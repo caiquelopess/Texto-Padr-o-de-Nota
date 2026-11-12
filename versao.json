@@ -1,14 +1,11 @@
 {
-  "versao": "2.3.0",
+  "versao": "2.3.1",
   "data": "12/11/2026",
   "novidades": [
+    "Fase padronizada em MONO / BI / TRI (Reativação Virtual agora tem BI; Ligação Nova, Ligação MUC e Reativação no mesmo padrão)",
     "Agora no GitHub Pages: abra pelo link https://caiquelopess.github.io/Texto-Padr-o-de-Nota/ e use sempre a versão mais nova, sem baixar nada",
     "Pelo link, a página confere a cada 30 minutos se há versão nova e oferece \"Atualizar agora\"",
     "Ligação Nova: opção Normal ou Por expediente, com a NOTA no novo padrão (telefone 71-912341234)",
-    "Ressarcimento de Danos Não Elétricos: prazo de 30 (trinta) dias corridos",
-    "Aferição: texto reordenado, com Horário para contato e Equipamento interno/externo",
-    "Desligamento Definitivo: critério da fatura final com 2 opções e sem a pergunta de retirada do medidor",
-    "Reativação e Reativação Virtual separadas; Ligação Nova e Ligação MUC separadas",
-    "Novo serviço BPC/LOAS e nova aba Tensão Fornecimento; Evento com Trio removido"
+    "Ressarcimento de Danos Não Elétricos: prazo de 30 (trinta) dias corridos"
   ]
 }

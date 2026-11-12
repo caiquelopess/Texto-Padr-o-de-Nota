@@ -1,11 +1,11 @@
 {
-  "versao": "2.5.0",
+  "versao": "2.5.1",
   "data": "12/11/2026",
   "novidades": [
+    "Declaração de Ligação: opção de contrato encerrado (início e data de encerramento) e data de emissão como único campo pré-preenchido",
     "Nova aba Declaração de Ligação: preenche a carta no modelo oficial e imprime/salva em PDF (fica no Histórico)",
     "Reativação Virtual: aviso para alterar o setor responsável na nota (código 8GE427) e AGENDA no modelo padrão",
     "Ligação Nova (Normal e Por expediente), Reativação e Reativação Virtual: NOTA e AGENDA nos modelos de texto usados no atendimento",
-    "Calculadora de Refaturamento agora é uma aba própria (Agenda e Nota | Tensão Fornecimento | Calculadora de Refat)",
-    "Fase padronizada em MONO / BI / TRI (Reativação Virtual agora tem BI; Ligação Nova, Ligação MUC e Reativação no mesmo padrão)"
+    "Calculadora de Refaturamento agora é uma aba própria (Agenda e Nota | Tensão Fornecimento | Calculadora de Refat)"
   ]
 }

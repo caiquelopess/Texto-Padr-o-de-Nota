@@ -1810,8 +1810,11 @@
         <div class="field-group full-width"><label>Endereço *</label><input type="text" id="decl_end" placeholder="Rua, número, complemento" required></div>
         <div class="field-group"><label>Bairro *</label><input type="text" id="decl_bairro" placeholder="Ex: Centro" required></div>
         <div class="field-group"><label>Município *</label><input type="text" id="decl_mun" placeholder="Ex: Camaçari" required></div>
+        <div class="field-group"><label>Situação do contrato *</label><select id="decl_situacao" data-change="toggleDeclEncerramento()"><option value="ativo">Ativo (até o presente momento)</option><option value="encerrado">Encerrado</option></select></div>
         <div class="field-group"><label>Início do fornecimento *</label><input type="text" id="decl_inicio" inputmode="numeric" placeholder="dd/mm/aaaa" data-input="mascararData(this)" required></div>
+        <div class="field-group" id="grp_decl_fim" style="display: none;"><label>Data de encerramento *</label><input type="text" id="decl_fim" inputmode="numeric" placeholder="dd/mm/aaaa" data-input="mascararData(this)" required></div>
         <div class="field-group"><label>Cidade da emissão *</label><input type="text" id="decl_cidade" placeholder="Ex: CAMAÇARI" required></div>
+        <div class="field-group"><label>Data de emissão *</label><input type="text" id="decl_emissao" inputmode="numeric" placeholder="dd/mm/aaaa" data-input="mascararData(this)" required></div>
       </div>
       <div class="actions"><button type="button" class="btn" data-click="gerarDeclaracao()">Gerar Declaração</button><button type="button" class="btn btn-clear" data-click="limparDeclaracao()">Limpar Tudo</button></div>
     </div>
@@ -3806,7 +3809,7 @@
     gerarBPC: gerarBPC,
     toggleLigacaoNova: toggleLigacaoNova,
     calcularRefat: calcularRefat, gerarCalcRefat: gerarCalcRefat, limparCalcRefat: limparCalcRefat,
-    gerarDeclaracao: gerarDeclaracao, limparDeclaracao: limparDeclaracao, imprimirDeclaracao: imprimirDeclaracao,
+    gerarDeclaracao: gerarDeclaracao, limparDeclaracao: limparDeclaracao, imprimirDeclaracao: imprimirDeclaracao, toggleDeclEncerramento: toggleDeclEncerramento,
     abrirHistorico: abrirHistorico, fecharHistorico: fecharHistorico, fecharHistoricoFundo: fecharHistoricoFundo,
     renderHistorico: renderHistorico, histCopiarNota: histCopiarNota, histCopiarAgenda: histCopiarAgenda,
     histAbrir: histAbrir, histExcluir: histExcluir, limparHistorico: limparHistorico, exportarHistorico: exportarHistorico,
@@ -4219,13 +4222,22 @@
     if (d.length === 14) return d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
     return null;
   }
+  function declHojeBR() {
+    var h = new Date();
+    return String(h.getDate()).padStart(2, '0') + '/' + String(h.getMonth() + 1).padStart(2, '0') + '/' + h.getFullYear();
+  }
+  function declDataExtenso(dt) { return dt.getUTCDate() + ' de ' + MESES_DECL[dt.getUTCMonth()] + ' de ' + dt.getUTCFullYear(); }
+  function toggleDeclEncerramento() {
+    document.getElementById('grp_decl_fim').style.display = getVal('decl_situacao') === 'encerrado' ? 'flex' : 'none';
+  }
   function declDados() {
-    var hoje = new Date();
+    var encerrado = getVal('decl_situacao') === 'encerrado';
     return {
       cliente: getVal('decl_cliente').toUpperCase(), codigo: getVal('decl_codigo'), doc: getVal('decl_doc'),
       end: getVal('decl_end').toUpperCase(), bairro: getVal('decl_bairro').toUpperCase(), mun: getVal('decl_mun').toUpperCase(),
-      inicio: getVal('decl_inicio'), cidade: getVal('decl_cidade').toUpperCase(),
-      emissao: hoje.getDate() + ' de ' + MESES_DECL[hoje.getMonth()] + ' de ' + hoje.getFullYear()
+      inicio: getVal('decl_inicio'), situacao: encerrado ? 'encerrado' : 'ativo', fim: encerrado ? getVal('decl_fim') : '',
+      cidade: getVal('decl_cidade').toUpperCase(), emissaoData: getVal('decl_emissao'),
+      emissao: declDataExtenso(calcLerData(getVal('decl_emissao')))
     };
   }
   function declHtml(d) {
@@ -4240,7 +4252,9 @@
       '</div>' +
       '<p class="decl-titulo">DECLARAÇÃO DE LIGAÇÃO</p>' +
       '<p class="decl-texto">De acordo com os registros da Neoenergia Coelba, declaramos que o código do cliente <b>' + declEsc(d.codigo) + '</b> teve o fornecimento de energia iniciado sob a titularidade da</p>' +
-      '<p class="decl-texto">Sr.(a) ' + declEsc(d.cliente) + ' em <b>' + declEsc(d.inicio) + ' até o presente momento.</b></p>' +
+      '<p class="decl-texto">Sr.(a) ' + declEsc(d.cliente) + ' em ' + (d.fim
+        ? '<b>' + declEsc(d.inicio) + '</b>, sendo o mesmo encerrado em <b>' + declEsc(d.fim) + '</b>.'
+        : '<b>' + declEsc(d.inicio) + ' até o presente momento.</b>') + '</p>' +
       '<p class="decl-texto">Em caso de dúvidas, estamos à disposição através do nosso site <a href="https://www.neoenergia.com/bahia">www.neoenergia.com/bahia</a>, nos nossos canais digitais ou em nossas lojas de atendimento.</p>' +
       '<p class="decl-local">' + declEsc(d.cidade) + ' ' + declEsc(d.emissao) + '.</p>' +
       '<img class="decl-assinatura" src="' + DECL_ASSINATURA + '" alt="Assinatura">' +
@@ -4257,7 +4271,8 @@
     return 'CLIENTE: ' + d.cliente + '\nCODIGO DO CLIENTE: ' + d.codigo + '\nCPF/CNPJ: ' + d.doc + '\nENDEREÇO: ' + d.end +
       '\nBAIRRO: ' + d.bairro + '\nMUNICIPIO: ' + d.mun + '\n\nDECLARAÇÃO DE LIGAÇÃO\n\n' +
       'De acordo com os registros da Neoenergia Coelba, declaramos que o código do cliente ' + d.codigo +
-      ' teve o fornecimento de energia iniciado sob a titularidade da Sr.(a) ' + d.cliente + ' em ' + d.inicio + ' até o presente momento.\n\n' +
+      ' teve o fornecimento de energia iniciado sob a titularidade da Sr.(a) ' + d.cliente + ' em ' + d.inicio +
+      (d.fim ? ', sendo o mesmo encerrado em ' + d.fim + '.' : ' até o presente momento.') + '\n\n' +
       d.cidade + ' ' + d.emissao + '.';
   }
   function mostrarDeclaracao(d) {
@@ -4274,13 +4289,22 @@
     var dt = calcLerData(getVal('decl_inicio'));
     if (!dt) { mostrarAviso('ATENÇÃO: o início do fornecimento deve ser uma data real no formato dd/mm/aaaa.'); document.getElementById('decl_inicio').focus(); return; }
     if (dt.getTime() > Date.now()) { mostrarAviso('ATENÇÃO: o início do fornecimento não pode ser uma data futura.'); document.getElementById('decl_inicio').focus(); return; }
-    try { localStorage.setItem('tp_decl_cidade', getVal('decl_cidade')); } catch (e) {}
+    if (getVal('decl_situacao') === 'encerrado') {
+      var fim = calcLerData(getVal('decl_fim'));
+      if (!fim) { mostrarAviso('ATENÇÃO: a data de encerramento deve ser uma data real no formato dd/mm/aaaa.'); document.getElementById('decl_fim').focus(); return; }
+      if (fim.getTime() < dt.getTime()) { mostrarAviso('ATENÇÃO: a data de encerramento não pode ser anterior ao início do fornecimento.'); document.getElementById('decl_fim').focus(); return; }
+      if (fim.getTime() > Date.now()) { mostrarAviso('ATENÇÃO: a data de encerramento não pode ser uma data futura.'); document.getElementById('decl_fim').focus(); return; }
+    }
+    if (!calcLerData(getVal('decl_emissao'))) { mostrarAviso('ATENÇÃO: a data de emissão deve ser uma data real no formato dd/mm/aaaa.'); document.getElementById('decl_emissao').focus(); return; }
     var d = declDados();
     mostrarDeclaracao(d);
     salvarNoHistorico('sf-decl', 'Declaração de Ligação — ' + d.cliente + ' — código ' + d.codigo, declTexto(d), d);
   }
   function limparDeclaracao() {
-    document.querySelectorAll('#sf-decl input[type="text"]').forEach(function(i) { if (i.id !== 'decl_cidade') i.value = ''; });
+    document.querySelectorAll('#sf-decl input[type="text"]').forEach(function(i) { i.value = ''; });
+    document.getElementById('decl_emissao').value = declHojeBR();
+    document.getElementById('decl_situacao').value = 'ativo';
+    toggleDeclEncerramento();
     document.getElementById('decl_folha').innerHTML = '';
     document.getElementById('decl_saida').style.display = 'none';
   }
@@ -4311,10 +4335,8 @@
     }
   }
   (function() {
-    var c = null;
-    try { c = localStorage.getItem('tp_decl_cidade'); } catch (e) {}
-    var el = document.getElementById('decl_cidade');
-    if (el) el.value = c || 'CAMAÇARI';
+    var el = document.getElementById('decl_emissao');
+    if (el && !el.value) el.value = declHojeBR();
   })();
 
   // === HISTÓRICO DE TEXTOS GERADOS ===
@@ -4457,9 +4479,11 @@
       var dd = h.dados;
       mostrarAbaPrincipal('decl');
       [['decl_cliente', 'cliente'], ['decl_codigo', 'codigo'], ['decl_doc', 'doc'], ['decl_end', 'end'], ['decl_bairro', 'bairro'],
-       ['decl_mun', 'mun'], ['decl_inicio', 'inicio'], ['decl_cidade', 'cidade']].forEach(function(par) {
+       ['decl_mun', 'mun'], ['decl_inicio', 'inicio'], ['decl_fim', 'fim'], ['decl_cidade', 'cidade'], ['decl_emissao', 'emissaoData']].forEach(function(par) {
         var el = document.getElementById(par[0]); if (el) el.value = dd[par[1]] || '';
       });
+      document.getElementById('decl_situacao').value = dd.fim ? 'encerrado' : 'ativo';
+      toggleDeclEncerramento();
       fecharHistorico();
       mostrarDeclaracao(dd);   // reabre exatamente como foi emitida (mesma data de emissão)
       return;
@@ -4521,7 +4545,7 @@
   // (PC ou celular). Repositório/gist privado NÃO funciona (responde 404).
   // Para publicar uma atualização: altere VERSAO_ATUAL aqui, atualize o
   // versao.json com o mesmo número e substitua os dois arquivos no gist.
-  var VERSAO_ATUAL = '2.5.0';
+  var VERSAO_ATUAL = '2.5.1';
   // Link do gist, ex.: 'https://gist.github.com/caiquelopess/0123456789abcdef'
   // (vazio = busca de atualizações desligada)
   var GIST_ATUALIZACAO = 'https://gist.github.com/caiquelopess/b682951d237c24ab8cd826fefa2d2d7d';

@@ -666,13 +666,14 @@
   <div class="nav-tabs" role="tablist">
     <button type="button" class="nav-tab ativa" data-aba="agenda" role="tab" aria-selected="true" data-click="mostrarAbaPrincipal('agenda', this)">AGENDA E NOTA</button>
     <button type="button" class="nav-tab inativa" data-aba="tensao" role="tab" aria-selected="false" data-click="mostrarAbaPrincipal('tensao', this)">TENSÃO FORNECIMENTO</button>
+    <button type="button" class="nav-tab inativa" data-aba="calc" role="tab" aria-selected="false" data-click="mostrarAbaPrincipal('calc', this)">CALCULADORA DE REFAT</button>
   </div>
 
   <div class="content" id="painel_agenda">
 
     <!-- SUB-NAVEGAÇÃO DE SERVIÇOS -->
     <div class="nav-toolbar">
-      <span class="svc-count" id="svc_count">40 serviços</span>
+      <span class="svc-count" id="svc_count">39 serviços</span>
       <button type="button" class="nav-toggle fechado" id="btn_alternar_servicos" data-click="alternarServicos(this)" aria-expanded="false" aria-controls="painel_servicos"><span class="nav-toggle-label">Exibir serviços</span><span class="chev"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></span></button>
     </div>
     <div class="search-row">
@@ -684,7 +685,6 @@
         <button type="button" class="sub-btn" data-click="trocarAba('sf-afericao', this)">Aferição</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-bloq-cobranca', this)">Bloqueio de Cobrança</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-icms', this)">Cadastro de Parceiro - Isenção ICMS</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-calc-refat', this)">Calculadora de Refaturamento</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-canc-parc', this)">Cancelamento de Parcelamento</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-cpnb', this)">Conta Paga e Não Baixada</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-data-boa', this)">DATA BOA</button>
@@ -1048,39 +1048,11 @@
       </div>
     </div>
 
-    <!-- CALCULADORA DE REFATURAMENTO (cálculo de leitura) -->
-    <div class="subform" id="sf-calc-refat">
-      <div class="alert-box">🧮 Calcula a leitura esperada da fatura reclamada pela média diária de consumo entre a fatura anterior e a leitura apresentada pelo cliente.</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Leitura da fatura ANTERIOR *</label><input type="text" id="calc_lt_ant" inputmode="numeric" placeholder="Ex: 12500" data-input="calcularRefat()" required></div>
-        <div class="field-group"><label>Data da fatura ANTERIOR *</label><input type="text" id="calc_dt_ant" inputmode="numeric" placeholder="dd/mm/aaaa" data-input="calcularRefat()" required></div>
-        <div class="field-group"><label>Leitura apresentada pelo CLIENTE *</label><input type="text" id="calc_lt_cli" inputmode="numeric" placeholder="Ex: 12900" data-input="calcularRefat()" required></div>
-        <div class="field-group"><label>Data da leitura do CLIENTE *</label><input type="text" id="calc_dt_cli" inputmode="numeric" placeholder="dd/mm/aaaa" data-input="calcularRefat()" required></div>
-        <div class="field-group full-width"><label>Data esperada (FATURA RECLAMADA) *</label><input type="text" id="calc_dt_esp" inputmode="numeric" placeholder="dd/mm/aaaa" data-input="calcularRefat()" required></div>
-      </div>
-      <div class="calc-resultado" id="calc_resultado" aria-live="polite">
-        <div class="calc-vazio" id="calc_vazio">Preencha os campos acima para ver o cálculo.</div>
-        <div class="calc-erro" id="calc_erro" style="display: none;"></div>
-        <div id="calc_valores" style="display: none;">
-          <div class="calc-destaque"><span>Leitura esperada</span><strong id="calc_r_leitura">—</strong><small id="calc_r_leitura_exata"></small></div>
-          <div class="calc-grid">
-            <div><span>Consumo no período do cliente</span><strong id="calc_r_consumo">—</strong></div>
-            <div><span>Dias (anterior → cliente)</span><strong id="calc_r_dias_cli">—</strong></div>
-            <div><span>Média diária</span><strong id="calc_r_media">—</strong></div>
-            <div><span>Dias (anterior → reclamada)</span><strong id="calc_r_dias_esp">—</strong></div>
-            <div><span>Consumo projetado</span><strong id="calc_r_proj">—</strong></div>
-          </div>
-        </div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarCalcRefat()">Gerar Texto e Copiar NOTA</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-calc-refat')">Limpar Tudo</button></div>
-    </div>
-
     <!-- 1. LIGAÇÃO NOVA (Normal / Por expediente) -->
     <div class="subform" id="sf-ligacao-nova">
       <div class="alert-box">⚠️ Precisa realizar agenda na conta contrato<br>Atualize o cadastro do cliente!</div>
       <div class="form-grid">
         <div class="field-group full-width"><label>Tipo *</label><select id="ln_modo" data-change="toggleLigacaoNova()"><option value="normal">Normal</option><option value="expediente">Por expediente</option></select></div>
-        <div class="field-group full-width"><label>Título da agenda *</label><input type="text" id="ln_titulo" placeholder="Título que vai na 1ª linha da agenda" required></div>
         <div class="field-group"><label>Solicitante *</label><input type="text" id="ln_solic" placeholder="Nome completo do solicitante" required></div>
         <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="ln_tel" placeholder="Ex: 71993501519" required></div>
         <div class="field-group"><label>Fase *</label><select id="ln_tipo_lig"><option value="MONO">MONO</option><option value="BI">BI</option><option value="TRI">TRI</option></select></div>
@@ -1122,7 +1094,6 @@
     <div class="subform" id="sf-reativ-comum">
       <div class="alert-box">⚠️ Precisa realizar agenda na conta contrato<br>Atualize o cadastro do cliente!</div>
       <div class="form-grid">
-        <div class="field-group full-width"><label>Título da agenda *</label><input type="text" id="rtc_titulo" placeholder="Título que vai na 1ª linha da agenda" required></div>
         <div class="field-group"><label>Solicitante *</label><input type="text" id="rtc_solic" placeholder="Nome completo do solicitante" required></div>
         <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="rtc_tel" placeholder="Ex: 71993501519" required></div>
         <div class="field-group"><label>Fase *</label><select id="rtc_tipo_lig"><option value="MONO">MONO</option><option value="BI">BI</option><option value="TRI">TRI</option></select></div>
@@ -1758,6 +1729,60 @@
   </div>
 
   <!-- ABA: TENSÃO DE FORNECIMENTO -->
+  <div class="content" id="painel_calc" style="display: none;">
+    <h2 class="tensao-titulo">Calculadora de Refaturamento</h2>
+    <p class="tensao-desc">Calcula a leitura esperada da fatura reclamada pela média diária de consumo entre a fatura anterior e a leitura apresentada pelo cliente.</p>
+
+    <!-- CALCULADORA DE REFATURAMENTO (cálculo de leitura) -->
+    <div id="sf-calc-refat" data-nome="Calculadora de Refaturamento">
+            <div class="form-grid">
+        <div class="field-group"><label>Leitura da fatura ANTERIOR *</label><input type="text" id="calc_lt_ant" inputmode="numeric" placeholder="Ex: 12500" data-input="calcularRefat()" required></div>
+        <div class="field-group"><label>Data da fatura ANTERIOR *</label><input type="text" id="calc_dt_ant" inputmode="numeric" placeholder="dd/mm/aaaa" data-input="calcularRefat()" required></div>
+        <div class="field-group"><label>Leitura apresentada pelo CLIENTE *</label><input type="text" id="calc_lt_cli" inputmode="numeric" placeholder="Ex: 12900" data-input="calcularRefat()" required></div>
+        <div class="field-group"><label>Data da leitura do CLIENTE *</label><input type="text" id="calc_dt_cli" inputmode="numeric" placeholder="dd/mm/aaaa" data-input="calcularRefat()" required></div>
+        <div class="field-group full-width"><label>Data esperada (FATURA RECLAMADA) *</label><input type="text" id="calc_dt_esp" inputmode="numeric" placeholder="dd/mm/aaaa" data-input="calcularRefat()" required></div>
+      </div>
+      <div class="calc-resultado" id="calc_resultado" aria-live="polite">
+        <div class="calc-vazio" id="calc_vazio">Preencha os campos acima para ver o cálculo.</div>
+        <div class="calc-erro" id="calc_erro" style="display: none;"></div>
+        <div id="calc_valores" style="display: none;">
+          <div class="calc-destaque"><span>Leitura esperada</span><strong id="calc_r_leitura">—</strong><small id="calc_r_leitura_exata"></small></div>
+          <div class="calc-grid">
+            <div><span>Consumo no período do cliente</span><strong id="calc_r_consumo">—</strong></div>
+            <div><span>Dias (anterior → cliente)</span><strong id="calc_r_dias_cli">—</strong></div>
+            <div><span>Média diária</span><strong id="calc_r_media">—</strong></div>
+            <div><span>Dias (anterior → reclamada)</span><strong id="calc_r_dias_esp">—</strong></div>
+            <div><span>Consumo projetado</span><strong id="calc_r_proj">—</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="actions"><button type="button" class="btn" data-click="gerarCalcRefat()">Gerar Texto e Copiar Resumo</button><button type="button" class="btn btn-clear" data-click="limparCalcRefat()">Limpar Tudo</button></div>
+    </div>
+
+    <div class="result-section">
+      <div class="output-group">
+        <div class="output-header">
+          <span>RESUMO (NOTA)</span>
+          <div>
+            <button type="button" class="copy-btn" data-click="copiarTexto('calc_out_nota', 'calc_al_nota')">Copiar Resumo</button>
+            <span class="alert-copied" id="calc_al_nota">Copiado!</span>
+          </div>
+        </div>
+        <textarea id="calc_out_nota" class="output-box" placeholder="O resumo do cálculo aparecerá aqui..." readonly></textarea>
+      </div>
+      <div class="output-group">
+        <div class="output-header">
+          <span>MEMÓRIA DE CÁLCULO</span>
+          <div>
+            <button type="button" class="copy-btn" data-click="copiarTexto('calc_out_agenda', 'calc_al_agenda')">Copiar Memória</button>
+            <span class="alert-copied" id="calc_al_agenda">Copiado!</span>
+          </div>
+        </div>
+        <textarea id="calc_out_agenda" class="output-box" style="min-height:190px;" placeholder="A memória de cálculo aparecerá aqui..." readonly></textarea>
+      </div>
+    </div>
+  </div>
+
   <div class="content" id="painel_tensao" style="display: none;">
     <h2 class="tensao-titulo">Tensão de Fornecimento</h2>
     <p class="tensao-desc">Digite o nome da cidade para consultar a tensão de fornecimento dela na Bahia (Neoenergia Coelba).</p>
@@ -2648,8 +2673,7 @@
 
   // AGENDA no padrão da Reativação (também usado na Ligação Nova normal)
   function agendaPadraoEndereco(tipoSolic, p) {
-    return 'Título: ' + getVal(p + '_titulo') +
-      '\nTipo de solicitação: ' + tipoSolic +
+    return 'Tipo de solicitação: ' + tipoSolic +
       '\nSolicitante: ' + getVal(p + '_solic') +
       '\nPontos de referências: ' + getVal(p + '_ref') +
       '\nCoordenadas geográficas: ' + getVal(p + '_coords') +
@@ -2668,8 +2692,7 @@
       nota = notaCaps('LN ' + getVal('ln_tipo_lig') + ' LIB P/AE ' + getVal('ln_num_nota') + ' AP ' + getVal('ln_ap') + ' BL ' + getVal('ln_bloco') +
         ' REF: ' + getVal('ln_ref') + ' TEL: ' + telefonesPadraoNota(getVal('ln_tel')) + ' PC: ' + getVal('ln_proc')) +
         '/' + getVal('ln_email') + ' PZ 5D UTEIS';
-      agenda = 'Título: ' + getVal('ln_titulo') +
-        '\nTipo de solicitação: Ligação Nova' +
+      agenda = 'Tipo de solicitação: Ligação Nova' +
         '\nSolicitante: ' + getVal('ln_solic') +
         '\nPontos de referências: ' + getVal('ln_ref') +
         '\nNome do Empreendimento: ' + getVal('ln_emp') +
@@ -3333,7 +3356,6 @@
   function limparForm(containerId) {
     desbloquearFormulario(containerId);
     if (containerId === 'sf-ligacao-nova') { document.getElementById('ln_modo').value = 'normal'; setTimeout(toggleLigacaoNova, 0); }
-    if (containerId === 'sf-calc-refat') { setTimeout(calcularRefat, 0); }
     document.querySelectorAll('#' + containerId + ' input[type="text"], #' + containerId + ' textarea').forEach(function(i) { i.value = ''; });
     if (containerId === 'sf-reclamacao-gd') { document.getElementById('gd_tipo').value = 'ausencia_fat'; toggleReclamacaoGD(); }
     if (containerId === 'sf-reclamacoes') {
@@ -3440,8 +3462,10 @@
     var pT = document.getElementById('painel_tensao');
     if (pA) pA.style.display = qual === 'agenda' ? '' : 'none';
     if (pT) pT.style.display = qual === 'tensao' ? '' : 'none';
+    var pC = document.getElementById('painel_calc');
+    if (pC) pC.style.display = qual === 'calc' ? '' : 'none';
     var tituloPrincipal = document.getElementById('titulo_principal');
-    if (tituloPrincipal) tituloPrincipal.textContent = qual === 'tensao' ? 'Tensão Fornecimento' : 'Textos Padrões';
+    if (tituloPrincipal) tituloPrincipal.textContent = qual === 'tensao' ? 'Tensão Fornecimento' : (qual === 'calc' ? 'Calculadora de Refaturamento' : 'Textos Padrões');
     document.querySelectorAll('.nav-tab').forEach(function(t) {
       var ativa = t.getAttribute('data-aba') === qual;
       t.classList.toggle('ativa', ativa);
@@ -3735,7 +3759,7 @@
     gerarTeleGravacao: gerarTeleGravacao, gerarBloqCobranca: gerarBloqCobranca,
     gerarBPC: gerarBPC,
     toggleLigacaoNova: toggleLigacaoNova,
-    calcularRefat: calcularRefat, gerarCalcRefat: gerarCalcRefat,
+    calcularRefat: calcularRefat, gerarCalcRefat: gerarCalcRefat, limparCalcRefat: limparCalcRefat,
     abrirHistorico: abrirHistorico, fecharHistorico: fecharHistorico, fecharHistoricoFundo: fecharHistoricoFundo,
     renderHistorico: renderHistorico, histCopiarNota: histCopiarNota, histCopiarAgenda: histCopiarAgenda,
     histAbrir: histAbrir, histExcluir: histExcluir, limparHistorico: limparHistorico, exportarHistorico: exportarHistorico,
@@ -4097,7 +4121,17 @@
       '\nDias até a fatura reclamada (' + calcDataBR(r.dtEsp) + '): ' + r.diasEsp +
       '\nConsumo projetado: ' + calcFmt(r.proj, 2) + ' kWh' +
       '\nLeitura esperada: ' + String(r.leituraArred);
-    finalizarGeracao('sf-calc-refat', nota, agenda, 'nota');
+    document.getElementById('calc_out_nota').value = nota;
+    document.getElementById('calc_out_agenda').value = agenda;
+    salvarNoHistorico('sf-calc-refat', nota, agenda);
+    copiarTexto('calc_out_nota', 'calc_al_nota');
+  }
+
+  function limparCalcRefat() {
+    document.querySelectorAll('#sf-calc-refat input[type="text"]').forEach(function(i) { i.value = ''; });
+    document.getElementById('calc_out_nota').value = '';
+    document.getElementById('calc_out_agenda').value = '';
+    calcularRefat();
   }
 
 
@@ -4126,6 +4160,8 @@
     var nome = containerId;
     var btn = document.querySelector('#service_nav .sub-btn[data-click*="\'' + containerId + '\'"]');
     if (btn) nome = btn.textContent.trim();
+    var contNome = document.getElementById(containerId);
+    if (!btn && contNome && contNome.getAttribute('data-nome')) nome = contNome.getAttribute('data-nome');
     // Se o formulário começa com um seletor de opção/tipo, acrescenta a opção escolhida.
     var cont = document.getElementById(containerId);
     var primeiro = cont ? cont.querySelector('.form-grid > .field-group.full-width:first-child select') : null;
@@ -4235,12 +4271,15 @@
   function histCopiarAgenda(id) { var h = histAchar(id); if (h) histCopiarTexto(h.agenda); }
   function histAbrir(id) {
     var h = histAchar(id); if (!h) return;
-    document.getElementById('out-nota').value = h.nota;
-    document.getElementById('out-agenda').value = h.agenda;
+    var calc = h.sf === 'sf-calc-refat';
+    mostrarAbaPrincipal(calc ? 'calc' : 'agenda');
+    document.getElementById(calc ? 'calc_out_nota' : 'out-nota').value = h.nota;
+    document.getElementById(calc ? 'calc_out_agenda' : 'out-agenda').value = h.agenda;
     fecharHistorico();
-    var alvo = document.getElementById('out-agenda');
+    var alvo = document.getElementById(calc ? 'calc_out_nota' : 'out-agenda');
     if (alvo && alvo.scrollIntoView) alvo.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
+
   function histExcluir(id) {
     if (!confirm('Excluir este texto do histórico?')) return;
     histGravar(histLer().filter(function(h) { return h.id !== id; }));

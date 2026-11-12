@@ -1080,20 +1080,21 @@
       <div class="alert-box">⚠️ Precisa realizar agenda na conta contrato<br>Atualize o cadastro do cliente!</div>
       <div class="form-grid">
         <div class="field-group full-width"><label>Tipo *</label><select id="ln_modo" data-change="toggleLigacaoNova()"><option value="normal">Normal</option><option value="expediente">Por expediente</option></select></div>
+        <div class="field-group full-width"><label>Título da agenda *</label><input type="text" id="ln_titulo" placeholder="Título que vai na 1ª linha da agenda" required></div>
         <div class="field-group"><label>Solicitante *</label><input type="text" id="ln_solic" placeholder="Nome completo do solicitante" required></div>
-        <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="ln_tel" placeholder="Ex: 71912341234" required></div>
-        <div class="field-group grp-ln-normal"><label>Fase *</label><select id="ln_tipo_lig"><option value="MONO">MONO</option><option value="BI">BI</option><option value="TRI">TRI</option></select></div>
-        <div class="field-group grp-ln-normal"><label>Número *</label><input type="text" id="ln_numero" placeholder="Número do imóvel ou S/N" required></div>
-        <div class="field-group grp-ln-normal full-width"><label>Complemento</label><input type="text" id="ln_compl" placeholder="Opcional — ex: Casa B, Fundos"></div>
+        <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="ln_tel" placeholder="Ex: 71993501519" required></div>
+        <div class="field-group"><label>Fase *</label><select id="ln_tipo_lig"><option value="MONO">MONO</option><option value="BI">BI</option><option value="TRI">TRI</option></select></div>
+        <div class="field-group grp-ln-normal"><label>Número *</label><input type="text" id="ln_numero" placeholder="Ex: 77 ou S/N" required></div>
+        <div class="field-group grp-ln-normal full-width"><label>Complemento</label><input type="text" id="ln_compl" placeholder="Opcional — ex: AP 101, CASA B"></div>
         <div class="field-group grp-ln-exp" style="display: none;"><label>Número da nota *</label><input type="text" id="ln_num_nota" placeholder="Ex: 300123456" required></div>
-        <div class="field-group grp-ln-exp" style="display: none;"><label>Nome do empreendimento *</label><input type="text" id="ln_emp" placeholder="Nome do condomínio/prédio" required></div>
-        <div class="field-group grp-ln-exp" style="display: none;"><label>AP *</label><input type="text" id="ln_ap" placeholder="Ex: 301" required></div>
+        <div class="field-group grp-ln-exp full-width" style="display: none;"><label>Nome do empreendimento *</label><input type="text" id="ln_emp" placeholder="Nome do condomínio/prédio" required></div>
+        <div class="field-group grp-ln-exp" style="display: none;"><label>AP *</label><input type="text" id="ln_ap" placeholder="Ex: 101" required></div>
         <div class="field-group grp-ln-exp" style="display: none;"><label>Bloco *</label><input type="text" id="ln_bloco" placeholder="Ex: B" required></div>
-        <div class="field-group full-width"><label>Pontos de referências *</label><input type="text" id="ln_ref" placeholder="Ponto de referência detalhado (próximo a...)" required></div>
-        <div class="field-group"><label>Coordenadas geográficas *</label><input type="text" id="ln_coords" placeholder="Ex: -12.9714, -38.5014 ou Não informado" required></div>
+        <div class="field-group full-width"><label>Pontos de referências *</label><input type="text" id="ln_ref" placeholder="Ex: PX AO BECO DO SIRILO" required></div>
+        <div class="field-group"><label>Coordenadas geográficas *</label><input type="text" id="ln_coords" placeholder="Ex: -12.9585, -38.4955 ou Não informado" required></div>
         <div class="field-group"><label>E-mail *</label><input type="text" id="ln_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Dados da receita *</label><select id="ln_rec"><option value="regular">regular</option><option value="pendente de regularização">pendente de regularização</option></select></div>
-        <div class="field-group"><label>Procurar por (pessoa de contato) *</label><input type="text" id="ln_proc" placeholder="Nome de quem atenderá a equipe técnica" required></div>
+        <div class="field-group"><label>Dados da receita *</label><select id="ln_rec"><option value="regular">REGULAR</option><option value="pendente de regularização">PENDENTE DE REGULARIZAÇÃO</option></select></div>
+        <div class="field-group"><label>Procurar por (pessoa de contato) *</label><input type="text" id="ln_proc" placeholder="Ex: STEPHANIE, PORTARIA" required></div>
       </div>
       <div class="actions"><button type="button" class="btn" data-click="gerarLigacaoNova()">Gerar Texto e Copiar NOTA</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-ligacao-nova')">Limpar Tudo</button></div>
     </div>
@@ -1121,14 +1122,17 @@
     <div class="subform" id="sf-reativ-comum">
       <div class="alert-box">⚠️ Precisa realizar agenda na conta contrato<br>Atualize o cadastro do cliente!</div>
       <div class="form-grid">
+        <div class="field-group full-width"><label>Título da agenda *</label><input type="text" id="rtc_titulo" placeholder="Título que vai na 1ª linha da agenda" required></div>
         <div class="field-group"><label>Solicitante *</label><input type="text" id="rtc_solic" placeholder="Nome completo do solicitante" required></div>
-        <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="rtc_tel" placeholder="DDD + telefone — Ex: 84988887777" required></div>
-        <div class="field-group full-width"><label>Pontos de referências *</label><input type="text" id="rtc_ref" placeholder="O máximo de informações possíveis" required></div>
-        <div class="field-group"><label>Coordenadas geográficas *</label><input type="text" id="rtc_coords" placeholder="Ex: -5.1872, -37.3441 ou Não informado" required></div>
-        <div class="field-group"><label>Tipo de ligação *</label><select id="rtc_tipo_lig"><option value="MONO">MONO</option><option value="BI">BI</option><option value="TRI">TRI</option></select></div>
+        <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="rtc_tel" placeholder="Ex: 71993501519" required></div>
+        <div class="field-group"><label>Fase *</label><select id="rtc_tipo_lig"><option value="MONO">MONO</option><option value="BI">BI</option><option value="TRI">TRI</option></select></div>
+        <div class="field-group"><label>Número *</label><input type="text" id="rtc_numero" placeholder="Ex: 77 ou S/N" required></div>
+        <div class="field-group full-width"><label>Complemento</label><input type="text" id="rtc_compl" placeholder="Opcional — ex: AP 101, CASA B"></div>
+        <div class="field-group full-width"><label>Pontos de referências *</label><input type="text" id="rtc_ref" placeholder="O máximo de informações possíveis — ex: PX AO BECO DO SIRILO" required></div>
+        <div class="field-group"><label>Coordenadas geográficas *</label><input type="text" id="rtc_coords" placeholder="Ex: -12.9585, -38.4955 ou Não informado" required></div>
         <div class="field-group"><label>E-mail *</label><input type="text" id="rtc_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Dados da receita *</label><select id="rtc_rec"><option value="regular">regular</option><option value="pendente de regularização">pendente de regularização</option></select></div>
-        <div class="field-group full-width"><label>Quem procurar no local *</label><input type="text" id="rtc_proc" placeholder="Nome de quem atenderá a equipe" required></div>
+        <div class="field-group"><label>Dados da receita *</label><select id="rtc_rec"><option value="regular">REGULAR</option><option value="pendente de regularização">PENDENTE DE REGULARIZAÇÃO</option></select></div>
+        <div class="field-group"><label>Procurar por (pessoa de contato) *</label><input type="text" id="rtc_proc" placeholder="Ex: STEPHANIE, PORTARIA" required></div>
       </div>
       <div class="actions"><button type="button" class="btn" data-click="gerarReativComum()">Gerar Texto e Copiar NOTA</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-reativ-comum')">Limpar Tudo</button></div>
     </div>
@@ -2632,35 +2636,54 @@
     }).filter(Boolean).join(' / ');
   }
 
+  // NOTA em maiúsculas, sem espaços duplos
+  function notaCaps(t) { return String(t || '').toUpperCase().replace(/\s+/g, ' ').trim(); }
+
+  // NOTA no padrão "LN/RT {FASE} N° {NÚMERO} {COMPLEMENTO} REF: ... CG: ... TEL: ... PC: ... PZ 5D UTEIS"
+  function notaPadraoEndereco(sigla, p) {
+    return notaCaps(sigla + ' ' + getVal(p + '_tipo_lig') + ' N° ' + getVal(p + '_numero') + ' ' + getVal(p + '_compl') +
+      ' REF: ' + getVal(p + '_ref') + ' CG: ' + getVal(p + '_coords') + ' TEL: ' + telefonesPadraoNota(getVal(p + '_tel')) +
+      ' PC: ' + getVal(p + '_proc') + ' PZ 5D UTEIS');
+  }
+
+  // AGENDA no padrão da Reativação (também usado na Ligação Nova normal)
+  function agendaPadraoEndereco(tipoSolic, p) {
+    return 'Título: ' + getVal(p + '_titulo') +
+      '\nTipo de solicitação: ' + tipoSolic +
+      '\nSolicitante: ' + getVal(p + '_solic') +
+      '\nPontos de referências: ' + getVal(p + '_ref') +
+      '\nCoordenadas geográficas: ' + getVal(p + '_coords') +
+      '\nTipo de ligação: ' + getVal(p + '_tipo_lig') +
+      '\nTelefones para contato: ' + getVal(p + '_tel') +
+      '\nE-mail para contato: ' + getVal(p + '_email') +
+      '\nDados da receita: (regular/pendente de regularização): ' + getVal(p + '_rec').toUpperCase() +
+      '\nQuem deverá ser procurado no local: ' + getVal(p + '_proc') +
+      '\nCiente do prazo de 5 dias úteis para execução do serviço';
+  }
+
   function gerarLigacaoNova() {
     if (!validarCampos('sf-ligacao-nova')) return;
-    var exp = getVal('ln_modo') === 'expediente';
-    var tel = telefonesPadraoNota(getVal('ln_tel'));
-    var nota;
-    if (exp) {
-      nota = 'LN LIB P/AE ' + getVal('ln_num_nota') + ' AP ' + getVal('ln_ap') + ' BL ' + getVal('ln_bloco') +
-        ' REF: ' + getVal('ln_ref') + ' TEL: ' + tel + ' PC: ' + getVal('ln_proc') + ' PZ 5D UTEIS';
+    var nota, agenda;
+    if (getVal('ln_modo') === 'expediente') {
+      nota = notaCaps('LN ' + getVal('ln_tipo_lig') + ' LIB P/AE ' + getVal('ln_num_nota') + ' AP ' + getVal('ln_ap') + ' BL ' + getVal('ln_bloco') +
+        ' REF: ' + getVal('ln_ref') + ' TEL: ' + telefonesPadraoNota(getVal('ln_tel')) + ' PC: ' + getVal('ln_proc')) +
+        '/' + getVal('ln_email') + ' PZ 5D UTEIS';
+      agenda = 'Título: ' + getVal('ln_titulo') +
+        '\nTipo de solicitação: Ligação Nova' +
+        '\nSolicitante: ' + getVal('ln_solic') +
+        '\nPontos de referências: ' + getVal('ln_ref') +
+        '\nNome do Empreendimento: ' + getVal('ln_emp') +
+        '\nCoordenadas geográficas: ' + getVal('ln_coords') +
+        '\nTipo de ligação: ' + getVal('ln_tipo_lig') +
+        '\nTelefones para contato: ' + getVal('ln_tel') +
+        '\nE-mail para contato: ' + getVal('ln_email') +
+        '\nDados da receita: ' + getVal('ln_rec').toUpperCase() +
+        '\nQuem deverá ser procurado no local: ' + getVal('ln_proc') +
+        '\nCiente do prazo de 5 dias úteis para execução do serviço';
     } else {
-      var compl = getVal('ln_compl');
-      nota = 'LN ' + getVal('ln_tipo_lig').toUpperCase() + ' N° ' + getVal('ln_numero') + (compl ? ' ' + compl : '') +
-        ' REF: ' + getVal('ln_ref') + ' TEL: ' + tel + ' CG: ' + getVal('ln_coords') + ' PC: ' + getVal('ln_proc') + ' PZ 5D UTEIS';
+      nota = notaPadraoEndereco('LN', 'ln');
+      agenda = agendaPadraoEndereco('Ligação Nova', 'ln');
     }
-    var agendaMUC = exp
-      ? 'MUC: N/A | Nome do empreendimento: ' + getVal('ln_emp') + ' | TORRE/BL/AP: BL ' + getVal('ln_bloco') + ' AP ' + getVal('ln_ap')
-      : 'MUC: N/A | Nome do empreendimento: N/A | TORRE/BL/AP: N/A';
-    var agenda = 'Tipo de solicitação: Ligação Nova' + (exp ? ' (por expediente)' : '') +
-      '\nSolicitante: ' + getVal('ln_solic') +
-      (exp ? '\nNúmero da nota: ' + getVal('ln_num_nota')
-           : '\nNúmero: ' + getVal('ln_numero') + (getVal('ln_compl') ? ' | Complemento: ' + getVal('ln_compl') : '')) +
-      '\nPontos de referências: ' + getVal('ln_ref') +
-      '\nCoordenadas geográficas: ' + getVal('ln_coords') +
-      (exp ? '' : '\nTipo de ligação: ' + getVal('ln_tipo_lig')) +
-      '\nTelefones para contato: ' + getVal('ln_tel') +
-      '\n' + agendaMUC +
-      '\nE-mail para contato: ' + getVal('ln_email') +
-      '\nDados da receita: ' + getVal('ln_rec') +
-      '\nQuem deverá ser procurado no local: ' + getVal('ln_proc') +
-      '\nCiente do prazo de 5 dias úteis para execução do serviço';
     finalizarGeracao('sf-ligacao-nova', nota, agenda, 'nota');
   }
 
@@ -2684,23 +2707,12 @@
 
   function gerarReativComum() {
     if (!validarCampos('sf-reativ-comum')) return;
-    var nota = 'Reativ Solic ' + getVal('rtc_solic') + ' Ref ' + getVal('rtc_ref') + ' Tel ' + getVal('rtc_tel') + ' Prazo 5 dias úteis Proc ' + getVal('rtc_proc');
-    var agenda = 'Tipo de solicitação: Reativação' +
-      '\nSolicitante: ' + getVal('rtc_solic') +
-      '\nPontos de referências: ' + getVal('rtc_ref') +
-      '\nCoordenadas geográficas: ' + getVal('rtc_coords') +
-      '\nTipo de ligação: ' + getVal('rtc_tipo_lig') +
-      '\nTelefones para contato: ' + getVal('rtc_tel') +
-      '\nE-mail para contato: ' + getVal('rtc_email') +
-      '\nDados da receita: ' + getVal('rtc_rec') +
-      '\nQuem deverá ser procurado no local: ' + getVal('rtc_proc') +
-      '\nCiente do prazo de 5 dias úteis para execução do serviço.';
-    finalizarGeracao('sf-reativ-comum', nota, agenda, 'nota');
+    finalizarGeracao('sf-reativ-comum', notaPadraoEndereco('RT', 'rtc'), agendaPadraoEndereco('Reativação', 'rtc'), 'nota');
   }
 
   function gerarReativVirtual() {
     if (!validarCampos('sf-reativ-virtual')) return;
-    var nota = 'TRATA-SE DE REATIVAÇÃO VIRTUAL ' + getVal('rtv_fase') + ' MEDIDOR EM CAMPO NUMERO ' + getVal('rtv_medidor') + ' E LEITURA ' + getVal('rtv_leitura') + ' | Solic: ' + getVal('rtv_solic') + ' | Ref: ' + getVal('rtv_ref') + ' | Tel: ' + getVal('rtv_tel') + ' | Proc: ' + getVal('rtv_proc');
+    var nota = 'TRATA-SE DE REATIVAÇÃO VIRTUAL MEDIDOR EM CAMPO N° ' + getVal('rtv_medidor');
     var agenda = 'Reat Virtual ' + getVal('rtv_fase') + ' N Medidor ' + getVal('rtv_medidor') + ' Leitura ' + getVal('rtv_leitura') + ' Solic ' + getVal('rtv_solic') + ' Ref ou geolocalização ' + getVal('rtv_ref') + ' Tel ' + getVal('rtv_tel') + ' Prazo 5 dias úteis Proc ' + getVal('rtv_proc');
     finalizarGeracao('sf-reativ-virtual', nota, agenda, 'nota');
   }
@@ -4277,7 +4289,7 @@
   // (PC ou celular). Repositório/gist privado NÃO funciona (responde 404).
   // Para publicar uma atualização: altere VERSAO_ATUAL aqui, atualize o
   // versao.json com o mesmo número e substitua os dois arquivos no gist.
-  var VERSAO_ATUAL = '2.3.1';
+  var VERSAO_ATUAL = '2.4.0';
   // Link do gist, ex.: 'https://gist.github.com/caiquelopess/0123456789abcdef'
   // (vazio = busca de atualizações desligada)
   var GIST_ATUALIZACAO = 'https://gist.github.com/caiquelopess/b682951d237c24ab8cd826fefa2d2d7d';

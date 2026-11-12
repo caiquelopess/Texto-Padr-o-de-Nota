@@ -1,11 +1,11 @@
 {
-  "versao": "2.4.0",
+  "versao": "2.4.1",
   "data": "12/11/2026",
   "novidades": [
+    "Reativação Virtual: aviso para alterar o setor responsável na nota (código 8GE427) e AGENDA no modelo padrão",
     "Ligação Nova (Normal e Por expediente), Reativação e Reativação Virtual: NOTA e AGENDA nos modelos de texto usados no atendimento",
     "Calculadora de Refaturamento agora é uma aba própria (Agenda e Nota | Tensão Fornecimento | Calculadora de Refat)",
     "Fase padronizada em MONO / BI / TRI (Reativação Virtual agora tem BI; Ligação Nova, Ligação MUC e Reativação no mesmo padrão)",
-    "Agora no GitHub Pages: abra pelo link https://caiquelopess.github.io/Texto-Padr-o-de-Nota/ e use sempre a versão mais nova, sem baixar nada",
-    "Pelo link, a página confere a cada 30 minutos se há versão nova e oferece \"Atualizar agora\""
+    "Agora no GitHub Pages: abra pelo link https://caiquelopess.github.io/Texto-Padr-o-de-Nota/ e use sempre a versão mais nova, sem baixar nada"
   ]
 }

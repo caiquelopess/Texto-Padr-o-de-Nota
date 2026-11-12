@@ -1,11 +1,11 @@
 {
-  "versao": "2.5.2",
+  "versao": "2.6.0",
   "data": "12/11/2026",
   "novidades": [
+    "Temas com personalidade: Neon Escuro/Claro, Preto/Branco com Vermelho, Azul ou Verde, Sépia/Papel, Ardósia, Logos Executive e Alto Contraste",
+    "Aferição e Verificação de Equipamento: somente texto de agenda, no modelo do atendimento",
     "PG só na Ligação Provisória (obrigatório) e na Inspeção e ligação 91/92 (opcional); removido dos demais serviços",
     "Verificação de Equipamento: somente texto de agenda",
-    "Declaração de Ligação: opção de contrato encerrado (início e data de encerramento) e data de emissão como único campo pré-preenchido",
-    "Nova aba Declaração de Ligação: preenche a carta no modelo oficial e imprime/salva em PDF (fica no Histórico)",
-    "Reativação Virtual: aviso para alterar o setor responsável na nota (código 8GE427) e AGENDA no modelo padrão"
+    "Declaração de Ligação: opção de contrato encerrado (início e data de encerramento) e data de emissão como único campo pré-preenchido"
   ]
 }

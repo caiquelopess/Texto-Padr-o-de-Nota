@@ -627,6 +627,95 @@
     .tensao-resultado { background: var(--glass-soft); border-color: var(--glass-border); }
     .tensao-result-valor, :root[data-theme="dark"] .tensao-result-valor { color: var(--neon-1); text-shadow: 0 0 18px var(--neon-1-glow); }
     .tensao-result-label { color: var(--neon-1); }
+
+    /* =================================================================
+       TEMAS COM PERSONALIDADE
+       Cada tema = modo base (data-theme: dark/light) + paleta (data-paleta)
+       que sobrescreve as variáveis do visual neon/vidro.
+       ================================================================= */
+    .tema-wrap { position: relative; display: inline-flex; }
+    .tema-menu { position: absolute; top: calc(100% + 8px); right: 0; z-index: 900; width: 330px; max-height: 70vh; overflow-y: auto;
+      background: var(--glass-strong); border: 1px solid var(--glass-border); border-radius: var(--r-card); padding: 10px;
+      -webkit-backdrop-filter: blur(22px) saturate(140%); backdrop-filter: blur(22px) saturate(140%);
+      box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.6); display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    :root[data-theme="dark"] .tema-menu { background: rgba(14, 16, 26, 0.94); }
+    .tema-menu-titulo { grid-column: 1 / -1; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 6px 6px 2px; }
+    .tema-opcao { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; padding: 8px 9px; border-radius: var(--r-control);
+      border: 1px solid transparent; background: transparent; color: var(--text); font: 500 12.5px/1.25 var(--font-sans); cursor: pointer; }
+    .tema-opcao:hover { background: var(--primary-soft); border-color: var(--glass-border); }
+    .tema-opcao.ativo { border-color: var(--neon-1); background: var(--primary-soft); }
+    .tema-opcao:focus-visible { outline: 2px solid var(--neon-1); outline-offset: 1px; }
+    .tema-amostra { flex: 0 0 auto; width: 26px; height: 26px; border-radius: 999px; border: 1px solid rgba(127, 127, 127, 0.35); position: relative; overflow: hidden; }
+    .tema-amostra::after { content: ""; position: absolute; right: -3px; bottom: -3px; width: 15px; height: 15px; border-radius: 999px; background: var(--amostra-cor); box-shadow: 0 0 8px var(--amostra-cor); }
+    @media (max-width: 640px) { .tema-menu { right: auto; left: 0; width: min(330px, calc(100vw - 48px)); } }
+
+    /* ---- Preto e Vermelho ---- */
+    :root[data-paleta="preto-vermelho"] { --neon-1: #FF3B47; --neon-2: #FF8A3D; --neon-1-glow: rgba(255, 59, 71, 0.45); --neon-2-glow: rgba(255, 138, 61, 0.35);
+      --bg: #070505; --bg-orb-1: rgba(255, 40, 60, 0.18); --bg-orb-2: rgba(255, 120, 40, 0.10); --glass: rgba(24, 14, 16, 0.58); --glass-strong: rgba(30, 16, 18, 0.78);
+      --primary-soft: rgba(255, 59, 71, 0.10); --accent: #FF6B6B; --btn-text: #FFFFFF; }
+    /* ---- Branco e Vermelho ---- */
+    :root[data-paleta="branco-vermelho"] { --neon-1: #D61F2C; --neon-2: #F2542D; --neon-1-glow: rgba(214, 31, 44, 0.25); --neon-2-glow: rgba(242, 84, 45, 0.2);
+      --bg: #FBF7F7; --bg-orb-1: rgba(239, 68, 68, 0.16); --bg-orb-2: rgba(249, 115, 22, 0.10); --primary-soft: rgba(214, 31, 44, 0.08); --accent: #C81E2B; --btn-text: #FFFFFF; }
+    /* ---- Preto e Azul ---- */
+    :root[data-paleta="preto-azul"] { --neon-1: #3B9CFF; --neon-2: #22D3EE; --neon-1-glow: rgba(59, 156, 255, 0.45); --neon-2-glow: rgba(34, 211, 238, 0.35);
+      --bg: #04060C; --bg-orb-1: rgba(59, 130, 246, 0.20); --bg-orb-2: rgba(34, 211, 238, 0.10); --glass: rgba(12, 18, 32, 0.58); --glass-strong: rgba(14, 22, 40, 0.78);
+      --primary-soft: rgba(59, 156, 255, 0.10); --accent: #38BDF8; --btn-text: #04060C; }
+    /* ---- Branco e Azul ---- */
+    :root[data-paleta="branco-azul"] { --neon-1: #1D4ED8; --neon-2: #0284C7; --neon-1-glow: rgba(29, 78, 216, 0.22); --neon-2-glow: rgba(2, 132, 199, 0.2);
+      --bg: #F5F8FD; --bg-orb-1: rgba(59, 130, 246, 0.18); --bg-orb-2: rgba(14, 165, 233, 0.12); --primary-soft: rgba(29, 78, 216, 0.08); --accent: #1D4ED8; --btn-text: #FFFFFF; }
+    /* ---- Preto e Verde ---- */
+    :root[data-paleta="preto-verde"] { --neon-1: #2BE07A; --neon-2: #B6F23C; --neon-1-glow: rgba(43, 224, 122, 0.42); --neon-2-glow: rgba(182, 242, 60, 0.3);
+      --bg: #030805; --bg-orb-1: rgba(34, 197, 94, 0.18); --bg-orb-2: rgba(163, 230, 53, 0.08); --glass: rgba(12, 24, 16, 0.58); --glass-strong: rgba(14, 30, 20, 0.78);
+      --primary-soft: rgba(43, 224, 122, 0.09); --accent: #4ADE80; --btn-text: #031208; }
+    /* ---- Branco e Verde ---- */
+    :root[data-paleta="branco-verde"] { --neon-1: #15803D; --neon-2: #0D9488; --neon-1-glow: rgba(21, 128, 61, 0.22); --neon-2-glow: rgba(13, 148, 136, 0.2);
+      --bg: #F5FAF6; --bg-orb-1: rgba(34, 197, 94, 0.16); --bg-orb-2: rgba(20, 184, 166, 0.12); --primary-soft: rgba(21, 128, 61, 0.08); --accent: #15803D; --btn-text: #FFFFFF; }
+    /* ---- Sépia / Papel ---- */
+    :root[data-paleta="sepia"] { --neon-1: #8A5A2B; --neon-2: #B07A3E; --neon-1-glow: rgba(138, 90, 43, 0.14); --neon-2-glow: rgba(176, 122, 62, 0.12);
+      --bg: #F3EAD7; --bg-orb-1: rgba(214, 180, 120, 0.25); --bg-orb-2: rgba(190, 150, 100, 0.18);
+      --glass: rgba(252, 246, 233, 0.78); --glass-strong: rgba(253, 248, 238, 0.92); --glass-soft: rgba(255, 250, 240, 0.55); --glass-border: rgba(90, 60, 30, 0.14); --glass-line: rgba(90, 60, 30, 0.10);
+      --text: #3A2C1D; --strong: #2A1F13; --label: #4A3826; --muted: #7A6650; --placeholder: #A08B72;
+      --input-bg: rgba(255, 251, 242, 0.85); --input-bg-soft: rgba(255, 251, 242, 0.65); --disabled-bg: rgba(240, 230, 210, 0.7); --border-strong: rgba(90, 60, 30, 0.24);
+      --primary-soft: rgba(138, 90, 43, 0.09); --accent: #7A5A2B; --btn-text: #FFFDF7; --scroll: rgba(90, 60, 30, 0.25); }
+    :root[data-paleta="sepia"] body { font-feature-settings: "liga" 1; }
+    /* ---- Ardósia ---- */
+    :root[data-paleta="ardosia"] { --neon-1: #93B4D6; --neon-2: #A9B7C9; --neon-1-glow: rgba(147, 180, 214, 0.22); --neon-2-glow: rgba(169, 183, 201, 0.16);
+      --bg: #1B222C; --bg-orb-1: rgba(120, 150, 185, 0.14); --bg-orb-2: rgba(100, 116, 139, 0.12);
+      --glass: rgba(40, 49, 61, 0.62); --glass-strong: rgba(36, 44, 56, 0.9); --glass-soft: rgba(255, 255, 255, 0.04); --glass-border: rgba(203, 213, 225, 0.12); --glass-line: rgba(203, 213, 225, 0.08);
+      --text: #E2E8F0; --strong: #F8FAFC; --label: #CBD5E1; --muted: #94A3B8; --placeholder: #7C8BA0;
+      --primary-soft: rgba(147, 180, 214, 0.10); --accent: #9FD3B8; --btn-text: #111821; }
+    /* ---- Logos Executive (grafite + vermelho Logos + dourado discreto) ---- */
+    :root[data-paleta="logos"] { --neon-1: #E8174E; --neon-2: #C9A86A; --neon-1-glow: rgba(232, 23, 78, 0.28); --neon-2-glow: rgba(201, 168, 106, 0.2);
+      --bg: #0D0E12; --bg-orb-1: rgba(232, 23, 78, 0.10); --bg-orb-2: rgba(201, 168, 106, 0.08);
+      --glass: rgba(22, 23, 29, 0.72); --glass-strong: rgba(24, 25, 32, 0.92); --glass-soft: rgba(255, 255, 255, 0.03); --glass-border: rgba(201, 168, 106, 0.16); --glass-line: rgba(201, 168, 106, 0.10);
+      --text: #E9E6E1; --strong: #FFFFFF; --label: #D4CFC6; --muted: #9A958C; --placeholder: #77726A;
+      --primary-soft: rgba(232, 23, 78, 0.09); --accent: #C9A86A; --btn-text: #FFFFFF; }
+    :root[data-paleta="logos"] header::after { background: linear-gradient(90deg, transparent, #E8174E, #C9A86A, transparent); box-shadow: none; }
+    :root[data-paleta="logos"] .btn { background: #E8174E; box-shadow: 0 8px 22px -12px rgba(232, 23, 78, 0.6); }
+    :root[data-paleta="logos"] .btn:hover { background: #F02A5E; }
+    /* ---- Alto Contraste (acessibilidade e rapidez: sem desfoque, sombras ou animações) ---- */
+    :root[data-paleta="contraste"] { --neon-1: #FFE600; --neon-2: #00E5FF; --neon-1-glow: transparent; --neon-2-glow: transparent;
+      --bg: #000000; --bg-orb-1: transparent; --bg-orb-2: transparent;
+      --glass: #000000; --glass-strong: #000000; --glass-soft: #000000; --glass-border: #FFFFFF; --glass-line: #FFFFFF;
+      --text: #FFFFFF; --strong: #FFFFFF; --label: #FFFFFF; --muted: #FFFFFF; --placeholder: #BDBDBD;
+      --input-bg: #000000; --input-bg-soft: #000000; --disabled-bg: #1A1A1A; --border-strong: #FFFFFF; --border: #FFFFFF;
+      --primary-soft: #1A1A00; --accent: #00FF66; --btn-text: #000000; --scroll: #FFFFFF;
+      --warning: #FFE600; --warning-bg: #000000; --warning-border: #FFE600; --danger: #FF4D4D; --danger-bg: #000000; --danger-border: #FF4D4D; }
+    :root[data-paleta="contraste"] *, :root[data-paleta="contraste"] *::before, :root[data-paleta="contraste"] *::after {
+      -webkit-backdrop-filter: none !important; backdrop-filter: none !important; box-shadow: none !important; text-shadow: none !important;
+      transition: none !important; animation: none !important; }
+    :root[data-paleta="contraste"] body { background: #000 !important; font-size: 15px; }
+    :root[data-paleta="contraste"] .btn { background: #FFE600 !important; color: #000 !important; border: 2px solid #FFE600 !important; font-weight: 700; filter: none !important; }
+    :root[data-paleta="contraste"] .btn-clear { background: #000 !important; color: #FFF !important; border: 2px solid #FFF !important; }
+    :root[data-paleta="contraste"] input, :root[data-paleta="contraste"] select, :root[data-paleta="contraste"] textarea,
+    :root[data-paleta="contraste"] .sel-trigger, :root[data-paleta="contraste"] .sub-btn, :root[data-paleta="contraste"] .theme-toggle,
+    :root[data-paleta="contraste"] .nav-toggle, :root[data-paleta="contraste"] .copy-btn { border-width: 2px !important; border-color: #FFFFFF !important; }
+    :root[data-paleta="contraste"] *:focus-visible, :root[data-paleta="contraste"] input:focus, :root[data-paleta="contraste"] .sel-trigger:focus { outline: 3px solid #FFE600 !important; outline-offset: 2px !important; }
+    :root[data-paleta="contraste"] .sub-btn.active, :root[data-paleta="contraste"] .tema-opcao.ativo { background: #FFE600 !important; color: #000 !important; border-color: #FFE600 !important; }
+    :root[data-paleta="contraste"] header::after { background: #FFFFFF; height: 2px; }
+    :root[data-paleta="contraste"] .calc-destaque strong, :root[data-paleta="contraste"] .tensao-result-valor { color: #FFE600 !important; }
+    :root[data-paleta="contraste"] a { color: #00E5FF; }
+    :root[data-paleta="contraste"] .decl-folha a { color: #0000FF; }
   </style>
 </head>
 <body>
@@ -642,14 +731,13 @@
       <h1 id="titulo_principal">Textos Padrões</h1>
     </div>
     <div class="header-actions">
-      <button type="button" class="theme-toggle" id="btn_tema" data-click="alternarTema(this)" aria-pressed="false" aria-label="Alternar para tema escuro" title="Alternar tema">
-        <span class="theme-icon" aria-hidden="true">
-          <svg class="icon-lua" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-          <svg class="icon-sol" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-        </span>
-        <span class="theme-label-light">Tema escuro</span>
-        <span class="theme-label-dark">Tema claro</span>
-      </button>
+      <span class="tema-wrap">
+        <button type="button" class="theme-toggle" id="btn_tema" data-click="abrirTemas()" aria-haspopup="true" aria-expanded="false" title="Escolher tema">
+          <span class="theme-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.6-.7 1.6-1.6 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.7-1.6 1.6-1.6H16c3.3 0 6-2.7 6-6 0-4.9-4.5-8.6-10-8.6Z"/></svg></span>
+          <span id="lbl_tema">Tema</span>
+        </button>
+        <div class="tema-menu" id="tema_menu" role="menu" style="display: none;"></div>
+      </span>
       <button type="button" class="theme-toggle" id="btn_historico" data-click="abrirHistorico()" title="Textos gerados salvos neste computador">
         <span class="theme-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg></span>
         <span>Histórico</span><span class="hist-contador" id="hist_contador_hoje" title="Gerados hoje"></span>
@@ -1374,7 +1462,7 @@
         <div class="field-group"><label>Equipamento interno ou externo: *</label><select id="af_equip"><option value="Interno">Interno</option><option value="Externo">Externo</option></select></div>
         <div class="field-group"><label>Possui e-mail: *</label><input type="text" id="af_email" placeholder="cliente@email.com ou Não informado" required></div>
       </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarAfericao()">Gerar Texto e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-afericao')">Limpar Tudo</button></div>
+      <div class="actions"><button type="button" class="btn" data-click="gerarAfericao()">Gerar Texto de AGENDA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-afericao')">Limpar Tudo</button></div>
     </div>
 
     <!-- 14. CONTA PAGA E NÃO BAIXADA -->
@@ -1421,11 +1509,13 @@
     <!-- 17. VERIFICAÇÃO DE EQUIPAMENTO -->
     <div class="subform" id="sf-verif-equip">
       <div class="form-grid">
-        <div class="field-group"><label>Sr(a) *</label><input type="text" id="ve_solic" placeholder="Nome completo" required></div>
-        <div class="field-group"><label>PRX *</label><input type="text" id="ve_prx" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="ve_tel" placeholder="Ex: 84-988887777" required></div>
-        <div class="field-group"><label>e-mail *</label><input type="text" id="ve_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Motivo da solicitação: *</label><input type="text" id="ve_motivo" placeholder="Ex: Medidor emitindo ruído / display apagado" required></div>
+        <div class="field-group"><label>Solicitante: *</label><input type="text" id="ve_solic" placeholder="Nome completo" required></div>
+        <div class="field-group"><label>Motivo: *</label><input type="text" id="ve_motivo" placeholder="Ex: Medidor emitindo ruído / display apagado" required></div>
+        <div class="field-group"><label>Telefone: *</label><input type="text" id="ve_tel" placeholder="Ex: 71993501519" required></div>
+        <div class="field-group"><label>Quem procurar: *</label><input type="text" id="ve_proc" placeholder="Nome de quem atenderá a equipe" required></div>
+        <div class="field-group"><label>Ponto de Referência: *</label><input type="text" id="ve_ref" placeholder="Ponto de referência detalhado" required></div>
+        <div class="field-group"><label>Equipamento interno ou externo: *</label><select id="ve_equip"><option value="Interno">Interno</option><option value="Externo">Externo</option></select></div>
+        <div class="field-group full-width"><label>Possui e-mail: *</label><input type="text" id="ve_email" placeholder="cliente@email.com ou Não informado" required></div>
       </div>
       <div class="actions"><button type="button" class="btn" data-click="gerarVerifEquip()">Gerar Texto de AGENDA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-verif-equip')">Limpar Tudo</button></div>
     </div>
@@ -1875,7 +1965,7 @@
 <script>
   var abaAtualId = null;
   // Serviços que só têm texto de AGENDA (sem nota)
-  var SERVICOS_SO_AGENDA = ['sf-verif-equip'];
+  var SERVICOS_SO_AGENDA = ['sf-verif-equip', 'sf-afericao'];
 
   function mostrarAviso(msg, tipo) {
     var t = document.getElementById('toastAviso');
@@ -3038,7 +3128,7 @@
       '\nEquipamento interno ou externo: ' + getVal('af_equip') +
       '\nPossui e-mail: ' + getVal('af_email') +
       '\nCliente ciente da possível cobrança de taxa';
-    finalizarGeracao('sf-afericao', txt, txt, 'nota');
+    finalizarGeracao('sf-afericao', '', txt, 'agenda');   // serviço sem texto de nota
   }
 
   function toggleBPC() {
@@ -3088,9 +3178,16 @@
 
   function gerarVerifEquip() {
     if (!validarCampos('sf-verif-equip')) return;
-    var txt = 'Sr(a) ' + getVal('ve_solic') + ' PRX ' + getVal('ve_prx') + ' Tel ' + getVal('ve_tel') + ' e-mail ' + getVal('ve_email') + ' Motivo da solicitação: ' + getVal('ve_motivo');
+    var txt = 'Solicitante: ' + getVal('ve_solic') +
+      '\nMotivo: ' + getVal('ve_motivo') +
+      '\nTelefone: ' + getVal('ve_tel') +
+      '\nQuem procurar: ' + getVal('ve_proc') +
+      '\nPonto de Referência: ' + getVal('ve_ref') +
+      '\nEquipamento interno ou externo: ' + getVal('ve_equip') +
+      '\nPossui e-mail: ' + getVal('ve_email');
     finalizarGeracao('sf-verif-equip', '', txt, 'agenda');   // serviço sem texto de nota
   }
+
 
   function gerarServRamal() {
     if (!validarCampos('sf-ramal')) return;
@@ -3405,6 +3502,7 @@
 
   function limparForm(containerId) {
     desbloquearFormulario(containerId);
+    if (containerId === 'sf-verif-equip') { document.getElementById('ve_equip').value = 'Interno'; }
     if (containerId === 'sf-ligacao-nova') { document.getElementById('ln_modo').value = 'normal'; setTimeout(toggleLigacaoNova, 0); }
     document.querySelectorAll('#' + containerId + ' input[type="text"], #' + containerId + ' textarea').forEach(function(i) { i.value = ''; });
     if (containerId === 'sf-reclamacao-gd') { document.getElementById('gd_tipo').value = 'ausencia_fat'; toggleReclamacaoGD(); }
@@ -3735,31 +3833,90 @@
 
   filtrarServicos();
 
-  // Tema manual: apenas claro ou escuro, sem opção "sistema".
-  // Começa no escuro (visual neon) e lembra a última escolha neste computador.
-  function aplicarTema(tema){
+  // Temas: cada um combina o modo base (escuro/claro) com uma paleta.
+  // A escolha fica salva neste computador. 'dark'/'light' (versões antigas)
+  // viram Neon Escuro / Neon Claro.
+  var TEMAS = [
+    { id: 'neon-escuro',     nome: 'Neon Escuro',      base: 'dark',  paleta: '',                fundo: '#05060D', cor: '#22E5FF' },
+    { id: 'neon-claro',      nome: 'Neon Claro',       base: 'light', paleta: '',                fundo: '#F4F6FB', cor: '#0891B2' },
+    { id: 'preto-vermelho',  nome: 'Preto e Vermelho', base: 'dark',  paleta: 'preto-vermelho',  fundo: '#070505', cor: '#FF3B47' },
+    { id: 'branco-vermelho', nome: 'Branco e Vermelho',base: 'light', paleta: 'branco-vermelho', fundo: '#FBF7F7', cor: '#D61F2C' },
+    { id: 'preto-azul',      nome: 'Preto e Azul',     base: 'dark',  paleta: 'preto-azul',      fundo: '#04060C', cor: '#3B9CFF' },
+    { id: 'branco-azul',     nome: 'Branco e Azul',    base: 'light', paleta: 'branco-azul',     fundo: '#F5F8FD', cor: '#1D4ED8' },
+    { id: 'preto-verde',     nome: 'Preto e Verde',    base: 'dark',  paleta: 'preto-verde',     fundo: '#030805', cor: '#2BE07A' },
+    { id: 'branco-verde',    nome: 'Branco e Verde',   base: 'light', paleta: 'branco-verde',    fundo: '#F5FAF6', cor: '#15803D' },
+    { id: 'sepia',           nome: 'Sépia / Papel',    base: 'light', paleta: 'sepia',           fundo: '#F3EAD7', cor: '#8A5A2B' },
+    { id: 'ardosia',         nome: 'Ardósia',          base: 'dark',  paleta: 'ardosia',         fundo: '#1B222C', cor: '#93B4D6' },
+    { id: 'logos',           nome: 'Logos Executive',  base: 'dark',  paleta: 'logos',           fundo: '#0D0E12', cor: '#E8174E' },
+    { id: 'contraste',       nome: 'Alto Contraste',   base: 'dark',  paleta: 'contraste',       fundo: '#000000', cor: '#FFE600' }
+  ];
+  var temaAtual = 'neon-escuro';
+  function acharTema(id) { for (var i = 0; i < TEMAS.length; i++) if (TEMAS[i].id === id) return TEMAS[i]; return TEMAS[0]; }
+
+  function aplicarTema(id) {
+    if (id === 'dark') id = 'neon-escuro';
+    if (id === 'light') id = 'neon-claro';
+    var t = acharTema(id);
+    temaAtual = t.id;
     var raiz = document.documentElement;
-    raiz.setAttribute('data-theme', tema);
-    raiz.style.colorScheme = tema;
+    raiz.setAttribute('data-theme', t.base);
+    if (t.paleta) raiz.setAttribute('data-paleta', t.paleta); else raiz.removeAttribute('data-paleta');
+    raiz.style.colorScheme = t.base;
     var meta = document.querySelector('meta[name="color-scheme"]');
-    if (meta) meta.setAttribute('content', tema);
-    var btn = document.getElementById('btn_tema');
-    if (btn) {
-      var escuro = tema === 'dark';
-      btn.setAttribute('aria-pressed', escuro ? 'true' : 'false');
-      btn.setAttribute('aria-label', escuro ? 'Alternar para tema claro' : 'Alternar para tema escuro');
-    }
+    if (meta) meta.setAttribute('content', t.base);
+    var lbl = document.getElementById('lbl_tema');
+    if (lbl) lbl.textContent = t.nome;
+    document.querySelectorAll('.tema-opcao').forEach(function(b) {
+      var on = b.getAttribute('data-tema') === t.id;
+      b.classList.toggle('ativo', on);
+      b.setAttribute('aria-checked', on ? 'true' : 'false');
+    });
   }
-  function alternarTema(btn){
-    var atual = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-    var novo = atual === 'dark' ? 'light' : 'dark';
-    aplicarTema(novo);
-    try { localStorage.setItem('tp_tema', novo); } catch (e) {}
+  function escolherTema(id) {
+    aplicarTema(id);
+    try { localStorage.setItem('tp_tema', temaAtual); } catch (e) {}
+    fecharTemas();
   }
+  function montarMenuTemas() {
+    var menu = document.getElementById('tema_menu');
+    if (!menu || menu.childNodes.length) return;
+    var tit = document.createElement('div'); tit.className = 'tema-menu-titulo'; tit.textContent = 'Escolha o tema'; menu.appendChild(tit);
+    TEMAS.forEach(function(t) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'tema-opcao'; b.setAttribute('role', 'menuitemradio'); b.setAttribute('data-tema', t.id);
+      b.setAttribute('data-click', "escolherTema('" + t.id + "')");
+      var sw = document.createElement('span'); sw.className = 'tema-amostra';
+      sw.style.background = t.fundo; sw.style.setProperty('--amostra-cor', t.cor);
+      var nm = document.createElement('span'); nm.textContent = t.nome;
+      b.appendChild(sw); b.appendChild(nm); menu.appendChild(b);
+    });
+    aplicarTema(temaAtual);
+  }
+  function abrirTemas() {
+    var menu = document.getElementById('tema_menu'), btn = document.getElementById('btn_tema');
+    if (!menu) return;
+    montarMenuTemas();
+    var abrir = menu.style.display === 'none';
+    menu.style.display = abrir ? 'grid' : 'none';
+    if (btn) btn.setAttribute('aria-expanded', abrir ? 'true' : 'false');
+    if (abrir) { var at = menu.querySelector('.tema-opcao.ativo') || menu.querySelector('.tema-opcao'); if (at) at.focus(); }
+  }
+  function fecharTemas() {
+    var menu = document.getElementById('tema_menu'), btn = document.getElementById('btn_tema');
+    if (menu) menu.style.display = 'none';
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+  }
+  // compatibilidade: versões antigas chamavam alternarTema
+  function alternarTema() { abrirTemas(); }
+  document.addEventListener('click', function(ev) {
+    var wrap = document.querySelector('.tema-wrap');
+    if (wrap && !wrap.contains(ev.target)) fecharTemas();
+  });
+  document.addEventListener('keydown', function(ev) { if (ev.key === 'Escape') fecharTemas(); });
   (function() {
     var salvo = null;
     try { salvo = localStorage.getItem('tp_tema'); } catch (e) {}
-    aplicarTema(salvo === 'light' ? 'light' : 'dark');
+    aplicarTema(salvo || 'neon-escuro');
   })();
 
   var servicosVisiveis = false;
@@ -3782,7 +3939,8 @@
   // do proprio script, via addEventListener com delegacao no document (vale
   // tambem para linhas de fatura criadas dinamicamente).
   var ACOES = {
-    trocarAba: trocarAba, alternarServicos: alternarServicos, alternarTema: alternarTema, filtrarServicos: filtrarServicos,
+    trocarAba: trocarAba, alternarServicos: alternarServicos, alternarTema: alternarTema,
+    abrirTemas: abrirTemas, escolherTema: escolherTema, filtrarServicos: filtrarServicos,
     mascararDataHoraRod: mascararDataHoraRod, mascararData: mascararData, mascararDataOuMes: mascararDataOuMes,
     selecionarSugestaoBusca: selecionarSugestaoBusca,
     mostrarAbaPrincipal: mostrarAbaPrincipal, filtrarCidades: filtrarCidades, buscarCidade: buscarCidade, selecionarCidadeTensao: selecionarCidadeTensao,
@@ -4550,7 +4708,7 @@
   // (PC ou celular). Repositório/gist privado NÃO funciona (responde 404).
   // Para publicar uma atualização: altere VERSAO_ATUAL aqui, atualize o
   // versao.json com o mesmo número e substitua os dois arquivos no gist.
-  var VERSAO_ATUAL = '2.5.2';
+  var VERSAO_ATUAL = '2.6.0';
   // Link do gist, ex.: 'https://gist.github.com/caiquelopess/0123456789abcdef'
   // (vazio = busca de atualizações desligada)
   var GIST_ATUALIZACAO = 'https://gist.github.com/caiquelopess/b682951d237c24ab8cd826fefa2d2d7d';

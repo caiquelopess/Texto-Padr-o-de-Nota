@@ -1308,7 +1308,7 @@
         <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="insp_tel" placeholder="Ex: 84-988887777" required></div>
         <div class="field-group"><label>e-mail *</label><input type="text" id="insp_email" placeholder="cliente@email.com ou Não informado" required></div>
         <div class="field-group"><label>Carga (kW) *</label><input type="text" id="insp_carga" placeholder="Ex: 10kw" required></div>
-        <div class="field-group"><label>PG *</label><input type="text" id="insp_pg" placeholder="Ex: PG 1234 ou N/A" required></div>
+        <div class="field-group"><label>PG</label><input type="text" id="insp_pg" placeholder="Opcional — nº do pagamento, se houver"></div>
         <div class="field-group"><label>Empreendimento: *</label><input type="text" id="insp_emp" placeholder="Nome do condomínio/prédio" required></div>
         <div class="field-group"><label>Bloco/Torre (quando houver)</label><input type="text" id="insp_bloco" placeholder="Ex: Bloco A ou deixe em branco"></div>
         <div class="field-group full-width"><label>Referente a MUC 92* *</label><input type="text" id="insp_muc" placeholder="Ex: 92xxxxxxx" required></div>
@@ -1325,7 +1325,7 @@
         <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="lp_tel" placeholder="Ex: 84-988887777" required></div>
         <div class="field-group"><label>e-mail *</label><input type="text" id="lp_email" placeholder="cliente@email.com ou Não informado" required></div>
         <div class="field-group"><label>Carga (kW) *</label><input type="text" id="lp_carga" placeholder="Ex: 10kw" required></div>
-        <div class="field-group"><label>PG *</label><input type="text" id="lp_pg" placeholder="Ex: PG 1234 ou N/A" required></div>
+        <div class="field-group"><label>PG *</label><input type="text" id="lp_pg" placeholder="Nº do pagamento — ex: PG 1234" required></div>
         <div class="field-group"><label>Ligar dia *</label><input type="text" id="lp_dt_lig" placeholder="dd/mm/aaaa" data-input="mascararData(this)" required></div>
         <div class="field-group"><label>Desligar dia *</label><input type="text" id="lp_dt_deslig" placeholder="dd/mm/aaaa" data-input="mascararData(this)" required></div>
       </div>
@@ -1340,7 +1340,6 @@
         <div class="field-group"><label>PRX *</label><input type="text" id="ro_prx" placeholder="Ponto de referência detalhado" required></div>
         <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="ro_tel" placeholder="Ex: 84-988887777" required></div>
         <div class="field-group"><label>e-mail *</label><input type="text" id="ro_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>PG *</label><input type="text" id="ro_pg" placeholder="Ex: PG 1234 ou N/A" required></div>
         <div class="field-group"><label>DOCs anexado (escritura publica, itr, iptu...) *</label><input type="text" id="ro_docs" placeholder="Ex: Escritura pública, ITR, IPTU, termo de posse..." required></div>
       </div>
       <div class="actions"><button type="button" class="btn" data-click="gerarRelocRede()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-reloc-rede')">Limpar Tudo</button></div>
@@ -1355,7 +1354,6 @@
         <div class="field-group"><label>PRX *</label><input type="text" id="refp_prx" placeholder="Ponto de referência detalhado" required></div>
         <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="refp_tel" placeholder="Ex: 84-988887777" required></div>
         <div class="field-group"><label>e-mail *</label><input type="text" id="refp_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group full-width"><label>PG *</label><input type="text" id="refp_pg" placeholder="Ex: PG 1234 ou N/A" required></div>
         <div class="field-group full-width" id="grp_refp_motivo" style="display: none;"><label>Motivo da solicitação *</label><input type="text" id="refp_motivo" placeholder="Descreva o motivo da reforma..."></div>
         <div class="field-group" id="grp_refp_deslig" style="display: none;"><label>DESLIGAR DIA *</label><input type="text" id="refp_dt_deslig" placeholder="dd/mm/aaaa" data-input="mascararData(this)"></div>
         <div class="field-group" id="grp_refp_relig" style="display: none;"><label>RELIGAR DIA *</label><input type="text" id="refp_dt_relig" placeholder="dd/mm/aaaa" data-input="mascararData(this)"></div>
@@ -1403,7 +1401,6 @@
         <div class="field-group"><label>PRX *</label><input type="text" id="mr_prx" placeholder="Ponto de referência detalhado" required></div>
         <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="mr_tel" placeholder="Ex: 84-988887777" required></div>
         <div class="field-group"><label>e-mail *</label><input type="text" id="mr_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>PG *</label><input type="text" id="mr_pg" placeholder="Ex: PG 1234 ou N/A" required></div>
         <div class="field-group"><label>Nº Medidor Roubado *</label><input type="text" id="mr_num" placeholder="Ex: 12345678" required></div>
         <div class="field-group full-width"><label>Nº do BO: *</label><input type="text" id="mr_bo" placeholder="Ex: 00123/2026" required></div>
       </div>
@@ -1417,8 +1414,7 @@
         <div class="field-group"><label>PRX *</label><input type="text" id="sel_prx" placeholder="Ponto de referência detalhado" required></div>
         <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="sel_tel" placeholder="Ex: 84-988887777" required></div>
         <div class="field-group"><label>e-mail *</label><input type="text" id="sel_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group full-width"><label>PG *</label><input type="text" id="sel_pg" placeholder="Ex: PG 1234 ou N/A" required></div>
-      </div>
+        </div>
       <div class="actions"><button type="button" class="btn" data-click="gerarSelagem()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-selagem')">Limpar Tudo</button></div>
     </div>
 
@@ -1429,10 +1425,9 @@
         <div class="field-group"><label>PRX *</label><input type="text" id="ve_prx" placeholder="Ponto de referência detalhado" required></div>
         <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="ve_tel" placeholder="Ex: 84-988887777" required></div>
         <div class="field-group"><label>e-mail *</label><input type="text" id="ve_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>PG *</label><input type="text" id="ve_pg" placeholder="Ex: PG 1234 ou N/A" required></div>
         <div class="field-group"><label>Motivo da solicitação: *</label><input type="text" id="ve_motivo" placeholder="Ex: Medidor emitindo ruído / display apagado" required></div>
       </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarVerifEquip()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-verif-equip')">Limpar Tudo</button></div>
+      <div class="actions"><button type="button" class="btn" data-click="gerarVerifEquip()">Gerar Texto de AGENDA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-verif-equip')">Limpar Tudo</button></div>
     </div>
 
     <!-- 18. SERVIÇO NO RAMAL -->
@@ -1442,7 +1437,6 @@
         <div class="field-group"><label>PRX *</label><input type="text" id="sram_prx" placeholder="Ponto de referência detalhado" required></div>
         <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="sram_tel" placeholder="Ex: 84-988887777" required></div>
         <div class="field-group"><label>e-mail *</label><input type="text" id="sram_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>PG *</label><input type="text" id="sram_pg" placeholder="Ex: PG 1234 ou N/A" required></div>
         <div class="field-group"><label>Motivo da solicitação: *</label><input type="text" id="sram_motivo" placeholder="Ex: Fiação baixa / cabo partido / ramal solto" required></div>
       </div>
       <div class="actions"><button type="button" class="btn" data-click="gerarServRamal()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-ramal')">Limpar Tudo</button></div>
@@ -1880,6 +1874,8 @@
 
 <script>
   var abaAtualId = null;
+  // Serviços que só têm texto de AGENDA (sem nota)
+  var SERVICOS_SO_AGENDA = ['sf-verif-equip'];
 
   function mostrarAviso(msg, tipo) {
     var t = document.getElementById('toastAviso');
@@ -1892,6 +1888,7 @@
   }
 
   function trocarAba(sfId, btn) {
+    mostrarCaixaNota(SERVICOS_SO_AGENDA.indexOf(sfId) < 0);
     // Trocar de serviço NÃO apaga o que já foi digitado: os formulários
     // ficam montados no DOM (apenas ocultos), então os dados de cada
     // serviço são mantidos ao ir e voltar entre eles. Apagar é papel
@@ -1976,7 +1973,14 @@
     }
   }
 
+  function mostrarCaixaNota(visivel) {
+    var g = document.getElementById('out-nota');
+    g = g && g.closest ? g.closest('.output-group') : null;
+    if (g) g.style.display = visivel ? '' : 'none';
+  }
+
   function finalizarGeracao(containerId, notaTxt, agendaTxt, copyTarget) {
+    mostrarCaixaNota(!!notaTxt);
     document.getElementById('out-nota').value = notaTxt;
     document.getElementById('out-agenda').value = agendaTxt;
     salvarNoHistorico(containerId, notaTxt, agendaTxt);
@@ -2993,7 +2997,7 @@
   function gerarINSP() {
     if (!validarCampos('sf-insp')) return;
     var bloco = getVal('insp_bloco') ? ' Bloco/Torre: ' + getVal('insp_bloco') + ' (quando houver)' : '';
-    var txt = 'Sr(a) ' + getVal('insp_solic') + ' PRX ' + getVal('insp_prx') + ' Tel ' + getVal('insp_tel') + ' e-mail ' + getVal('insp_email') + ' Carga ' + getVal('insp_carga') + ' PG ' + getVal('insp_pg') + ' Empreendimento: ' + getVal('insp_emp') + bloco + ' referente a MUC ' + getVal('insp_muc');
+    var txt = 'Sr(a) ' + getVal('insp_solic') + ' PRX ' + getVal('insp_prx') + ' Tel ' + getVal('insp_tel') + ' e-mail ' + getVal('insp_email') + ' Carga ' + getVal('insp_carga') + (getVal('insp_pg') ? ' PG ' + getVal('insp_pg') : '') + ' Empreendimento: ' + getVal('insp_emp') + bloco + ' referente a MUC ' + getVal('insp_muc');
     finalizarGeracao('sf-insp', txt, txt, 'nota');
   }
 
@@ -3005,7 +3009,7 @@
 
   function gerarRelocRede() {
     if (!validarCampos('sf-reloc-rede')) return;
-    var txt = 'Sr(a) ' + getVal('ro_solic') + ' PRX ' + getVal('ro_prx') + ' Tel ' + getVal('ro_tel') + ' e-mail ' + getVal('ro_email') + ' PG ' + getVal('ro_pg') + '. Cliente Orientado quanto aos possíveis custos DOCs anexado: ' + getVal('ro_docs');
+    var txt = 'Sr(a) ' + getVal('ro_solic') + ' PRX ' + getVal('ro_prx') + ' Tel ' + getVal('ro_tel') + ' e-mail ' + getVal('ro_email') + '. Cliente Orientado quanto aos possíveis custos DOCs anexado: ' + getVal('ro_docs');
     finalizarGeracao('sf-reloc-rede', txt, txt, 'nota');
   }
 
@@ -3014,10 +3018,10 @@
     var isDeslig = (getVal('refp_opt') === 'desliga_religa');
     var txt = '';
     if (!isDeslig) {
-      txt = 'Sr(a) ' + getVal('refp_solic') + ' PRX ' + getVal('refp_prx') + ' Tel ' + getVal('refp_tel') + ' e-mail ' + getVal('refp_email') + ' PG ' + getVal('refp_pg') + '\nMotivo da solicitação: MUDANÇA DE LOCAL DO MEDIDOR.';
+      txt = 'Sr(a) ' + getVal('refp_solic') + ' PRX ' + getVal('refp_prx') + ' Tel ' + getVal('refp_tel') + ' e-mail ' + getVal('refp_email') + '\nMotivo da solicitação: MUDANÇA DE LOCAL DO MEDIDOR.';
     } else {
-      var d = 'Sr(a) ' + getVal('refp_solic') + ' PRX ' + getVal('refp_prx') + ' Tel ' + getVal('refp_tel') + ' e-mail ' + getVal('refp_email') + ' PG ' + getVal('refp_pg') + ' Motivo da solicitação: ' + getVal('refp_motivo') + ' | DESLIGAR DIA ' + getVal('refp_dt_deslig');
-      var r = 'Sr(a) ' + getVal('refp_solic') + ' PRX ' + getVal('refp_prx') + ' Tel ' + getVal('refp_tel') + ' e-mail ' + getVal('refp_email') + ' PG ' + getVal('refp_pg') + ' Motivo da solicitação: ' + getVal('refp_motivo') + ' | RELIGAR DIA ' + getVal('refp_dt_relig');
+      var d = 'Sr(a) ' + getVal('refp_solic') + ' PRX ' + getVal('refp_prx') + ' Tel ' + getVal('refp_tel') + ' e-mail ' + getVal('refp_email') + ' Motivo da solicitação: ' + getVal('refp_motivo') + ' | DESLIGAR DIA ' + getVal('refp_dt_deslig');
+      var r = 'Sr(a) ' + getVal('refp_solic') + ' PRX ' + getVal('refp_prx') + ' Tel ' + getVal('refp_tel') + ' e-mail ' + getVal('refp_email') + ' Motivo da solicitação: ' + getVal('refp_motivo') + ' | RELIGAR DIA ' + getVal('refp_dt_relig');
       txt = 'NOTA DE DESLIGA:\n' + d + '\n\nNOTA DE RELIGA:\n' + r;
     }
     finalizarGeracao('sf-ref-padrao', txt, txt, 'nota');
@@ -3072,25 +3076,25 @@
 
   function gerarMedRoubado() {
     if (!validarCampos('sf-med-roub')) return;
-    var txt = 'Sr(a) ' + getVal('mr_solic') + ' PRX ' + getVal('mr_prx') + ' Tel ' + getVal('mr_tel') + ' e-mail ' + getVal('mr_email') + ' PG ' + getVal('mr_pg') + ' Nº Medidor Roubado ' + getVal('mr_num') + ' Nº do BO: ' + getVal('mr_bo');
+    var txt = 'Sr(a) ' + getVal('mr_solic') + ' PRX ' + getVal('mr_prx') + ' Tel ' + getVal('mr_tel') + ' e-mail ' + getVal('mr_email') + ' Nº Medidor Roubado ' + getVal('mr_num') + ' Nº do BO: ' + getVal('mr_bo');
     finalizarGeracao('sf-med-roub', txt, txt, 'nota');
   }
 
   function gerarSelagem() {
     if (!validarCampos('sf-selagem')) return;
-    var txt = 'Sr(a) ' + getVal('sel_solic') + ' PRX ' + getVal('sel_prx') + ' Tel ' + getVal('sel_tel') + ' e-mail ' + getVal('sel_email') + ' PG ' + getVal('sel_pg');
+    var txt = 'Sr(a) ' + getVal('sel_solic') + ' PRX ' + getVal('sel_prx') + ' Tel ' + getVal('sel_tel') + ' e-mail ' + getVal('sel_email');
     finalizarGeracao('sf-selagem', txt, txt, 'nota');
   }
 
   function gerarVerifEquip() {
     if (!validarCampos('sf-verif-equip')) return;
-    var txt = 'Sr(a) ' + getVal('ve_solic') + ' PRX ' + getVal('ve_prx') + ' Tel ' + getVal('ve_tel') + ' e-mail ' + getVal('ve_email') + ' PG ' + getVal('ve_pg') + ' Motivo da solicitação: ' + getVal('ve_motivo');
-    finalizarGeracao('sf-verif-equip', txt, txt, 'nota');
+    var txt = 'Sr(a) ' + getVal('ve_solic') + ' PRX ' + getVal('ve_prx') + ' Tel ' + getVal('ve_tel') + ' e-mail ' + getVal('ve_email') + ' Motivo da solicitação: ' + getVal('ve_motivo');
+    finalizarGeracao('sf-verif-equip', '', txt, 'agenda');   // serviço sem texto de nota
   }
 
   function gerarServRamal() {
     if (!validarCampos('sf-ramal')) return;
-    var txt = 'Sr(a) ' + getVal('sram_solic') + ' PRX ' + getVal('sram_prx') + ' Tel ' + getVal('sram_tel') + ' e-mail ' + getVal('sram_email') + ' PG ' + getVal('sram_pg') + ' Motivo da solicitação: ' + getVal('sram_motivo');
+    var txt = 'Sr(a) ' + getVal('sram_solic') + ' PRX ' + getVal('sram_prx') + ' Tel ' + getVal('sram_tel') + ' e-mail ' + getVal('sram_email') + ' Motivo da solicitação: ' + getVal('sram_motivo');
     finalizarGeracao('sf-ramal', txt, txt, 'nota');
   }
 
@@ -4490,6 +4494,7 @@
     }
     var calc = h.sf === 'sf-calc-refat';
     mostrarAbaPrincipal(calc ? 'calc' : 'agenda');
+    if (!calc) mostrarCaixaNota(!!h.nota);
     document.getElementById(calc ? 'calc_out_nota' : 'out-nota').value = h.nota;
     document.getElementById(calc ? 'calc_out_agenda' : 'out-agenda').value = h.agenda;
     fecharHistorico();
@@ -4545,7 +4550,7 @@
   // (PC ou celular). Repositório/gist privado NÃO funciona (responde 404).
   // Para publicar uma atualização: altere VERSAO_ATUAL aqui, atualize o
   // versao.json com o mesmo número e substitua os dois arquivos no gist.
-  var VERSAO_ATUAL = '2.5.1';
+  var VERSAO_ATUAL = '2.5.2';
   // Link do gist, ex.: 'https://gist.github.com/caiquelopess/0123456789abcdef'
   // (vazio = busca de atualizações desligada)
   var GIST_ATUALIZACAO = 'https://gist.github.com/caiquelopess/b682951d237c24ab8cd826fefa2d2d7d';

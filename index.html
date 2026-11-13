@@ -594,6 +594,9 @@
     .update-banner-acoes { display: flex; gap: 8px; flex-wrap: wrap; }
     .update-banner .btn { flex: 0 0 auto; }
 
+    .alert-box-blink { font-weight: 700; font-size: 15px; animation: alertBlink 1.6s ease-in-out infinite; }
+    @keyframes alertBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    @media (prefers-reduced-motion: reduce) { .alert-box-blink { animation: none; } }
     .alert-box.alert-setor { background: var(--primary-soft); border-color: color-mix(in srgb, var(--neon-1) 55%, transparent); color: var(--strong); box-shadow: 0 0 18px -8px var(--neon-1-glow); }
     .alert-box.alert-setor strong { color: var(--neon-1); font-weight: 600; }
 
@@ -833,6 +836,7 @@
 
     <!-- MÓDULO UNIFICADO: RECLAMAÇÕES (11 TIPOS) -->
     <div class="subform" id="sf-reclamacoes">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box" id="rec_alerta_box">
         ⚠️ Atenção: Realizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.
       </div>
@@ -1035,6 +1039,7 @@
 
     <!-- RECLAMAÇÃO GD (4 TIPOS) -->
     <div class="subform" id="sf-reclamacao-gd">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box" id="gd_alerta_box">
         ⚠️ Orientação: Analise o histórico de consumo e leitura; confira através da transação FPL9 se existe parcelamento considerando o artigo 323.
       </div>
@@ -1150,7 +1155,7 @@
 
     <!-- 1. LIGAÇÃO NOVA (Normal / Por expediente) -->
     <div class="subform" id="sf-ligacao-nova">
-      <div class="alert-box">⚠️ Precisa realizar agenda na conta contrato<br>Atualize o cadastro do cliente!</div>
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="form-grid">
         <div class="field-group full-width"><label>Tipo *</label><select id="ln_modo" data-change="toggleLigacaoNova()"><option value="normal">Normal</option><option value="expediente">Por expediente</option></select></div>
         <div class="field-group"><label>Solicitante *</label><input type="text" id="ln_solic" placeholder="Nome completo do solicitante" required></div>
@@ -1173,7 +1178,7 @@
 
     <!-- 1B. LIGAÇÃO MUC -->
     <div class="subform" id="sf-ligacao-muc">
-      <div class="alert-box">⚠️ Precisa realizar agenda na conta contrato<br>Atualize o cadastro do cliente!</div>
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="form-grid">
         <div class="field-group"><label>Solicitante *</label><input type="text" id="muc_solic" placeholder="Nome completo do solicitante" required></div>
         <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="muc_tel" placeholder="Ex: 84988887777" required></div>
@@ -1192,7 +1197,7 @@
 
     <!-- 2. REATIVAÇÃO -->
     <div class="subform" id="sf-reativ-comum">
-      <div class="alert-box">⚠️ Precisa realizar agenda na conta contrato<br>Atualize o cadastro do cliente!</div>
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="form-grid">
         <div class="field-group"><label>Solicitante *</label><input type="text" id="rtc_solic" placeholder="Nome completo do solicitante" required></div>
         <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="rtc_tel" placeholder="Ex: 71993501519" required></div>
@@ -1210,13 +1215,14 @@
 
     <!-- 2B. REATIVAÇÃO VIRTUAL -->
     <div class="subform" id="sf-reativ-virtual">
-      <div class="alert-box">⚠️ Precisa realizar agenda na conta contrato<br>Atualize o cadastro do cliente!</div>
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box alert-setor">🔁 <strong>Altere o setor responsável na nota para o código 8GE427</strong></div>
       <div class="form-grid">
         <div class="field-group"><label>Solicitante *</label><input type="text" id="rtv_solic" placeholder="Nome completo do solicitante" required></div>
         <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="rtv_tel" placeholder="Ex: 71993501519" required></div>
         <div class="field-group"><label>Fase *</label><select id="rtv_fase"><option value="MONO">MONO</option><option value="BI">BI</option><option value="TRI">TRI</option></select></div>
         <div class="field-group"><label>Número do medidor em campo *</label><input type="text" id="rtv_medidor" placeholder="Ex: 12345678" required></div>
+        <div class="field-group"><label>Leitura</label><input type="text" id="rtv_leitura" inputmode="numeric" placeholder="Em branco = não informou"></div>
         <div class="field-group full-width"><label>Pontos de referências *</label><input type="text" id="rtv_ref" placeholder="O máximo de informações possíveis — ex: PX AO BECO DO SIRILO" required></div>
         <div class="field-group"><label>Coordenadas geográficas *</label><input type="text" id="rtv_coords" placeholder="Ex: -12.9585, -38.4955 ou Não informado" required></div>
         <div class="field-group"><label>E-mail *</label><input type="text" id="rtv_email" placeholder="cliente@email.com ou Não informado" required></div>
@@ -1228,6 +1234,7 @@
 
     <!-- 3. DESLIGAMENTO DEFINITIVO -->
     <div class="subform" id="sf-dd">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">O mesmo texto da nota é igual para a agenda</div>
       <div class="form-grid">
         <div class="field-group full-width"><label>Ponto de Referência: *</label><input type="text" id="dd_ref" placeholder="Ponto de referência detalhado" required></div>
@@ -1243,6 +1250,7 @@
 
     <!-- 4. TROCA DE TITULARIDADE -->
     <div class="subform" id="sf-tt">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">OBS.: Nos casos de representante legal ou solicitante, deverá criar relações no PN em Outros Campos.<br>OBS.: Termo de reconhecimento de débito deve ser anexado como PADE no KM.</div>
       <div class="form-grid">
         <div class="field-group full-width">
@@ -1294,6 +1302,7 @@
 
     <!-- 5. REATIVAÇÃO - DÉBITOS -->
     <div class="subform" id="sf-ri">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">OBS.: Termo de reconhecimento de débito deve ser anexado como PADE no KM.</div>
       <div class="form-grid">
         <div class="field-group full-width">
@@ -1344,6 +1353,7 @@
 
     <!-- 6. MODIFICAÇÃO CONTRATUAL -->
     <div class="subform" id="sf-mc">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">Texto para Nota de Serviço e Agenda do Contrato</div>
       <div class="form-grid">
         <div class="field-group"><label>Solicitante: *</label><input type="text" id="mc_solic" placeholder="Nome completo do solicitante" required></div>
@@ -1358,6 +1368,7 @@
 
     <!-- 7. RESTITUIÇÃO DE VALORES -->
     <div class="subform" id="sf-res">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">Atenção: O mesmo texto da nota é igual para a agenda<br>É obrigatório que o formulário seja preenchido corretamente e anexado no SAP KM juntamente com documento de identificação do solicitação. Em caso de procurador, não esquecer de anexar procuração e documento do procurador e um único arquivo.</div>
       <div class="form-grid">
         <div class="field-group"><label>Sr(a): *</label><input type="text" id="res_solic" placeholder="Nome completo do solicitante" required></div>
@@ -1376,6 +1387,7 @@
 
     <!-- 8. RELIGAÇÃO -->
     <div class="subform" id="sf-relig">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div id="alerta-sem-comp-relig" class="alert-box-danger">Clica em confirmar, para gerar a nota</div>
       <div class="form-grid">
         <div class="field-group full-width"><label>Comprovantes: *</label><select id="relig_opcao" data-change="toggleRelig()"><option value="com_comprovante">Apresentou comprovante de pagamento</option><option value="sem_comprovante">Não apresentou comprovantes</option></select></div>
@@ -1389,6 +1401,7 @@
 
     <!-- 9. INSPEÇÃO E LIGAÇÃO 91* -->
     <div class="subform" id="sf-insp">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">Atenção: No caso de pessoa jurídica colocar o nome do representante legal no nome do cliente.</div>
       <div class="form-grid">
         <div class="field-group"><label>Sr(a) *</label><input type="text" id="insp_solic" placeholder="Nome completo (Representante legal se PJ)" required></div>
@@ -1406,6 +1419,7 @@
 
     <!-- 10. LIGAÇÃO PROVISÓRIA -->
     <div class="subform" id="sf-lp">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">⚠️ AGENDAR EM NUMERO DO PEDIDO</div>
       <div class="form-grid">
         <div class="field-group"><label>Sr(a) *</label><input type="text" id="lp_solic" placeholder="Nome completo do solicitante" required></div>
@@ -1422,6 +1436,7 @@
 
     <!-- 11. RELOCAÇÃO DE POSTE / DESLOCAMENTO DE REDE -->
     <div class="subform" id="sf-reloc-rede">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">FOP serviço de obra<br>ATENÇÃO: INCLUIR DOCUMENTO DE PROPRIEDADE<br>Para Isolamento De Rede, Usar Code Deslocamento De Rede E Informar Que É Deslocamento De Rede, Não Colocar A Informação Isolamento de rede</div>
       <div class="form-grid">
         <div class="field-group"><label>Sr(a) *</label><input type="text" id="ro_solic" placeholder="Nome completo do solicitante" required></div>
@@ -1435,6 +1450,7 @@
 
     <!-- 12. REFORMA PADRÃO -->
     <div class="subform" id="sf-ref-padrao">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">⚠️ AGENDAR EM NUMERO DO PEDIDO</div>
       <div class="form-grid">
         <div class="field-group full-width"><label>Opção de Reforma *</label><select id="refp_opt" data-change="toggleRefPadrao()"><option value="mudanca">MUDANÇA DE LOCAL DE MEDIDOR</option><option value="desliga_religa">DESLIGA/RELIGA</option></select></div>
@@ -1451,6 +1467,7 @@
 
     <!-- 13. AFERIÇÃO -->
     <div class="subform" id="sf-afericao">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">OBS.: Este serviço é agendado e deve ser contato a partir do terceiro dia útil (cada município tem o dia específico para atendimento que deve ser observado no Book antes da marcação).</div>
       <div class="form-grid">
         <div class="field-group"><label>Solicitante: *</label><input type="text" id="af_solic" placeholder="Nome completo" required></div>
@@ -1467,6 +1484,7 @@
 
     <!-- 14. CONTA PAGA E NÃO BAIXADA -->
     <div class="subform" id="sf-cpnb">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">FOP Serviços Não estruturados - Abrir apenas após 5 dias úteis da data do pagamento<br>Ao realizar a abertura da nota, é muito importante que seja inserido bloqueio de 15 dias nas faturas reclamadas e nota ser informada no grupo do 2º Nível.<br>O comprovante precisa ser anexado na nota e no SAP KM.</div>
       <div class="form-grid">
         <div class="field-group"><label>Solicitante: *</label><input type="text" id="cpnb_solic" placeholder="Nome completo" required></div>
@@ -1484,6 +1502,7 @@
 
     <!-- 15. MEDIDOR ROUBADO -->
     <div class="subform" id="sf-med-roub">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="form-grid">
         <div class="field-group"><label>Sr(a) *</label><input type="text" id="mr_solic" placeholder="Nome completo" required></div>
         <div class="field-group"><label>PRX *</label><input type="text" id="mr_prx" placeholder="Ponto de referência detalhado" required></div>
@@ -1497,6 +1516,7 @@
 
     <!-- 16. SELAGEM DO MEDIDOR -->
     <div class="subform" id="sf-selagem">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="form-grid">
         <div class="field-group"><label>Sr(a) *</label><input type="text" id="sel_solic" placeholder="Nome completo" required></div>
         <div class="field-group"><label>PRX *</label><input type="text" id="sel_prx" placeholder="Ponto de referência detalhado" required></div>
@@ -1508,6 +1528,7 @@
 
     <!-- 17. VERIFICAÇÃO DE EQUIPAMENTO -->
     <div class="subform" id="sf-verif-equip">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="form-grid">
         <div class="field-group"><label>Solicitante: *</label><input type="text" id="ve_solic" placeholder="Nome completo" required></div>
         <div class="field-group"><label>Motivo: *</label><input type="text" id="ve_motivo" placeholder="Ex: Medidor emitindo ruído / display apagado" required></div>
@@ -1522,6 +1543,7 @@
 
     <!-- 18. SERVIÇO NO RAMAL -->
     <div class="subform" id="sf-ramal">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="form-grid">
         <div class="field-group"><label>Sr(a) *</label><input type="text" id="sram_solic" placeholder="Nome completo" required></div>
         <div class="field-group"><label>PRX *</label><input type="text" id="sram_prx" placeholder="Ponto de referência detalhado" required></div>
@@ -1534,6 +1556,7 @@
 
     <!-- 19. USO DE APARELHAGEM MÉDICA -->
     <div class="subform" id="sf-aparelhagem">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="form-grid">
         <div class="field-group full-width"><label>Situação *</label><select id="ap_sit"><option value="normal">Normal (Favor cadastrar internação domiciliar)</option><option value="osb">FATURA EM OSB (PERÍODO DE FATURAMENTO)</option></select></div>
         <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="ap_tel" placeholder="Ex: 84-988887777" required></div>
@@ -1544,6 +1567,7 @@
 
     <!-- 20. CADASTRO DE PARCEIRO - ISENÇÃO ICMS -->
     <div class="subform" id="sf-isencao-icms">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">OBS.: Caso o cliente não esteja com CNAE B2_1 (ou está, mas atividade não é a mesma do sistema) É necessário realizar modificação contratual.</div>
       <div class="form-grid">
         <div class="field-group"><label>NUMERO DA INSCRICAO ESTADUAL *</label><input type="text" id="icms_ie" placeholder="Ex: 20.123.456-7" required></div>
@@ -1556,6 +1580,7 @@
 
     <!-- 21. DATA BOA -->
     <div class="subform" id="sf-data-boa">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="form-grid">
         <div class="field-group full-width"><label>DIA XX *</label><input type="text" id="db_dia" placeholder="Ex: 10" required></div>
       </div>
@@ -1564,6 +1589,7 @@
 
     <!-- 22. DÉBITO AUTOMÁTICO -->
     <div class="subform" id="sf-deb-auto">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="form-grid">
         <div class="field-group full-width"><label>TITULAR SR *</label><input type="text" id="da_titular" placeholder="Nome completo do titular" required></div>
       </div>
@@ -1572,6 +1598,7 @@
 
     <!-- 23. RESSARCIMENTO DE DANOS ELÉTRICOS -->
     <div class="subform" id="sf-danos-eletricos">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">O e-mail para recebimento da comunicação informado na abertura da nota, deve ser o mesmo e-mail do cadastro.</div>
       <div class="form-grid">
         <div class="field-group"><label>Solicitante: *</label><input type="text" id="rde_solic" placeholder="Nome completo" required></div>
@@ -1590,6 +1617,7 @@
 
     <!-- 24. RESSARCIMENTO DE DANOS NÃO ELÉTRICOS -->
     <div class="subform" id="sf-outros-danos">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">- O e-mail para recebimento da comunicação informado na abertura da nota, deve ser o mesmo e-mail do cadastro.<br>Para recebimento da documentação, será necessária abertura de uma nova nota, mencionando a nota anterior</div>
       <div class="form-grid">
         <div class="field-group"><label>Nome e sobrenome do cliente: *</label><input type="text" id="rod_solic" placeholder="Nome e sobrenome completo" required></div>
@@ -1607,6 +1635,7 @@
 
     <!-- 25. TAREFA NEO TRANSFERÊNCIA DE CRÉDITOS -->
     <div class="subform" id="sf-tarefa-neo">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">Atenção a matrícula do responsável: CLB615445 - Thaiana Barbosa Sales</div>
       <div class="form-grid">
         <div class="field-group"><label>Título: *</label><input type="text" id="tneo_titulo" placeholder="Ex: Transferência de Créditos MMGD" required></div>
@@ -1622,6 +1651,7 @@
 
     <!-- 26. DEFESA ADMINISTRATIVA P-RECURSO -->
     <div class="subform" id="sf-defesa-adm">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">Atenção: Gera dois textos simultaneamente — o texto de <b>P-Recurso (Nota)</b> e o texto de <b>Reclamação (Agenda)</b>.</div>
       <div class="form-grid">
         <div class="field-group"><label>Entregue dia (P-Recurso): *</label><input type="text" id="def_dt_ent" placeholder="dd / mm / aaaa" data-input="mascararData(this)" required></div>
@@ -1641,6 +1671,7 @@
 
     <!-- 27. PARCELAMENTO -->
     <div class="subform" id="sf-parcelamento">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">⚠️ Acima de 10 mil imprimir, solicitar assinatura do cliente e inserir no sapkm</div>
       <div class="form-grid">
         <div class="field-group full-width"><label>Tipo de Cliente *</label><select id="parc_tipo" data-change="toggleParcelamento()"><option value="pf">Pessoa Física</option><option value="pj">Pessoa Jurídica</option></select></div>
@@ -1660,6 +1691,7 @@
 
     <!-- 28. CANCELAMENTO DE PARCELAMENTO -->
     <div class="subform" id="sf-canc-parc">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="form-grid">
         <div class="field-group"><label>Plano de parcelamento nº: *</label><input type="text" id="cparc_plano" placeholder="Ex: 12345" required></div>
         <div class="field-group"><label>Cancelado devido a: *</label><input type="text" id="cparc_motivo" placeholder="Ex: ao não pagamento do sinal." required></div>
@@ -1669,6 +1701,7 @@
 
     <!-- 29. ESTORNO DE MOVEIN E MOVEOUT -->
     <div class="subform" id="sf-movein-moveout">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">Todo pedido de estorno Movein e Moveout tem que ser feito o texto nas duas contas contratos na agenda de cada.</div>
       <div class="form-grid">
         <div class="field-group"><label>Contrato: *</label><input type="text" id="mm_contrato" placeholder="Ex: 50xxxxxxx" required></div>
@@ -1682,6 +1715,7 @@
 
     <!-- 30. RDE - RECEBIMENTO DE DOCUMENTAÇÃO -->
     <div class="subform" id="sf-rde-doc">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">O e-mail para recebimento da comunicação informado na abertura da nota, deve ser o mesmo e-mail do cadastro.</div>
       <div class="form-grid">
         <div class="field-group"><label>Sr. ou Sra. (a): *</label><input type="text" id="rdedoc_solic" placeholder="Nome completo" required></div>
@@ -1696,6 +1730,7 @@
 
     <!-- 31. PARCELAMENTO DE DÉBITOS ORIUNDOS DE TROCA DE TITULARIDADE -->
     <div class="subform" id="sf-parc-tt">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">⚠️ Inserir cópia dos dados da Receita Federal e do termo de assunção assinado no SAP KM.</div>
       <div class="form-grid">
         <div class="field-group full-width">
@@ -1728,6 +1763,7 @@
 
     <!-- 32. TR DE PARTIDAS -->
     <div class="subform" id="sf-tr-partidas">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">Transferência de Partidas (Pessoa Física e Pessoa Jurídica)</div>
       <div class="form-grid">
         <div class="field-group full-width">
@@ -1755,6 +1791,7 @@
 
     <!-- 33. TELE GRAVAÇÃO -->
     <div class="subform" id="sf-tele-gravacao">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">Texto para Nota de Serviço - Tele Gravação</div>
       <div class="form-grid">
         <div class="field-group"><label>Sr(a): *</label><input type="text" id="tg_solic" placeholder="Nome completo do cliente" required></div>
@@ -1770,6 +1807,7 @@
 
     <!-- 34. BLOQUEIO DE COBRANÇA -->
     <div class="subform" id="sf-bloq-cobranca">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">⚠️ Bloquear fatura após registro da reclamação</div>
       <div class="form-grid">
         <div class="field-group full-width">
@@ -1789,6 +1827,7 @@
 
     <!-- 35. BPC/LOAS -->
     <div class="subform" id="sf-bpc">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="form-grid">
         <div class="field-group full-width"><label>Titular do benefício: *</label><select id="bpc_titular" data-change="toggleBPC()"><option value="mesmo">Titular</option><option value="diferente">Não Titular</option></select></div>
         <div class="field-group"><label>Numero da conta contrato: *</label><input type="text" id="bpc_cc" placeholder="Ex: 70xxxxxxx" required></div>
@@ -2874,7 +2913,7 @@
 
   function gerarReativVirtual() {
     if (!validarCampos('sf-reativ-virtual')) return;
-    var nota = 'TRATA-SE DE REATIVAÇÃO VIRTUAL MEDIDOR EM CAMPO N° ' + getVal('rtv_medidor');
+    var nota = 'TRATA-SE DE REATIVAÇÃO VIRTUAL MEDIDOR EM CAMPO N° ' + getVal('rtv_medidor') + ' E LEITURA ' + (getVal('rtv_leitura') || 'NÃO INFORMOU');
     finalizarGeracao('sf-reativ-virtual', nota, agendaPadraoEndereco('Reativação Virtual', 'rtv'), 'nota');
     // Lembrete na hora de criar a nota (depois do "Copiado!")
     setTimeout(function() { mostrarAviso('Lembrete: altere o setor responsável na nota para o código 8GE427.', 'longo'); }, 300);
@@ -4708,7 +4747,7 @@
   // (PC ou celular). Repositório/gist privado NÃO funciona (responde 404).
   // Para publicar uma atualização: altere VERSAO_ATUAL aqui, atualize o
   // versao.json com o mesmo número e substitua os dois arquivos no gist.
-  var VERSAO_ATUAL = '2.6.0';
+  var VERSAO_ATUAL = '2.6.1';
   // Link do gist, ex.: 'https://gist.github.com/caiquelopess/0123456789abcdef'
   // (vazio = busca de atualizações desligada)
   var GIST_ATUALIZACAO = 'https://gist.github.com/caiquelopess/b682951d237c24ab8cd826fefa2d2d7d';

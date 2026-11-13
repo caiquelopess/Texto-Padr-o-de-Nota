@@ -1,11 +1,11 @@
 {
-  "versao": "2.6.0",
+  "versao": "2.6.1",
   "data": "12/11/2026",
   "novidades": [
+    "Alerta \"Atualize o cadastro do cliente e anexe os documentos no SAP KM\" no topo de todos os serviços",
+    "Reativação Virtual: campo Leitura (em branco sai \"NÃO INFORMOU\" na nota)",
     "Temas com personalidade: Neon Escuro/Claro, Preto/Branco com Vermelho, Azul ou Verde, Sépia/Papel, Ardósia, Logos Executive e Alto Contraste",
     "Aferição e Verificação de Equipamento: somente texto de agenda, no modelo do atendimento",
-    "PG só na Ligação Provisória (obrigatório) e na Inspeção e ligação 91/92 (opcional); removido dos demais serviços",
-    "Verificação de Equipamento: somente texto de agenda",
-    "Declaração de Ligação: opção de contrato encerrado (início e data de encerramento) e data de emissão como único campo pré-preenchido"
+    "PG só na Ligação Provisória (obrigatório) e na Inspeção e ligação 91/92 (opcional); removido dos demais serviços"
   ]
 }

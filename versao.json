@@ -1,11 +1,14 @@
 {
-  "versao": "2.6.1",
-  "data": "12/11/2026",
+  "versao": "2.7.4",
+  "data": "14/11/2026",
   "novidades": [
-    "Alerta \"Atualize o cadastro do cliente e anexe os documentos no SAP KM\" no topo de todos os serviços",
-    "Reativação Virtual: campo Leitura (em branco sai \"NÃO INFORMOU\" na nota)",
-    "Temas com personalidade: Neon Escuro/Claro, Preto/Branco com Vermelho, Azul ou Verde, Sépia/Papel, Ardósia, Logos Executive e Alto Contraste",
-    "Aferição e Verificação de Equipamento: somente texto de agenda, no modelo do atendimento",
-    "PG só na Ligação Provisória (obrigatório) e na Inspeção e ligação 91/92 (opcional); removido dos demais serviços"
+    "Sem forma de tratamento: Sr./Sra. removidos, sempre \"Solicitante\" (exceto a carta da Declaração de Ligação)",
+    "Avisos: relações no PN em caso de CNPJ; Termo como PADE no KM só nos serviços com assunção de débito",
+    "Todos os campos CPF passam a ser CPF/CNPJ",
+    "Novo serviço: Isenção de Débitos (pedido de análise, com conta contrato, PN e documentação apresentada)",
+    "Troca de Titularidade e Reativação agrupadas: um botão cada, com o \"Tipo de solicitação\" dentro do serviço",
+    "Reativação Virtual: nota no formato '... N° X / LEITURA Y' ou '... / NAO INFORMOU LEITURA' (também na REATIVAÇÃO - DÉBITOS virtual)",
+    "Calculadora de Refat: texto do Refat Urgente integrado, com a leitura atual puxada da calculadora",
+    "Novo serviço: Análise de Isenção de Débitos (troca de titularidade ou reativação), no modelo do Texto Padrão Lojas"
   ]
 }

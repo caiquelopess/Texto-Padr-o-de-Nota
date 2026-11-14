@@ -594,6 +594,17 @@
     .update-banner-acoes { display: flex; gap: 8px; flex-wrap: wrap; }
     .update-banner .btn { flex: 0 0 auto; }
 
+
+    /* ---- Faixa do ambiente de teste ---- */
+    .faixa-teste { position: sticky; top: 0; z-index: 2000; width: 100%; background: repeating-linear-gradient(45deg, #F59E0B 0 14px, #FBBF24 14px 28px);
+      color: #1C1917; font: 700 13px/1.4 var(--font-sans); text-align: center; padding: 8px 12px; letter-spacing: 0.02em; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35); }
+    body:has(.faixa-teste) { flex-direction: column; align-items: center; padding-top: 0; }
+    body:has(.faixa-teste) > .faixa-teste { margin-bottom: 20px; }
+    /* ---- Refat Urgente (aba da calculadora) ---- */
+    .ru-bloco { margin-top: 34px; padding-top: 26px; border-top: 1px solid var(--glass-line); }
+    .ru-check { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border: 1px solid var(--glass-border); border-radius: var(--r-control); background: var(--glass-soft); cursor: pointer; font-size: 13.5px; color: var(--text); }
+    .ru-check input { width: 18px; height: 18px; min-height: 0; margin: 1px 0 0; accent-color: var(--neon-1); flex: 0 0 auto; }
+    .ru-obrig { color: var(--danger); font-weight: 600; font-size: 13px; margin: 6px 0 0; }
     .alert-box-blink { font-weight: 700; font-size: 15px; animation: alertBlink 1.6s ease-in-out infinite; }
     @keyframes alertBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
     @media (prefers-reduced-motion: reduce) { .alert-box-blink { animation: none; } }
@@ -776,7 +787,7 @@
 
     <!-- SUB-NAVEGAÇÃO DE SERVIÇOS -->
     <div class="nav-toolbar">
-      <span class="svc-count" id="svc_count">39 serviços</span>
+      <span class="svc-count" id="svc_count">37 serviços</span>
       <button type="button" class="nav-toggle fechado" id="btn_alternar_servicos" data-click="alternarServicos(this)" aria-expanded="false" aria-controls="painel_servicos"><span class="nav-toggle-label">Exibir serviços</span><span class="chev"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></span></button>
     </div>
     <div class="search-row">
@@ -796,6 +807,7 @@
         <button type="button" class="sub-btn" data-click="trocarAba('sf-dd', this)">Desligamento Definitivo</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-movein-moveout', this)">Estorno Movein e Moveout</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-insp', this)">Inspeção e ligação 91*</button>
+        <button type="button" class="sub-btn" data-click="trocarAba('sf-analise-isencao', this)">Isenção de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-rde-doc', this)">Laudos e Orçamentos - Agenda</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-nova', this)">Ligação Nova</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-muc', this)">Ligação MUC</button>
@@ -803,10 +815,7 @@
         <button type="button" class="sub-btn" data-click="trocarAba('sf-med-roub', this)">Medidor Roubado</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-mc', this)">Modificação Contratual</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-parcelamento', this)">Parcelamento</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-parc-tt', this)">Parcelamento Débitos Troca Titularidade</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reativ-comum', this)">Reativação</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-reativ-virtual', this)">Reativação Virtual</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-ri', this)">REATIVAÇÃO - DÉBITOS</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reclamacao-gd', this)">Reclamação GD</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reclamacoes', this)">Reclamações</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ref-padrao', this)">Reforma Padrão</button>
@@ -1153,6 +1162,57 @@
       </div>
     </div>
 
+    <!-- ANÁLISE DE ISENÇÃO DE DÉBITOS (Troca de titularidade ou Reativação) -->
+    <div class="subform" id="sf-isencao-deb">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
+      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
+      <div class="alert-box">OBS.: Nos casos de representante legal ou solicitante, deverá criar relações no PN em Outros Campos.</div>
+      <div class="form-grid">
+        <div class="field-group full-width grp-tipo-tt"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="tt" data-change="trocarTipoGrupo(this)"><option value="sf-tt|sem_debito">Sem débitos</option><option value="sf-tt|com_assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|troca">Com análise de isenção de débitos</option><option value="sf-parc-tt|">Com parcelamento de débitos</option></select></div>
+        <div class="field-group full-width grp-tipo-reat" style="display: none;"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="reat" data-change="trocarTipoGrupo(this)"><option value="sf-reativ-comum|">Reativação (sem débitos)</option><option value="sf-reativ-virtual|">Reativação virtual</option><option value="sf-ri|assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|reativacao">Com análise de isenção de débitos</option><option value="sf-ri|virtual_assuncao">Virtual com assunção de débitos</option><option value="sf-ri|virtual_isencao">Virtual com isenção de débitos</option></select></div>
+        <div class="field-group full-width" style="display: none;"><label>Serviço *</label><select id="ise_servico"><option value="troca">Troca de titularidade</option><option value="reativacao">Reativação</option></select></div>
+        <div class="field-group"><label>Solicitante *</label><input type="text" id="ise_solic" placeholder="Nome completo" required></div>
+        <div class="field-group"><label>CPF/CNPJ *</label><input type="text" id="ise_doc" inputmode="numeric" placeholder="Somente números" required></div>
+        <div class="field-group"><label>Telefone com DDD *</label><input type="text" id="ise_tel" placeholder="Ex: 71993501519" required></div>
+        <div class="field-group"><label>E-mail *</label><input type="text" id="ise_email" placeholder="cliente@email.com ou Não informado" required></div>
+        <div class="field-group"><label>CC Antiga *</label><input type="text" id="ise_cca" placeholder="Conta contrato antiga" required></div>
+        <div class="field-group"><label>CC Nova *</label><input type="text" id="ise_ccn" placeholder="Conta contrato nova" required></div>
+        <div class="field-group"><label>Leitura *</label><input type="text" id="ise_leitura" inputmode="numeric" placeholder="Ex: 15420" required></div>
+        <div class="field-group"><label>Valor do débito total (R$) *</label><input type="text" id="ise_deb_total" inputmode="decimal" placeholder="Ex: 3.250,80" data-input="toggleIsencaoDeb()" required></div>
+        <div class="field-group full-width" id="grp_ise_ni" style="display: none;"><label>Débito acima de R$ 12.000 — número da nota interna *</label><input type="text" id="ise_ni" placeholder="Nº da nota interna" required></div>
+        <div class="field-group full-width"><label>Valor do débito de responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade)</label><input type="text" id="ise_deb_solic" inputmode="decimal" placeholder="Em branco = Não se aplica"></div>
+        <div class="field-group"><label>Fatura de responsabilidade do Solicitante foi entregue? *</label><select id="ise_fat_solic"><option value="Não se aplica">Não se aplica</option><option value="Sim">Sim</option><option value="Não">Não</option></select></div>
+        <div class="field-group"><label>Período (de) *</label><input type="text" id="ise_de" inputmode="numeric" placeholder="dd/mm/aaaa" data-input="mascararData(this)" required></div>
+        <div class="field-group"><label>Período (até) *</label><input type="text" id="ise_ate" inputmode="numeric" placeholder="dd/mm/aaaa" data-input="mascararData(this)" required></div>
+        <div class="field-group full-width"><label>Documentação apresentada com comprovação de posse (inserir cópia no SAP KM) *</label><input type="text" id="ise_doc_posse" list="ise_docs_lista" placeholder="Ex: Contrato de locação, Contrato de Compra e Venda, Matrícula do imóvel" required>
+          <datalist id="ise_docs_lista"><option value="Contrato de locação"><option value="Contrato de Compra e Venda"><option value="Matrícula do imóvel"></datalist></div>
+        <div class="field-group"><label>Dados da Receita Federal (inserir cópia no SAP KM) *</label><select id="ise_rec"><option value="regular">regular</option><option value="pendente de regularização">pendente de regularização</option><option value="indisponível">indisponível</option></select></div>
+        <div class="field-group"><label>Cliente ciente do faturamento da fatura de período final de *</label><input type="text" id="ise_periodo_final" placeholder="Ex: 10/10/2026 a 14/11/2026 ou Não se aplica" required></div>
+        <div class="field-group"><label>Critério de fatura final *</label><select id="ise_crit"><option value="Faturado por média">Faturado por média</option><option value="Leitura fornecida pelo cliente">Leitura fornecida pelo cliente</option><option value="Não se aplica">Não se aplica</option></select></div>
+        <div class="field-group"><label>Fatura final entregue de que forma *</label><input type="text" id="ise_forma" list="ise_forma_lista" placeholder="Ex: Impressa na loja, E-mail ou Não se aplica" required>
+          <datalist id="ise_forma_lista"><option value="Impressa na loja"><option value="Por e-mail"><option value="Não se aplica"></datalist></div>
+        <div class="field-group"><label>Unidade consumidora MMGD Geradora? *</label><select id="ise_mmgd"><option value="Não">Não</option><option value="Sim">Sim</option></select></div>
+        <div class="field-group"><label>Número da Tarefa Neo aberta</label><input type="text" id="ise_neo" placeholder="Em branco = Não se aplica"></div>
+      </div>
+      <div class="actions"><button type="button" class="btn" data-click="gerarIsencaoDeb()">Gerar Texto e Copiar NOTA</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-isencao-deb')">Limpar Tudo</button></div>
+    </div>
+
+    <!-- ISENÇÃO DE DÉBITOS (pedido de análise) -->
+    <div class="subform" id="sf-analise-isencao">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
+      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
+      <div class="form-grid">
+        <div class="field-group"><label>Conta contrato *</label><input type="text" id="aid_cc" inputmode="numeric" placeholder="Ex: 7001234567" required></div>
+        <div class="field-group"><label>PN *</label><input type="text" id="aid_pn" inputmode="numeric" placeholder="Parceiro de negócio — ex: 1010000000" required></div>
+        <div class="field-group"><label>Solicitante *</label><input type="text" id="aid_solic" placeholder="Nome completo" required></div>
+        <div class="field-group"><label>CPF/CNPJ *</label><input type="text" id="aid_doc" inputmode="numeric" placeholder="Somente números" required></div>
+        <div class="field-group"><label>Telefone (DDD + telefone) *</label><input type="text" id="aid_tel" placeholder="Ex: 71993501519" required></div>
+        <div class="field-group full-width"><label>E-mail *</label><input type="text" id="aid_email" placeholder="cliente@email.com ou Não informado" required></div>
+        <div class="field-group full-width"><label>Documentação apresentada *</label><input type="text" id="aid_docs" placeholder="Ex: Escritura e CNH" required></div>
+      </div>
+      <div class="actions"><button type="button" class="btn" data-click="gerarAnaliseIsencao()">Gerar Texto e Copiar NOTA</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-analise-isencao')">Limpar Tudo</button></div>
+    </div>
+
     <!-- 1. LIGAÇÃO NOVA (Normal / Por expediente) -->
     <div class="subform" id="sf-ligacao-nova">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
@@ -1199,6 +1259,7 @@
     <div class="subform" id="sf-reativ-comum">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="form-grid">
+        <div class="field-group full-width grp-tipo-reat"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="reat" data-change="trocarTipoGrupo(this)"><option value="sf-reativ-comum|">Reativação (sem débitos)</option><option value="sf-reativ-virtual|">Reativação virtual</option><option value="sf-ri|assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|reativacao">Com análise de isenção de débitos</option><option value="sf-ri|virtual_assuncao">Virtual com assunção de débitos</option><option value="sf-ri|virtual_isencao">Virtual com isenção de débitos</option></select></div>
         <div class="field-group"><label>Solicitante *</label><input type="text" id="rtc_solic" placeholder="Nome completo do solicitante" required></div>
         <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="rtc_tel" placeholder="Ex: 71993501519" required></div>
         <div class="field-group"><label>Fase *</label><select id="rtc_tipo_lig"><option value="MONO">MONO</option><option value="BI">BI</option><option value="TRI">TRI</option></select></div>
@@ -1218,6 +1279,7 @@
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box alert-setor">🔁 <strong>Altere o setor responsável na nota para o código 8GE427</strong></div>
       <div class="form-grid">
+        <div class="field-group full-width grp-tipo-reat"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="reat" data-change="trocarTipoGrupo(this)"><option value="sf-reativ-comum|">Reativação (sem débitos)</option><option value="sf-reativ-virtual|">Reativação virtual</option><option value="sf-ri|assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|reativacao">Com análise de isenção de débitos</option><option value="sf-ri|virtual_assuncao">Virtual com assunção de débitos</option><option value="sf-ri|virtual_isencao">Virtual com isenção de débitos</option></select></div>
         <div class="field-group"><label>Solicitante *</label><input type="text" id="rtv_solic" placeholder="Nome completo do solicitante" required></div>
         <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="rtv_tel" placeholder="Ex: 71993501519" required></div>
         <div class="field-group"><label>Fase *</label><select id="rtv_fase"><option value="MONO">MONO</option><option value="BI">BI</option><option value="TRI">TRI</option></select></div>
@@ -1251,9 +1313,12 @@
     <!-- 4. TROCA DE TITULARIDADE -->
     <div class="subform" id="sf-tt">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box">OBS.: Nos casos de representante legal ou solicitante, deverá criar relações no PN em Outros Campos.<br>OBS.: Termo de reconhecimento de débito deve ser anexado como PADE no KM.</div>
+      <div class="alert-box alerta-pade" id="pade_tt" style="display: none;"><b>Atenção:</b> Em caso de reconhecimento de débito o Termo deve ser anexado como PADE no KM já assinado pelo cliente.</div>
+      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
+      <div class="alert-box">OBS.: Nos casos de representante legal ou solicitante, deverá criar relações no PN em Outros Campos.</div>
       <div class="form-grid">
-        <div class="field-group full-width">
+        <div class="field-group full-width grp-tipo-tt"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="tt" data-change="trocarTipoGrupo(this)"><option value="sf-tt|sem_debito">Sem débitos</option><option value="sf-tt|com_assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|troca">Com análise de isenção de débitos</option><option value="sf-parc-tt|">Com parcelamento de débitos</option></select></div>
+        <div class="field-group full-width" style="display: none;">
           <label>Tipo de Troca *</label>
           <select id="tt_tipo" data-change="toggleTrocaTitularidade()">
             <option value="sem_debito">TROCA DE TITULARIDADE SEM DÉBITOS</option>
@@ -1263,7 +1328,7 @@
         </div>
         <div class="field-group"><label id="lbl_tt_solic">Solicitante (titular).: *</label><input type="text" id="tt_solic" placeholder="Nome completo" required></div>
         <div class="field-group" id="grp_tt_rep"><label>Representante legal: *</label><input type="text" id="tt_rep" placeholder="Nome do representante ou Não informado" required></div>
-        <div class="field-group"><label id="lbl_tt_cpf">CPF: *</label><input type="text" id="tt_cpf" placeholder="000.000.000-00 ou CNPJ" required></div>
+        <div class="field-group"><label id="lbl_tt_cpf">CPF/CNPJ: *</label><input type="text" id="tt_cpf" placeholder="000.000.000-00 ou CNPJ" required></div>
         <div class="field-group"><label>Telefone com DDD: *</label><input type="text" id="tt_tel" placeholder="Ex: 84988887777" required></div>
         <div class="field-group"><label>E-mail: *</label><input type="text" id="tt_email" placeholder="cliente@email.com ou Não informado" required></div>
         <div class="field-group"><label>Leitura: *</label><input type="text" id="tt_leitura" placeholder="Ex: 1234 ou Sem leitura" required></div>
@@ -1303,9 +1368,11 @@
     <!-- 5. REATIVAÇÃO - DÉBITOS -->
     <div class="subform" id="sf-ri">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box">OBS.: Termo de reconhecimento de débito deve ser anexado como PADE no KM.</div>
+      <div class="alert-box alerta-pade" id="pade_ri"><b>Atenção:</b> Em caso de reconhecimento de débito o Termo deve ser anexado como PADE no KM já assinado pelo cliente.</div>
+      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
       <div class="form-grid">
-        <div class="field-group full-width">
+        <div class="field-group full-width grp-tipo-reat"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="reat" data-change="trocarTipoGrupo(this)"><option value="sf-reativ-comum|">Reativação (sem débitos)</option><option value="sf-reativ-virtual|">Reativação virtual</option><option value="sf-ri|assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|reativacao">Com análise de isenção de débitos</option><option value="sf-ri|virtual_assuncao">Virtual com assunção de débitos</option><option value="sf-ri|virtual_isencao">Virtual com isenção de débitos</option></select></div>
+        <div class="field-group full-width" style="display: none;">
           <label>Tipo de Reativação *</label>
           <select id="ri_tipo" data-change="toggleReativDebitos()">
             <option value="assuncao">REATIVAÇÃO COM ASSUNÇÃO DE DÉBITOS (RECONHECIMENTO DE DÉBITOS)</option>
@@ -1314,7 +1381,7 @@
             <option value="virtual_isencao">REATIVAÇÃO VIRTUAL COM ISENÇÃO DE DÉBITOS</option>
           </select>
         </div>
-        <div class="field-group"><label>Solicitante Sr. ou Sra.: *</label><input type="text" id="ri_solic" placeholder="Nome completo" required></div>
+        <div class="field-group"><label>Solicitante: *</label><input type="text" id="ri_solic" placeholder="Nome completo" required></div>
         <div class="field-group"><label>CPF/CNPJ: *</label><input type="text" id="ri_cpf" placeholder="000.000.000-00 ou CNPJ" required></div>
         <div class="field-group full-width"><label>Ref ou geolocalização (Ref p/ Nota): *</label><input type="text" id="ri_ref" placeholder="Ponto de referência detalhado ou geolocalização" required></div>
         <div class="field-group"><label>Telefone com DDD: *</label><input type="text" id="ri_tel" placeholder="Ex: 84988887777" required></div>
@@ -1371,7 +1438,7 @@
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">Atenção: O mesmo texto da nota é igual para a agenda<br>É obrigatório que o formulário seja preenchido corretamente e anexado no SAP KM juntamente com documento de identificação do solicitação. Em caso de procurador, não esquecer de anexar procuração e documento do procurador e um único arquivo.</div>
       <div class="form-grid">
-        <div class="field-group"><label>Sr(a): *</label><input type="text" id="res_solic" placeholder="Nome completo do solicitante" required></div>
+        <div class="field-group"><label>Solicitante: *</label><input type="text" id="res_solic" placeholder="Nome completo do solicitante" required></div>
         <div class="field-group"><label>Telefone: *</label><input type="text" id="res_tel" placeholder="Ex: 84988887777" required></div>
         <div class="field-group"><label>E mail: *</label><input type="text" id="res_email1" placeholder="cliente@email.com ou Não informado" required></div>
         <div class="field-group"><label>Forma de pagamento: *</label><select id="res_forma_pag" data-change="toggleFormaPagRes()"><option value="conta">Conta Bancária</option><option value="ordem">Ordem de pagamento</option></select></div>
@@ -1404,7 +1471,7 @@
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">Atenção: No caso de pessoa jurídica colocar o nome do representante legal no nome do cliente.</div>
       <div class="form-grid">
-        <div class="field-group"><label>Sr(a) *</label><input type="text" id="insp_solic" placeholder="Nome completo (Representante legal se PJ)" required></div>
+        <div class="field-group"><label>Solicitante *</label><input type="text" id="insp_solic" placeholder="Nome completo (Representante legal se PJ)" required></div>
         <div class="field-group"><label>PRX *</label><input type="text" id="insp_prx" placeholder="Ponto de referência detalhado" required></div>
         <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="insp_tel" placeholder="Ex: 84-988887777" required></div>
         <div class="field-group"><label>e-mail *</label><input type="text" id="insp_email" placeholder="cliente@email.com ou Não informado" required></div>
@@ -1422,7 +1489,7 @@
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">⚠️ AGENDAR EM NUMERO DO PEDIDO</div>
       <div class="form-grid">
-        <div class="field-group"><label>Sr(a) *</label><input type="text" id="lp_solic" placeholder="Nome completo do solicitante" required></div>
+        <div class="field-group"><label>Solicitante *</label><input type="text" id="lp_solic" placeholder="Nome completo do solicitante" required></div>
         <div class="field-group"><label>PRX *</label><input type="text" id="lp_prx" placeholder="Ponto de referência detalhado" required></div>
         <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="lp_tel" placeholder="Ex: 84-988887777" required></div>
         <div class="field-group"><label>e-mail *</label><input type="text" id="lp_email" placeholder="cliente@email.com ou Não informado" required></div>
@@ -1439,7 +1506,7 @@
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">FOP serviço de obra<br>ATENÇÃO: INCLUIR DOCUMENTO DE PROPRIEDADE<br>Para Isolamento De Rede, Usar Code Deslocamento De Rede E Informar Que É Deslocamento De Rede, Não Colocar A Informação Isolamento de rede</div>
       <div class="form-grid">
-        <div class="field-group"><label>Sr(a) *</label><input type="text" id="ro_solic" placeholder="Nome completo do solicitante" required></div>
+        <div class="field-group"><label>Solicitante *</label><input type="text" id="ro_solic" placeholder="Nome completo do solicitante" required></div>
         <div class="field-group"><label>PRX *</label><input type="text" id="ro_prx" placeholder="Ponto de referência detalhado" required></div>
         <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="ro_tel" placeholder="Ex: 84-988887777" required></div>
         <div class="field-group"><label>e-mail *</label><input type="text" id="ro_email" placeholder="cliente@email.com ou Não informado" required></div>
@@ -1454,7 +1521,7 @@
       <div class="alert-box">⚠️ AGENDAR EM NUMERO DO PEDIDO</div>
       <div class="form-grid">
         <div class="field-group full-width"><label>Opção de Reforma *</label><select id="refp_opt" data-change="toggleRefPadrao()"><option value="mudanca">MUDANÇA DE LOCAL DE MEDIDOR</option><option value="desliga_religa">DESLIGA/RELIGA</option></select></div>
-        <div class="field-group"><label>Sr(a) *</label><input type="text" id="refp_solic" placeholder="Nome completo do solicitante" required></div>
+        <div class="field-group"><label>Solicitante *</label><input type="text" id="refp_solic" placeholder="Nome completo do solicitante" required></div>
         <div class="field-group"><label>PRX *</label><input type="text" id="refp_prx" placeholder="Ponto de referência detalhado" required></div>
         <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="refp_tel" placeholder="Ex: 84-988887777" required></div>
         <div class="field-group"><label>e-mail *</label><input type="text" id="refp_email" placeholder="cliente@email.com ou Não informado" required></div>
@@ -1504,7 +1571,7 @@
     <div class="subform" id="sf-med-roub">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="form-grid">
-        <div class="field-group"><label>Sr(a) *</label><input type="text" id="mr_solic" placeholder="Nome completo" required></div>
+        <div class="field-group"><label>Solicitante *</label><input type="text" id="mr_solic" placeholder="Nome completo" required></div>
         <div class="field-group"><label>PRX *</label><input type="text" id="mr_prx" placeholder="Ponto de referência detalhado" required></div>
         <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="mr_tel" placeholder="Ex: 84-988887777" required></div>
         <div class="field-group"><label>e-mail *</label><input type="text" id="mr_email" placeholder="cliente@email.com ou Não informado" required></div>
@@ -1518,7 +1585,7 @@
     <div class="subform" id="sf-selagem">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="form-grid">
-        <div class="field-group"><label>Sr(a) *</label><input type="text" id="sel_solic" placeholder="Nome completo" required></div>
+        <div class="field-group"><label>Solicitante *</label><input type="text" id="sel_solic" placeholder="Nome completo" required></div>
         <div class="field-group"><label>PRX *</label><input type="text" id="sel_prx" placeholder="Ponto de referência detalhado" required></div>
         <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="sel_tel" placeholder="Ex: 84-988887777" required></div>
         <div class="field-group"><label>e-mail *</label><input type="text" id="sel_email" placeholder="cliente@email.com ou Não informado" required></div>
@@ -1545,7 +1612,7 @@
     <div class="subform" id="sf-ramal">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="form-grid">
-        <div class="field-group"><label>Sr(a) *</label><input type="text" id="sram_solic" placeholder="Nome completo" required></div>
+        <div class="field-group"><label>Solicitante *</label><input type="text" id="sram_solic" placeholder="Nome completo" required></div>
         <div class="field-group"><label>PRX *</label><input type="text" id="sram_prx" placeholder="Ponto de referência detalhado" required></div>
         <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="sram_tel" placeholder="Ex: 84-988887777" required></div>
         <div class="field-group"><label>e-mail *</label><input type="text" id="sram_email" placeholder="cliente@email.com ou Não informado" required></div>
@@ -1672,10 +1739,11 @@
     <!-- 27. PARCELAMENTO -->
     <div class="subform" id="sf-parcelamento">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
+      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
       <div class="alert-box">⚠️ Acima de 10 mil imprimir, solicitar assinatura do cliente e inserir no sapkm</div>
       <div class="form-grid">
         <div class="field-group full-width"><label>Tipo de Cliente *</label><select id="parc_tipo" data-change="toggleParcelamento()"><option value="pf">Pessoa Física</option><option value="pj">Pessoa Jurídica</option></select></div>
-        <div class="field-group"><label>Sr(a). *</label><input type="text" id="parc_solic" placeholder="Nome completo" required></div>
+        <div class="field-group"><label>Solicitante *</label><input type="text" id="parc_solic" placeholder="Nome completo" required></div>
         <div class="field-group" id="grp_parc_empresa" style="display: none;"><label>Empresa Representada *</label><input type="text" id="parc_empresa" placeholder="Razão social / Nome da empresa"></div>
         <div class="field-group"><label>Dados da Receita Federal *</label><select id="parc_rec"><option value="regular">regular</option><option value="pendente regularizacao">pendente regularizacao</option></select></div>
         <div class="field-group"><label>Telefone *</label><input type="text" id="parc_tel" placeholder="Ex: 84988887777" required></div>
@@ -1718,7 +1786,7 @@
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">O e-mail para recebimento da comunicação informado na abertura da nota, deve ser o mesmo e-mail do cadastro.</div>
       <div class="form-grid">
-        <div class="field-group"><label>Sr. ou Sra. (a): *</label><input type="text" id="rdedoc_solic" placeholder="Nome completo" required></div>
+        <div class="field-group"><label>Solicitante: *</label><input type="text" id="rdedoc_solic" placeholder="Nome completo" required></div>
         <div class="field-group"><label>Apresentou laudo(s) e orçamento(s) de oficina(s) Credenciada(s)? *</label><select id="rdedoc_cred"><option value="sim">Sim</option><option value="nao">Não</option></select></div>
         <div class="field-group"><label>Quantidade Orçamento(s): *</label><select id="rdedoc_qtd_orc"><option value="1">1</option><option value="2">2</option></select></div>
         <div class="field-group"><label>Quantidade Laudo(s) Desistência? *</label><select id="rdedoc_qtd_desist"><option value="nenhum">Nenhum ( )</option><option value="1">1</option><option value="2">2</option></select></div>
@@ -1731,8 +1799,11 @@
     <!-- 31. PARCELAMENTO DE DÉBITOS ORIUNDOS DE TROCA DE TITULARIDADE -->
     <div class="subform" id="sf-parc-tt">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
+      <div class="alert-box alerta-pade" id="pade_ptt"><b>Atenção:</b> Em caso de reconhecimento de débito o Termo deve ser anexado como PADE no KM já assinado pelo cliente.</div>
+      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
       <div class="alert-box">⚠️ Inserir cópia dos dados da Receita Federal e do termo de assunção assinado no SAP KM.</div>
       <div class="form-grid">
+        <div class="field-group full-width grp-tipo-tt"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="tt" data-change="trocarTipoGrupo(this)"><option value="sf-tt|sem_debito">Sem débitos</option><option value="sf-tt|com_assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|troca">Com análise de isenção de débitos</option><option value="sf-parc-tt|">Com parcelamento de débitos</option></select></div>
         <div class="field-group full-width">
           <label>Tipo de Cliente *</label>
           <select id="ptt_tipo" data-change="toggleParcTT()">
@@ -1740,7 +1811,7 @@
             <option value="pj">Pessoa Jurídica</option>
           </select>
         </div>
-        <div class="field-group"><label>Sr(a). *</label><input type="text" id="ptt_solic" placeholder="Nome completo" required></div>
+        <div class="field-group"><label>Solicitante *</label><input type="text" id="ptt_solic" placeholder="Nome completo" required></div>
         <div class="field-group" id="grp_ptt_empresa" style="display: none;"><label>Empresa Representada *</label><input type="text" id="ptt_empresa" placeholder="Razão social / Nome da empresa"></div>
         <div class="field-group">
           <label>Dados da Receita Federal *</label>
@@ -1764,6 +1835,7 @@
     <!-- 32. TR DE PARTIDAS -->
     <div class="subform" id="sf-tr-partidas">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
+      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
       <div class="alert-box">Transferência de Partidas (Pessoa Física e Pessoa Jurídica)</div>
       <div class="form-grid">
         <div class="field-group full-width">
@@ -1777,7 +1849,7 @@
         <div class="field-group"><label>Conta contrato de destino: *</label><input type="text" id="trp_cc_dest" placeholder="Ex: 70xxxxxxx" required></div>
         <div class="field-group"><label>Contrato: *</label><input type="text" id="trp_contrato" placeholder="Ex: 50xxxxxxx" required></div>
         <div class="field-group"><label id="lbl_trp_solic">Solicitante: *</label><input type="text" id="trp_solic" placeholder="Nome completo" required></div>
-        <div class="field-group"><label>CPF: *</label><input type="text" id="trp_cpf" placeholder="000.000.000-00" required></div>
+        <div class="field-group"><label>CPF/CNPJ: *</label><input type="text" id="trp_cpf" placeholder="CPF ou CNPJ — somente números" required></div>
         <div class="field-group" id="grp_trp_cnpj" style="display: none;"><label>CNPJ: *</label><input type="text" id="trp_cnpj" placeholder="00.000.000/0000-00"></div>
         <div class="field-group"><label>Telefone: *</label><input type="text" id="trp_tel" placeholder="Ex: 84988887777" required></div>
         <div class="field-group"><label>E-mail: *</label><input type="text" id="trp_email" placeholder="cliente@email.com ou Não informado" required></div>
@@ -1794,7 +1866,7 @@
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">Texto para Nota de Serviço - Tele Gravação</div>
       <div class="form-grid">
-        <div class="field-group"><label>Sr(a): *</label><input type="text" id="tg_solic" placeholder="Nome completo do cliente" required></div>
+        <div class="field-group"><label>Solicitante: *</label><input type="text" id="tg_solic" placeholder="Nome completo do cliente" required></div>
         <div class="field-group"><label>Tel (XX-9XXXXX): *</label><input type="text" id="tg_tel" placeholder="Ex: 84-988887777" required></div>
         <div class="field-group full-width"><label>Refr (Ponto de Referência): *</label><input type="text" id="tg_ref" placeholder="Ponto de referência detalhado" required></div>
         <div class="field-group"><label>E-mail: *</label><input type="text" id="tg_email" placeholder="cliente@email.com" required></div>
@@ -1919,6 +1991,45 @@
         <textarea id="calc_out_agenda" class="output-box" style="min-height:190px;" placeholder="A memória de cálculo aparecerá aqui..." readonly></textarea>
       </div>
     </div>
+      <div class="ru-bloco" id="sf-refat-urg" data-nome="Refat Urgente">
+      <h2 class="tensao-titulo">Texto Refat Urgente</h2>
+      <p class="tensao-desc">Texto para agenda do contrato e observação dentro do processo. A leitura atual vem da calculadora acima; dá para alterar.</p>
+      <div class="form-grid">
+        <div class="field-group"><label>Identificação do local de atendimento *</label><input type="text" id="ru_local" placeholder="Ex: Loja Camaçari" required></div>
+        <div class="field-group"><label>Atendente *</label><input type="text" id="ru_atendente" placeholder="Seu nome" required></div>
+        <div class="field-group"><label>Solicitante (nome e sobrenome) *</label><input type="text" id="ru_solic" placeholder="Ex: Maria Souza" required></div>
+        <div class="field-group"><label>Motivo da solicitação *</label><input type="text" id="ru_motivo" placeholder="Ex: Discorda do valor da fatura" required></div>
+        <div class="field-group"><label>Leitura atual *</label><input type="text" id="ru_leitura" inputmode="numeric" placeholder="Obrigatório" required></div>
+        <div class="field-group"><label>Local do medidor *</label><select id="ru_local_med"><option value="Interno">Interno</option><option value="Externo">Externo</option></select></div>
+        <div class="field-group"><label>Vencimento da fatura reclamada *</label><input type="text" id="ru_venc" inputmode="numeric" placeholder="dd/mm/aaaa" data-input="mascararData(this)" required></div>
+        <div class="field-group"><label>Valor da fatura reclamada (R$) *</label><input type="text" id="ru_valor" inputmode="decimal" placeholder="Ex: 245,90" required></div>
+        <div class="field-group"><label>Situação do imóvel *</label><select id="ru_imovel" data-change="toggleRefatUrgente()"><option value="Habitado">Habitado</option><option value="Desabitado">Desabitado</option></select></div>
+        <div class="field-group" id="grp_ru_desab" style="display: none;"><label>Desabitado desde *</label><input type="text" id="ru_desab_data" inputmode="numeric" placeholder="dd/mm/aaaa" data-input="mascararData(this)" required></div>
+        <div class="field-group"><label>Situação em campo *</label><select id="ru_campo"><option value="Ativo">Ativo</option><option value="Suspenso">Suspenso</option></select></div>
+        <div class="field-group"><label>E-mail do cliente *</label><input type="text" id="ru_email" placeholder="cliente@email.com ou Não informado" required></div>
+        <div class="field-group"><label>Telefone do cliente com DDD *</label><input type="text" id="ru_tel" placeholder="Ex: 71993501519" required></div>
+        <div class="field-group full-width"><label>Pontos de referência *</label><input type="text" id="ru_ref" placeholder="O máximo de informações possíveis" required></div>
+        <div class="field-group full-width"><label>Modalidade de resposta *</label><select id="ru_resposta"><option value="E-mail">E-mail</option><option value="Telefone">Telefone</option><option value="SMS">SMS</option><option value="Carta">Carta</option></select>
+          <p class="tensao-desc" style="margin: 6px 0 0;">Ofereça ao cliente o envio da resposta por e-mail. Apenas quando não for possível, informe que a resposta pode ocorrer também por telefone, SMS ou carta.</p></div>
+        <div class="field-group full-width">
+          <label class="ru-check"><input type="checkbox" id="ru_foto"> <span>Cliente apresentou foto/vídeo e conseguimos confirmar o número do medidor e a leitura</span></label>
+          <p class="ru-obrig">É obrigatório a confirmação da leitura e número do medidor através de foto e/ou vídeo.</p>
+        </div>
+      </div>
+      <div class="actions"><button type="button" class="btn" data-click="gerarRefatUrgente()">Gerar Texto Refat Urgente e Copiar</button><button type="button" class="btn btn-clear" data-click="limparRefatUrgente()">Limpar Tudo</button></div>
+      <div class="result-section">
+        <div class="output-group">
+          <div class="output-header">
+            <span>TEXTO REFAT URGENTE (AGENDA E OBSERVAÇÃO)</span>
+            <div>
+              <button type="button" class="copy-btn" data-click="copiarTexto('ru_out', 'ru_al')">Copiar Texto</button>
+              <span class="alert-copied" id="ru_al">Copiado!</span>
+            </div>
+          </div>
+          <textarea id="ru_out" class="output-box" style="min-height:300px;" placeholder="O texto do Refat Urgente aparecerá aqui..." readonly></textarea>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="content" id="painel_decl" style="display: none;">
@@ -2002,6 +2113,18 @@
 </div>
 
 <script>
+  // Ambiente: false = produção. A cópia em /teste/ é gerada com true:
+  // faixa de aviso, histórico separado e atualizações lidas de /teste/.
+  var AMBIENTE_TESTE = false;
+  if (AMBIENTE_TESTE) {
+    document.title = '[TESTE] ' + document.title;
+    (function() {
+      var f = document.createElement('div');
+      f.className = 'faixa-teste';
+      f.textContent = 'AMBIENTE DE TESTE — versão em avaliação. Não use para atendimento real.';
+      document.body.insertBefore(f, document.body.firstChild);
+    })();
+  }
   var abaAtualId = null;
   // Serviços que só têm texto de AGENDA (sem nota)
   var SERVICOS_SO_AGENDA = ['sf-verif-equip', 'sf-afericao'];
@@ -2017,6 +2140,8 @@
   }
 
   function trocarAba(sfId, btn) {
+    var gBotao = abrindoGrupo ? null : grupoDoBotao(sfId);
+    if (gBotao) { abrirTipoGrupo(gBotao, grupoAtual[gBotao] || document.querySelector('select.sel-grupo[data-grupo="' + gBotao + '"]').options[0].value, btn); return; }
     mostrarCaixaNota(SERVICOS_SO_AGENDA.indexOf(sfId) < 0);
     // Trocar de serviço NÃO apaga o que já foi digitado: os formulários
     // ficam montados no DOM (apenas ocultos), então os dados de cada
@@ -2043,11 +2168,13 @@
     if (!container) return;
 
     container.querySelectorAll('input, select, textarea').forEach(function(el) {
+      if (el.classList.contains('sel-grupo')) return;   // "Tipo de solicitação" é navegação: continua livre
       el.disabled = true;
     });
 
     container.querySelectorAll('button').forEach(function(btn) {
-      if (!btn.classList.contains('btn-clear') && !btn.classList.contains('btn-edit')) {
+      var doGrupo = btn.classList.contains('sel-trigger') && btn.parentNode && btn.parentNode.querySelector('select.sel-grupo');
+      if (!doGrupo && !btn.classList.contains('btn-clear') && !btn.classList.contains('btn-edit')) {
         btn.disabled = true;
       }
     });
@@ -2420,14 +2547,15 @@
   }
 
   function toggleTrocaTitularidade() {
+    setTimeout(atualizarAlertaPade, 0);
     var tipo = document.getElementById('tt_tipo').value;
     var isSem = (tipo === 'sem_debito');
     var isAssuncao = (tipo === 'com_assuncao');
     var isIsencao = (tipo === 'com_isencao');
     var hasDebito = (isAssuncao || isIsencao);
 
-    document.getElementById('lbl_tt_solic').innerText = hasDebito ? 'Solicitante Sr. ou Sra.: *' : 'Solicitante (titular).: *';
-    document.getElementById('lbl_tt_cpf').innerText = hasDebito ? 'CPF/CNPJ: *' : 'CPF: *';
+    document.getElementById('lbl_tt_solic').innerText = hasDebito ? 'Solicitante: *' : 'Solicitante (titular).: *';
+    document.getElementById('lbl_tt_cpf').innerText = 'CPF/CNPJ: *';
     document.getElementById('lbl_tt_cca').innerText = hasDebito ? 'CC Antiga: *' : 'CC antiga: *';
     document.getElementById('lbl_tt_ccn').innerText = hasDebito ? 'CC Nova: *' : 'Nova CC: *';
     document.getElementById('lbl_tt_ciente_fim').innerText = hasDebito ? 'Cliente ciente fatura período final de: *' : 'Cliente ciente fatura período: *';
@@ -2521,7 +2649,7 @@
   // Campos que aceitam dd/mm/aaaa ou mm/aaaa
   var DATAS_OU_MES = { trp_venc_de: 1, trp_venc_ate: 1 };
   // Documentos: 'doc' aceita CPF (11) ou CNPJ (14); 'cpf' só 11 dígitos; 'cnpj' só 14
-  var DOCS = { tt_cpf: 'doc', ri_cpf: 'doc', trp_cpf: 'cpf', trp_cnpj: 'cnpj' };
+  var DOCS = { tt_cpf: 'doc', ri_cpf: 'doc', trp_cpf: 'doc', trp_cnpj: 'cnpj' };
 
   function rotuloDoCampo(inp) {
     var labelEl = inp.previousElementSibling;
@@ -2911,9 +3039,15 @@
     finalizarGeracao('sf-reativ-comum', notaPadraoEndereco('RT', 'rtc'), agendaPadraoEndereco('Reativação', 'rtc'), 'nota');
   }
 
+  // "TRATA-SE DE REATIVAÇÃO VIRTUAL MEDIDOR EM CAMPO N° X / LEITURA Y"
+  // ou, sem leitura, "... N° X / NAO INFORMOU LEITURA"
+  function notaReativVirtual(medidor, leitura) {
+    return 'TRATA-SE DE REATIVAÇÃO VIRTUAL MEDIDOR EM CAMPO N° ' + medidor + ' / ' + (leitura ? 'LEITURA ' + leitura : 'NAO INFORMOU LEITURA');
+  }
+
   function gerarReativVirtual() {
     if (!validarCampos('sf-reativ-virtual')) return;
-    var nota = 'TRATA-SE DE REATIVAÇÃO VIRTUAL MEDIDOR EM CAMPO N° ' + getVal('rtv_medidor') + ' E LEITURA ' + (getVal('rtv_leitura') || 'NÃO INFORMOU');
+    var nota = notaReativVirtual(getVal('rtv_medidor'), getVal('rtv_leitura'));
     finalizarGeracao('sf-reativ-virtual', nota, agendaPadraoEndereco('Reativação Virtual', 'rtv'), 'nota');
     // Lembrete na hora de criar a nota (depois do "Copiado!")
     setTimeout(function() { mostrarAviso('Lembrete: altere o setor responsável na nota para o código 8GE427.', 'longo'); }, 300);
@@ -2946,7 +3080,7 @@
     if (tipo === 'sem_debito') {
       txt = 'Solicitante (titular).: ' + getVal('tt_solic') +
         '\nSe houver, representante legal: ' + getVal('tt_rep') +
-        '\nCPF: ' + getVal('tt_cpf') +
+        '\nCPF/CNPJ: ' + getVal('tt_cpf') +
         '\nTelefone: ' + getVal('tt_tel') +
         '\nE-mail: ' + getVal('tt_email') +
         '\nLeitura: ' + getVal('tt_leitura') +
@@ -2959,7 +3093,7 @@
         '\nSe trata de unidade consumidora MMGD Geradora? ' + getVal('tt_mmgd') +
         '\nNúmero da Tarefa Neo aberta: ' + getVal('tt_neo');
     } else if (tipo === 'com_assuncao') {
-      txt = 'Solicitante Sr. ou Sra.: ' + getVal('tt_solic') +
+      txt = 'Solicitante: ' + getVal('tt_solic') +
         '\nCPF/CNPJ: ' + getVal('tt_cpf') +
         '\nTelefone com DDD: ' + getVal('tt_tel') +
         '\nE-mail: ' + getVal('tt_email') +
@@ -2980,7 +3114,7 @@
         '\nSe trata de unidade consumidora MMGD Geradora? ' + getVal('tt_mmgd') +
         '\nNúmero da Tarefa Neo aberta: ' + getVal('tt_neo');
     } else {
-      txt = 'Solicitante Sr. ou Sra.: ' + getVal('tt_solic') +
+      txt = 'Solicitante: ' + getVal('tt_solic') +
         '\nCPF/CNPJ: ' + getVal('tt_cpf') +
         '\nTelefone com DDD: ' + getVal('tt_tel') +
         '\nE-mail: ' + getVal('tt_email') +
@@ -3005,6 +3139,7 @@
   }
 
   function toggleReativDebitos() {
+    setTimeout(atualizarAlertaPade, 0);
     var tipo = document.getElementById('ri_tipo').value;
     var isAssuncao = (tipo === 'assuncao' || tipo === 'virtual_assuncao');
     var isIsencao = (tipo === 'isencao' || tipo === 'virtual_isencao');
@@ -3027,14 +3162,14 @@
 
     var nota = '';
     if (isVirtual) {
-      nota = 'TRATA-SE DE REATIVAÇÃO VIRTUAL MEDIDOR EM CAMPO NUMERO ' + getVal('ri_medidor') + ' E LEITURA ' + getVal('ri_leitura') + '  Solic: ' + getVal('ri_solic') + ' Ref: ' + getVal('ri_ref') + ' Tel: ' + getVal('ri_tel') + ' Proc: ' + getVal('ri_proc');
+      nota = notaReativVirtual(getVal('ri_medidor'), getVal('ri_leitura')) + '  Solic: ' + getVal('ri_solic') + ' Ref: ' + getVal('ri_ref') + ' Tel: ' + getVal('ri_tel') + ' Proc: ' + getVal('ri_proc');
     } else {
       nota = 'REATIV Ref ou geolocalização ' + getVal('ri_ref') + ' Tel ' + getVal('ri_tel') + ' Prazo 5 dias úteis Proc ' + getVal('ri_proc');
     }
 
     var agenda = '';
     if (isAssuncao) {
-      agenda = 'Solicitante Sr. ou Sra.: ' + getVal('ri_solic') +
+      agenda = 'Solicitante: ' + getVal('ri_solic') +
         '\nCPF/CNPJ:' + getVal('ri_cpf') +
         '\nTelefone com DDD:' + getVal('ri_tel') +
         '\nE-mail:' + getVal('ri_email') +
@@ -3055,7 +3190,7 @@
         '\nSe trata de unidade consumidora MMGD Geradora? ' + getVal('ri_mmgd') +
         '\nNúmero da Tarefa Neo aberta: ' + getVal('ri_neo');
     } else {
-      agenda = 'Solicitante Sr. ou Sra.: ' + getVal('ri_solic') +
+      agenda = 'Solicitante: ' + getVal('ri_solic') +
         '\nCPF/CNPJ:' + getVal('ri_cpf') +
         '\nTelefone com DDD:' + getVal('ri_tel') +
         '\nE-mail:' + getVal('ri_email') +
@@ -3096,7 +3231,7 @@
     var forma = (getVal('res_forma_pag') === 'conta') ? '(X) Conta Bancária ( ) Ordem de pagamento' : '( ) Conta Bancária (X) Ordem de pagamento';
     var conta = (getVal('res_forma_pag') === 'conta') ? getVal('res_conta') : 'Não se aplica';
     var tipoConta = (getVal('res_forma_pag') === 'conta') ? getVal('res_tipo_conta') : 'Não se aplica';
-    var txt = 'Sr(a): ' + getVal('res_solic') +
+    var txt = 'Solicitante: ' + getVal('res_solic') +
       '\nTelefone: ' + getVal('res_tel') +
       '\nE mail: ' + getVal('res_email1') +
       '\nForma de pagamento: ' + forma +
@@ -3126,19 +3261,19 @@
   function gerarINSP() {
     if (!validarCampos('sf-insp')) return;
     var bloco = getVal('insp_bloco') ? ' Bloco/Torre: ' + getVal('insp_bloco') + ' (quando houver)' : '';
-    var txt = 'Sr(a) ' + getVal('insp_solic') + ' PRX ' + getVal('insp_prx') + ' Tel ' + getVal('insp_tel') + ' e-mail ' + getVal('insp_email') + ' Carga ' + getVal('insp_carga') + (getVal('insp_pg') ? ' PG ' + getVal('insp_pg') : '') + ' Empreendimento: ' + getVal('insp_emp') + bloco + ' referente a MUC ' + getVal('insp_muc');
+    var txt = 'Solicitante ' + getVal('insp_solic') + ' PRX ' + getVal('insp_prx') + ' Tel ' + getVal('insp_tel') + ' e-mail ' + getVal('insp_email') + ' Carga ' + getVal('insp_carga') + (getVal('insp_pg') ? ' PG ' + getVal('insp_pg') : '') + ' Empreendimento: ' + getVal('insp_emp') + bloco + ' referente a MUC ' + getVal('insp_muc');
     finalizarGeracao('sf-insp', txt, txt, 'nota');
   }
 
   function gerarLP() {
     if (!validarCampos('sf-lp')) return;
-    var txt = 'Sr(a) ' + getVal('lp_solic') + ' PRX ' + getVal('lp_prx') + ' Tel ' + getVal('lp_tel') + ' e-mail ' + getVal('lp_email') + ' Carga ' + getVal('lp_carga') + ' PG ' + getVal('lp_pg') + ' Ligar dia ' + getVal('lp_dt_lig') + ' e desligar dia ' + getVal('lp_dt_deslig');
+    var txt = 'Solicitante ' + getVal('lp_solic') + ' PRX ' + getVal('lp_prx') + ' Tel ' + getVal('lp_tel') + ' e-mail ' + getVal('lp_email') + ' Carga ' + getVal('lp_carga') + ' PG ' + getVal('lp_pg') + ' Ligar dia ' + getVal('lp_dt_lig') + ' e desligar dia ' + getVal('lp_dt_deslig');
     finalizarGeracao('sf-lp', txt, txt, 'nota');
   }
 
   function gerarRelocRede() {
     if (!validarCampos('sf-reloc-rede')) return;
-    var txt = 'Sr(a) ' + getVal('ro_solic') + ' PRX ' + getVal('ro_prx') + ' Tel ' + getVal('ro_tel') + ' e-mail ' + getVal('ro_email') + '. Cliente Orientado quanto aos possíveis custos DOCs anexado: ' + getVal('ro_docs');
+    var txt = 'Solicitante ' + getVal('ro_solic') + ' PRX ' + getVal('ro_prx') + ' Tel ' + getVal('ro_tel') + ' e-mail ' + getVal('ro_email') + '. Cliente Orientado quanto aos possíveis custos DOCs anexado: ' + getVal('ro_docs');
     finalizarGeracao('sf-reloc-rede', txt, txt, 'nota');
   }
 
@@ -3147,10 +3282,10 @@
     var isDeslig = (getVal('refp_opt') === 'desliga_religa');
     var txt = '';
     if (!isDeslig) {
-      txt = 'Sr(a) ' + getVal('refp_solic') + ' PRX ' + getVal('refp_prx') + ' Tel ' + getVal('refp_tel') + ' e-mail ' + getVal('refp_email') + '\nMotivo da solicitação: MUDANÇA DE LOCAL DO MEDIDOR.';
+      txt = 'Solicitante ' + getVal('refp_solic') + ' PRX ' + getVal('refp_prx') + ' Tel ' + getVal('refp_tel') + ' e-mail ' + getVal('refp_email') + '\nMotivo da solicitação: MUDANÇA DE LOCAL DO MEDIDOR.';
     } else {
-      var d = 'Sr(a) ' + getVal('refp_solic') + ' PRX ' + getVal('refp_prx') + ' Tel ' + getVal('refp_tel') + ' e-mail ' + getVal('refp_email') + ' Motivo da solicitação: ' + getVal('refp_motivo') + ' | DESLIGAR DIA ' + getVal('refp_dt_deslig');
-      var r = 'Sr(a) ' + getVal('refp_solic') + ' PRX ' + getVal('refp_prx') + ' Tel ' + getVal('refp_tel') + ' e-mail ' + getVal('refp_email') + ' Motivo da solicitação: ' + getVal('refp_motivo') + ' | RELIGAR DIA ' + getVal('refp_dt_relig');
+      var d = 'Solicitante ' + getVal('refp_solic') + ' PRX ' + getVal('refp_prx') + ' Tel ' + getVal('refp_tel') + ' e-mail ' + getVal('refp_email') + ' Motivo da solicitação: ' + getVal('refp_motivo') + ' | DESLIGAR DIA ' + getVal('refp_dt_deslig');
+      var r = 'Solicitante ' + getVal('refp_solic') + ' PRX ' + getVal('refp_prx') + ' Tel ' + getVal('refp_tel') + ' e-mail ' + getVal('refp_email') + ' Motivo da solicitação: ' + getVal('refp_motivo') + ' | RELIGAR DIA ' + getVal('refp_dt_relig');
       txt = 'NOTA DE DESLIGA:\n' + d + '\n\nNOTA DE RELIGA:\n' + r;
     }
     finalizarGeracao('sf-ref-padrao', txt, txt, 'nota');
@@ -3205,13 +3340,13 @@
 
   function gerarMedRoubado() {
     if (!validarCampos('sf-med-roub')) return;
-    var txt = 'Sr(a) ' + getVal('mr_solic') + ' PRX ' + getVal('mr_prx') + ' Tel ' + getVal('mr_tel') + ' e-mail ' + getVal('mr_email') + ' Nº Medidor Roubado ' + getVal('mr_num') + ' Nº do BO: ' + getVal('mr_bo');
+    var txt = 'Solicitante ' + getVal('mr_solic') + ' PRX ' + getVal('mr_prx') + ' Tel ' + getVal('mr_tel') + ' e-mail ' + getVal('mr_email') + ' Nº Medidor Roubado ' + getVal('mr_num') + ' Nº do BO: ' + getVal('mr_bo');
     finalizarGeracao('sf-med-roub', txt, txt, 'nota');
   }
 
   function gerarSelagem() {
     if (!validarCampos('sf-selagem')) return;
-    var txt = 'Sr(a) ' + getVal('sel_solic') + ' PRX ' + getVal('sel_prx') + ' Tel ' + getVal('sel_tel') + ' e-mail ' + getVal('sel_email');
+    var txt = 'Solicitante ' + getVal('sel_solic') + ' PRX ' + getVal('sel_prx') + ' Tel ' + getVal('sel_tel') + ' e-mail ' + getVal('sel_email');
     finalizarGeracao('sf-selagem', txt, txt, 'nota');
   }
 
@@ -3230,7 +3365,7 @@
 
   function gerarServRamal() {
     if (!validarCampos('sf-ramal')) return;
-    var txt = 'Sr(a) ' + getVal('sram_solic') + ' PRX ' + getVal('sram_prx') + ' Tel ' + getVal('sram_tel') + ' e-mail ' + getVal('sram_email') + ' Motivo da solicitação: ' + getVal('sram_motivo');
+    var txt = 'Solicitante ' + getVal('sram_solic') + ' PRX ' + getVal('sram_prx') + ' Tel ' + getVal('sram_tel') + ' e-mail ' + getVal('sram_email') + ' Motivo da solicitação: ' + getVal('sram_motivo');
     finalizarGeracao('sf-ramal', txt, txt, 'nota');
   }
 
@@ -3325,9 +3460,9 @@
     var isPj = (getVal('parc_tipo') === 'pj');
     var txt = '';
     if (!isPj) {
-      txt = 'Sr(a). ' + getVal('parc_solic') + ', dados da Receita Federal ' + getVal('parc_rec') + ' (Inserir cópia do cpf receita federal no SAP KM), telefone ' + getVal('parc_tel') + ', E-mail ' + getVal('parc_email') + ', esteve na loja para negociar a dívida no valor R$' + getVal('parc_divida') + ', plano numero ' + getVal('parc_plano') + ' com sinal R$' + getVal('parc_sinal') + ' e o restante do valor divido em ' + getVal('parc_qtd_parc') + ' parcelas de R$' + getVal('parc_val_parc') + '. Cliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.';
+      txt = 'Solicitante ' + getVal('parc_solic') + ', dados da Receita Federal ' + getVal('parc_rec') + ' (Inserir cópia do cpf receita federal no SAP KM), telefone ' + getVal('parc_tel') + ', E-mail ' + getVal('parc_email') + ', esteve na loja para negociar a dívida no valor R$' + getVal('parc_divida') + ', plano numero ' + getVal('parc_plano') + ' com sinal R$' + getVal('parc_sinal') + ' e o restante do valor divido em ' + getVal('parc_qtd_parc') + ' parcelas de R$' + getVal('parc_val_parc') + '. Cliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.';
     } else {
-      txt = 'Sr(a) ' + getVal('parc_solic') + ', dados da Receita Federal ' + getVal('parc_rec') + ' (Inserir cópia no SAP KM), telefone ' + getVal('parc_tel') + ', E-mail ' + getVal('parc_email') + ' representante da Empresa ' + getVal('parc_empresa') + ' esteve na loja de atendimento para negociar a divida no valor R$' + getVal('parc_divida') + ', plano numero ' + getVal('parc_plano') + ' com sinal R$' + getVal('parc_sinal') + ' e o restante do valor divido em ' + getVal('parc_qtd_parc') + ' parcelas de R$' + getVal('parc_val_parc') + '.\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.';
+      txt = 'Solicitante ' + getVal('parc_solic') + ', dados da Receita Federal ' + getVal('parc_rec') + ' (Inserir cópia no SAP KM), telefone ' + getVal('parc_tel') + ', E-mail ' + getVal('parc_email') + ' representante da Empresa ' + getVal('parc_empresa') + ' esteve na loja de atendimento para negociar a divida no valor R$' + getVal('parc_divida') + ', plano numero ' + getVal('parc_plano') + ' com sinal R$' + getVal('parc_sinal') + ' e o restante do valor divido em ' + getVal('parc_qtd_parc') + ' parcelas de R$' + getVal('parc_val_parc') + '.\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.';
     }
     finalizarGeracao('sf-parcelamento', txt, txt, 'nota');
   }
@@ -3357,7 +3492,7 @@
     if (valDesist === '1') desist = 'Nenhum ( ) (X) 1 ( ) 2';
     else if (valDesist === '2') desist = 'Nenhum ( ) ( ) 1 (X) 2';
 
-    var txt = 'Sr. ou Sra. (a) ' + getVal('rdedoc_solic') + ' compareceu à loja/credenciado para análise a documentação de ressarcimento de danos elétricos.\n' +
+    var txt = 'Solicitante ' + getVal('rdedoc_solic') + ' compareceu à loja/credenciado para análise a documentação de ressarcimento de danos elétricos.\n' +
       'Cliente apresentou laudo (s) e orçamento (s) de oficina (s) Credenciada(s)? ' + cred + '\n' +
       'Quantidade Orçamento (s) ' + orc + '\n' +
       'Detalhar de quais equipamentos : ' + getVal('rdedoc_equip') + '\n' +
@@ -3372,9 +3507,9 @@
     var isPj = (getVal('ptt_tipo') === 'pj');
     var txt = '';
     if (!isPj) {
-      txt = 'Sr(a). ' + getVal('ptt_solic') + ', dados da Receita Federal ' + getVal('ptt_rec') + ' (Inserir cópia no SAP KM), telefone ' + getVal('ptt_tel') + ', E-mail ' + getVal('ptt_email') + ', esteve na loja para negociar a dívida no valor R$' + getVal('ptt_divida') + ', plano numero ' + getVal('ptt_plano') + ' com sinal R$' + getVal('ptt_sinal') + ' e o restante do valor divido em ' + getVal('ptt_qtd_parc') + ' parcelas de R$' + getVal('ptt_val_parc') + '.\nOs débitos são oriundos da troca de titularidade ' + getVal('ptt_origem_tt') + ' e foram reconhecidas através do termo de assunção assinado (Inserir cópia no SAP KM).\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.';
+      txt = 'Solicitante ' + getVal('ptt_solic') + ', dados da Receita Federal ' + getVal('ptt_rec') + ' (Inserir cópia no SAP KM), telefone ' + getVal('ptt_tel') + ', E-mail ' + getVal('ptt_email') + ', esteve na loja para negociar a dívida no valor R$' + getVal('ptt_divida') + ', plano numero ' + getVal('ptt_plano') + ' com sinal R$' + getVal('ptt_sinal') + ' e o restante do valor divido em ' + getVal('ptt_qtd_parc') + ' parcelas de R$' + getVal('ptt_val_parc') + '.\nOs débitos são oriundos da troca de titularidade ' + getVal('ptt_origem_tt') + ' e foram reconhecidas através do termo de assunção assinado (Inserir cópia no SAP KM).\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.';
     } else {
-      txt = 'Sr(a) ' + getVal('ptt_solic') + ', dados da Receita Federal ' + getVal('ptt_rec') + ' (Inserir cópia no SAP KM), telefone ' + getVal('ptt_tel') + ', E-mail ' + getVal('ptt_email') + ' representante da Empresa ' + getVal('ptt_empresa') + ' esteve na loja de atendimento para negociar a divida no valor R$' + getVal('ptt_divida') + ', plano numero ' + getVal('ptt_plano') + ' com sinal R$' + getVal('ptt_sinal') + ' e o restante do valor divido em ' + getVal('ptt_qtd_parc') + ' parcelas de R$' + getVal('ptt_val_parc') + '.\nOs débitos são oriundos da troca de titularidade ' + getVal('ptt_origem_tt') + ' e foram reconhecidas através do termo de assunção assinado (Inserir cópia no SAP KM).\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado';
+      txt = 'Solicitante ' + getVal('ptt_solic') + ', dados da Receita Federal ' + getVal('ptt_rec') + ' (Inserir cópia no SAP KM), telefone ' + getVal('ptt_tel') + ', E-mail ' + getVal('ptt_email') + ' representante da Empresa ' + getVal('ptt_empresa') + ' esteve na loja de atendimento para negociar a divida no valor R$' + getVal('ptt_divida') + ', plano numero ' + getVal('ptt_plano') + ' com sinal R$' + getVal('ptt_sinal') + ' e o restante do valor divido em ' + getVal('ptt_qtd_parc') + ' parcelas de R$' + getVal('ptt_val_parc') + '.\nOs débitos são oriundos da troca de titularidade ' + getVal('ptt_origem_tt') + ' e foram reconhecidas através do termo de assunção assinado (Inserir cópia no SAP KM).\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado';
     }
     finalizarGeracao('sf-parc-tt', txt, txt, 'nota');
   }
@@ -3388,7 +3523,7 @@
         '\nConta contrato de destino: ' + getVal('trp_cc_dest') +
         '\nContrato: ' + getVal('trp_contrato') +
         '\nSolicitante: ' + getVal('trp_solic') +
-        '\nCPF: ' + getVal('trp_cpf') +
+        '\nCPF/CNPJ: ' + getVal('trp_cpf') +
         '\nTelefone: ' + getVal('trp_tel') +
         '\n\nE-mail: ' + getVal('trp_email') +
         '\nValor R$ ' + getVal('trp_valor') + ' referente ao vencimento de ' + getVal('trp_venc_de') + ' até ' + getVal('trp_venc_ate') + ';' +
@@ -3398,7 +3533,7 @@
         '\nConta contrato de destino; ' + getVal('trp_cc_dest') +
         '\nContrato: ' + getVal('trp_contrato') +
         '\nRepresentante legal da empresa: ' + getVal('trp_solic') +
-        '\nCPF; ' + getVal('trp_cpf') +
+        '\nCPF/CNPJ; ' + getVal('trp_cpf') +
         '\nCNPJ; ' + getVal('trp_cnpj') +
         '\n\nTelefone: ' + getVal('trp_tel') +
         '\nE-mail: ' + getVal('trp_email') +
@@ -3410,7 +3545,7 @@
 
   function gerarTeleGravacao() {
     if (!validarCampos('sf-tele-gravacao')) return;
-    var txt = 'Sr(a) ' + getVal('tg_solic') + ' Tel ' + getVal('tg_tel') + ' Refr: ' + getVal('tg_ref') +
+    var txt = 'Solicitante ' + getVal('tg_solic') + ' Tel ' + getVal('tg_tel') + ' Refr: ' + getVal('tg_ref') +
       '\nE-mail: ' + getVal('tg_email') +
       '\nMotivo: ' + getVal('tg_motivo') +
       '\nData da ligação ' + getVal('tg_data') +
@@ -3541,6 +3676,10 @@
 
   function limparForm(containerId) {
     desbloquearFormulario(containerId);
+    if (containerId === 'sf-isencao-deb') {
+      [['ise_servico', 'troca'], ['ise_fat_solic', 'Não se aplica'], ['ise_rec', 'regular'], ['ise_crit', 'Faturado por média'], ['ise_mmgd', 'Não']].forEach(function(p) { document.getElementById(p[0]).value = p[1]; });
+      setTimeout(toggleIsencaoDeb, 0);
+    }
     if (containerId === 'sf-verif-equip') { document.getElementById('ve_equip').value = 'Interno'; }
     if (containerId === 'sf-ligacao-nova') { document.getElementById('ln_modo').value = 'normal'; setTimeout(toggleLigacaoNova, 0); }
     document.querySelectorAll('#' + containerId + ' input[type="text"], #' + containerId + ' textarea').forEach(function(i) { i.value = ''; });
@@ -3565,6 +3704,8 @@
     if (containerId === 'sf-bloq-cobranca') { document.getElementById('bloq_tipo').value = 'pagamento'; toggleBloqCobranca(); }
     if (containerId === 'sf-bpc') { document.getElementById('bpc_titular').value = 'mesmo'; toggleBPC(); }
     
+    var selG = grupoVisivelDe(containerId);
+    if (selG) { var vG = grupoAtual[selG.getAttribute('data-grupo')] || selG.value; setTimeout(function() { aplicarSubtipo(containerId, String(vG).split('|')[1] || ''); }, 0); }
     document.getElementById('out-nota').value = '';
     document.getElementById('out-agenda').value = '';
     // A área de transferência NÃO é tocada de propósito: se o texto
@@ -4010,6 +4151,8 @@
     gerarBPC: gerarBPC,
     toggleLigacaoNova: toggleLigacaoNova,
     calcularRefat: calcularRefat, gerarCalcRefat: gerarCalcRefat, limparCalcRefat: limparCalcRefat,
+    gerarRefatUrgente: gerarRefatUrgente, limparRefatUrgente: limparRefatUrgente, toggleRefatUrgente: toggleRefatUrgente,
+    gerarAnaliseIsencao: gerarAnaliseIsencao, gerarIsencaoDeb: gerarIsencaoDeb, toggleIsencaoDeb: toggleIsencaoDeb, trocarTipoGrupo: trocarTipoGrupo,
     gerarDeclaracao: gerarDeclaracao, limparDeclaracao: limparDeclaracao, imprimirDeclaracao: imprimirDeclaracao, toggleDeclEncerramento: toggleDeclEncerramento,
     abrirHistorico: abrirHistorico, fecharHistorico: fecharHistorico, fecharHistoricoFundo: fecharHistoricoFundo,
     renderHistorico: renderHistorico, histCopiarNota: histCopiarNota, histCopiarAgenda: histCopiarAgenda,
@@ -4387,6 +4530,167 @@
 
 
 
+
+  // Aviso do Termo (PADE): só nos tipos com assunção/reconhecimento de débito
+  function atualizarAlertaPade() {
+    var tt = document.getElementById('pade_tt'), ri = document.getElementById('pade_ri');
+    if (tt) tt.style.display = getVal('tt_tipo') === 'com_assuncao' ? '' : 'none';
+    if (ri) ri.style.display = /assuncao/.test(getVal('ri_tipo')) ? '' : 'none';
+  }
+
+  // === GRUPOS DE SERVIÇO (Troca de Titularidade / Reativação) ===
+  // Um botão por grupo; o "Tipo de solicitação" dentro do formulário escolhe
+  // qual formulário abrir. Valor "formulário|subtipo".
+  var GRUPOS_SERVICO = {
+    tt:   { nome: 'Troca de Titularidade', botao: 'sf-tt' },
+    reat: { nome: 'Reativação', botao: 'sf-reativ-comum' }
+  };
+  var grupoAtual = {};
+  var abrindoGrupo = false;
+  function grupoDoBotao(sfId) { for (var g in GRUPOS_SERVICO) if (GRUPOS_SERVICO[g].botao === sfId) return g; return null; }
+  function botaoDoGrupo(g) { return document.querySelector('#service_nav .sub-btn[data-click*="\'' + GRUPOS_SERVICO[g].botao + '\'"]'); }
+  function aplicarSubtipo(sf, sub) {
+    setTimeout(atualizarAlertaPade, 0);
+    if (sf === 'sf-tt' && sub) { document.getElementById('tt_tipo').value = sub; toggleTrocaTitularidade(); }
+    if (sf === 'sf-ri' && sub) { document.getElementById('ri_tipo').value = sub; toggleReativDebitos(); }
+    if (sf === 'sf-isencao-deb' && sub) { document.getElementById('ise_servico').value = sub; toggleIsencaoDeb(); }
+  }
+  function abrirTipoGrupo(g, valor, btn) {
+    var partes = String(valor).split('|'), sf = partes[0], sub = partes[1] || '';
+    grupoAtual[g] = valor;
+    abrindoGrupo = true;
+    try { trocarAba(sf, btn || botaoDoGrupo(g)); } finally { abrindoGrupo = false; }
+    aplicarSubtipo(sf, sub);
+    // a análise de isenção atende os dois grupos: mostra só o seletor do grupo atual
+    document.querySelectorAll('#sf-isencao-deb .grp-tipo-tt').forEach(function(e) { e.style.display = g === 'tt' ? '' : 'none'; });
+    document.querySelectorAll('#sf-isencao-deb .grp-tipo-reat').forEach(function(e) { e.style.display = g === 'reat' ? '' : 'none'; });
+    document.querySelectorAll('select.sel-grupo[data-grupo="' + g + '"]').forEach(function(sel) { if (sel.value !== valor) sel.value = valor; });
+  }
+  function trocarTipoGrupo(sel) { abrirTipoGrupo(sel.getAttribute('data-grupo'), sel.value); }
+  function grupoVisivelDe(containerId) {
+    var c = document.getElementById(containerId); if (!c) return null;
+    var sels = c.querySelectorAll('select.sel-grupo');
+    for (var i = 0; i < sels.length; i++) { var fg = sels[i].closest('.field-group'); if (!fg || fg.style.display !== 'none') return sels[i]; }
+    return null;
+  }
+
+  // === ISENÇÃO DE DÉBITOS (pedido de análise) ===
+  function gerarAnaliseIsencao() {
+    if (!validarCampos('sf-analise-isencao')) return;
+    var doc = declFormatarDoc(getVal('aid_doc'));
+    if (!doc) { mostrarAviso('ATENÇÃO: o CPF/CNPJ deve ter 11 (CPF) ou 14 (CNPJ) números.'); document.getElementById('aid_doc').focus(); return; }
+    document.getElementById('aid_doc').value = doc;
+    var docs = getVal('aid_docs').toUpperCase().replace(/\.+$/, '') + '.';
+    var txt = 'Análise de isenção de debitos' +
+      '\nConta contrato: ' + getVal('aid_cc') +
+      '\nSolicitante: ' + getVal('aid_solic').toUpperCase() +
+      '\nCPF/CNPJ: ' + doc +
+      '\nPN: ' + getVal('aid_pn') +
+      '\nTEL: ' + telefonesPadraoNota(getVal('aid_tel')) +
+      '\nEMAIL: ' + getVal('aid_email') +
+      '\nDOCUMENTAÇÃO APRESENTADA: ' + docs;
+    finalizarGeracao('sf-analise-isencao', txt, txt, 'nota');
+  }
+
+  // === ANÁLISE DE ISENÇÃO DE DÉBITOS (Troca de titularidade ou Reativação) ===
+  function valorReais(t) {
+    var v = String(t || '').replace(/[^\d,.-]/g, '');
+    if (v.indexOf(',') >= 0) v = v.replace(/\./g, '').replace(',', '.');
+    var n = parseFloat(v); return isNaN(n) ? null : n;
+  }
+  function toggleIsencaoDeb() {
+    var v = valorReais(getVal('ise_deb_total'));
+    document.getElementById('grp_ise_ni').style.display = (v !== null && v > 12000) ? 'flex' : 'none';
+  }
+  function gerarIsencaoDeb() {
+    toggleIsencaoDeb();
+    if (!validarCampos('sf-isencao-deb')) return;
+    var doc = typeof declFormatarDoc === 'function' ? declFormatarDoc(getVal('ise_doc')) : getVal('ise_doc');
+    if (!doc) { mostrarAviso('ATENÇÃO: o CPF/CNPJ deve ter 11 (CPF) ou 14 (CNPJ) números.'); document.getElementById('ise_doc').focus(); return; }
+    document.getElementById('ise_doc').value = doc;
+    if (valorReais(getVal('ise_deb_total')) === null) { mostrarAviso('ATENÇÃO: informe o valor do débito total em reais (ex: 3.250,80).'); document.getElementById('ise_deb_total').focus(); return; }
+    var de = calcLerData(getVal('ise_de')), ate = calcLerData(getVal('ise_ate'));
+    if (!de || !ate) { mostrarAviso('ATENÇÃO: o período deve ter datas reais no formato dd/mm/aaaa.'); return; }
+    if (ate.getTime() < de.getTime()) { mostrarAviso('ATENÇÃO: a data final do período não pode ser anterior à inicial.'); document.getElementById('ise_ate').focus(); return; }
+    var troca = getVal('ise_servico') === 'troca';
+    var acima = valorReais(getVal('ise_deb_total')) > 12000;
+    var rs = function(t) { return String(t).replace(/^R\$\s*/i, ''); };
+    var txt = 'Título: ' + (troca ? 'TROCA DE TITULARIDADE' : 'REATIVAÇÃO') + ' COM ANÁLISE DE ISENÇÃO DE DÉBITOS' +
+      '\nSolicitante: ' + getVal('ise_solic') +
+      '\nCPF/CNPJ: ' + doc +
+      '\nTelefone com DDD: ' + getVal('ise_tel') +
+      '\nE-mail: ' + getVal('ise_email') +
+      '\nServiço (troca ou reativação): ' + (troca ? 'Troca de titularidade' : 'Reativação') +
+      '\nCC Antiga: ' + getVal('ise_cca') +
+      '\nCC Nova: ' + getVal('ise_ccn') +
+      '\nLeitura: ' + getVal('ise_leitura') +
+      '\nValor do débito total R$: ' + rs(getVal('ise_deb_total')) +
+      '\nCaso débito >R$12.000, número da nota interna: ' + (acima ? getVal('ise_ni') : 'Não se aplica') +
+      '\nValor do débito responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade): ' + (getVal('ise_deb_solic') ? 'R$ ' + rs(getVal('ise_deb_solic')) : 'Não se aplica') +
+      '\nFatura de responsabilidade do Solicitante foi entregue: ' + getVal('ise_fat_solic') +
+      '\nPeríodo (de/até): ' + getVal('ise_de') + ' até ' + getVal('ise_ate') +
+      '\nDocumentação apresentada com comprovação de posse (inserir cópia no SAP KM): ' + getVal('ise_doc_posse') +
+      '\nDados da Receita Federal (inserir cópia no SAP KM): ' + getVal('ise_rec') +
+      '\nCliente ciente do faturamento da fatura de período final de: ' + getVal('ise_periodo_final') +
+      '\nCritério de fatura final: ' + getVal('ise_crit') +
+      '\nFatura final entregue de que forma: ' + getVal('ise_forma') +
+      '\nSe trata de unidade consumidora MMGD Geradora? ' + getVal('ise_mmgd') +
+      '\nNúmero da Tarefa Neo aberta: ' + (getVal('ise_neo') || 'Não se aplica');
+    finalizarGeracao('sf-isencao-deb', txt, txt, 'nota');
+  }
+
+  // === REFAT URGENTE (aba da calculadora) ===
+  var ruLeituraManual = false;
+  function toggleRefatUrgente() {
+    document.getElementById('grp_ru_desab').style.display = getVal('ru_imovel') === 'Desabitado' ? 'flex' : 'none';
+  }
+  function sincronizarLeituraRefat() {
+    var alvo = document.getElementById('ru_leitura');
+    if (alvo && !ruLeituraManual) alvo.value = getVal('calc_lt_cli');
+  }
+  function gerarRefatUrgente() {
+    if (!validarCampos('sf-refat-urg')) return;
+    if (!document.getElementById('ru_foto').checked) {
+      mostrarAviso('ATENÇÃO: é obrigatório confirmar a leitura e o número do medidor através de foto e/ou vídeo.', 'longo');
+      document.getElementById('ru_foto').focus(); return;
+    }
+    if (!calcLerData(getVal('ru_venc'))) { mostrarAviso('ATENÇÃO: o vencimento da fatura deve ser uma data real no formato dd/mm/aaaa.'); document.getElementById('ru_venc').focus(); return; }
+    var desab = getVal('ru_imovel') === 'Desabitado';
+    if (desab && !calcLerData(getVal('ru_desab_data'))) { mostrarAviso('ATENÇÃO: informe desde quando o imóvel está desabitado (dd/mm/aaaa).'); document.getElementById('ru_desab_data').focus(); return; }
+    var valor = getVal('ru_valor').replace(/^R\$\s*/i, '');
+    var txt = 'Título: Refat Urgente' +
+      '\nIdentificação do local de atendimento: ' + getVal('ru_local') +
+      '\nAtendente: ' + getVal('ru_atendente') +
+      '\nSolicitante: ' + getVal('ru_solic') +
+      '\nMotivo da Solicitação: ' + getVal('ru_motivo') +
+      '\nLeitura atual: ' + getVal('ru_leitura') +
+      '\nCliente apresentou foto: Sim e conseguimos confirmar o número do medidor e a leitura' +
+      '\nFatura reclamada: Vencimento ' + getVal('ru_venc') + ' valor de R$ ' + valor +
+      '\nLocal do medidor: ' + getVal('ru_local_med') +
+      '\nSituação do imóvel: ' + (desab ? 'Desabitado desde ' + getVal('ru_desab_data') : 'Habitado') +
+      '\nSituação em campo: ' + getVal('ru_campo') +
+      '\nE-mail do Cliente: ' + getVal('ru_email') +
+      '\nTelefone do Cliente: ' + getVal('ru_tel') +
+      '\nPontos de Referência: ' + getVal('ru_ref') +
+      '\nModalidade de Resposta: ' + getVal('ru_resposta') + '. Prazo de até 05 dias úteis ou 15 dias corridos quando necessária verificação em campo.';
+    document.getElementById('ru_out').value = txt;
+    salvarNoHistorico('sf-refat-urg', '', txt);
+    copiarTexto('ru_out', 'ru_al');
+  }
+  function limparRefatUrgente() {
+    document.querySelectorAll('#sf-refat-urg input[type="text"]').forEach(function(i) { i.value = ''; });
+    document.getElementById('ru_foto').checked = false;
+    ['ru_local_med', 'ru_imovel', 'ru_campo', 'ru_resposta'].forEach(function(id) { var el = document.getElementById(id); el.value = el.options[0].value; });
+    toggleRefatUrgente();
+    document.getElementById('ru_out').value = '';
+    ruLeituraManual = false; sincronizarLeituraRefat();
+  }
+  (function() {
+    var lt = document.getElementById('ru_leitura'), cli = document.getElementById('calc_lt_cli');
+    if (lt) lt.addEventListener('input', function() { ruLeituraManual = lt.value.trim() !== ''; });
+    if (cli) cli.addEventListener('input', sincronizarLeituraRefat);
+  })();
+
   // === DECLARAÇÃO DE LIGAÇÃO ===
   // Reproduz o modelo "CARTA_INICIO" (Neoenergia Coelba). A folha usa estilos
   // próprios (iguais na prévia e na impressão) e é impressa num iframe
@@ -4544,7 +4848,7 @@
   // Cada texto gerado (NOTA + AGENDA) é guardado no localStorage deste
   // navegador, com data/hora e serviço. Fica só nesta máquina; mantém os
   // últimos 90 dias (no máximo 5000 registros).
-  var HIST_CHAVE = 'tp_historico_v1';
+  var HIST_CHAVE = AMBIENTE_TESTE ? 'tp_teste_historico_v1' : 'tp_historico_v1';
   var HIST_DIAS = 90, HIST_MAX = 5000;
 
   function histLer() {
@@ -4562,6 +4866,8 @@
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   }
   function histNomeServico(containerId) {
+    var selG = grupoVisivelDe(containerId);
+    if (selG && selG.selectedIndex >= 0) return GRUPOS_SERVICO[selG.getAttribute('data-grupo')].nome + ' — ' + selG.options[selG.selectedIndex].text;
     var nome = containerId;
     var btn = document.querySelector('#service_nav .sub-btn[data-click*="\'' + containerId + '\'"]');
     if (btn) nome = btn.textContent.trim();
@@ -4649,7 +4955,7 @@
       botao('Excluir', 'histExcluir', 'hist-del');
       topo.appendChild(hora); topo.appendChild(serv); topo.appendChild(acoes);
       item.appendChild(topo);
-      [[h.sf === 'sf-decl' ? 'RESUMO' : 'NOTA', h.nota], [h.sf === 'sf-decl' ? 'DECLARAÇÃO' : 'AGENDA', h.agenda]].forEach(function(par) {
+      [[h.sf === 'sf-decl' ? 'RESUMO' : 'NOTA', h.nota], [h.sf === 'sf-decl' ? 'DECLARAÇÃO' : (h.sf === 'sf-refat-urg' ? 'TEXTO' : 'AGENDA'), h.agenda]].forEach(function(par) {
         if (!par[1]) return;
         var pre = document.createElement('pre'); pre.className = 'hist-texto';
         var r = document.createElement('span'); r.className = 'hist-rotulo'; r.textContent = par[0];
@@ -4676,6 +4982,13 @@
   function histCopiarAgenda(id) { var h = histAchar(id); if (h) histCopiarTexto(h.agenda); }
   function histAbrir(id) {
     var h = histAchar(id); if (!h) return;
+    if (h.sf === 'sf-refat-urg') {
+      mostrarAbaPrincipal('calc');
+      document.getElementById('ru_out').value = h.agenda;
+      fecharHistorico();
+      document.getElementById('ru_out').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
     if (h.sf === 'sf-decl' && h.dados) {
       var dd = h.dados;
       mostrarAbaPrincipal('decl');
@@ -4747,7 +5060,7 @@
   // (PC ou celular). Repositório/gist privado NÃO funciona (responde 404).
   // Para publicar uma atualização: altere VERSAO_ATUAL aqui, atualize o
   // versao.json com o mesmo número e substitua os dois arquivos no gist.
-  var VERSAO_ATUAL = '2.6.1';
+  var VERSAO_ATUAL = '2.7.4';
   // Link do gist, ex.: 'https://gist.github.com/caiquelopess/0123456789abcdef'
   // (vazio = busca de atualizações desligada)
   var GIST_ATUALIZACAO = 'https://gist.github.com/caiquelopess/b682951d237c24ab8cd826fefa2d2d7d';
@@ -4755,8 +5068,9 @@
   // Aberta por esse link, a página confere sozinha o versao.json do próprio
   // site a cada 30 minutos e oferece "Atualizar agora". Aberta como arquivo,
   // consulta o site (e, se falhar, o gist) e oferece abrir a versão online.
-  var SITE_ONLINE = 'https://caiquelopess.github.io/Texto-Padr-o-de-Nota/';
+  var SITE_ONLINE = 'https://caiquelopess.github.io/Texto-Padr-o-de-Nota/' + (AMBIENTE_TESTE ? 'teste/' : '');
   var NA_WEB = /^https?:$/.test(location.protocol);
+  if (AMBIENTE_TESTE) GIST_ATUALIZACAO = '';
   var URL_PAGINA_REPO = GIST_ATUALIZACAO.replace(/\/+$/, '');
   var URL_BASE_RAW = URL_PAGINA_REPO
     ? URL_PAGINA_REPO.replace('https://gist.github.com/', 'https://gist.githubusercontent.com/') + '/raw/'

@@ -1165,6 +1165,7 @@
     <!-- ANÁLISE DE ISENÇÃO DE DÉBITOS (Troca de titularidade ou Reativação) -->
     <div class="subform" id="sf-isencao-deb">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
+      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
       <div class="alert-box">OBS.: Nos casos de representante legal ou solicitante, deverá criar relações no PN em Outros Campos.</div>
       <div class="form-grid">
         <div class="field-group full-width grp-tipo-tt"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="tt" data-change="trocarTipoGrupo(this)"><option value="sf-tt|sem_debito">Sem débitos</option><option value="sf-tt|com_assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|troca">Com análise de isenção de débitos</option><option value="sf-parc-tt|">Com parcelamento de débitos</option></select></div>
@@ -1199,6 +1200,7 @@
     <!-- ISENÇÃO DE DÉBITOS (pedido de análise) -->
     <div class="subform" id="sf-analise-isencao">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
+      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
       <div class="form-grid">
         <div class="field-group"><label>Conta contrato *</label><input type="text" id="aid_cc" inputmode="numeric" placeholder="Ex: 7001234567" required></div>
         <div class="field-group"><label>PN *</label><input type="text" id="aid_pn" inputmode="numeric" placeholder="Parceiro de negócio — ex: 1010000000" required></div>
@@ -1312,7 +1314,9 @@
     <!-- 4. TROCA DE TITULARIDADE -->
     <div class="subform" id="sf-tt">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box">OBS.: Nos casos de representante legal ou solicitante, deverá criar relações no PN em Outros Campos.<br>OBS.: Termo de reconhecimento de débito deve ser anexado como PADE no KM.</div>
+      <div class="alert-box alerta-pade" id="pade_tt" style="display: none;"><b>Atenção:</b> Em caso de reconhecimento de débito o Termo deve ser anexado como PADE no KM já assinado pelo cliente.</div>
+      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
+      <div class="alert-box">OBS.: Nos casos de representante legal ou solicitante, deverá criar relações no PN em Outros Campos.</div>
       <div class="form-grid">
         <div class="field-group full-width grp-tipo-tt"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="tt" data-change="trocarTipoGrupo(this)"><option value="sf-tt|sem_debito">Sem débitos</option><option value="sf-tt|com_assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|troca">Com análise de isenção de débitos</option><option value="sf-parc-tt|">Com parcelamento de débitos</option></select></div>
         <div class="field-group full-width" style="display: none;">
@@ -1325,7 +1329,7 @@
         </div>
         <div class="field-group"><label id="lbl_tt_solic">Solicitante (titular).: *</label><input type="text" id="tt_solic" placeholder="Nome completo" required></div>
         <div class="field-group" id="grp_tt_rep"><label>Representante legal: *</label><input type="text" id="tt_rep" placeholder="Nome do representante ou Não informado" required></div>
-        <div class="field-group"><label id="lbl_tt_cpf">CPF: *</label><input type="text" id="tt_cpf" placeholder="000.000.000-00 ou CNPJ" required></div>
+        <div class="field-group"><label id="lbl_tt_cpf">CPF/CNPJ: *</label><input type="text" id="tt_cpf" placeholder="000.000.000-00 ou CNPJ" required></div>
         <div class="field-group"><label>Telefone com DDD: *</label><input type="text" id="tt_tel" placeholder="Ex: 84988887777" required></div>
         <div class="field-group"><label>E-mail: *</label><input type="text" id="tt_email" placeholder="cliente@email.com ou Não informado" required></div>
         <div class="field-group"><label>Leitura: *</label><input type="text" id="tt_leitura" placeholder="Ex: 1234 ou Sem leitura" required></div>
@@ -1365,7 +1369,8 @@
     <!-- 5. REATIVAÇÃO - DÉBITOS -->
     <div class="subform" id="sf-ri">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box">OBS.: Termo de reconhecimento de débito deve ser anexado como PADE no KM.</div>
+      <div class="alert-box alerta-pade" id="pade_ri"><b>Atenção:</b> Em caso de reconhecimento de débito o Termo deve ser anexado como PADE no KM já assinado pelo cliente.</div>
+      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
       <div class="form-grid">
         <div class="field-group full-width grp-tipo-reat"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="reat" data-change="trocarTipoGrupo(this)"><option value="sf-reativ-comum|">Reativação (sem débitos)</option><option value="sf-reativ-virtual|">Reativação virtual</option><option value="sf-ri|assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|reativacao">Com análise de isenção de débitos</option><option value="sf-ri|virtual_assuncao">Virtual com assunção de débitos</option><option value="sf-ri|virtual_isencao">Virtual com isenção de débitos</option></select></div>
         <div class="field-group full-width" style="display: none;">
@@ -1735,6 +1740,7 @@
     <!-- 27. PARCELAMENTO -->
     <div class="subform" id="sf-parcelamento">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
+      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
       <div class="alert-box">⚠️ Acima de 10 mil imprimir, solicitar assinatura do cliente e inserir no sapkm</div>
       <div class="form-grid">
         <div class="field-group full-width"><label>Tipo de Cliente *</label><select id="parc_tipo" data-change="toggleParcelamento()"><option value="pf">Pessoa Física</option><option value="pj">Pessoa Jurídica</option></select></div>
@@ -1794,6 +1800,8 @@
     <!-- 31. PARCELAMENTO DE DÉBITOS ORIUNDOS DE TROCA DE TITULARIDADE -->
     <div class="subform" id="sf-parc-tt">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
+      <div class="alert-box alerta-pade" id="pade_ptt"><b>Atenção:</b> Em caso de reconhecimento de débito o Termo deve ser anexado como PADE no KM já assinado pelo cliente.</div>
+      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
       <div class="alert-box">⚠️ Inserir cópia dos dados da Receita Federal e do termo de assunção assinado no SAP KM.</div>
       <div class="form-grid">
         <div class="field-group full-width grp-tipo-tt"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="tt" data-change="trocarTipoGrupo(this)"><option value="sf-tt|sem_debito">Sem débitos</option><option value="sf-tt|com_assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|troca">Com análise de isenção de débitos</option><option value="sf-parc-tt|">Com parcelamento de débitos</option></select></div>
@@ -1828,6 +1836,7 @@
     <!-- 32. TR DE PARTIDAS -->
     <div class="subform" id="sf-tr-partidas">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
+      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
       <div class="alert-box">Transferência de Partidas (Pessoa Física e Pessoa Jurídica)</div>
       <div class="form-grid">
         <div class="field-group full-width">
@@ -1841,7 +1850,7 @@
         <div class="field-group"><label>Conta contrato de destino: *</label><input type="text" id="trp_cc_dest" placeholder="Ex: 70xxxxxxx" required></div>
         <div class="field-group"><label>Contrato: *</label><input type="text" id="trp_contrato" placeholder="Ex: 50xxxxxxx" required></div>
         <div class="field-group"><label id="lbl_trp_solic">Solicitante: *</label><input type="text" id="trp_solic" placeholder="Nome completo" required></div>
-        <div class="field-group"><label>CPF: *</label><input type="text" id="trp_cpf" placeholder="000.000.000-00" required></div>
+        <div class="field-group"><label>CPF/CNPJ: *</label><input type="text" id="trp_cpf" placeholder="CPF ou CNPJ — somente números" required></div>
         <div class="field-group" id="grp_trp_cnpj" style="display: none;"><label>CNPJ: *</label><input type="text" id="trp_cnpj" placeholder="00.000.000/0000-00"></div>
         <div class="field-group"><label>Telefone: *</label><input type="text" id="trp_tel" placeholder="Ex: 84988887777" required></div>
         <div class="field-group"><label>E-mail: *</label><input type="text" id="trp_email" placeholder="cliente@email.com ou Não informado" required></div>
@@ -2539,6 +2548,7 @@
   }
 
   function toggleTrocaTitularidade() {
+    setTimeout(atualizarAlertaPade, 0);
     var tipo = document.getElementById('tt_tipo').value;
     var isSem = (tipo === 'sem_debito');
     var isAssuncao = (tipo === 'com_assuncao');
@@ -2546,7 +2556,7 @@
     var hasDebito = (isAssuncao || isIsencao);
 
     document.getElementById('lbl_tt_solic').innerText = hasDebito ? 'Solicitante Sr. ou Sra.: *' : 'Solicitante (titular).: *';
-    document.getElementById('lbl_tt_cpf').innerText = hasDebito ? 'CPF/CNPJ: *' : 'CPF: *';
+    document.getElementById('lbl_tt_cpf').innerText = 'CPF/CNPJ: *';
     document.getElementById('lbl_tt_cca').innerText = hasDebito ? 'CC Antiga: *' : 'CC antiga: *';
     document.getElementById('lbl_tt_ccn').innerText = hasDebito ? 'CC Nova: *' : 'Nova CC: *';
     document.getElementById('lbl_tt_ciente_fim').innerText = hasDebito ? 'Cliente ciente fatura período final de: *' : 'Cliente ciente fatura período: *';
@@ -2640,7 +2650,7 @@
   // Campos que aceitam dd/mm/aaaa ou mm/aaaa
   var DATAS_OU_MES = { trp_venc_de: 1, trp_venc_ate: 1 };
   // Documentos: 'doc' aceita CPF (11) ou CNPJ (14); 'cpf' só 11 dígitos; 'cnpj' só 14
-  var DOCS = { tt_cpf: 'doc', ri_cpf: 'doc', trp_cpf: 'cpf', trp_cnpj: 'cnpj' };
+  var DOCS = { tt_cpf: 'doc', ri_cpf: 'doc', trp_cpf: 'doc', trp_cnpj: 'cnpj' };
 
   function rotuloDoCampo(inp) {
     var labelEl = inp.previousElementSibling;
@@ -3071,7 +3081,7 @@
     if (tipo === 'sem_debito') {
       txt = 'Solicitante (titular).: ' + getVal('tt_solic') +
         '\nSe houver, representante legal: ' + getVal('tt_rep') +
-        '\nCPF: ' + getVal('tt_cpf') +
+        '\nCPF/CNPJ: ' + getVal('tt_cpf') +
         '\nTelefone: ' + getVal('tt_tel') +
         '\nE-mail: ' + getVal('tt_email') +
         '\nLeitura: ' + getVal('tt_leitura') +
@@ -3130,6 +3140,7 @@
   }
 
   function toggleReativDebitos() {
+    setTimeout(atualizarAlertaPade, 0);
     var tipo = document.getElementById('ri_tipo').value;
     var isAssuncao = (tipo === 'assuncao' || tipo === 'virtual_assuncao');
     var isIsencao = (tipo === 'isencao' || tipo === 'virtual_isencao');
@@ -3513,7 +3524,7 @@
         '\nConta contrato de destino: ' + getVal('trp_cc_dest') +
         '\nContrato: ' + getVal('trp_contrato') +
         '\nSolicitante: ' + getVal('trp_solic') +
-        '\nCPF: ' + getVal('trp_cpf') +
+        '\nCPF/CNPJ: ' + getVal('trp_cpf') +
         '\nTelefone: ' + getVal('trp_tel') +
         '\n\nE-mail: ' + getVal('trp_email') +
         '\nValor R$ ' + getVal('trp_valor') + ' referente ao vencimento de ' + getVal('trp_venc_de') + ' até ' + getVal('trp_venc_ate') + ';' +
@@ -3523,7 +3534,7 @@
         '\nConta contrato de destino; ' + getVal('trp_cc_dest') +
         '\nContrato: ' + getVal('trp_contrato') +
         '\nRepresentante legal da empresa: ' + getVal('trp_solic') +
-        '\nCPF; ' + getVal('trp_cpf') +
+        '\nCPF/CNPJ; ' + getVal('trp_cpf') +
         '\nCNPJ; ' + getVal('trp_cnpj') +
         '\n\nTelefone: ' + getVal('trp_tel') +
         '\nE-mail: ' + getVal('trp_email') +
@@ -4522,6 +4533,13 @@
 
 
 
+  // Aviso do Termo (PADE): só nos tipos com assunção/reconhecimento de débito
+  function atualizarAlertaPade() {
+    var tt = document.getElementById('pade_tt'), ri = document.getElementById('pade_ri');
+    if (tt) tt.style.display = getVal('tt_tipo') === 'com_assuncao' ? '' : 'none';
+    if (ri) ri.style.display = /assuncao/.test(getVal('ri_tipo')) ? '' : 'none';
+  }
+
   // === GRUPOS DE SERVIÇO (Troca de Titularidade / Reativação) ===
   // Um botão por grupo; o "Tipo de solicitação" dentro do formulário escolhe
   // qual formulário abrir. Valor "formulário|subtipo".
@@ -4534,6 +4552,7 @@
   function grupoDoBotao(sfId) { for (var g in GRUPOS_SERVICO) if (GRUPOS_SERVICO[g].botao === sfId) return g; return null; }
   function botaoDoGrupo(g) { return document.querySelector('#service_nav .sub-btn[data-click*="\'' + GRUPOS_SERVICO[g].botao + '\'"]'); }
   function aplicarSubtipo(sf, sub) {
+    setTimeout(atualizarAlertaPade, 0);
     if (sf === 'sf-tt' && sub) { document.getElementById('tt_tipo').value = sub; toggleTrocaTitularidade(); }
     if (sf === 'sf-ri' && sub) { document.getElementById('ri_tipo').value = sub; toggleReativDebitos(); }
     if (sf === 'sf-isencao-deb' && sub) { document.getElementById('ise_servico').value = sub; toggleIsencaoDeb(); }
@@ -5043,7 +5062,7 @@
   // (PC ou celular). Repositório/gist privado NÃO funciona (responde 404).
   // Para publicar uma atualização: altere VERSAO_ATUAL aqui, atualize o
   // versao.json com o mesmo número e substitua os dois arquivos no gist.
-  var VERSAO_ATUAL = '2.7.2';
+  var VERSAO_ATUAL = '2.7.3';
   // Link do gist, ex.: 'https://gist.github.com/caiquelopess/0123456789abcdef'
   // (vazio = busca de atualizações desligada)
   var GIST_ATUALIZACAO = 'https://gist.github.com/caiquelopess/b682951d237c24ab8cd826fefa2d2d7d';

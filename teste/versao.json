@@ -1,7 +1,9 @@
 {
-  "versao": "2.7.2",
+  "versao": "2.7.3",
   "data": "14/11/2026",
   "novidades": [
+    "Avisos: relações no PN em caso de CNPJ; Termo como PADE no KM só nos serviços com assunção de débito",
+    "Todos os campos CPF passam a ser CPF/CNPJ",
     "Novo serviço: Isenção de Débitos (pedido de análise, com conta contrato, PN e documentação apresentada)",
     "Troca de Titularidade e Reativação agrupadas: um botão cada, com o \"Tipo de solicitação\" dentro do serviço",
     "Reativação Virtual: nota no formato '... N° X / LEITURA Y' ou '... / NAO INFORMOU LEITURA' (também na REATIVAÇÃO - DÉBITOS virtual)",

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Texto Padrão Neoenergia</title>
+  <script>
+    // Qualquer endereço que não existe (inclusive links antigos de versão,
+    // como /v2.6.1/) vai para a versão atual: /teste/... para o teste, o resto
+    // para a produção.
+    (function() {
+      var base = '/Texto-Padr-o-de-Nota/';
+      var teste = location.pathname.indexOf(base + 'teste/') === 0;
+      location.replace(base + (teste ? 'teste/' : '') + location.hash);
+    })();
+  </script>
+  <meta http-equiv="refresh" content="0; url=/Texto-Padr-o-de-Nota/">
+</head>
+<body>Abrindo a versão atual do Texto Padrão…</body>
+</html>

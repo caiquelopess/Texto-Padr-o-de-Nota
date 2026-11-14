@@ -1,0 +1,9 @@
+{
+  "versao": "2.7.0",
+  "data": "14/11/2026",
+  "novidades": [
+    "Reativação Virtual: nota no formato '... N° X / LEITURA Y' ou '... / NAO INFORMOU LEITURA' (também na REATIVAÇÃO - DÉBITOS virtual)",
+    "Calculadora de Refat: texto do Refat Urgente integrado, com a leitura atual puxada da calculadora",
+    "Novo serviço: Análise de Isenção de Débitos (troca de titularidade ou reativação), no modelo do Texto Padrão Lojas"
+  ]
+}

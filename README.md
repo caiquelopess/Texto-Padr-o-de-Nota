@@ -17,3 +17,9 @@ Gerador de textos de NOTA e AGENDA para os serviços de atendimento.
 1. No `index.html`, aumente `var VERSAO_ATUAL = '...'` (ex.: `2.3.0` → `2.4.0`).
 2. No `versao.json`, coloque o mesmo número em `versao`, a data e as `novidades`.
 3. Envie os dois arquivos para a branch `main`. O GitHub Pages atualiza o site em 1 a 2 minutos.
+
+## Ambiente de teste
+
+Mudanças novas vão primeiro para **https://caiquelopess.github.io/Texto-Padr-o-de-Nota/teste/** (pasta `teste/`).
+A cópia de teste mostra uma faixa "AMBIENTE DE TESTE", guarda um histórico separado e confere atualizações só em `teste/versao.json`.
+Depois de aprovada, a versão é copiada para a raiz (produção) com `AMBIENTE_TESTE = false`.

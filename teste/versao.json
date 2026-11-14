@@ -1,7 +1,8 @@
 {
-  "versao": "2.7.3",
+  "versao": "2.7.4",
   "data": "14/11/2026",
   "novidades": [
+    "Sem forma de tratamento: Sr./Sra. removidos, sempre \"Solicitante\" (exceto a carta da Declaração de Ligação)",
     "Avisos: relações no PN em caso de CNPJ; Termo como PADE no KM só nos serviços com assunção de débito",
     "Todos os campos CPF passam a ser CPF/CNPJ",
     "Novo serviço: Isenção de Débitos (pedido de análise, com conta contrato, PN e documentação apresentada)",

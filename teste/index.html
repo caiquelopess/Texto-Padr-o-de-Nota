@@ -787,7 +787,7 @@
 
     <!-- SUB-NAVEGAÇÃO DE SERVIÇOS -->
     <div class="nav-toolbar">
-      <span class="svc-count" id="svc_count">36 serviços</span>
+      <span class="svc-count" id="svc_count">37 serviços</span>
       <button type="button" class="nav-toggle fechado" id="btn_alternar_servicos" data-click="alternarServicos(this)" aria-expanded="false" aria-controls="painel_servicos"><span class="nav-toggle-label">Exibir serviços</span><span class="chev"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></span></button>
     </div>
     <div class="search-row">
@@ -807,6 +807,7 @@
         <button type="button" class="sub-btn" data-click="trocarAba('sf-dd', this)">Desligamento Definitivo</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-movein-moveout', this)">Estorno Movein e Moveout</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-insp', this)">Inspeção e ligação 91*</button>
+        <button type="button" class="sub-btn" data-click="trocarAba('sf-analise-isencao', this)">Isenção de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-rde-doc', this)">Laudos e Orçamentos - Agenda</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-nova', this)">Ligação Nova</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-muc', this)">Ligação MUC</button>
@@ -1193,6 +1194,22 @@
         <div class="field-group"><label>Número da Tarefa Neo aberta</label><input type="text" id="ise_neo" placeholder="Em branco = Não se aplica"></div>
       </div>
       <div class="actions"><button type="button" class="btn" data-click="gerarIsencaoDeb()">Gerar Texto e Copiar NOTA</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-isencao-deb')">Limpar Tudo</button></div>
+    </div>
+
+    <!-- ISENÇÃO DE DÉBITOS (pedido de análise) -->
+    <div class="subform" id="sf-analise-isencao">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
+      <div class="form-grid">
+        <div class="field-group"><label>Conta contrato *</label><input type="text" id="aid_cc" inputmode="numeric" placeholder="Ex: 7001234567" required></div>
+        <div class="field-group"><label>PN *</label><input type="text" id="aid_pn" inputmode="numeric" placeholder="Parceiro de negócio — ex: 1010000000" required></div>
+        <div class="field-group"><label>Tratamento *</label><select id="aid_trat"><option value="Sr.">Sr.</option><option value="Sra.">Sra.</option></select></div>
+        <div class="field-group"><label>Solicitante *</label><input type="text" id="aid_solic" placeholder="Nome completo" required></div>
+        <div class="field-group"><label>CPF/CNPJ *</label><input type="text" id="aid_doc" inputmode="numeric" placeholder="Somente números" required></div>
+        <div class="field-group"><label>Telefone (DDD + telefone) *</label><input type="text" id="aid_tel" placeholder="Ex: 71993501519" required></div>
+        <div class="field-group full-width"><label>E-mail *</label><input type="text" id="aid_email" placeholder="cliente@email.com ou Não informado" required></div>
+        <div class="field-group full-width"><label>Documentação apresentada *</label><input type="text" id="aid_docs" placeholder="Ex: Escritura e CNH" required></div>
+      </div>
+      <div class="actions"><button type="button" class="btn" data-click="gerarAnaliseIsencao()">Gerar Texto e Copiar NOTA</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-analise-isencao')">Limpar Tudo</button></div>
     </div>
 
     <!-- 1. LIGAÇÃO NOVA (Normal / Por expediente) -->
@@ -3649,6 +3666,7 @@
 
   function limparForm(containerId) {
     desbloquearFormulario(containerId);
+    if (containerId === 'sf-analise-isencao') { document.getElementById('aid_trat').value = 'Sr.'; }
     if (containerId === 'sf-isencao-deb') {
       [['ise_servico', 'troca'], ['ise_fat_solic', 'Não se aplica'], ['ise_rec', 'regular'], ['ise_crit', 'Faturado por média'], ['ise_mmgd', 'Não']].forEach(function(p) { document.getElementById(p[0]).value = p[1]; });
       setTimeout(toggleIsencaoDeb, 0);
@@ -4125,7 +4143,7 @@
     toggleLigacaoNova: toggleLigacaoNova,
     calcularRefat: calcularRefat, gerarCalcRefat: gerarCalcRefat, limparCalcRefat: limparCalcRefat,
     gerarRefatUrgente: gerarRefatUrgente, limparRefatUrgente: limparRefatUrgente, toggleRefatUrgente: toggleRefatUrgente,
-    gerarIsencaoDeb: gerarIsencaoDeb, toggleIsencaoDeb: toggleIsencaoDeb, trocarTipoGrupo: trocarTipoGrupo,
+    gerarAnaliseIsencao: gerarAnaliseIsencao, gerarIsencaoDeb: gerarIsencaoDeb, toggleIsencaoDeb: toggleIsencaoDeb, trocarTipoGrupo: trocarTipoGrupo,
     gerarDeclaracao: gerarDeclaracao, limparDeclaracao: limparDeclaracao, imprimirDeclaracao: imprimirDeclaracao, toggleDeclEncerramento: toggleDeclEncerramento,
     abrirHistorico: abrirHistorico, fecharHistorico: fecharHistorico, fecharHistoricoFundo: fecharHistoricoFundo,
     renderHistorico: renderHistorico, histCopiarNota: histCopiarNota, histCopiarAgenda: histCopiarAgenda,
@@ -4537,6 +4555,24 @@
     var sels = c.querySelectorAll('select.sel-grupo');
     for (var i = 0; i < sels.length; i++) { var fg = sels[i].closest('.field-group'); if (!fg || fg.style.display !== 'none') return sels[i]; }
     return null;
+  }
+
+  // === ISENÇÃO DE DÉBITOS (pedido de análise) ===
+  function gerarAnaliseIsencao() {
+    if (!validarCampos('sf-analise-isencao')) return;
+    var doc = declFormatarDoc(getVal('aid_doc'));
+    if (!doc) { mostrarAviso('ATENÇÃO: o CPF/CNPJ deve ter 11 (CPF) ou 14 (CNPJ) números.'); document.getElementById('aid_doc').focus(); return; }
+    document.getElementById('aid_doc').value = doc;
+    var docs = getVal('aid_docs').toUpperCase().replace(/\.+$/, '') + '.';
+    var txt = 'Análise de isenção de debitos' +
+      '\nConta contrato: ' + getVal('aid_cc') +
+      '\nSolicitante: ' + getVal('aid_trat') + ' ' + getVal('aid_solic').toUpperCase() +
+      '\nCPF/CNPJ: ' + doc +
+      '\nPN: ' + getVal('aid_pn') +
+      '\nTEL: ' + telefonesPadraoNota(getVal('aid_tel')) +
+      '\nEMAIL: ' + getVal('aid_email') +
+      '\nDOCUMENTAÇÃO APRESENTADA: ' + docs;
+    finalizarGeracao('sf-analise-isencao', txt, txt, 'nota');
   }
 
   // === ANÁLISE DE ISENÇÃO DE DÉBITOS (Troca de titularidade ou Reativação) ===
@@ -5007,7 +5043,7 @@
   // (PC ou celular). Repositório/gist privado NÃO funciona (responde 404).
   // Para publicar uma atualização: altere VERSAO_ATUAL aqui, atualize o
   // versao.json com o mesmo número e substitua os dois arquivos no gist.
-  var VERSAO_ATUAL = '2.7.1';
+  var VERSAO_ATUAL = '2.7.2';
   // Link do gist, ex.: 'https://gist.github.com/caiquelopess/0123456789abcdef'
   // (vazio = busca de atualizações desligada)
   var GIST_ATUALIZACAO = 'https://gist.github.com/caiquelopess/b682951d237c24ab8cd826fefa2d2d7d';

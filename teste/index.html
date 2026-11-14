@@ -787,7 +787,7 @@
 
     <!-- SUB-NAVEGAÇÃO DE SERVIÇOS -->
     <div class="nav-toolbar">
-      <span class="svc-count" id="svc_count">40 serviços</span>
+      <span class="svc-count" id="svc_count">36 serviços</span>
       <button type="button" class="nav-toggle fechado" id="btn_alternar_servicos" data-click="alternarServicos(this)" aria-expanded="false" aria-controls="painel_servicos"><span class="nav-toggle-label">Exibir serviços</span><span class="chev"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></span></button>
     </div>
     <div class="search-row">
@@ -797,7 +797,6 @@
     <div id="painel_servicos" style="display: none;">
       <div class="service-nav" id="service_nav">
         <button type="button" class="sub-btn" data-click="trocarAba('sf-afericao', this)">Aferição</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-deb', this)">Análise de Isenção de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-bloq-cobranca', this)">Bloqueio de Cobrança</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-icms', this)">Cadastro de Parceiro - Isenção ICMS</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-canc-parc', this)">Cancelamento de Parcelamento</button>
@@ -815,10 +814,7 @@
         <button type="button" class="sub-btn" data-click="trocarAba('sf-med-roub', this)">Medidor Roubado</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-mc', this)">Modificação Contratual</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-parcelamento', this)">Parcelamento</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-parc-tt', this)">Parcelamento Débitos Troca Titularidade</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reativ-comum', this)">Reativação</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-reativ-virtual', this)">Reativação Virtual</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-ri', this)">REATIVAÇÃO - DÉBITOS</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reclamacao-gd', this)">Reclamação GD</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reclamacoes', this)">Reclamações</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ref-padrao', this)">Reforma Padrão</button>
@@ -1170,7 +1166,9 @@
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">OBS.: Nos casos de representante legal ou solicitante, deverá criar relações no PN em Outros Campos.</div>
       <div class="form-grid">
-        <div class="field-group full-width"><label>Serviço *</label><select id="ise_servico"><option value="troca">Troca de titularidade</option><option value="reativacao">Reativação</option></select></div>
+        <div class="field-group full-width grp-tipo-tt"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="tt" data-change="trocarTipoGrupo(this)"><option value="sf-tt|sem_debito">Sem débitos</option><option value="sf-tt|com_assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|troca">Com análise de isenção de débitos</option><option value="sf-parc-tt|">Com parcelamento de débitos</option></select></div>
+        <div class="field-group full-width grp-tipo-reat" style="display: none;"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="reat" data-change="trocarTipoGrupo(this)"><option value="sf-reativ-comum|">Reativação (sem débitos)</option><option value="sf-reativ-virtual|">Reativação virtual</option><option value="sf-ri|assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|reativacao">Com análise de isenção de débitos</option><option value="sf-ri|virtual_assuncao">Virtual com assunção de débitos</option><option value="sf-ri|virtual_isencao">Virtual com isenção de débitos</option></select></div>
+        <div class="field-group full-width" style="display: none;"><label>Serviço *</label><select id="ise_servico"><option value="troca">Troca de titularidade</option><option value="reativacao">Reativação</option></select></div>
         <div class="field-group"><label>Solicitante Sr. ou Sra. *</label><input type="text" id="ise_solic" placeholder="Nome completo" required></div>
         <div class="field-group"><label>CPF/CNPJ *</label><input type="text" id="ise_doc" inputmode="numeric" placeholder="Somente números" required></div>
         <div class="field-group"><label>Telefone com DDD *</label><input type="text" id="ise_tel" placeholder="Ex: 71993501519" required></div>
@@ -1243,6 +1241,7 @@
     <div class="subform" id="sf-reativ-comum">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="form-grid">
+        <div class="field-group full-width grp-tipo-reat"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="reat" data-change="trocarTipoGrupo(this)"><option value="sf-reativ-comum|">Reativação (sem débitos)</option><option value="sf-reativ-virtual|">Reativação virtual</option><option value="sf-ri|assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|reativacao">Com análise de isenção de débitos</option><option value="sf-ri|virtual_assuncao">Virtual com assunção de débitos</option><option value="sf-ri|virtual_isencao">Virtual com isenção de débitos</option></select></div>
         <div class="field-group"><label>Solicitante *</label><input type="text" id="rtc_solic" placeholder="Nome completo do solicitante" required></div>
         <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="rtc_tel" placeholder="Ex: 71993501519" required></div>
         <div class="field-group"><label>Fase *</label><select id="rtc_tipo_lig"><option value="MONO">MONO</option><option value="BI">BI</option><option value="TRI">TRI</option></select></div>
@@ -1262,6 +1261,7 @@
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box alert-setor">🔁 <strong>Altere o setor responsável na nota para o código 8GE427</strong></div>
       <div class="form-grid">
+        <div class="field-group full-width grp-tipo-reat"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="reat" data-change="trocarTipoGrupo(this)"><option value="sf-reativ-comum|">Reativação (sem débitos)</option><option value="sf-reativ-virtual|">Reativação virtual</option><option value="sf-ri|assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|reativacao">Com análise de isenção de débitos</option><option value="sf-ri|virtual_assuncao">Virtual com assunção de débitos</option><option value="sf-ri|virtual_isencao">Virtual com isenção de débitos</option></select></div>
         <div class="field-group"><label>Solicitante *</label><input type="text" id="rtv_solic" placeholder="Nome completo do solicitante" required></div>
         <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="rtv_tel" placeholder="Ex: 71993501519" required></div>
         <div class="field-group"><label>Fase *</label><select id="rtv_fase"><option value="MONO">MONO</option><option value="BI">BI</option><option value="TRI">TRI</option></select></div>
@@ -1297,7 +1297,8 @@
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">OBS.: Nos casos de representante legal ou solicitante, deverá criar relações no PN em Outros Campos.<br>OBS.: Termo de reconhecimento de débito deve ser anexado como PADE no KM.</div>
       <div class="form-grid">
-        <div class="field-group full-width">
+        <div class="field-group full-width grp-tipo-tt"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="tt" data-change="trocarTipoGrupo(this)"><option value="sf-tt|sem_debito">Sem débitos</option><option value="sf-tt|com_assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|troca">Com análise de isenção de débitos</option><option value="sf-parc-tt|">Com parcelamento de débitos</option></select></div>
+        <div class="field-group full-width" style="display: none;">
           <label>Tipo de Troca *</label>
           <select id="tt_tipo" data-change="toggleTrocaTitularidade()">
             <option value="sem_debito">TROCA DE TITULARIDADE SEM DÉBITOS</option>
@@ -1349,7 +1350,8 @@
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">OBS.: Termo de reconhecimento de débito deve ser anexado como PADE no KM.</div>
       <div class="form-grid">
-        <div class="field-group full-width">
+        <div class="field-group full-width grp-tipo-reat"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="reat" data-change="trocarTipoGrupo(this)"><option value="sf-reativ-comum|">Reativação (sem débitos)</option><option value="sf-reativ-virtual|">Reativação virtual</option><option value="sf-ri|assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|reativacao">Com análise de isenção de débitos</option><option value="sf-ri|virtual_assuncao">Virtual com assunção de débitos</option><option value="sf-ri|virtual_isencao">Virtual com isenção de débitos</option></select></div>
+        <div class="field-group full-width" style="display: none;">
           <label>Tipo de Reativação *</label>
           <select id="ri_tipo" data-change="toggleReativDebitos()">
             <option value="assuncao">REATIVAÇÃO COM ASSUNÇÃO DE DÉBITOS (RECONHECIMENTO DE DÉBITOS)</option>
@@ -1777,6 +1779,7 @@
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box">⚠️ Inserir cópia dos dados da Receita Federal e do termo de assunção assinado no SAP KM.</div>
       <div class="form-grid">
+        <div class="field-group full-width grp-tipo-tt"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="tt" data-change="trocarTipoGrupo(this)"><option value="sf-tt|sem_debito">Sem débitos</option><option value="sf-tt|com_assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|troca">Com análise de isenção de débitos</option><option value="sf-parc-tt|">Com parcelamento de débitos</option></select></div>
         <div class="field-group full-width">
           <label>Tipo de Cliente *</label>
           <select id="ptt_tipo" data-change="toggleParcTT()">
@@ -2112,6 +2115,8 @@
   }
 
   function trocarAba(sfId, btn) {
+    var gBotao = abrindoGrupo ? null : grupoDoBotao(sfId);
+    if (gBotao) { abrirTipoGrupo(gBotao, grupoAtual[gBotao] || document.querySelector('select.sel-grupo[data-grupo="' + gBotao + '"]').options[0].value, btn); return; }
     mostrarCaixaNota(SERVICOS_SO_AGENDA.indexOf(sfId) < 0);
     // Trocar de serviço NÃO apaga o que já foi digitado: os formulários
     // ficam montados no DOM (apenas ocultos), então os dados de cada
@@ -2138,11 +2143,13 @@
     if (!container) return;
 
     container.querySelectorAll('input, select, textarea').forEach(function(el) {
+      if (el.classList.contains('sel-grupo')) return;   // "Tipo de solicitação" é navegação: continua livre
       el.disabled = true;
     });
 
     container.querySelectorAll('button').forEach(function(btn) {
-      if (!btn.classList.contains('btn-clear') && !btn.classList.contains('btn-edit')) {
+      var doGrupo = btn.classList.contains('sel-trigger') && btn.parentNode && btn.parentNode.querySelector('select.sel-grupo');
+      if (!doGrupo && !btn.classList.contains('btn-clear') && !btn.classList.contains('btn-edit')) {
         btn.disabled = true;
       }
     });
@@ -3670,6 +3677,8 @@
     if (containerId === 'sf-bloq-cobranca') { document.getElementById('bloq_tipo').value = 'pagamento'; toggleBloqCobranca(); }
     if (containerId === 'sf-bpc') { document.getElementById('bpc_titular').value = 'mesmo'; toggleBPC(); }
     
+    var selG = grupoVisivelDe(containerId);
+    if (selG) { var vG = grupoAtual[selG.getAttribute('data-grupo')] || selG.value; setTimeout(function() { aplicarSubtipo(containerId, String(vG).split('|')[1] || ''); }, 0); }
     document.getElementById('out-nota').value = '';
     document.getElementById('out-agenda').value = '';
     // A área de transferência NÃO é tocada de propósito: se o texto
@@ -4116,7 +4125,7 @@
     toggleLigacaoNova: toggleLigacaoNova,
     calcularRefat: calcularRefat, gerarCalcRefat: gerarCalcRefat, limparCalcRefat: limparCalcRefat,
     gerarRefatUrgente: gerarRefatUrgente, limparRefatUrgente: limparRefatUrgente, toggleRefatUrgente: toggleRefatUrgente,
-    gerarIsencaoDeb: gerarIsencaoDeb, toggleIsencaoDeb: toggleIsencaoDeb,
+    gerarIsencaoDeb: gerarIsencaoDeb, toggleIsencaoDeb: toggleIsencaoDeb, trocarTipoGrupo: trocarTipoGrupo,
     gerarDeclaracao: gerarDeclaracao, limparDeclaracao: limparDeclaracao, imprimirDeclaracao: imprimirDeclaracao, toggleDeclEncerramento: toggleDeclEncerramento,
     abrirHistorico: abrirHistorico, fecharHistorico: fecharHistorico, fecharHistoricoFundo: fecharHistoricoFundo,
     renderHistorico: renderHistorico, histCopiarNota: histCopiarNota, histCopiarAgenda: histCopiarAgenda,
@@ -4495,6 +4504,41 @@
 
 
 
+  // === GRUPOS DE SERVIÇO (Troca de Titularidade / Reativação) ===
+  // Um botão por grupo; o "Tipo de solicitação" dentro do formulário escolhe
+  // qual formulário abrir. Valor "formulário|subtipo".
+  var GRUPOS_SERVICO = {
+    tt:   { nome: 'Troca de Titularidade', botao: 'sf-tt' },
+    reat: { nome: 'Reativação', botao: 'sf-reativ-comum' }
+  };
+  var grupoAtual = {};
+  var abrindoGrupo = false;
+  function grupoDoBotao(sfId) { for (var g in GRUPOS_SERVICO) if (GRUPOS_SERVICO[g].botao === sfId) return g; return null; }
+  function botaoDoGrupo(g) { return document.querySelector('#service_nav .sub-btn[data-click*="\'' + GRUPOS_SERVICO[g].botao + '\'"]'); }
+  function aplicarSubtipo(sf, sub) {
+    if (sf === 'sf-tt' && sub) { document.getElementById('tt_tipo').value = sub; toggleTrocaTitularidade(); }
+    if (sf === 'sf-ri' && sub) { document.getElementById('ri_tipo').value = sub; toggleReativDebitos(); }
+    if (sf === 'sf-isencao-deb' && sub) { document.getElementById('ise_servico').value = sub; toggleIsencaoDeb(); }
+  }
+  function abrirTipoGrupo(g, valor, btn) {
+    var partes = String(valor).split('|'), sf = partes[0], sub = partes[1] || '';
+    grupoAtual[g] = valor;
+    abrindoGrupo = true;
+    try { trocarAba(sf, btn || botaoDoGrupo(g)); } finally { abrindoGrupo = false; }
+    aplicarSubtipo(sf, sub);
+    // a análise de isenção atende os dois grupos: mostra só o seletor do grupo atual
+    document.querySelectorAll('#sf-isencao-deb .grp-tipo-tt').forEach(function(e) { e.style.display = g === 'tt' ? '' : 'none'; });
+    document.querySelectorAll('#sf-isencao-deb .grp-tipo-reat').forEach(function(e) { e.style.display = g === 'reat' ? '' : 'none'; });
+    document.querySelectorAll('select.sel-grupo[data-grupo="' + g + '"]').forEach(function(sel) { if (sel.value !== valor) sel.value = valor; });
+  }
+  function trocarTipoGrupo(sel) { abrirTipoGrupo(sel.getAttribute('data-grupo'), sel.value); }
+  function grupoVisivelDe(containerId) {
+    var c = document.getElementById(containerId); if (!c) return null;
+    var sels = c.querySelectorAll('select.sel-grupo');
+    for (var i = 0; i < sels.length; i++) { var fg = sels[i].closest('.field-group'); if (!fg || fg.style.display !== 'none') return sels[i]; }
+    return null;
+  }
+
   // === ANÁLISE DE ISENÇÃO DE DÉBITOS (Troca de titularidade ou Reativação) ===
   function valorReais(t) {
     var v = String(t || '').replace(/[^\d,.-]/g, '');
@@ -4769,6 +4813,8 @@
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   }
   function histNomeServico(containerId) {
+    var selG = grupoVisivelDe(containerId);
+    if (selG && selG.selectedIndex >= 0) return GRUPOS_SERVICO[selG.getAttribute('data-grupo')].nome + ' — ' + selG.options[selG.selectedIndex].text;
     var nome = containerId;
     var btn = document.querySelector('#service_nav .sub-btn[data-click*="\'' + containerId + '\'"]');
     if (btn) nome = btn.textContent.trim();
@@ -4961,7 +5007,7 @@
   // (PC ou celular). Repositório/gist privado NÃO funciona (responde 404).
   // Para publicar uma atualização: altere VERSAO_ATUAL aqui, atualize o
   // versao.json com o mesmo número e substitua os dois arquivos no gist.
-  var VERSAO_ATUAL = '2.7.0';
+  var VERSAO_ATUAL = '2.7.1';
   // Link do gist, ex.: 'https://gist.github.com/caiquelopess/0123456789abcdef'
   // (vazio = busca de atualizações desligada)
   var GIST_ATUALIZACAO = 'https://gist.github.com/caiquelopess/b682951d237c24ab8cd826fefa2d2d7d';

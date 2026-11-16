@@ -1,7 +1,8 @@
 {
-  "versao": "2.8.0",
-  "data": "14/11/2026",
+  "versao": "2.8.1",
+  "data": "16/11/2026",
   "novidades": [
+    "Análise de isenção de débitos: período (de/até) opcional; em branco sai \"Não se aplica\"",
     "Ícone da página na aba do navegador (L da Logos com as pétalas da Neoenergia)",
     "Fim das versões: o site abre sempre na publicação mais recente, sem botão de atualizar",
     "Atualização automática só com a tela limpa: formulário pela metade ou texto gerado nunca são perdidos",

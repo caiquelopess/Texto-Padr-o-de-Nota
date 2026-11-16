@@ -1168,8 +1168,8 @@
         <div class="field-group full-width" id="grp_ise_ni" style="display: none;"><label>Débito acima de R$ 12.000 — número da nota interna *</label><input type="text" id="ise_ni" placeholder="Nº da nota interna" required></div>
         <div class="field-group full-width"><label>Valor do débito de responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade)</label><input type="text" id="ise_deb_solic" inputmode="decimal" placeholder="Em branco = Não se aplica"></div>
         <div class="field-group"><label>Fatura de responsabilidade do Solicitante foi entregue? *</label><select id="ise_fat_solic"><option value="Não se aplica">Não se aplica</option><option value="Sim">Sim</option><option value="Não">Não</option></select></div>
-        <div class="field-group"><label>Período (de) *</label><input type="text" id="ise_de" inputmode="numeric" placeholder="dd/mm/aaaa" data-input="mascararData(this)" required></div>
-        <div class="field-group"><label>Período (até) *</label><input type="text" id="ise_ate" inputmode="numeric" placeholder="dd/mm/aaaa" data-input="mascararData(this)" required></div>
+        <div class="field-group"><label>Período (de)</label><input type="text" id="ise_de" inputmode="numeric" placeholder="dd/mm/aaaa — em branco = Não se aplica" data-input="mascararData(this)"></div>
+        <div class="field-group"><label>Período (até)</label><input type="text" id="ise_ate" inputmode="numeric" placeholder="dd/mm/aaaa — em branco = Não se aplica" data-input="mascararData(this)"></div>
         <div class="field-group full-width"><label>Documentação apresentada com comprovação de posse (inserir cópia no SAP KM) *</label><input type="text" id="ise_doc_posse" list="ise_docs_lista" placeholder="Ex: Contrato de locação, Contrato de Compra e Venda, Matrícula do imóvel" required>
           <datalist id="ise_docs_lista"><option value="Contrato de locação"><option value="Contrato de Compra e Venda"><option value="Matrícula do imóvel"></datalist></div>
         <div class="field-group"><label>Dados da Receita Federal (inserir cópia no SAP KM) *</label><select id="ise_rec"><option value="regular">regular</option><option value="pendente de regularização">pendente de regularização</option><option value="indisponível">indisponível</option></select></div>
@@ -4594,9 +4594,15 @@
     if (!doc) { mostrarAviso('ATENÇÃO: o CPF/CNPJ deve ter 11 (CPF) ou 14 (CNPJ) números.'); document.getElementById('ise_doc').focus(); return; }
     document.getElementById('ise_doc').value = doc;
     if (valorReais(getVal('ise_deb_total')) === null) { mostrarAviso('ATENÇÃO: informe o valor do débito total em reais (ex: 3.250,80).'); document.getElementById('ise_deb_total').focus(); return; }
-    var de = calcLerData(getVal('ise_de')), ate = calcLerData(getVal('ise_ate'));
-    if (!de || !ate) { mostrarAviso('ATENÇÃO: o período deve ter datas reais no formato dd/mm/aaaa.'); return; }
-    if (ate.getTime() < de.getTime()) { mostrarAviso('ATENÇÃO: a data final do período não pode ser anterior à inicial.'); document.getElementById('ise_ate').focus(); return; }
+    // Período só quando há débito de responsabilidade do solicitante: os dois em branco = "Não se aplica"
+    var temDe = !!getVal('ise_de'), temAte = !!getVal('ise_ate'), periodo = 'Não se aplica';
+    if (temDe !== temAte) { mostrarAviso('ATENÇÃO: preencha as duas datas do período (de e até) ou deixe as duas em branco.'); document.getElementById(temDe ? 'ise_ate' : 'ise_de').focus(); return; }
+    if (temDe) {
+      var de = calcLerData(getVal('ise_de')), ate = calcLerData(getVal('ise_ate'));
+      if (!de || !ate) { mostrarAviso('ATENÇÃO: o período deve ter datas reais no formato dd/mm/aaaa.'); return; }
+      if (ate.getTime() < de.getTime()) { mostrarAviso('ATENÇÃO: a data final do período não pode ser anterior à inicial.'); document.getElementById('ise_ate').focus(); return; }
+      periodo = getVal('ise_de') + ' até ' + getVal('ise_ate');
+    }
     var troca = getVal('ise_servico') === 'troca';
     var acima = valorReais(getVal('ise_deb_total')) > 12000;
     var rs = function(t) { return String(t).replace(/^R\$\s*/i, ''); };
@@ -4613,7 +4619,7 @@
       '\nCaso débito >R$12.000, número da nota interna: ' + (acima ? getVal('ise_ni') : 'Não se aplica') +
       '\nValor do débito responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade): ' + (getVal('ise_deb_solic') ? 'R$ ' + rs(getVal('ise_deb_solic')) : 'Não se aplica') +
       '\nFatura de responsabilidade do Solicitante foi entregue: ' + getVal('ise_fat_solic') +
-      '\nPeríodo (de/até): ' + getVal('ise_de') + ' até ' + getVal('ise_ate') +
+      '\nPeríodo (de/até): ' + periodo +
       '\nDocumentação apresentada com comprovação de posse (inserir cópia no SAP KM): ' + getVal('ise_doc_posse') +
       '\nDados da Receita Federal (inserir cópia no SAP KM): ' + getVal('ise_rec') +
       '\nCliente ciente do faturamento da fatura de período final de: ' + getVal('ise_periodo_final') +
@@ -5046,7 +5052,7 @@
   // ?v=2.6.1) levam direto para a produção.
   // PUBLICAR: troque o código abaixo e o campo "versao" do versao.json pelo mesmo
   // valor (ex.: a data e hora da publicação). Ele é interno e não aparece na tela.
-  var VERSAO_ATUAL = '2.8.0';
+  var VERSAO_ATUAL = '2.8.1';
   var SITE_PRODUCAO = 'https://caiquelopess.github.io/Texto-Padr-o-de-Nota/';
   var NA_WEB = /^https?:$/.test(location.protocol);
 

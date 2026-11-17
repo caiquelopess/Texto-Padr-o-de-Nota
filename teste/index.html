@@ -639,6 +639,12 @@
     .pend-responder select, .pend-responder input { width: 100%; }
     @media (max-width: 640px) { .pend-responder { grid-template-columns: 1fr; } }
     .pend-concluidas { margin-top: 18px; }
+    .pend-no-servico { margin: 6px 0 18px; padding: 14px 16px 6px; border: 1px dashed var(--neon-1); border-radius: var(--r-card); background: var(--primary-soft); }
+    .pend-no-servico-tit { margin: 0 0 10px; font-weight: 700; color: var(--strong); font-size: 14px; }
+    .pend-no-servico textarea { width: 100%; resize: vertical; }
+    .pend-no-servico .actions .btn { flex: 1 1 auto; }
+    .pend-coment { margin: 8px 0 0; padding: 8px 10px; border-radius: var(--r-control); background: var(--input-bg-soft); font-size: 13.5px; color: var(--strong); white-space: pre-wrap; }
+    .pend-item.agendada { border-left-color: var(--border-strong); }
     .pend-concluidas summary { cursor: pointer; font-size: 13px; color: var(--muted); padding: 6px 0; }
     .pend-cadencia { font-size: 12px; color: var(--muted); margin: 18px 0 0; line-height: 1.6; }
     /* lembrete flutuante */
@@ -2112,29 +2118,21 @@
 
   <div class="content" id="painel_pend" style="display: none;">
     <h2 class="tensao-titulo">Pendências</h2>
-    <p class="tensao-desc">Serviços abertos que precisam de resposta dentro do prazo. A Análise de Isenção de Débitos entra aqui sozinha ao gerar o texto; outros serviços podem ser incluídos em "Nova pendência". Fica salvo só neste computador.</p>
+    <p class="tensao-desc">Atendimentos para terminar depois. Escolha o serviço, preencha normalmente e use o quadro <b>Pendência</b> no fim do formulário para escrever o comentário (ex.: "Complementar nota 300123456") e a data do lembrete. A Análise de Isenção de Débitos entra aqui sozinha, com prazo de 5 dias úteis. Fica salvo só neste computador.</p>
     <div class="pend-resumo" id="pend_resumo"></div>
-    <div class="pend-acoes">
-      <button type="button" class="btn" data-click="novaPendencia()">+ Nova pendência</button>
-      <button type="button" class="btn btn-clear" id="btn_pend_notif" data-click="ativarAvisosNavegador()">Ativar avisos do navegador</button>
-    </div>
-    <div class="pend-form" id="pend_form" style="display: none;">
-      <div class="form-grid">
-        <div class="field-group"><label>Tipo *</label><select id="pend_tipo" data-change="pendTipoMudou()"><option value="isencao">Análise de Isenção de Débitos</option><option value="outro">Outro serviço</option></select></div>
-        <div class="field-group" id="grp_pend_nome" style="display: none;"><label>Nome do serviço *</label><input type="text" id="pend_nome" placeholder="Ex: Refat Urgente"></div>
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="pend_solic" placeholder="Nome completo"></div>
-        <div class="field-group"><label>Conta contrato</label><input type="text" id="pend_cc" inputmode="numeric" placeholder="Ex: 7001234567"></div>
-        <div class="field-group"><label>Nº da nota / protocolo</label><input type="text" id="pend_nota" placeholder="Pode preencher depois"></div>
-        <div class="field-group"><label>Data de abertura *</label><input type="text" id="pend_abertura" inputmode="numeric" placeholder="dd/mm/aaaa" data-input="mascararData(this)"></div>
-        <div class="field-group"><label>Prazo (dias úteis) *</label><input type="text" id="pend_prazo" inputmode="numeric" placeholder="Ex: 5"></div>
-        <div class="field-group full-width"><label>Observação</label><input type="text" id="pend_obs" placeholder="Opcional"></div>
+    <div class="pend-form">
+      <div class="form-grid" style="margin-bottom: 14px;">
+        <div class="field-group full-width"><label>Adicionar pendência — escolha o serviço</label><select id="pend_servico"></select></div>
       </div>
-      <div class="actions"><button type="button" class="btn" data-click="salvarPendenciaManual()">Salvar pendência</button><button type="button" class="btn btn-clear" data-click="fecharFormPendencia()">Cancelar</button></div>
+      <div class="pend-acoes" style="margin-bottom: 0;">
+        <button type="button" class="btn" data-click="iniciarPendenciaServico()">Abrir o serviço e preencher</button>
+        <button type="button" class="btn btn-clear" id="btn_pend_notif" data-click="ativarAvisosNavegador()">Ativar avisos do navegador</button>
+      </div>
     </div>
     <h3 class="pend-sub">Em aberto</h3>
     <div class="pend-lista" id="pend_lista"></div>
     <details class="pend-concluidas" id="pend_concl_box"><summary id="pend_concl_tit">Concluídas</summary><div class="pend-lista" id="pend_concl"></div></details>
-    <p class="pend-cadencia"><b>Lembretes</b> (com a página aberta): 3 ou mais dias úteis — 1 vez por dia · 2 dias úteis — a cada 4 horas · 1 dia útil — a cada 2 horas · vence hoje — a cada 30 minutos · vencida — a cada 15 minutos.<br>Dias úteis: sem sábados, domingos, feriados nacionais e 2 de Julho; Carnaval e Corpus Christi contam como dia útil (o prazo nunca fica depois do real).</p>
+    <p class="pend-cadencia"><b>Lembretes</b> (com a página aberta): pendência com data — a partir do dia do lembrete, a cada 30 minutos; depois da data, alerta grave a cada 15 minutos. Análise de isenção (prazo de 5 dias úteis) — 1 vez por dia, depois a cada 4 h (2 dias úteis), 2 h (1 dia útil), 30 min (vence hoje) e 15 min (vencida).<br>Dias úteis: sem sábados, domingos, feriados nacionais e 2 de Julho; Carnaval e Corpus Christi contam como dia útil (o prazo nunca fica depois do real).</p>
   </div>
 
   <div class="content" id="painel_tensao" style="display: none;">
@@ -2165,6 +2163,19 @@
 </div>
 
 <div class="toast-aviso" id="toastAviso" role="alert"></div>
+
+<div class="pend-no-servico" id="pend_box" style="display: none;">
+  <p class="pend-no-servico-tit">📌 Pendência deste atendimento</p>
+  <div class="form-grid">
+    <div class="field-group full-width"><label>Comentário *</label><textarea id="pendc_coment" rows="2" placeholder="Ex: Complementar nota 300123456"></textarea></div>
+    <div class="field-group"><label>Data para lembrete *</label><input type="text" id="pendc_data" inputmode="numeric" placeholder="dd/mm/aaaa" data-input="mascararData(this)"></div>
+  </div>
+  <div class="actions">
+    <button type="button" class="btn" data-click="salvarPendenciaServico()">Salvar pendência</button>
+    <button type="button" class="btn" id="pendc_concluir" data-click="concluirPendenciaServico()">Concluir pendência (gerar texto)</button>
+    <button type="button" class="btn btn-clear" data-click="sairModoPendencia()">Cancelar</button>
+  </div>
+</div>
 
 <div class="pend-lembrete" id="pend_lembrete" role="alert" style="display: none;">
   <p class="pend-lembrete-tit" id="pend_lembrete_tit"></p>
@@ -2226,6 +2237,7 @@
   var nomeServicoAtivo = {}, subtipoAtivo = {};
   function trocarAba(id, btn) {
     var partes = String(id).split('|'), sf = partes[0], sub = partes[1] || '';
+    if (typeof pendModo !== 'undefined' && pendModo && pendModo.servicoId !== id) sairModoPendencia(true);   // trocou de serviço: sai do modo pendência
     subtipoAtivo[sf] = sub;
     if (sub && btn && btn.textContent) nomeServicoAtivo[sf] = btn.textContent.trim(); else delete nomeServicoAtivo[sf];
     trocarAbaBase(sf, btn);
@@ -2325,6 +2337,7 @@
   }
 
   function finalizarGeracao(containerId, notaTxt, agendaTxt, copyTarget) {
+    if (typeof pendenciaAoGerar === 'function') setTimeout(function() { pendenciaAoGerar(containerId, notaTxt, agendaTxt); }, 0);
     mostrarCaixaNota(!!notaTxt);
     document.getElementById('out-nota').value = notaTxt;
     document.getElementById('out-agenda').value = agendaTxt;
@@ -4245,7 +4258,8 @@
     calcularRefat: calcularRefat, gerarCalcRefat: gerarCalcRefat, limparCalcRefat: limparCalcRefat,
     gerarRefatUrgente: gerarRefatUrgente, limparRefatUrgente: limparRefatUrgente, toggleRefatUrgente: toggleRefatUrgente,
     gerarAnaliseIsencao: gerarAnaliseIsencao, gerarIsencaoDeb: gerarIsencaoDeb, toggleIsencaoDeb: toggleIsencaoDeb,
-    novaPendencia: novaPendencia, pendTipoMudou: pendTipoMudou, fecharFormPendencia: fecharFormPendencia, salvarPendenciaManual: salvarPendenciaManual,
+    iniciarPendenciaServico: iniciarPendenciaServico, salvarPendenciaServico: salvarPendenciaServico, concluirPendenciaServico: concluirPendenciaServico,
+    sairModoPendencia: sairModoPendencia, retomarPendencia: retomarPendencia, editarComentario: editarComentario,
     abrirResposta: abrirResposta, atualizarMotivosPend: atualizarMotivosPend, concluirPendencia: concluirPendencia, informarNota: informarNota,
     excluirPendencia: excluirPendencia, reabrirPendencia: reabrirPendencia, alternarTextoPend: alternarTextoPend, copiarTextoPend: copiarTextoPend,
     fecharLembrete: fecharLembrete, verPendencias: verPendencias, ativarAvisosNavegador: ativarAvisosNavegador,
@@ -4921,23 +4935,26 @@
   })();
 
   // === PENDÊNCIAS ===
-  // Serviços abertos que precisam de resposta no prazo (ex.: Análise de
-  // Isenção de Débitos: 5 dias úteis). Salvo no localStorage deste computador.
-  // TIPOS DE RESPOSTA: lista inicial, ajustar conforme o procedimento oficial.
+  // Dois tipos, salvos no localStorage deste computador:
+  //  - 'servico': atendimento para terminar depois. Guarda os campos do
+  //    formulário, um comentário e a data do lembrete. Concluir = reabrir o
+  //    serviço preenchido e gerar o texto (vai para o Histórico).
+  //  - 'prazo': Análise de Isenção de Débitos, criada ao gerar o texto, com
+  //    prazo de 5 dias úteis e resposta Deferido/Indeferido.
+  // TIPOS DE RESPOSTA da isenção: lista inicial, ajustar conforme o procedimento oficial.
   var TIPOS_PENDENCIA = {
     isencao: { nome: 'Análise de Isenção de Débitos', prazo: 5,
       deferido: ['Deferido — isenção total do débito', 'Deferido parcialmente — isenção de parte do débito/período'],
       indeferido: ['Documentação não comprova a posse no período do débito', 'Solicitante era responsável pelo imóvel no período do débito',
                    'Documentação ilegível, incompleta ou fora da validade', 'Dados da Receita Federal pendentes ou irregulares',
-                   'Outro motivo (descrever na observação)'] },
-    outro: { nome: 'Outro serviço', prazo: 5,
-      deferido: ['Atendido / deferido'], indeferido: ['Não atendido / indeferido (descrever na observação)'] }
+                   'Outro motivo (descrever na observação)'] }
   };
   var PEND_CHAVE = AMBIENTE_TESTE ? 'tp_teste_pendencias_v1' : 'tp_pendencias_v1';
   var PEND_DIAS_CONCLUIDAS = 90;
 
   function pendLer() { try { var a = JSON.parse(localStorage.getItem(PEND_CHAVE) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
   function pendGravar(l) { try { localStorage.setItem(PEND_CHAVE, JSON.stringify(l)); } catch (e) { mostrarAviso('Não foi possível salvar as pendências neste navegador.'); } }
+  function pKind(pd) { return pd.kind === 'servico' ? 'servico' : 'prazo'; }
 
   // ---- datas e dias úteis (datas como 'aaaa-mm-dd') ----
   function pIso(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -4945,21 +4962,20 @@
   function pDeBR(br) { var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(br || '').trim()); if (!m) return null; var d = new Date(+m[3], +m[2] - 1, +m[1]); return (d.getDate() === +m[1] && d.getMonth() === +m[2] - 1) ? pIso(d) : null; }
   function pBR(iso) { var x = String(iso || '').split('-'); return x.length === 3 ? x[2] + '/' + x[1] + '/' + x[0] : ''; }
   function pData(iso) { var x = iso.split('-'); return new Date(+x[0], +x[1] - 1, +x[2]); }
+  function pDiasCorridos(a, b) { return Math.round((pData(b) - pData(a)) / 86400000); }
   var pFeriadosCache = {};
   function pFeriados(ano) {
     if (pFeriadosCache[ano]) return pFeriadosCache[ano];
     var f = {};
     ['01-01', '04-21', '05-01', '07-02', '09-07', '10-12', '11-02', '11-15', '11-20', '12-25'].forEach(function(md) { f[ano + '-' + md] = true; });
-    // Sexta-feira Santa (Páscoa - 2 dias)
     var a = ano % 19, b = Math.floor(ano / 100), c = ano % 100, d = Math.floor(b / 4), e = b % 4, g = Math.floor((8 * b + 13) / 25),
         h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 19 * l) / 433),
         mes = Math.floor((h + l - 7 * m + 90) / 25), dia = (h + l - 7 * m + 33 * mes + 19) % 32;
-    var pascoa = new Date(ano, mes - 1, dia); pascoa.setDate(pascoa.getDate() - 2); f[pIso(pascoa)] = true;
+    var sextaSanta = new Date(ano, mes - 1, dia); sextaSanta.setDate(sextaSanta.getDate() - 2); f[pIso(sextaSanta)] = true;
     return (pFeriadosCache[ano] = f);
   }
   function pUtil(iso) { var d = pData(iso), w = d.getDay(); return w !== 0 && w !== 6 && !pFeriados(d.getFullYear())[iso]; }
   function pSomarUteis(iso, n) { var d = pData(iso), c = 0; while (c < n) { d.setDate(d.getDate() + 1); if (pUtil(pIso(d))) c++; } return pIso(d); }
-  // dias úteis de hoje até o prazo (0 = vence hoje; negativo = vencida há N dias úteis)
   function pUteisAte(prazoIso) {
     var hoje = pHoje();
     if (hoje === prazoIso) return 0;
@@ -4967,80 +4983,193 @@
     while (pIso(d) < fim) { d.setDate(d.getDate() + 1); if (pUtil(pIso(d))) c++; }
     return hoje < prazoIso ? c : -Math.max(c, 1);
   }
+  // classe: agendada | ok | proxima | hoje | vencida | concluida
   function pSituacao(pd) {
-    if (pd.status === 'concluida') return { classe: 'concluida', texto: 'Respondida em ' + pBR(pd.respostaData) + (pd.respostaData <= pd.prazo ? ' (no prazo)' : ' (fora do prazo)'), dias: null };
+    if (pd.status === 'concluida') {
+      if (pKind(pd) === 'servico') return { classe: 'concluida', texto: 'Concluída em ' + pBR(pd.respostaData), dias: null };
+      return { classe: 'concluida', texto: 'Respondida em ' + pBR(pd.respostaData) + (pd.respostaData <= pd.prazo ? ' (no prazo)' : ' (fora do prazo)'), dias: null };
+    }
+    if (pKind(pd) === 'servico') {
+      var dc = pDiasCorridos(pHoje(), pd.lembrete);
+      if (dc > 0) return { classe: 'agendada', texto: 'Lembrete em ' + pBR(pd.lembrete) + (dc === 1 ? ' (amanhã)' : ' (em ' + dc + ' dias)'), dias: dc };
+      if (dc === 0) return { classe: 'hoje', texto: 'Lembrete HOJE', dias: 0 };
+      return { classe: 'vencida', texto: 'ATRASADA há ' + (-dc) + (dc === -1 ? ' dia' : ' dias'), dias: dc };
+    }
     var n = pUteisAte(pd.prazo);
     if (n < 0) return { classe: 'vencida', texto: 'Vencida há ' + (-n) + (n === -1 ? ' dia útil' : ' dias úteis'), dias: n };
     if (n === 0) return { classe: 'hoje', texto: 'Vence HOJE', dias: 0 };
     if (n <= 2) return { classe: 'proxima', texto: 'Vence em ' + n + (n === 1 ? ' dia útil' : ' dias úteis'), dias: n };
     return { classe: 'ok', texto: 'Vence em ' + n + ' dias úteis', dias: n };
   }
-
-  // ---- criação ----
   function pNovoId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-  function pNomeTipo(pd) { return pd.tipo === 'outro' && pd.nome ? pd.nome : (TIPOS_PENDENCIA[pd.tipo] || TIPOS_PENDENCIA.outro).nome; }
-  // Chamado ao gerar uma Análise de Isenção: cria (ou atualiza, se for o mesmo cliente no mesmo dia).
+  function pEsc(t) { return declEsc(t); }
+  function pAchar(id) { var l = pendLer(); for (var i = 0; i < l.length; i++) if (l[i].id === id) return { lista: l, pd: l[i] }; return null; }
+
+  // ---- Análise de Isenção: criada ao gerar o texto ----
   function criarPendenciaAuto(tipo, dados) {
     var lista = pendLer(), hoje = pHoje(), t = TIPOS_PENDENCIA[tipo];
     var chave = String(dados.doc || dados.cc || dados.solicitante || '').replace(/\W/g, '').toLowerCase();
     var existente = null;
-    lista.forEach(function(pd) { if (pd.status === 'aberta' && pd.tipo === tipo && pd.abertura === hoje && pd.chave === chave && pd.origem === dados.origem) existente = pd; });
+    lista.forEach(function(pd) { if (pKind(pd) === 'prazo' && pd.status === 'aberta' && pd.tipo === tipo && pd.abertura === hoje && pd.chave === chave && pd.origem === dados.origem) existente = pd; });
     if (existente) {
       existente.solicitante = dados.solicitante; existente.cc = dados.cc; existente.doc = dados.doc; existente.texto = dados.texto;
       pendGravar(lista); atualizarBadgePendencias();
       return existente;
     }
-    var pd = { id: pNovoId(), tipo: tipo, origem: dados.origem || t.nome, chave: chave, solicitante: dados.solicitante || '', cc: dados.cc || '', doc: dados.doc || '',
-      nota: '', obs: '', texto: dados.texto || '', abertura: hoje, prazoUteis: t.prazo, prazo: pSomarUteis(hoje, t.prazo), status: 'aberta', ultimoLembrete: Date.now() };
+    var pd = { id: pNovoId(), kind: 'prazo', tipo: tipo, origem: dados.origem || t.nome, chave: chave, solicitante: dados.solicitante || '', cc: dados.cc || '', doc: dados.doc || '',
+      nota: '', comentario: '', texto: dados.texto || '', abertura: hoje, prazoUteis: t.prazo, prazo: pSomarUteis(hoje, t.prazo), status: 'aberta', ultimoLembrete: Date.now() };
     lista.unshift(pd); pendGravar(lista); atualizarBadgePendencias();
     setTimeout(function() { mostrarAviso('Pendência criada: responder até ' + pBR(pd.prazo) + ' (' + t.prazo + ' dias úteis). Veja na aba Pendências.', 'ok'); }, 900);
     return pd;
   }
-  function novaPendencia() {
-    var f = document.getElementById('pend_form');
-    ['pend_nome', 'pend_solic', 'pend_cc', 'pend_nota', 'pend_obs'].forEach(function(id) { document.getElementById(id).value = ''; });
-    document.getElementById('pend_tipo').value = 'isencao';
-    document.getElementById('pend_abertura').value = pBR(pHoje());
-    pendTipoMudou();
-    f.style.display = 'block';
-    document.getElementById('pend_solic').focus();
+
+  // ---- pendência de serviço: abrir, preencher, salvar, retomar, concluir ----
+  var pendModo = null;   // { sf, servicoId, nome, id (quando já salva) }
+  function pSf(servicoId) { return String(servicoId).split('|')[0]; }
+  function pBotaoServico(servicoId) { return document.querySelector('#service_nav .sub-btn[data-click*="\'' + servicoId + '\'"]'); }
+  function montarListaServicosPend() {
+    var sel = document.getElementById('pend_servico'); if (!sel) return;
+    sel.innerHTML = '';
+    document.querySelectorAll('#service_nav .sub-btn').forEach(function(b) {
+      var m = /trocarAba\('([^']+)'/.exec(b.getAttribute('data-click') || ''); if (!m) return;
+      var o = document.createElement('option'); o.value = m[1]; o.textContent = b.textContent.trim(); sel.appendChild(o);
+    });
+    recriarListaSelect(sel);
   }
-  function pendTipoMudou() {
-    var outro = getVal('pend_tipo') === 'outro';
-    document.getElementById('grp_pend_nome').style.display = outro ? 'flex' : 'none';
-    document.getElementById('pend_prazo').value = TIPOS_PENDENCIA[getVal('pend_tipo')].prazo;
+  // As listas suspensas personalizadas são montadas ao carregar a página; quando
+  // as opções de um <select> mudam depois disso, a lista visível precisa ser refeita.
+  function recriarListaSelect(sel) {
+    var ctx = sel && sel._selCtx; if (!ctx) return;
+    ctx.list.innerHTML = '';
+    for (var i = 0; i < sel.options.length; i++) {
+      var it = document.createElement('div');
+      it.className = 'sel-opt'; it.setAttribute('role', 'option'); it.setAttribute('data-idx', String(i));
+      it.textContent = sel.options[i].textContent;
+      ctx.list.appendChild(it);
+    }
+    sel.selectedIndex = sel.options.length ? Math.max(sel.selectedIndex, 0) : -1;   // o setter espelhado atualiza o rótulo
   }
-  function fecharFormPendencia() { document.getElementById('pend_form').style.display = 'none'; }
-  function salvarPendenciaManual() {
-    var tipo = getVal('pend_tipo'), outro = tipo === 'outro';
-    if (outro && !getVal('pend_nome')) { mostrarAviso('ATENÇÃO: informe o nome do serviço.'); document.getElementById('pend_nome').focus(); return; }
-    if (!getVal('pend_solic')) { mostrarAviso('ATENÇÃO: informe o solicitante.'); document.getElementById('pend_solic').focus(); return; }
-    var ab = pDeBR(getVal('pend_abertura'));
-    if (!ab) { mostrarAviso('ATENÇÃO: a data de abertura deve ser uma data real (dd/mm/aaaa).'); document.getElementById('pend_abertura').focus(); return; }
-    if (ab > pHoje()) { mostrarAviso('ATENÇÃO: a data de abertura não pode ser futura.'); document.getElementById('pend_abertura').focus(); return; }
-    var prazo = parseInt(getVal('pend_prazo'), 10);
-    if (!(prazo >= 1 && prazo <= 90)) { mostrarAviso('ATENÇÃO: o prazo deve ser de 1 a 90 dias úteis.'); document.getElementById('pend_prazo').focus(); return; }
-    var lista = pendLer();
-    lista.unshift({ id: pNovoId(), tipo: tipo, nome: outro ? getVal('pend_nome') : '', origem: outro ? getVal('pend_nome') : TIPOS_PENDENCIA.isencao.nome, chave: '',
-      solicitante: getVal('pend_solic'), cc: getVal('pend_cc'), doc: '', nota: getVal('pend_nota'), obs: getVal('pend_obs'), texto: '',
-      abertura: ab, prazoUteis: prazo, prazo: pSomarUteis(ab, prazo), status: 'aberta', ultimoLembrete: Date.now() });
-    pendGravar(lista); fecharFormPendencia(); renderPendencias(); atualizarBadgePendencias();
-    mostrarAviso('Pendência salva.', 'ok');
+  function mostrarCaixaPendencia(sf, comentario, dataBr, existente) {
+    var box = document.getElementById('pend_box'), cont = document.getElementById(sf);
+    if (!box || !cont) return;
+    var acoes = null;
+    for (var i = 0; i < cont.children.length; i++) if (cont.children[i].classList.contains('actions')) acoes = cont.children[i];
+    cont.insertBefore(box, acoes);
+    document.getElementById('pendc_coment').value = comentario || '';
+    document.getElementById('pendc_data').value = dataBr || '';
+    document.getElementById('pendc_concluir').style.display = existente ? '' : 'none';
+    box.querySelectorAll('input, textarea, button').forEach(function(el) { el.disabled = false; });
+    box.style.display = 'block';
+  }
+  function sairModoPendencia(silencioso) {
+    var box = document.getElementById('pend_box');
+    if (box) { box.style.display = 'none'; document.body.appendChild(box); }
+    pendModo = null;
+    if (!silencioso) mostrarAbaPrincipal('pend');
+  }
+  function iniciarPendenciaServico() {
+    var servicoId = getVal('pend_servico'); if (!servicoId) return;
+    var btn = pBotaoServico(servicoId), sf = pSf(servicoId);
+    mostrarAbaPrincipal('agenda');
+    trocarAba(servicoId, btn);
+    limparForm(sf);
+    var amanha = new Date(); amanha.setDate(amanha.getDate() + 1);
+    pendModo = { sf: sf, servicoId: servicoId, nome: btn ? btn.textContent.trim() : servicoId, id: null };
+    setTimeout(function() {
+      mostrarCaixaPendencia(sf, '', pBR(pIso(amanha)), false);
+      var primeiro = document.querySelector('#' + sf + ' .form-grid input:not([type=hidden]), #' + sf + ' .form-grid textarea');
+      document.getElementById(sf).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (primeiro) primeiro.focus();
+    }, 60);
+  }
+  function pCamposDoFormulario(sf) {
+    var campos = {};
+    document.querySelectorAll('#' + sf + ' input[id], #' + sf + ' select[id], #' + sf + ' textarea[id]').forEach(function(el) {
+      if (/^pendc_/.test(el.id)) return;
+      campos[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? !!el.checked : el.value;
+    });
+    return campos;
+  }
+  function pSolicitanteDe(campos) {
+    for (var k in campos) if (/_solic$/.test(k) && campos[k]) return campos[k];
+    for (var k2 in campos) if (/(cliente|nome)$/.test(k2) && campos[k2]) return campos[k2];
+    return '';
+  }
+  function salvarPendenciaServico() {
+    if (!pendModo) return;
+    var coment = document.getElementById('pendc_coment').value.trim();
+    if (!coment) { mostrarAviso('ATENÇÃO: escreva o comentário da pendência (ex.: Complementar nota 300123456).'); document.getElementById('pendc_coment').focus(); return; }
+    var data = pDeBR(document.getElementById('pendc_data').value);
+    if (!data) { mostrarAviso('ATENÇÃO: a data para lembrete deve ser uma data real (dd/mm/aaaa).'); document.getElementById('pendc_data').focus(); return; }
+    var campos = pCamposDoFormulario(pendModo.sf), lista = pendLer(), pd = null;
+    if (pendModo.id) lista.forEach(function(x) { if (x.id === pendModo.id) pd = x; });
+    if (!pd) {
+      if (data < pHoje()) { mostrarAviso('ATENÇÃO: a data para lembrete não pode ser no passado.'); document.getElementById('pendc_data').focus(); return; }
+      pd = { id: pNovoId(), kind: 'servico', abertura: pHoje(), status: 'aberta' };
+      lista.unshift(pd);
+    }
+    if (pd.lembrete !== data) pd.ultimoLembrete = 0;
+    pd.servicoId = pendModo.servicoId; pd.origem = pendModo.nome; pd.campos = campos; pd.comentario = coment; pd.lembrete = data;
+    pd.solicitante = pSolicitanteDe(campos);
+    pendGravar(lista);
+    var sf = pendModo.sf;
+    sairModoPendencia(true);
+    limparForm(sf);
+    atualizarBadgePendencias();
+    mostrarAbaPrincipal('pend');
+    mostrarAviso('Pendência salva: lembrete em ' + pBR(data) + '.', 'ok');
+  }
+  // Reabre o serviço com o que foi preenchido, para completar e concluir.
+  function retomarPendencia(id) {
+    var r = pAchar(id); if (!r || pKind(r.pd) !== 'servico') return;
+    var pd = r.pd, sf = pSf(pd.servicoId), btn = pBotaoServico(pd.servicoId);
+    if (!document.getElementById(sf)) { mostrarAviso('Este serviço não existe mais na página.'); return; }
+    mostrarAbaPrincipal('agenda');
+    trocarAba(pd.servicoId, btn);
+    limparForm(sf);
+    setTimeout(function() {
+      var campos = pd.campos || {}, selects = [], outros = [];
+      Object.keys(campos).forEach(function(k) { var el = document.getElementById(k); if (!el) return; (el.tagName === 'SELECT' ? selects : outros).push(el); });
+      selects.forEach(function(el) { el.value = campos[el.id]; el.dispatchEvent(new Event('change', { bubbles: true })); });
+      outros.forEach(function(el) { if (el.type === 'checkbox' || el.type === 'radio') el.checked = !!campos[el.id]; else el.value = campos[el.id]; });
+      pendModo = { sf: sf, servicoId: pd.servicoId, nome: pd.origem, id: pd.id };
+      mostrarCaixaPendencia(sf, pd.comentario, pBR(pd.lembrete), true);
+      document.getElementById(sf).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 60);
+  }
+  function concluirPendenciaServico() {
+    if (!pendModo || !pendModo.id) return;
+    var cont = document.getElementById(pendModo.sf), gerar = null;
+    for (var i = 0; i < cont.children.length; i++) {
+      var c = cont.children[i];
+      if (c.classList.contains('actions')) { gerar = c.querySelector('.btn:not(.btn-clear):not(.btn-edit)'); break; }
+    }
+    if (gerar) gerar.click();   // mesma validação e mesmo texto do botão normal; ao gerar, a pendência é concluída
+  }
+  // Chamado por finalizarGeracao: gerar o texto de um serviço em pendência a conclui.
+  function pendenciaAoGerar(containerId, notaTxt, agendaTxt) {
+    if (!pendModo || pendModo.sf !== containerId) return;
+    var id = pendModo.id;
+    sairModoPendencia(true);
+    if (!id) return;   // pendência ainda não salva: o atendimento foi concluído na hora
+    var r = pAchar(id); if (!r) return;
+    r.pd.status = 'concluida'; r.pd.respostaData = pHoje(); r.pd.respostaTs = Date.now(); r.pd.texto = notaTxt || agendaTxt;
+    pendGravar(r.lista); atualizarBadgePendencias();
+    setTimeout(function() { mostrarAviso('Pendência concluída. O texto foi gerado e está no Histórico.', 'ok'); }, 900);
   }
 
   // ---- lista ----
-  function pEsc(t) { return declEsc(t); }
   function renderPendencias() {
     var lista = pendLer(), limite = Date.now() - PEND_DIAS_CONCLUIDAS * 86400000;
-    var abertas = lista.filter(function(pd) { return pd.status === 'aberta'; }).sort(function(a, b) { return a.prazo < b.prazo ? -1 : a.prazo > b.prazo ? 1 : 0; });
+    var chaveOrd = function(pd) { return pKind(pd) === 'servico' ? pd.lembrete : pd.prazo; };
+    var abertas = lista.filter(function(pd) { return pd.status === 'aberta'; }).sort(function(a, b) { return chaveOrd(a) < chaveOrd(b) ? -1 : chaveOrd(a) > chaveOrd(b) ? 1 : 0; });
     var concl = lista.filter(function(pd) { return pd.status === 'concluida' && (pd.respostaTs || 0) >= limite; }).sort(function(a, b) { return (b.respostaTs || 0) - (a.respostaTs || 0); });
-    var cont = { vencida: 0, hoje: 0, proxima: 0, ok: 0 };
+    var cont = { vencida: 0, hoje: 0, proxima: 0, ok: 0, agendada: 0 };
     abertas.forEach(function(pd) { cont[pSituacao(pd).classe]++; });
     document.getElementById('pend_resumo').innerHTML =
-      '<span class="pend-chip vencida">Vencidas: <b>' + cont.vencida + '</b></span><span class="pend-chip hoje">Vencem hoje: <b>' + cont.hoje + '</b></span>' +
-      '<span class="pend-chip">Próximas (1–2 dias úteis): <b>' + cont.proxima + '</b></span><span class="pend-chip">No prazo: <b>' + cont.ok + '</b></span>';
-    var el = document.getElementById('pend_lista');
-    el.innerHTML = abertas.length ? abertas.map(pCard).join('') : '<div class="pend-vazio">Nenhuma pendência em aberto.</div>';
+      '<span class="pend-chip vencida">Atrasadas/vencidas: <b>' + cont.vencida + '</b></span><span class="pend-chip hoje">Para hoje: <b>' + cont.hoje + '</b></span>' +
+      '<span class="pend-chip">Próximas: <b>' + (cont.proxima + cont.ok + cont.agendada) + '</b></span>';
+    document.getElementById('pend_lista').innerHTML = abertas.length ? abertas.map(pCard).join('') : '<div class="pend-vazio">Nenhuma pendência em aberto.</div>';
     document.getElementById('pend_concl_tit').textContent = 'Concluídas nos últimos ' + PEND_DIAS_CONCLUIDAS + ' dias (' + concl.length + ')';
     document.getElementById('pend_concl').innerHTML = concl.length ? concl.map(pCard).join('') : '<div class="pend-vazio">Nenhuma pendência concluída.</div>';
     var bn = document.getElementById('btn_pend_notif');
@@ -5051,31 +5180,39 @@
     }
   }
   function pCard(pd) {
-    var sit = pSituacao(pd), aberta = pd.status === 'aberta';
-    var h = '<div class="pend-item ' + sit.classe + '" id="pitem_' + pd.id + '">' +
-      '<div class="pend-topo"><span class="pend-tipo">' + pEsc(pd.origem || pNomeTipo(pd)) + '</span><span class="pend-status">' + pEsc(sit.texto) + '</span></div>' +
-      '<p class="pend-info"><b>' + pEsc(pd.solicitante || '—') + '</b>' + (pd.cc ? ' · CC ' + pEsc(pd.cc) : '') + (pd.nota ? ' · Nota ' + pEsc(pd.nota) : '') +
-      '<br>Aberta em ' + pBR(pd.abertura) + ' · prazo ' + pd.prazoUteis + ' dias úteis · <b>responder até ' + pBR(pd.prazo) + '</b>' +
-      (pd.obs ? '<br>Obs.: ' + pEsc(pd.obs) : '') +
-      (!aberta ? '<br>Resultado: <b>' + pEsc(pd.resultado) + '</b> — ' + pEsc(pd.motivo) + (pd.respostaObs ? ' · ' + pEsc(pd.respostaObs) : '') : '') + '</p>' +
-      '<div class="pend-botoes">' +
-      (aberta ? '<button type="button" class="pend-resp" data-click="abrirResposta(\'' + pd.id + '\')">Responder</button>' +
-                '<button type="button" data-click="informarNota(\'' + pd.id + '\')">' + (pd.nota ? 'Alterar nº da nota' : 'Informar nº da nota') + '</button>'
-             : '<button type="button" data-click="reabrirPendencia(\'' + pd.id + '\')">Reabrir</button>') +
-      (pd.texto ? '<button type="button" data-click="alternarTextoPend(\'' + pd.id + '\')">Ver texto</button><button type="button" data-click="copiarTextoPend(\'' + pd.id + '\')">Copiar texto</button>' : '') +
-      '<button type="button" class="pend-del" data-click="excluirPendencia(\'' + pd.id + '\')">Excluir</button></div>' +
+    var sit = pSituacao(pd), aberta = pd.status === 'aberta', servico = pKind(pd) === 'servico';
+    var info = servico
+      ? '<b>' + pEsc(pd.solicitante || '—') + '</b> · criada em ' + pBR(pd.abertura) + ' · <b>lembrete em ' + pBR(pd.lembrete) + '</b>'
+      : '<b>' + pEsc(pd.solicitante || '—') + '</b>' + (pd.cc ? ' · CC ' + pEsc(pd.cc) : '') + (pd.nota ? ' · Nota ' + pEsc(pd.nota) : '') +
+        '<br>Aberta em ' + pBR(pd.abertura) + ' · prazo ' + pd.prazoUteis + ' dias úteis · <b>responder até ' + pBR(pd.prazo) + '</b>' +
+        (!aberta ? '<br>Resultado: <b>' + pEsc(pd.resultado) + '</b> — ' + pEsc(pd.motivo) + (pd.respostaObs ? ' · ' + pEsc(pd.respostaObs) : '') : '');
+    var botoes = '';
+    if (aberta && servico) botoes += '<button type="button" class="pend-resp" data-click="retomarPendencia(\'' + pd.id + '\')">Retomar e concluir</button>';
+    if (aberta && !servico) botoes += '<button type="button" class="pend-resp" data-click="abrirResposta(\'' + pd.id + '\')">Responder</button>' +
+      '<button type="button" data-click="informarNota(\'' + pd.id + '\')">' + (pd.nota ? 'Alterar nº da nota' : 'Informar nº da nota') + '</button>' +
+      '<button type="button" data-click="editarComentario(\'' + pd.id + '\')">' + (pd.comentario ? 'Alterar comentário' : 'Comentário') + '</button>';
+    if (!aberta && !servico) botoes += '<button type="button" data-click="reabrirPendencia(\'' + pd.id + '\')">Reabrir</button>';
+    if (pd.texto) botoes += '<button type="button" data-click="alternarTextoPend(\'' + pd.id + '\')">Ver texto</button><button type="button" data-click="copiarTextoPend(\'' + pd.id + '\')">Copiar texto</button>';
+    botoes += '<button type="button" class="pend-del" data-click="excluirPendencia(\'' + pd.id + '\')">Excluir</button>';
+    return '<div class="pend-item ' + sit.classe + '" id="pitem_' + pd.id + '">' +
+      '<div class="pend-topo"><span class="pend-tipo">' + pEsc(pd.origem || 'Pendência') + '</span><span class="pend-status">' + pEsc(sit.texto) + '</span></div>' +
+      (pd.comentario ? '<p class="pend-coment">' + pEsc(pd.comentario) + '</p>' : '') +
+      '<p class="pend-info">' + info + '</p>' +
+      '<div class="pend-botoes">' + botoes + '</div>' +
       (pd.texto ? '<pre class="pend-texto" id="ptexto_' + pd.id + '" style="display: none;">' + pEsc(pd.texto) + '</pre>' : '') +
       '<div id="presp_' + pd.id + '"></div></div>';
-    return h;
   }
-  function pAchar(id) { var l = pendLer(); for (var i = 0; i < l.length; i++) if (l[i].id === id) return { lista: l, pd: l[i] }; return null; }
   function alternarTextoPend(id) { var e = document.getElementById('ptexto_' + id); if (e) e.style.display = e.style.display === 'none' ? 'block' : 'none'; }
   function copiarTextoPend(id) { var r = pAchar(id); if (r) histCopiarTexto(r.pd.texto); }
   function informarNota(id) {
     var r = pAchar(id); if (!r) return;
-    var v = prompt('Nº da nota / protocolo:', r.pd.nota || '');
-    if (v === null) return;
+    var v = prompt('Nº da nota / protocolo:', r.pd.nota || ''); if (v === null) return;
     r.pd.nota = v.trim(); pendGravar(r.lista); renderPendencias();
+  }
+  function editarComentario(id) {
+    var r = pAchar(id); if (!r) return;
+    var v = prompt('Comentário da pendência:', r.pd.comentario || ''); if (v === null) return;
+    r.pd.comentario = v.trim(); pendGravar(r.lista); renderPendencias();
   }
   function excluirPendencia(id) {
     if (!confirm('Excluir esta pendência? Ela não será mais lembrada.')) return;
@@ -5086,7 +5223,7 @@
     r.pd.status = 'aberta'; delete r.pd.resultado; delete r.pd.motivo; delete r.pd.respostaObs; delete r.pd.respostaData; delete r.pd.respostaTs;
     r.pd.ultimoLembrete = 0; pendGravar(r.lista); renderPendencias(); atualizarBadgePendencias();
   }
-  // ---- resposta (deferido / indeferido) ----
+  // ---- resposta da Análise de Isenção (deferido / indeferido) ----
   function abrirResposta(id) {
     var r = pAchar(id); if (!r) return;
     var box = document.getElementById('presp_' + id);
@@ -5101,7 +5238,7 @@
   }
   function atualizarMotivosPend(id) {
     var r = pAchar(id); if (!r) return;
-    var t = TIPOS_PENDENCIA[r.pd.tipo] || TIPOS_PENDENCIA.outro;
+    var t = TIPOS_PENDENCIA[r.pd.tipo] || TIPOS_PENDENCIA.isencao;
     var res = document.getElementById('pres_res_' + id).value, sel = document.getElementById('pres_mot_' + id);
     sel.innerHTML = '';
     (res === 'Deferido' ? t.deferido : t.indeferido).forEach(function(m) { var o = document.createElement('option'); o.value = m; o.textContent = m; sel.appendChild(o); });
@@ -5115,11 +5252,11 @@
     if (/^Outro motivo|descrever/i.test(motivo) && !obs) { mostrarAviso('ATENÇÃO: descreva o motivo na observação.'); document.getElementById('pres_obs_' + id).focus(); return; }
     r.pd.status = 'concluida'; r.pd.resultado = document.getElementById('pres_res_' + id).value; r.pd.motivo = motivo; r.pd.respostaObs = obs;
     r.pd.respostaData = data; r.pd.respostaTs = Date.now();
-    pendGravar(r.lista); renderPendencias(); atualizarBadgePendencias(); verificarLembretes(true);
+    pendGravar(r.lista); renderPendencias(); atualizarBadgePendencias();
     mostrarAviso('Pendência respondida: ' + r.pd.resultado + (data <= r.pd.prazo ? ' (no prazo).' : ' (fora do prazo).'), 'ok');
   }
 
-  // ---- contador na aba e lembretes ----
+  // ---- contador e lembretes ----
   function atualizarBadgePendencias() {
     var abertas = pendLer().filter(function(pd) { return pd.status === 'aberta'; });
     var urgente = abertas.some(function(pd) { var c = pSituacao(pd).classe; return c === 'vencida' || c === 'hoje'; });
@@ -5130,20 +5267,26 @@
       b.classList.toggle('alerta', urgente);
     });
   }
-  // Quanto mais perto do prazo, menor o intervalo entre lembretes.
-  function pIntervaloLembrete(dias) {
-    if (dias < 0) return 15 * 60000;          // vencida: a cada 15 min
-    if (dias === 0) return 30 * 60000;        // vence hoje: a cada 30 min
-    if (dias === 1) return 2 * 3600000;       // 1 dia útil: a cada 2 h
-    if (dias === 2) return 4 * 3600000;       // 2 dias úteis: a cada 4 h
-    return null;                              // 3+: uma vez por dia
+  // Intervalo entre lembretes (ms). null = uma vez por dia; -1 = ainda não lembra.
+  function pIntervaloLembrete(pd) {
+    var sit = pSituacao(pd);
+    if (pKind(pd) === 'servico') {
+      if (sit.classe === 'agendada') return -1;          // antes da data: sem alerta
+      return sit.classe === 'vencida' ? 15 * 60000 : 30 * 60000;
+    }
+    var dias = sit.dias;
+    if (dias < 0) return 15 * 60000;
+    if (dias === 0) return 30 * 60000;
+    if (dias === 1) return 2 * 3600000;
+    if (dias === 2) return 4 * 3600000;
+    return null;
   }
   function pDevido(pd, agora) {
-    var sit = pSituacao(pd), iv = pIntervaloLembrete(sit.dias), ult = pd.ultimoLembrete || 0;
+    var iv = pIntervaloLembrete(pd), ult = pd.ultimoLembrete || 0;
+    if (iv === -1) return false;
     if (iv === null) return pIso(new Date(ult)) !== pHoje();
     return agora - ult >= iv;
   }
-  var pLembreteAberto = [];
   function verificarLembretes(soAtualizar) {
     atualizarBadgePendencias();
     var painel = document.getElementById('painel_pend');
@@ -5152,22 +5295,22 @@
     var lista = pendLer(), agora = Date.now();
     var devidas = lista.filter(function(pd) { return pd.status === 'aberta' && pDevido(pd, agora); });
     if (!devidas.length) return;
-    devidas.sort(function(a, b) { return a.prazo < b.prazo ? -1 : 1; });
+    devidas.sort(function(a, b) { return pSituacao(a).classe === 'vencida' ? -1 : pSituacao(b).classe === 'vencida' ? 1 : 0; });
     devidas.forEach(function(pd) { pd.ultimoLembrete = agora; });
     pendGravar(lista);
     mostrarLembrete(devidas);
   }
   function mostrarLembrete(devidas) {
-    var urg = devidas.some(function(pd) { var c = pSituacao(pd).classe; return c === 'vencida' || c === 'hoje'; });
+    var grave = devidas.some(function(pd) { return pSituacao(pd).classe === 'vencida'; });
     var box = document.getElementById('pend_lembrete');
-    document.getElementById('pend_lembrete_tit').textContent = (urg ? '⚠️ ' : '⏰ ') + (devidas.length === 1 ? 'Há 1 pendência para responder' : 'Há ' + devidas.length + ' pendências para responder');
+    document.getElementById('pend_lembrete_tit').textContent = (grave ? '🚨 ' : '⏰ ') + (grave ? 'Pendência atrasada! ' : '') + (devidas.length === 1 ? '1 pendência para resolver' : devidas.length + ' pendências para resolver');
     document.getElementById('pend_lembrete_lista').innerHTML = devidas.map(function(pd) {
-      return '<li><b>' + pEsc(pSituacao(pd).texto) + '</b> — ' + pEsc(pd.origem || pNomeTipo(pd)) + ': ' + pEsc(pd.solicitante || '—') + ' (até ' + pBR(pd.prazo) + ')</li>';
+      return '<li><b>' + pEsc(pSituacao(pd).texto) + '</b> — ' + pEsc(pd.origem) + (pd.comentario ? ': ' + pEsc(pd.comentario) : '') + (pd.solicitante ? ' (' + pEsc(pd.solicitante) + ')' : '') + '</li>';
     }).join('');
-    box.classList.toggle('urgente', urg);
+    box.classList.toggle('urgente', grave);
     box.style.display = 'block';
     if ('Notification' in window && Notification.permission === 'granted') {
-      try { new Notification('Textos Padrões — pendências', { body: devidas.map(function(pd) { return pSituacao(pd).texto + ': ' + (pd.solicitante || pNomeTipo(pd)); }).join('\n'), tag: 'tp-pendencias', renotify: true }); } catch (e) {}
+      try { new Notification(grave ? 'Pendência ATRASADA — Textos Padrões' : 'Pendências — Textos Padrões', { body: devidas.map(function(pd) { return pSituacao(pd).texto + ': ' + (pd.comentario || pd.origem); }).join('\n'), tag: 'tp-pendencias', renotify: true, requireInteraction: grave }); } catch (e) {}
     }
   }
   function fecharLembrete() { document.getElementById('pend_lembrete').style.display = 'none'; }
@@ -5178,10 +5321,10 @@
     Notification.requestPermission().then(function(p) { mostrarAviso(p === 'granted' ? 'Avisos do navegador ativados.' : 'Avisos do navegador não foram ativados.', p === 'granted' ? 'ok' : ''); renderPendencias(); });
   }
   (function iniciarPendencias() {
-    // limpa concluídas antigas
     var limite = Date.now() - PEND_DIAS_CONCLUIDAS * 86400000, l = pendLer();
     var l2 = l.filter(function(pd) { return pd.status === 'aberta' || (pd.respostaTs || 0) >= limite; });
     if (l2.length !== l.length) pendGravar(l2);
+    montarListaServicosPend();
     atualizarBadgePendencias();
     setTimeout(function() { verificarLembretes(); }, 3000);
     setInterval(function() { verificarLembretes(); }, 60000);
@@ -5404,7 +5547,7 @@
   // ?v=2.6.1) levam direto para a produção.
   // PUBLICAR: troque o código abaixo e o campo "versao" do versao.json pelo mesmo
   // valor (ex.: a data e hora da publicação). Ele é interno e não aparece na tela.
-  var VERSAO_ATUAL = '2.9.0';
+  var VERSAO_ATUAL = '2.9.1';
   var SITE_PRODUCAO = 'https://caiquelopess.github.io/Texto-Padr-o-de-Nota/';
   var NA_WEB = /^https?:$/.test(location.protocol);
 

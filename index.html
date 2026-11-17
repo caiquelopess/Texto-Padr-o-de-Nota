@@ -596,6 +596,69 @@
     .update-banner .btn { flex: 0 0 auto; }
 
 
+
+    /* ---- Pendências ---- */
+    .pend-badge { display: none; margin-left: 6px; min-width: 18px; padding: 1px 6px; border-radius: 999px; font-size: 10.5px; font-weight: 700; background: var(--neon-1); color: var(--btn-text); }
+    .pend-badge.tem { display: inline-block; }
+    .theme-toggle .pend-badge { margin-left: 0; }
+    .pend-badge.alerta { background: var(--danger); color: #fff; animation: alertBlink 1.6s ease-in-out infinite; }
+    .pend-resumo { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
+    .pend-chip { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--glass-border); background: var(--glass-soft); font-size: 12.5px; color: var(--text); }
+    .pend-chip b { font-variant-numeric: tabular-nums; }
+    .pend-chip.vencida { border-color: var(--danger-border); color: var(--danger); }
+    .pend-chip.hoje { border-color: var(--warning-border); color: var(--warning); }
+    .pend-acoes { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+    .pend-acoes .btn { flex: 0 0 auto; }
+    .pend-form { border: 1px solid var(--glass-border); border-radius: var(--r-card); background: var(--glass-soft); padding: 16px; margin-bottom: 20px; }
+    .pend-sub { margin: 22px 0 10px; font-size: 13px; font-family: var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--neon-1); font-weight: 500; }
+    .pend-lista { display: flex; flex-direction: column; gap: 10px; }
+    .pend-vazio { color: var(--muted); font-size: 13px; padding: 10px 0; }
+    .pend-item { border: 1px solid var(--glass-border); border-left: 4px solid var(--neon-1); border-radius: var(--r-card); background: var(--glass-soft); padding: 12px 14px; }
+    .pend-item.vencida { border-left-color: var(--danger); }
+    .pend-item.hoje { border-left-color: #F97316; }
+    .pend-item.proxima { border-left-color: var(--warning); }
+    .pend-item.concluida { border-left-color: var(--accent); opacity: 0.9; }
+    .pend-topo { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; }
+    .pend-tipo { font-weight: 600; color: var(--strong); font-size: 14px; }
+    .pend-status { font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: var(--primary-soft); color: var(--neon-1); }
+    .pend-item.vencida .pend-status { background: var(--danger-bg); color: var(--danger); }
+    .pend-item.hoje .pend-status { background: rgba(249, 115, 22, 0.14); color: #F97316; }
+    .pend-item.proxima .pend-status { background: var(--warning-bg); color: var(--warning); }
+    .pend-item.concluida .pend-status { background: rgba(16, 185, 129, 0.12); color: var(--accent); }
+    .pend-info { margin: 6px 0 0; font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+    .pend-info b { color: var(--text); font-weight: 500; }
+    .pend-botoes { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+    .pend-botoes button { font: 500 12px/1 var(--font-sans); padding: 7px 11px; border-radius: var(--r-control); border: 1px solid var(--glass-border); background: transparent; color: var(--text); cursor: pointer; }
+    .pend-botoes button:hover { border-color: var(--neon-1); color: var(--neon-1); background: var(--primary-soft); }
+    .pend-botoes .pend-resp { border-color: var(--neon-1); color: var(--neon-1); }
+    .pend-botoes .pend-del { color: var(--danger); border-color: var(--danger-border); }
+    .pend-texto { margin: 10px 0 0; white-space: pre-wrap; word-break: break-word; font: 12px/1.55 var(--font-mono); background: var(--input-bg-soft); border-radius: var(--r-control); padding: 8px 10px; color: var(--text); }
+    .pend-responder { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--glass-border); display: grid; grid-template-columns: 1fr 2fr; gap: 10px; }
+    .pend-responder .full { grid-column: 1 / -1; }
+    .pend-responder label { display: block; font-size: 12px; margin-bottom: 4px; }
+    .pend-responder select, .pend-responder input { width: 100%; }
+    @media (max-width: 640px) { .pend-responder { grid-template-columns: 1fr; } }
+    .pend-concluidas { margin-top: 18px; }
+    .pend-no-servico { margin: 6px 0 18px; padding: 14px 16px 6px; border: 1px dashed var(--neon-1); border-radius: var(--r-card); background: var(--primary-soft); }
+    .pend-no-servico-tit { margin: 0 0 10px; font-weight: 700; color: var(--strong); font-size: 14px; }
+    .pend-no-servico textarea { width: 100%; resize: vertical; }
+    .pend-no-servico .actions .btn { flex: 1 1 auto; }
+    .pend-coment { margin: 8px 0 0; padding: 8px 10px; border-radius: var(--r-control); background: var(--input-bg-soft); font-size: 13.5px; color: var(--strong); white-space: pre-wrap; }
+    .pend-item.agendada, .pend-item.semdata { border-left-color: var(--border-strong); }
+    .pend-item.semdata .pend-status { background: var(--glass-soft); color: var(--muted); }
+    .pend-concluidas summary { cursor: pointer; font-size: 13px; color: var(--muted); padding: 6px 0; }
+    .pend-cadencia { font-size: 12px; color: var(--muted); margin: 18px 0 0; line-height: 1.6; }
+    /* lembrete flutuante */
+    .pend-lembrete { position: fixed; right: 20px; bottom: 20px; z-index: 1500; width: min(390px, calc(100vw - 32px)); border-radius: var(--r-card);
+      background: var(--glass-strong); border: 1px solid var(--warning-border); border-left: 5px solid var(--warning); padding: 14px 16px; color: var(--text);
+      box-shadow: 0 18px 50px -12px rgba(0, 0, 0, 0.55); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); animation: fadeIn 200ms var(--ease); }
+    :root[data-theme="dark"] .pend-lembrete { background: rgba(16, 18, 31, 0.95); }
+    .pend-lembrete.urgente { border-color: var(--danger-border); border-left-color: var(--danger); }
+    .pend-lembrete-tit { font-weight: 700; font-size: 14px; margin: 0 0 8px; color: var(--strong); }
+    .pend-lembrete ul { margin: 0 0 12px; padding-left: 18px; font-size: 12.5px; line-height: 1.55; max-height: 180px; overflow-y: auto; }
+    .pend-lembrete-acoes { display: flex; gap: 8px; }
+    .pend-lembrete-acoes .btn { flex: 1; min-height: 38px; padding: 8px 12px; font-size: 13px; }
+    @media (max-width: 640px) { .pend-lembrete { right: 16px; left: 16px; bottom: 16px; width: auto; } }
     /* ---- Faixa do ambiente de teste ---- */
     .faixa-teste { position: sticky; top: 0; z-index: 2000; width: 100%; background: repeating-linear-gradient(45deg, #F59E0B 0 14px, #FBBF24 14px 28px);
       color: #1C1917; font: 700 13px/1.4 var(--font-sans); text-align: center; padding: 8px 12px; letter-spacing: 0.02em; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35); }
@@ -753,6 +816,10 @@
         </button>
         <div class="tema-menu" id="tema_menu" role="menu" style="display: none;"></div>
       </span>
+      <button type="button" class="theme-toggle" id="btn_pendencias" data-click="verPendencias()" title="Serviços abertos aguardando resposta">
+        <span class="theme-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><path d="M3.26 15.33A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.67C19.41 13.96 18 12.5 18 8A6 6 0 0 0 6 8c0 4.5-1.41 5.96-2.74 7.33"/></svg></span>
+        <span>Pendências</span><span class="pend-badge" id="pend_badge_topo"></span>
+      </button>
       <button type="button" class="theme-toggle" id="btn_historico" data-click="abrirHistorico()" title="Textos gerados salvos neste computador">
         <span class="theme-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg></span>
         <span>Histórico</span><span class="hist-contador" id="hist_contador_hoje" title="Gerados hoje"></span>
@@ -767,13 +834,14 @@
     <button type="button" class="nav-tab inativa" data-aba="tensao" role="tab" aria-selected="false" data-click="mostrarAbaPrincipal('tensao', this)">TENSÃO FORNECIMENTO</button>
     <button type="button" class="nav-tab inativa" data-aba="calc" role="tab" aria-selected="false" data-click="mostrarAbaPrincipal('calc', this)">CALCULADORA DE REFAT</button>
     <button type="button" class="nav-tab inativa" data-aba="decl" role="tab" aria-selected="false" data-click="mostrarAbaPrincipal('decl', this)">DECLARAÇÃO DE LIGAÇÃO</button>
+    <button type="button" class="nav-tab inativa" data-aba="pend" role="tab" aria-selected="false" data-click="mostrarAbaPrincipal('pend', this)">PENDÊNCIAS<span class="pend-badge" id="pend_badge"></span></button>
   </div>
 
   <div class="content" id="painel_agenda">
 
     <!-- SUB-NAVEGAÇÃO DE SERVIÇOS -->
     <div class="nav-toolbar">
-      <span class="svc-count" id="svc_count">37 serviços</span>
+      <span class="svc-count" id="svc_count">45 serviços</span>
       <button type="button" class="nav-toggle fechado" id="btn_alternar_servicos" data-click="alternarServicos(this)" aria-expanded="false" aria-controls="painel_servicos"><span class="nav-toggle-label">Exibir serviços</span><span class="chev"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></span></button>
     </div>
     <div class="search-row">
@@ -802,6 +870,11 @@
         <button type="button" class="sub-btn" data-click="trocarAba('sf-mc', this)">Modificação Contratual</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-parcelamento', this)">Parcelamento</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reativ-comum', this)">Reativação</button>
+        <button type="button" class="sub-btn" data-click="trocarAba('sf-reativ-virtual', this)">Reativação Virtual</button>
+        <button type="button" class="sub-btn" data-click="trocarAba('sf-ri|assuncao', this)">Reativação com Assunção de Débitos</button>
+        <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-deb|reativacao', this)">Reativação com Análise de Isenção de Débitos</button>
+        <button type="button" class="sub-btn" data-click="trocarAba('sf-ri|virtual_assuncao', this)">Reativação Virtual com Assunção de Débitos</button>
+        <button type="button" class="sub-btn" data-click="trocarAba('sf-ri|virtual_isencao', this)">Reativação Virtual com Isenção de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reclamacao-gd', this)">Reclamação GD</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reclamacoes', this)">Reclamações</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ref-padrao', this)">Reforma Padrão</button>
@@ -815,7 +888,10 @@
         <button type="button" class="sub-btn" data-click="trocarAba('sf-tarefa-neo', this)">Tarefa NEO transferência de Créditos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-tele-gravacao', this)">Tele gravação</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-tr-partidas', this)">TR DE PARTIDAS</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-tt', this)">Troca de Titularidade</button>
+        <button type="button" class="sub-btn" data-click="trocarAba('sf-tt|sem_debito', this)">Troca de Titularidade sem Débitos</button>
+        <button type="button" class="sub-btn" data-click="trocarAba('sf-tt|com_assuncao', this)">Troca de Titularidade com Assunção de Débitos</button>
+        <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-deb|troca', this)">Troca de Titularidade com Análise de Isenção de Débitos</button>
+        <button type="button" class="sub-btn" data-click="trocarAba('sf-parc-tt', this)">Troca de Titularidade com Parcelamento de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-aparelhagem', this)">Uso de Aparelhagem Médica</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-verif-equip', this)">Verificação de Equipamento</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-bpc', this)">BPC/LOAS</button>
@@ -1154,8 +1230,6 @@
       <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
       <div class="alert-box">OBS.: Nos casos de representante legal ou solicitante, deverá criar relações no PN em Outros Campos.</div>
       <div class="form-grid">
-        <div class="field-group full-width grp-tipo-tt"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="tt" data-change="trocarTipoGrupo(this)"><option value="sf-tt|sem_debito">Sem débitos</option><option value="sf-tt|com_assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|troca">Com análise de isenção de débitos</option><option value="sf-parc-tt|">Com parcelamento de débitos</option></select></div>
-        <div class="field-group full-width grp-tipo-reat" style="display: none;"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="reat" data-change="trocarTipoGrupo(this)"><option value="sf-reativ-comum|">Reativação (sem débitos)</option><option value="sf-reativ-virtual|">Reativação virtual</option><option value="sf-ri|assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|reativacao">Com análise de isenção de débitos</option><option value="sf-ri|virtual_assuncao">Virtual com assunção de débitos</option><option value="sf-ri|virtual_isencao">Virtual com isenção de débitos</option></select></div>
         <div class="field-group full-width" style="display: none;"><label>Serviço *</label><select id="ise_servico"><option value="troca">Troca de titularidade</option><option value="reativacao">Reativação</option></select></div>
         <div class="field-group"><label>Solicitante *</label><input type="text" id="ise_solic" placeholder="Nome completo" required></div>
         <div class="field-group"><label>CPF/CNPJ *</label><input type="text" id="ise_doc" inputmode="numeric" placeholder="Somente números" required></div>
@@ -1245,7 +1319,6 @@
     <div class="subform" id="sf-reativ-comum">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="form-grid">
-        <div class="field-group full-width grp-tipo-reat"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="reat" data-change="trocarTipoGrupo(this)"><option value="sf-reativ-comum|">Reativação (sem débitos)</option><option value="sf-reativ-virtual|">Reativação virtual</option><option value="sf-ri|assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|reativacao">Com análise de isenção de débitos</option><option value="sf-ri|virtual_assuncao">Virtual com assunção de débitos</option><option value="sf-ri|virtual_isencao">Virtual com isenção de débitos</option></select></div>
         <div class="field-group"><label>Solicitante *</label><input type="text" id="rtc_solic" placeholder="Nome completo do solicitante" required></div>
         <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="rtc_tel" placeholder="Ex: 71993501519" required></div>
         <div class="field-group"><label>Fase *</label><select id="rtc_tipo_lig"><option value="MONO">MONO</option><option value="BI">BI</option><option value="TRI">TRI</option></select></div>
@@ -1265,7 +1338,6 @@
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box alert-setor">🔁 <strong>Altere o setor responsável na nota para o código 8GE427</strong></div>
       <div class="form-grid">
-        <div class="field-group full-width grp-tipo-reat"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="reat" data-change="trocarTipoGrupo(this)"><option value="sf-reativ-comum|">Reativação (sem débitos)</option><option value="sf-reativ-virtual|">Reativação virtual</option><option value="sf-ri|assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|reativacao">Com análise de isenção de débitos</option><option value="sf-ri|virtual_assuncao">Virtual com assunção de débitos</option><option value="sf-ri|virtual_isencao">Virtual com isenção de débitos</option></select></div>
         <div class="field-group"><label>Solicitante *</label><input type="text" id="rtv_solic" placeholder="Nome completo do solicitante" required></div>
         <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="rtv_tel" placeholder="Ex: 71993501519" required></div>
         <div class="field-group"><label>Fase *</label><select id="rtv_fase"><option value="MONO">MONO</option><option value="BI">BI</option><option value="TRI">TRI</option></select></div>
@@ -1303,7 +1375,6 @@
       <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
       <div class="alert-box">OBS.: Nos casos de representante legal ou solicitante, deverá criar relações no PN em Outros Campos.</div>
       <div class="form-grid">
-        <div class="field-group full-width grp-tipo-tt"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="tt" data-change="trocarTipoGrupo(this)"><option value="sf-tt|sem_debito">Sem débitos</option><option value="sf-tt|com_assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|troca">Com análise de isenção de débitos</option><option value="sf-parc-tt|">Com parcelamento de débitos</option></select></div>
         <div class="field-group full-width" style="display: none;">
           <label>Tipo de Troca *</label>
           <select id="tt_tipo" data-change="toggleTrocaTitularidade()">
@@ -1357,7 +1428,6 @@
       <div class="alert-box alerta-pade" id="pade_ri"><b>Atenção:</b> Em caso de reconhecimento de débito o Termo deve ser anexado como PADE no KM já assinado pelo cliente.</div>
       <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
       <div class="form-grid">
-        <div class="field-group full-width grp-tipo-reat"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="reat" data-change="trocarTipoGrupo(this)"><option value="sf-reativ-comum|">Reativação (sem débitos)</option><option value="sf-reativ-virtual|">Reativação virtual</option><option value="sf-ri|assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|reativacao">Com análise de isenção de débitos</option><option value="sf-ri|virtual_assuncao">Virtual com assunção de débitos</option><option value="sf-ri|virtual_isencao">Virtual com isenção de débitos</option></select></div>
         <div class="field-group full-width" style="display: none;">
           <label>Tipo de Reativação *</label>
           <select id="ri_tipo" data-change="toggleReativDebitos()">
@@ -1789,7 +1859,6 @@
       <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
       <div class="alert-box">⚠️ Inserir cópia dos dados da Receita Federal e do termo de assunção assinado no SAP KM.</div>
       <div class="form-grid">
-        <div class="field-group full-width grp-tipo-tt"><label>Tipo de solicitação *</label><select class="sel-grupo" data-grupo="tt" data-change="trocarTipoGrupo(this)"><option value="sf-tt|sem_debito">Sem débitos</option><option value="sf-tt|com_assuncao">Com assunção de débitos (reconhecimento de débitos)</option><option value="sf-isencao-deb|troca">Com análise de isenção de débitos</option><option value="sf-parc-tt|">Com parcelamento de débitos</option></select></div>
         <div class="field-group full-width">
           <label>Tipo de Cliente *</label>
           <select id="ptt_tipo" data-change="toggleParcTT()">
@@ -2048,6 +2117,28 @@
     </div>
   </div>
 
+  <div class="content" id="painel_pend" style="display: none;">
+    <h2 class="tensao-titulo">Pendências</h2>
+    <p class="tensao-desc">Atendimentos para terminar depois. Escolha o serviço, preencha normalmente e use o quadro <b>Pendência</b> no fim do formulário para escrever o comentário (ex.: "Complementar nota 300123456") e a data do lembrete. A Análise de Isenção de Débitos entra aqui sozinha, com prazo de 5 dias úteis. Fica salvo só neste computador.</p>
+    <div class="pend-resumo" id="pend_resumo"></div>
+    <div class="pend-form">
+      <div class="form-grid" style="margin-bottom: 14px;">
+        <div class="field-group full-width"><label>Adicionar pendência — escolha o serviço</label><select id="pend_servico" data-change="pendServicoMudou()"></select></div>
+        <div class="field-group" id="grp_pref_contrato" style="display: none;"><label>Contrato a ser refaturado *</label><input type="text" id="pref_contrato" inputmode="numeric" placeholder="Ex: 7001234567"></div>
+        <div class="field-group" id="grp_pref_motivo" style="display: none;"><label>Motivo *</label><input type="text" id="pref_motivo" placeholder="Ex: Leitura informada pelo cliente divergente"></div>
+      </div>
+      <div class="pend-acoes" style="margin-bottom: 0;">
+        <button type="button" class="btn" id="btn_pend_abrir" data-click="iniciarPendenciaServico()">Abrir o serviço e preencher</button>
+        <button type="button" class="btn" id="btn_pend_refat" style="display: none;" data-click="adicionarPendenciaRefat()">Adicionar pendência</button>
+        <button type="button" class="btn btn-clear" id="btn_pend_notif" data-click="ativarAvisosNavegador()">Ativar avisos do navegador</button>
+      </div>
+    </div>
+    <h3 class="pend-sub">Em aberto</h3>
+    <div class="pend-lista" id="pend_lista"></div>
+    <details class="pend-concluidas" id="pend_concl_box"><summary id="pend_concl_tit">Concluídas</summary><div class="pend-lista" id="pend_concl"></div></details>
+    <p class="pend-cadencia"><b>Lembretes</b> (com a página aberta): pendência com data — a partir do dia do lembrete, a cada 30 minutos; depois da data, alerta grave a cada 15 minutos. Análise de isenção (prazo de 5 dias úteis) — 1 vez por dia, depois a cada 4 h (2 dias úteis), 2 h (1 dia útil), 30 min (vence hoje) e 15 min (vencida).<br>Dias úteis: sem sábados, domingos, feriados nacionais e 2 de Julho; Carnaval e Corpus Christi contam como dia útil (o prazo nunca fica depois do real).</p>
+  </div>
+
   <div class="content" id="painel_tensao" style="display: none;">
     <h2 class="tensao-titulo">Tensão de Fornecimento</h2>
     <p class="tensao-desc">Digite o nome da cidade para consultar a tensão de fornecimento dela na Bahia (Neoenergia Coelba).</p>
@@ -2076,6 +2167,25 @@
 </div>
 
 <div class="toast-aviso" id="toastAviso" role="alert"></div>
+
+<div class="pend-no-servico" id="pend_box" style="display: none;">
+  <p class="pend-no-servico-tit">📌 Pendência deste atendimento</p>
+  <div class="form-grid">
+    <div class="field-group full-width"><label>Comentário *</label><textarea id="pendc_coment" rows="2" placeholder="Ex: Complementar nota 300123456"></textarea></div>
+    <div class="field-group"><label>Data para lembrete *</label><input type="text" id="pendc_data" inputmode="numeric" placeholder="dd/mm/aaaa" data-input="mascararData(this)"></div>
+  </div>
+  <div class="actions">
+    <button type="button" class="btn" data-click="salvarPendenciaServico()">Salvar pendência</button>
+    <button type="button" class="btn" id="pendc_concluir" data-click="concluirPendenciaServico()">Concluir pendência (gerar texto)</button>
+    <button type="button" class="btn btn-clear" data-click="sairModoPendencia()">Cancelar</button>
+  </div>
+</div>
+
+<div class="pend-lembrete" id="pend_lembrete" role="alert" style="display: none;">
+  <p class="pend-lembrete-tit" id="pend_lembrete_tit"></p>
+  <ul id="pend_lembrete_lista"></ul>
+  <div class="pend-lembrete-acoes"><button type="button" class="btn" data-click="verPendencias()">Ver pendências</button><button type="button" class="btn btn-clear" data-click="fecharLembrete()">Lembrar depois</button></div>
+</div>
 
 <div class="hist-overlay" id="hist_overlay" style="display: none;" data-click="fecharHistoricoFundo(this)">
   <div class="hist-painel" role="dialog" aria-modal="true" aria-labelledby="hist_titulo">
@@ -2125,9 +2235,20 @@
     t._timer = setTimeout(function() { t.classList.remove('show'); }, tipo === 'longo' ? 12000 : 4500);
   }
 
-  function trocarAba(sfId, btn) {
-    var gBotao = abrindoGrupo ? null : grupoDoBotao(sfId);
-    if (gBotao) { abrirTipoGrupo(gBotao, grupoAtual[gBotao] || document.querySelector('select.sel-grupo[data-grupo="' + gBotao + '"]').options[0].value, btn); return; }
+  // Cada tipo de Troca/Reativação tem o próprio botão. Um formulário pode
+  // atender mais de um botão: o id "formulário|subtipo" abre o formulário já
+  // com o tipo certo escolhido (ex.: 'sf-tt|com_assuncao').
+  var nomeServicoAtivo = {}, subtipoAtivo = {};
+  function trocarAba(id, btn) {
+    var partes = String(id).split('|'), sf = partes[0], sub = partes[1] || '';
+    if (typeof pendModo !== 'undefined' && pendModo && pendModo.servicoId !== id) sairModoPendencia(true);   // trocou de serviço: sai do modo pendência
+    subtipoAtivo[sf] = sub;
+    if (sub && btn && btn.textContent) nomeServicoAtivo[sf] = btn.textContent.trim(); else delete nomeServicoAtivo[sf];
+    trocarAbaBase(sf, btn);
+    if (sub) aplicarSubtipo(sf, sub);
+  }
+
+  function trocarAbaBase(sfId, btn) {
     mostrarCaixaNota(SERVICOS_SO_AGENDA.indexOf(sfId) < 0);
     // Trocar de serviço NÃO apaga o que já foi digitado: os formulários
     // ficam montados no DOM (apenas ocultos), então os dados de cada
@@ -2154,13 +2275,11 @@
     if (!container) return;
 
     container.querySelectorAll('input, select, textarea').forEach(function(el) {
-      if (el.classList.contains('sel-grupo')) return;   // "Tipo de solicitação" é navegação: continua livre
       el.disabled = true;
     });
 
     container.querySelectorAll('button').forEach(function(btn) {
-      var doGrupo = btn.classList.contains('sel-trigger') && btn.parentNode && btn.parentNode.querySelector('select.sel-grupo');
-      if (!doGrupo && !btn.classList.contains('btn-clear') && !btn.classList.contains('btn-edit')) {
+      if (!btn.classList.contains('btn-clear') && !btn.classList.contains('btn-edit')) {
         btn.disabled = true;
       }
     });
@@ -2222,6 +2341,7 @@
   }
 
   function finalizarGeracao(containerId, notaTxt, agendaTxt, copyTarget) {
+    if (typeof pendenciaAoGerar === 'function') setTimeout(function() { pendenciaAoGerar(containerId, notaTxt, agendaTxt); }, 0);
     mostrarCaixaNota(!!notaTxt);
     document.getElementById('out-nota').value = notaTxt;
     document.getElementById('out-agenda').value = agendaTxt;
@@ -3690,8 +3810,8 @@
     if (containerId === 'sf-bloq-cobranca') { document.getElementById('bloq_tipo').value = 'pagamento'; toggleBloqCobranca(); }
     if (containerId === 'sf-bpc') { document.getElementById('bpc_titular').value = 'mesmo'; toggleBPC(); }
     
-    var selG = grupoVisivelDe(containerId);
-    if (selG) { var vG = grupoAtual[selG.getAttribute('data-grupo')] || selG.value; setTimeout(function() { aplicarSubtipo(containerId, String(vG).split('|')[1] || ''); }, 0); }
+    var subA = subtipoAtivo[containerId];
+    if (subA) setTimeout(function() { aplicarSubtipo(containerId, subA); }, 0);
     document.getElementById('out-nota').value = '';
     document.getElementById('out-agenda').value = '';
     // A área de transferência NÃO é tocada de propósito: se o texto
@@ -3780,7 +3900,10 @@
     if (pC) pC.style.display = qual === 'calc' ? '' : 'none';
     var pD = document.getElementById('painel_decl');
     if (pD) pD.style.display = qual === 'decl' ? '' : 'none';
-    var titulos = { tensao: 'Tensão Fornecimento', calc: 'Calculadora de Refaturamento', decl: 'Declaração de Ligação' };
+    var pP = document.getElementById('painel_pend');
+    if (pP) pP.style.display = qual === 'pend' ? '' : 'none';
+    if (qual === 'pend' && typeof renderPendencias === 'function') renderPendencias();
+    var titulos = { tensao: 'Tensão Fornecimento', calc: 'Calculadora de Refaturamento', decl: 'Declaração de Ligação', pend: 'Pendências' };
     var tituloPrincipal = document.getElementById('titulo_principal');
     if (tituloPrincipal) tituloPrincipal.textContent = titulos[qual] || 'Textos Padrões';
     document.querySelectorAll('.nav-tab').forEach(function(t) {
@@ -4138,7 +4261,13 @@
     toggleLigacaoNova: toggleLigacaoNova,
     calcularRefat: calcularRefat, gerarCalcRefat: gerarCalcRefat, limparCalcRefat: limparCalcRefat,
     gerarRefatUrgente: gerarRefatUrgente, limparRefatUrgente: limparRefatUrgente, toggleRefatUrgente: toggleRefatUrgente,
-    gerarAnaliseIsencao: gerarAnaliseIsencao, gerarIsencaoDeb: gerarIsencaoDeb, toggleIsencaoDeb: toggleIsencaoDeb, trocarTipoGrupo: trocarTipoGrupo,
+    gerarAnaliseIsencao: gerarAnaliseIsencao, gerarIsencaoDeb: gerarIsencaoDeb, toggleIsencaoDeb: toggleIsencaoDeb,
+    pendServicoMudou: pendServicoMudou, adicionarPendenciaRefat: adicionarPendenciaRefat, concluirPendenciaRefat: concluirPendenciaRefat,
+    iniciarPendenciaServico: iniciarPendenciaServico, salvarPendenciaServico: salvarPendenciaServico, concluirPendenciaServico: concluirPendenciaServico,
+    sairModoPendencia: sairModoPendencia, retomarPendencia: retomarPendencia, editarComentario: editarComentario,
+    abrirResposta: abrirResposta, atualizarMotivosPend: atualizarMotivosPend, concluirPendencia: concluirPendencia, informarNota: informarNota,
+    excluirPendencia: excluirPendencia, reabrirPendencia: reabrirPendencia, alternarTextoPend: alternarTextoPend, copiarTextoPend: copiarTextoPend,
+    fecharLembrete: fecharLembrete, verPendencias: verPendencias, ativarAvisosNavegador: ativarAvisosNavegador,
     gerarDeclaracao: gerarDeclaracao, limparDeclaracao: limparDeclaracao, imprimirDeclaracao: imprimirDeclaracao, toggleDeclEncerramento: toggleDeclEncerramento,
     abrirHistorico: abrirHistorico, fecharHistorico: fecharHistorico, fecharHistoricoFundo: fecharHistoricoFundo,
     renderHistorico: renderHistorico, histCopiarNota: histCopiarNota, histCopiarAgenda: histCopiarAgenda,
@@ -4523,40 +4652,12 @@
     if (ri) ri.style.display = /assuncao/.test(getVal('ri_tipo')) ? '' : 'none';
   }
 
-  // === GRUPOS DE SERVIÇO (Troca de Titularidade / Reativação) ===
-  // Um botão por grupo; o "Tipo de solicitação" dentro do formulário escolhe
-  // qual formulário abrir. Valor "formulário|subtipo".
-  var GRUPOS_SERVICO = {
-    tt:   { nome: 'Troca de Titularidade', botao: 'sf-tt' },
-    reat: { nome: 'Reativação', botao: 'sf-reativ-comum' }
-  };
-  var grupoAtual = {};
-  var abrindoGrupo = false;
-  function grupoDoBotao(sfId) { for (var g in GRUPOS_SERVICO) if (GRUPOS_SERVICO[g].botao === sfId) return g; return null; }
-  function botaoDoGrupo(g) { return document.querySelector('#service_nav .sub-btn[data-click*="\'' + GRUPOS_SERVICO[g].botao + '\'"]'); }
+  // Escolhe o tipo dentro de formulários compartilhados (Troca/Reativação/Isenção)
   function aplicarSubtipo(sf, sub) {
     setTimeout(atualizarAlertaPade, 0);
     if (sf === 'sf-tt' && sub) { document.getElementById('tt_tipo').value = sub; toggleTrocaTitularidade(); }
     if (sf === 'sf-ri' && sub) { document.getElementById('ri_tipo').value = sub; toggleReativDebitos(); }
     if (sf === 'sf-isencao-deb' && sub) { document.getElementById('ise_servico').value = sub; toggleIsencaoDeb(); }
-  }
-  function abrirTipoGrupo(g, valor, btn) {
-    var partes = String(valor).split('|'), sf = partes[0], sub = partes[1] || '';
-    grupoAtual[g] = valor;
-    abrindoGrupo = true;
-    try { trocarAba(sf, btn || botaoDoGrupo(g)); } finally { abrindoGrupo = false; }
-    aplicarSubtipo(sf, sub);
-    // a análise de isenção atende os dois grupos: mostra só o seletor do grupo atual
-    document.querySelectorAll('#sf-isencao-deb .grp-tipo-tt').forEach(function(e) { e.style.display = g === 'tt' ? '' : 'none'; });
-    document.querySelectorAll('#sf-isencao-deb .grp-tipo-reat').forEach(function(e) { e.style.display = g === 'reat' ? '' : 'none'; });
-    document.querySelectorAll('select.sel-grupo[data-grupo="' + g + '"]').forEach(function(sel) { if (sel.value !== valor) sel.value = valor; });
-  }
-  function trocarTipoGrupo(sel) { abrirTipoGrupo(sel.getAttribute('data-grupo'), sel.value); }
-  function grupoVisivelDe(containerId) {
-    var c = document.getElementById(containerId); if (!c) return null;
-    var sels = c.querySelectorAll('select.sel-grupo');
-    for (var i = 0; i < sels.length; i++) { var fg = sels[i].closest('.field-group'); if (!fg || fg.style.display !== 'none') return sels[i]; }
-    return null;
   }
 
   // === ISENÇÃO DE DÉBITOS (pedido de análise) ===
@@ -4575,6 +4676,7 @@
       '\nEMAIL: ' + getVal('aid_email') +
       '\nDOCUMENTAÇÃO APRESENTADA: ' + docs;
     finalizarGeracao('sf-analise-isencao', txt, txt, 'nota');
+    criarPendenciaAuto('isencao', { origem: 'Isenção de Débitos (pedido de análise)', solicitante: getVal('aid_solic'), cc: getVal('aid_cc'), doc: doc, texto: txt });
   }
 
   // === ANÁLISE DE ISENÇÃO DE DÉBITOS (Troca de titularidade ou Reativação) ===
@@ -4628,6 +4730,8 @@
       '\nSe trata de unidade consumidora MMGD Geradora? ' + getVal('ise_mmgd') +
       '\nNúmero da Tarefa Neo aberta: ' + (getVal('ise_neo') || 'Não se aplica');
     finalizarGeracao('sf-isencao-deb', txt, txt, 'nota');
+    criarPendenciaAuto('isencao', { origem: (troca ? 'Troca de Titularidade' : 'Reativação') + ' com Análise de Isenção de Débitos',
+      solicitante: getVal('ise_solic'), cc: getVal('ise_ccn') || getVal('ise_cca'), doc: doc, texto: txt });
   }
 
   // === REFAT URGENTE (aba da calculadora) ===
@@ -4835,6 +4939,453 @@
     if (el && !el.value) el.value = declHojeBR();
   })();
 
+  // === PENDÊNCIAS ===
+  // Dois tipos, salvos no localStorage deste computador:
+  //  - 'servico': atendimento para terminar depois. Guarda os campos do
+  //    formulário, um comentário e a data do lembrete. Concluir = reabrir o
+  //    serviço preenchido e gerar o texto (vai para o Histórico).
+  //  - 'prazo': Análise de Isenção de Débitos, criada ao gerar o texto, com
+  //    prazo de 5 dias úteis e resposta Deferido/Indeferido.
+  // TIPOS DE RESPOSTA da isenção: lista inicial, ajustar conforme o procedimento oficial.
+  var TIPOS_PENDENCIA = {
+    isencao: { nome: 'Análise de Isenção de Débitos', prazo: 5,
+      deferido: ['Deferido — isenção total do débito', 'Deferido parcialmente — isenção de parte do débito/período'],
+      indeferido: ['Documentação não comprova a posse no período do débito', 'Solicitante era responsável pelo imóvel no período do débito',
+                   'Documentação ilegível, incompleta ou fora da validade', 'Dados da Receita Federal pendentes ou irregulares',
+                   'Outro motivo (descrever na observação)'] }
+  };
+  var PEND_CHAVE = AMBIENTE_TESTE ? 'tp_teste_pendencias_v1' : 'tp_pendencias_v1';
+  var PEND_DIAS_CONCLUIDAS = 90;
+
+  function pendLer() { try { var a = JSON.parse(localStorage.getItem(PEND_CHAVE) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+  function pendGravar(l) { try { localStorage.setItem(PEND_CHAVE, JSON.stringify(l)); } catch (e) { mostrarAviso('Não foi possível salvar as pendências neste navegador.'); } }
+  function pKind(pd) { return pd.kind === 'servico' || pd.kind === 'refat' ? pd.kind : 'prazo'; }
+
+  // ---- datas e dias úteis (datas como 'aaaa-mm-dd') ----
+  function pIso(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function pHoje() { return pIso(new Date()); }
+  function pDeBR(br) { var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(br || '').trim()); if (!m) return null; var d = new Date(+m[3], +m[2] - 1, +m[1]); return (d.getDate() === +m[1] && d.getMonth() === +m[2] - 1) ? pIso(d) : null; }
+  function pBR(iso) { var x = String(iso || '').split('-'); return x.length === 3 ? x[2] + '/' + x[1] + '/' + x[0] : ''; }
+  function pData(iso) { var x = iso.split('-'); return new Date(+x[0], +x[1] - 1, +x[2]); }
+  function pDiasCorridos(a, b) { return Math.round((pData(b) - pData(a)) / 86400000); }
+  var pFeriadosCache = {};
+  function pFeriados(ano) {
+    if (pFeriadosCache[ano]) return pFeriadosCache[ano];
+    var f = {};
+    ['01-01', '04-21', '05-01', '07-02', '09-07', '10-12', '11-02', '11-15', '11-20', '12-25'].forEach(function(md) { f[ano + '-' + md] = true; });
+    var a = ano % 19, b = Math.floor(ano / 100), c = ano % 100, d = Math.floor(b / 4), e = b % 4, g = Math.floor((8 * b + 13) / 25),
+        h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 19 * l) / 433),
+        mes = Math.floor((h + l - 7 * m + 90) / 25), dia = (h + l - 7 * m + 33 * mes + 19) % 32;
+    var sextaSanta = new Date(ano, mes - 1, dia); sextaSanta.setDate(sextaSanta.getDate() - 2); f[pIso(sextaSanta)] = true;
+    return (pFeriadosCache[ano] = f);
+  }
+  function pUtil(iso) { var d = pData(iso), w = d.getDay(); return w !== 0 && w !== 6 && !pFeriados(d.getFullYear())[iso]; }
+  function pSomarUteis(iso, n) { var d = pData(iso), c = 0; while (c < n) { d.setDate(d.getDate() + 1); if (pUtil(pIso(d))) c++; } return pIso(d); }
+  function pUteisAte(prazoIso) {
+    var hoje = pHoje();
+    if (hoje === prazoIso) return 0;
+    var ini = hoje < prazoIso ? hoje : prazoIso, fim = hoje < prazoIso ? prazoIso : hoje, d = pData(ini), c = 0;
+    while (pIso(d) < fim) { d.setDate(d.getDate() + 1); if (pUtil(pIso(d))) c++; }
+    return hoje < prazoIso ? c : -Math.max(c, 1);
+  }
+  // classe: agendada | ok | proxima | hoje | vencida | concluida
+  function pSituacao(pd) {
+    if (pKind(pd) === 'refat') return pd.status === 'concluida'
+      ? { classe: 'concluida', texto: 'Concluída em ' + pBR(pd.respostaData), dias: null }
+      : { classe: 'semdata', texto: 'Sem data — aguardando refaturamento', dias: null };
+    if (pd.status === 'concluida') {
+      if (pKind(pd) === 'servico') return { classe: 'concluida', texto: 'Concluída em ' + pBR(pd.respostaData), dias: null };
+      return { classe: 'concluida', texto: 'Respondida em ' + pBR(pd.respostaData) + (pd.respostaData <= pd.prazo ? ' (no prazo)' : ' (fora do prazo)'), dias: null };
+    }
+    if (pKind(pd) === 'servico') {
+      var dc = pDiasCorridos(pHoje(), pd.lembrete);
+      if (dc > 0) return { classe: 'agendada', texto: 'Lembrete em ' + pBR(pd.lembrete) + (dc === 1 ? ' (amanhã)' : ' (em ' + dc + ' dias)'), dias: dc };
+      if (dc === 0) return { classe: 'hoje', texto: 'Lembrete HOJE', dias: 0 };
+      return { classe: 'vencida', texto: 'ATRASADA há ' + (-dc) + (dc === -1 ? ' dia' : ' dias'), dias: dc };
+    }
+    var n = pUteisAte(pd.prazo);
+    if (n < 0) return { classe: 'vencida', texto: 'Vencida há ' + (-n) + (n === -1 ? ' dia útil' : ' dias úteis'), dias: n };
+    if (n === 0) return { classe: 'hoje', texto: 'Vence HOJE', dias: 0 };
+    if (n <= 2) return { classe: 'proxima', texto: 'Vence em ' + n + (n === 1 ? ' dia útil' : ' dias úteis'), dias: n };
+    return { classe: 'ok', texto: 'Vence em ' + n + ' dias úteis', dias: n };
+  }
+  function pNovoId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function pEsc(t) { return declEsc(t); }
+  function pAchar(id) { var l = pendLer(); for (var i = 0; i < l.length; i++) if (l[i].id === id) return { lista: l, pd: l[i] }; return null; }
+
+  // ---- Análise de Isenção: criada ao gerar o texto ----
+  function criarPendenciaAuto(tipo, dados) {
+    var lista = pendLer(), hoje = pHoje(), t = TIPOS_PENDENCIA[tipo];
+    var chave = String(dados.doc || dados.cc || dados.solicitante || '').replace(/\W/g, '').toLowerCase();
+    var existente = null;
+    lista.forEach(function(pd) { if (pKind(pd) === 'prazo' && pd.status === 'aberta' && pd.tipo === tipo && pd.abertura === hoje && pd.chave === chave && pd.origem === dados.origem) existente = pd; });
+    if (existente) {
+      existente.solicitante = dados.solicitante; existente.cc = dados.cc; existente.doc = dados.doc; existente.texto = dados.texto;
+      pendGravar(lista); atualizarBadgePendencias();
+      return existente;
+    }
+    var pd = { id: pNovoId(), kind: 'prazo', tipo: tipo, origem: dados.origem || t.nome, chave: chave, solicitante: dados.solicitante || '', cc: dados.cc || '', doc: dados.doc || '',
+      nota: '', comentario: '', texto: dados.texto || '', abertura: hoje, prazoUteis: t.prazo, prazo: pSomarUteis(hoje, t.prazo), status: 'aberta', ultimoLembrete: Date.now() };
+    lista.unshift(pd); pendGravar(lista); atualizarBadgePendencias();
+    setTimeout(function() { mostrarAviso('Pendência criada: responder até ' + pBR(pd.prazo) + ' (' + t.prazo + ' dias úteis). Veja na aba Pendências.', 'ok'); }, 900);
+    return pd;
+  }
+
+  // ---- pendência de serviço: abrir, preencher, salvar, retomar, concluir ----
+  var pendModo = null;   // { sf, servicoId, nome, id (quando já salva) }
+  function pSf(servicoId) { return String(servicoId).split('|')[0]; }
+  function pBotaoServico(servicoId) { return document.querySelector('#service_nav .sub-btn[data-click*="\'' + servicoId + '\'"]'); }
+  function montarListaServicosPend() {
+    var sel = document.getElementById('pend_servico'); if (!sel) return;
+    sel.innerHTML = '';
+    var oR = document.createElement('option'); oR.value = PEND_REFAT; oR.textContent = 'Refaturamento (só contrato e motivo)'; sel.appendChild(oR);
+    document.querySelectorAll('#service_nav .sub-btn').forEach(function(b) {
+      var m = /trocarAba\('([^']+)'/.exec(b.getAttribute('data-click') || ''); if (!m) return;
+      var o = document.createElement('option'); o.value = m[1]; o.textContent = b.textContent.trim(); sel.appendChild(o);
+    });
+    recriarListaSelect(sel);
+  }
+  // As listas suspensas personalizadas são montadas ao carregar a página; quando
+  // as opções de um <select> mudam depois disso, a lista visível precisa ser refeita.
+  function recriarListaSelect(sel) {
+    var ctx = sel && sel._selCtx; if (!ctx) return;
+    ctx.list.innerHTML = '';
+    for (var i = 0; i < sel.options.length; i++) {
+      var it = document.createElement('div');
+      it.className = 'sel-opt'; it.setAttribute('role', 'option'); it.setAttribute('data-idx', String(i));
+      it.textContent = sel.options[i].textContent;
+      ctx.list.appendChild(it);
+    }
+    sel.selectedIndex = sel.options.length ? Math.max(sel.selectedIndex, 0) : -1;   // o setter espelhado atualiza o rótulo
+  }
+  function mostrarCaixaPendencia(sf, comentario, dataBr, existente) {
+    var box = document.getElementById('pend_box'), cont = document.getElementById(sf);
+    if (!box || !cont) return;
+    var acoes = null;
+    for (var i = 0; i < cont.children.length; i++) if (cont.children[i].classList.contains('actions')) acoes = cont.children[i];
+    cont.insertBefore(box, acoes);
+    document.getElementById('pendc_coment').value = comentario || '';
+    document.getElementById('pendc_data').value = dataBr || '';
+    document.getElementById('pendc_concluir').style.display = existente ? '' : 'none';
+    box.querySelectorAll('input, textarea, button').forEach(function(el) { el.disabled = false; });
+    box.style.display = 'block';
+  }
+  function sairModoPendencia(silencioso) {
+    var box = document.getElementById('pend_box');
+    if (box) { box.style.display = 'none'; document.body.appendChild(box); }
+    pendModo = null;
+    if (!silencioso) mostrarAbaPrincipal('pend');
+  }
+  function iniciarPendenciaServico() {
+    var servicoId = getVal('pend_servico'); if (!servicoId) return;
+    var btn = pBotaoServico(servicoId), sf = pSf(servicoId);
+    mostrarAbaPrincipal('agenda');
+    trocarAba(servicoId, btn);
+    limparForm(sf);
+    var amanha = new Date(); amanha.setDate(amanha.getDate() + 1);
+    pendModo = { sf: sf, servicoId: servicoId, nome: btn ? btn.textContent.trim() : servicoId, id: null };
+    setTimeout(function() {
+      mostrarCaixaPendencia(sf, '', pBR(pIso(amanha)), false);
+      var primeiro = document.querySelector('#' + sf + ' .form-grid input:not([type=hidden]), #' + sf + ' .form-grid textarea');
+      document.getElementById(sf).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (primeiro) primeiro.focus();
+    }, 60);
+  }
+  function pCamposDoFormulario(sf) {
+    var campos = {};
+    document.querySelectorAll('#' + sf + ' input[id], #' + sf + ' select[id], #' + sf + ' textarea[id]').forEach(function(el) {
+      if (/^pendc_/.test(el.id)) return;
+      campos[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? !!el.checked : el.value;
+    });
+    return campos;
+  }
+  function pSolicitanteDe(campos) {
+    for (var k in campos) if (/_solic$/.test(k) && campos[k]) return campos[k];
+    for (var k2 in campos) if (/(cliente|nome)$/.test(k2) && campos[k2]) return campos[k2];
+    return '';
+  }
+  function salvarPendenciaServico() {
+    if (!pendModo) return;
+    var coment = document.getElementById('pendc_coment').value.trim();
+    if (!coment) { mostrarAviso('ATENÇÃO: escreva o comentário da pendência (ex.: Complementar nota 300123456).'); document.getElementById('pendc_coment').focus(); return; }
+    var data = pDeBR(document.getElementById('pendc_data').value);
+    if (!data) { mostrarAviso('ATENÇÃO: a data para lembrete deve ser uma data real (dd/mm/aaaa).'); document.getElementById('pendc_data').focus(); return; }
+    var campos = pCamposDoFormulario(pendModo.sf), lista = pendLer(), pd = null;
+    if (pendModo.id) lista.forEach(function(x) { if (x.id === pendModo.id) pd = x; });
+    if (!pd) {
+      if (data < pHoje()) { mostrarAviso('ATENÇÃO: a data para lembrete não pode ser no passado.'); document.getElementById('pendc_data').focus(); return; }
+      pd = { id: pNovoId(), kind: 'servico', abertura: pHoje(), status: 'aberta' };
+      lista.unshift(pd);
+    }
+    if (pd.lembrete !== data) pd.ultimoLembrete = 0;
+    pd.servicoId = pendModo.servicoId; pd.origem = pendModo.nome; pd.campos = campos; pd.comentario = coment; pd.lembrete = data;
+    pd.solicitante = pSolicitanteDe(campos);
+    pendGravar(lista);
+    var sf = pendModo.sf;
+    sairModoPendencia(true);
+    limparForm(sf);
+    atualizarBadgePendencias();
+    mostrarAbaPrincipal('pend');
+    mostrarAviso('Pendência salva: lembrete em ' + pBR(data) + '.', 'ok');
+  }
+  // Reabre o serviço com o que foi preenchido, para completar e concluir.
+  function retomarPendencia(id) {
+    var r = pAchar(id); if (!r || pKind(r.pd) !== 'servico') return;
+    var pd = r.pd, sf = pSf(pd.servicoId), btn = pBotaoServico(pd.servicoId);
+    if (!document.getElementById(sf)) { mostrarAviso('Este serviço não existe mais na página.'); return; }
+    mostrarAbaPrincipal('agenda');
+    trocarAba(pd.servicoId, btn);
+    limparForm(sf);
+    setTimeout(function() {
+      var campos = pd.campos || {}, selects = [], outros = [];
+      Object.keys(campos).forEach(function(k) { var el = document.getElementById(k); if (!el) return; (el.tagName === 'SELECT' ? selects : outros).push(el); });
+      selects.forEach(function(el) { el.value = campos[el.id]; el.dispatchEvent(new Event('change', { bubbles: true })); });
+      outros.forEach(function(el) { if (el.type === 'checkbox' || el.type === 'radio') el.checked = !!campos[el.id]; else el.value = campos[el.id]; });
+      pendModo = { sf: sf, servicoId: pd.servicoId, nome: pd.origem, id: pd.id };
+      mostrarCaixaPendencia(sf, pd.comentario, pBR(pd.lembrete), true);
+      document.getElementById(sf).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 60);
+  }
+  function concluirPendenciaServico() {
+    if (!pendModo || !pendModo.id) return;
+    var cont = document.getElementById(pendModo.sf), gerar = null;
+    for (var i = 0; i < cont.children.length; i++) {
+      var c = cont.children[i];
+      if (c.classList.contains('actions')) { gerar = c.querySelector('.btn:not(.btn-clear):not(.btn-edit)'); break; }
+    }
+    if (gerar) gerar.click();   // mesma validação e mesmo texto do botão normal; ao gerar, a pendência é concluída
+  }
+  // Chamado por finalizarGeracao: gerar o texto de um serviço em pendência a conclui.
+  function pendenciaAoGerar(containerId, notaTxt, agendaTxt) {
+    if (!pendModo || pendModo.sf !== containerId) return;
+    var id = pendModo.id;
+    sairModoPendencia(true);
+    if (!id) return;   // pendência ainda não salva: o atendimento foi concluído na hora
+    var r = pAchar(id); if (!r) return;
+    r.pd.status = 'concluida'; r.pd.respostaData = pHoje(); r.pd.respostaTs = Date.now(); r.pd.texto = notaTxt || agendaTxt;
+    pendGravar(r.lista); atualizarBadgePendencias();
+    setTimeout(function() { mostrarAviso('Pendência concluída. O texto foi gerado e está no Histórico.', 'ok'); }, 900);
+  }
+
+  // ---- Refaturamento: pendência simples (contrato + motivo, sem data) ----
+  var PEND_REFAT = '__refat';
+  function pendServicoMudou() {
+    var refat = getVal('pend_servico') === PEND_REFAT;
+    ['grp_pref_contrato', 'grp_pref_motivo'].forEach(function(id) { document.getElementById(id).style.display = refat ? 'flex' : 'none'; });
+    document.getElementById('btn_pend_abrir').style.display = refat ? 'none' : '';
+    document.getElementById('btn_pend_refat').style.display = refat ? '' : 'none';
+  }
+  function adicionarPendenciaRefat() {
+    var contrato = getVal('pref_contrato'), motivo = getVal('pref_motivo');
+    if (!contrato) { mostrarAviso('ATENÇÃO: informe o contrato a ser refaturado.'); document.getElementById('pref_contrato').focus(); return; }
+    if (!motivo) { mostrarAviso('ATENÇÃO: informe o motivo do refaturamento.'); document.getElementById('pref_motivo').focus(); return; }
+    var lista = pendLer(), chave = contrato.replace(/\D/g, '') || contrato.toLowerCase();
+    var dup = lista.some(function(pd) { return pKind(pd) === 'refat' && pd.status === 'aberta' && ((pd.contrato || '').replace(/\D/g, '') || (pd.contrato || '').toLowerCase()) === chave; });
+    if (dup) { mostrarAviso('Já existe uma pendência de refaturamento em aberto para o contrato ' + contrato + '.'); return; }
+    lista.unshift({ id: pNovoId(), kind: 'refat', origem: 'Refaturamento', contrato: contrato, comentario: motivo, solicitante: '', abertura: pHoje(), status: 'aberta' });
+    pendGravar(lista);
+    document.getElementById('pref_contrato').value = ''; document.getElementById('pref_motivo').value = '';
+    renderPendencias(); atualizarBadgePendencias();
+    mostrarAviso('Pendência de refaturamento adicionada para o contrato ' + contrato + '.', 'ok');
+  }
+  function concluirPendenciaRefat(id) {
+    var r = pAchar(id); if (!r) return;
+    if (!confirm('Confirmar que o contrato ' + r.pd.contrato + ' foi refaturado?')) return;
+    r.pd.status = 'concluida'; r.pd.respostaData = pHoje(); r.pd.respostaTs = Date.now();
+    r.pd.texto = 'Refaturamento concluído\nContrato: ' + r.pd.contrato + '\nMotivo: ' + r.pd.comentario + '\nConcluído em: ' + pBR(r.pd.respostaData);
+    pendGravar(r.lista);
+    nomeServicoAtivo['sf-pend-refat'] = 'Refaturamento (pendência)';
+    salvarNoHistorico('sf-pend-refat', r.pd.texto, '');
+    renderPendencias(); atualizarBadgePendencias();
+    mostrarAviso('Refaturamento concluído e registrado no Histórico.', 'ok');
+  }
+
+  // ---- lista ----
+  function renderPendencias() {
+    var lista = pendLer(), limite = Date.now() - PEND_DIAS_CONCLUIDAS * 86400000;
+    var chaveOrd = function(pd) { return pKind(pd) === 'refat' ? 'z' + pd.abertura : pKind(pd) === 'servico' ? pd.lembrete : pd.prazo; };
+    var abertas = lista.filter(function(pd) { return pd.status === 'aberta'; }).sort(function(a, b) { return chaveOrd(a) < chaveOrd(b) ? -1 : chaveOrd(a) > chaveOrd(b) ? 1 : 0; });
+    var concl = lista.filter(function(pd) { return pd.status === 'concluida' && (pd.respostaTs || 0) >= limite; }).sort(function(a, b) { return (b.respostaTs || 0) - (a.respostaTs || 0); });
+    var cont = { vencida: 0, hoje: 0, proxima: 0, ok: 0, agendada: 0, semdata: 0 };
+    abertas.forEach(function(pd) { cont[pSituacao(pd).classe]++; });
+    document.getElementById('pend_resumo').innerHTML =
+      '<span class="pend-chip vencida">Atrasadas/vencidas: <b>' + cont.vencida + '</b></span><span class="pend-chip hoje">Para hoje: <b>' + cont.hoje + '</b></span>' +
+      '<span class="pend-chip">Próximas: <b>' + (cont.proxima + cont.ok + cont.agendada) + '</b></span><span class="pend-chip">Refaturamento (sem data): <b>' + cont.semdata + '</b></span>';
+    document.getElementById('pend_lista').innerHTML = abertas.length ? abertas.map(pCard).join('') : '<div class="pend-vazio">Nenhuma pendência em aberto.</div>';
+    document.getElementById('pend_concl_tit').textContent = 'Concluídas nos últimos ' + PEND_DIAS_CONCLUIDAS + ' dias (' + concl.length + ')';
+    document.getElementById('pend_concl').innerHTML = concl.length ? concl.map(pCard).join('') : '<div class="pend-vazio">Nenhuma pendência concluída.</div>';
+    var bn = document.getElementById('btn_pend_notif');
+    if (bn) {
+      var sup = 'Notification' in window, perm = sup ? Notification.permission : 'denied';
+      bn.style.display = sup && perm !== 'granted' ? '' : 'none';
+      bn.textContent = perm === 'denied' ? 'Avisos do navegador bloqueados' : 'Ativar avisos do navegador';
+    }
+  }
+  function pCard(pd) {
+    var sit = pSituacao(pd), aberta = pd.status === 'aberta', servico = pKind(pd) === 'servico', refat = pKind(pd) === 'refat';
+    if (refat) {
+      return '<div class="pend-item ' + sit.classe + '" id="pitem_' + pd.id + '">' +
+        '<div class="pend-topo"><span class="pend-tipo">Refaturamento</span><span class="pend-status">' + pEsc(sit.texto) + '</span></div>' +
+        '<p class="pend-coment">' + pEsc(pd.comentario) + '</p>' +
+        '<p class="pend-info"><b>Contrato ' + pEsc(pd.contrato) + '</b> · criada em ' + pBR(pd.abertura) + '</p>' +
+        '<div class="pend-botoes">' +
+        (aberta ? '<button type="button" class="pend-resp" data-click="concluirPendenciaRefat(\'' + pd.id + '\')">Concluir refaturamento</button>' +
+                  '<button type="button" data-click="editarComentario(\'' + pd.id + '\')">Alterar motivo</button>'
+                : '<button type="button" data-click="reabrirPendencia(\'' + pd.id + '\')">Reabrir</button>') +
+        '<button type="button" class="pend-del" data-click="excluirPendencia(\'' + pd.id + '\')">Excluir</button></div></div>';
+    }
+    var info = servico
+      ? '<b>' + pEsc(pd.solicitante || '—') + '</b> · criada em ' + pBR(pd.abertura) + ' · <b>lembrete em ' + pBR(pd.lembrete) + '</b>'
+      : '<b>' + pEsc(pd.solicitante || '—') + '</b>' + (pd.cc ? ' · CC ' + pEsc(pd.cc) : '') + (pd.nota ? ' · Nota ' + pEsc(pd.nota) : '') +
+        '<br>Aberta em ' + pBR(pd.abertura) + ' · prazo ' + pd.prazoUteis + ' dias úteis · <b>responder até ' + pBR(pd.prazo) + '</b>' +
+        (!aberta ? '<br>Resultado: <b>' + pEsc(pd.resultado) + '</b> — ' + pEsc(pd.motivo) + (pd.respostaObs ? ' · ' + pEsc(pd.respostaObs) : '') : '');
+    var botoes = '';
+    if (aberta && servico) botoes += '<button type="button" class="pend-resp" data-click="retomarPendencia(\'' + pd.id + '\')">Retomar e concluir</button>';
+    if (aberta && !servico) botoes += '<button type="button" class="pend-resp" data-click="abrirResposta(\'' + pd.id + '\')">Responder</button>' +
+      '<button type="button" data-click="informarNota(\'' + pd.id + '\')">' + (pd.nota ? 'Alterar nº da nota' : 'Informar nº da nota') + '</button>' +
+      '<button type="button" data-click="editarComentario(\'' + pd.id + '\')">' + (pd.comentario ? 'Alterar comentário' : 'Comentário') + '</button>';
+    if (!aberta && !servico) botoes += '<button type="button" data-click="reabrirPendencia(\'' + pd.id + '\')">Reabrir</button>';
+    if (pd.texto) botoes += '<button type="button" data-click="alternarTextoPend(\'' + pd.id + '\')">Ver texto</button><button type="button" data-click="copiarTextoPend(\'' + pd.id + '\')">Copiar texto</button>';
+    botoes += '<button type="button" class="pend-del" data-click="excluirPendencia(\'' + pd.id + '\')">Excluir</button>';
+    return '<div class="pend-item ' + sit.classe + '" id="pitem_' + pd.id + '">' +
+      '<div class="pend-topo"><span class="pend-tipo">' + pEsc(pd.origem || 'Pendência') + '</span><span class="pend-status">' + pEsc(sit.texto) + '</span></div>' +
+      (pd.comentario ? '<p class="pend-coment">' + pEsc(pd.comentario) + '</p>' : '') +
+      '<p class="pend-info">' + info + '</p>' +
+      '<div class="pend-botoes">' + botoes + '</div>' +
+      (pd.texto ? '<pre class="pend-texto" id="ptexto_' + pd.id + '" style="display: none;">' + pEsc(pd.texto) + '</pre>' : '') +
+      '<div id="presp_' + pd.id + '"></div></div>';
+  }
+  function alternarTextoPend(id) { var e = document.getElementById('ptexto_' + id); if (e) e.style.display = e.style.display === 'none' ? 'block' : 'none'; }
+  function copiarTextoPend(id) { var r = pAchar(id); if (r) histCopiarTexto(r.pd.texto); }
+  function informarNota(id) {
+    var r = pAchar(id); if (!r) return;
+    var v = prompt('Nº da nota / protocolo:', r.pd.nota || ''); if (v === null) return;
+    r.pd.nota = v.trim(); pendGravar(r.lista); renderPendencias();
+  }
+  function editarComentario(id) {
+    var r = pAchar(id); if (!r) return;
+    var v = prompt('Comentário da pendência:', r.pd.comentario || ''); if (v === null) return;
+    r.pd.comentario = v.trim(); pendGravar(r.lista); renderPendencias();
+  }
+  function excluirPendencia(id) {
+    if (!confirm('Excluir esta pendência? Ela não será mais lembrada.')) return;
+    pendGravar(pendLer().filter(function(pd) { return pd.id !== id; })); renderPendencias(); atualizarBadgePendencias();
+  }
+  function reabrirPendencia(id) {
+    var r = pAchar(id); if (!r) return;
+    r.pd.status = 'aberta'; delete r.pd.resultado; delete r.pd.motivo; delete r.pd.respostaObs; delete r.pd.respostaData; delete r.pd.respostaTs;
+    r.pd.ultimoLembrete = 0; pendGravar(r.lista); renderPendencias(); atualizarBadgePendencias();
+  }
+  // ---- resposta da Análise de Isenção (deferido / indeferido) ----
+  function abrirResposta(id) {
+    var r = pAchar(id); if (!r) return;
+    var box = document.getElementById('presp_' + id);
+    if (box.innerHTML) { box.innerHTML = ''; return; }
+    box.innerHTML = '<div class="pend-responder">' +
+      '<div><label>Resultado *</label><select id="pres_res_' + id + '" data-change="atualizarMotivosPend(\'' + id + '\')"><option value="Deferido">Deferido</option><option value="Indeferido">Indeferido</option></select></div>' +
+      '<div><label>Tipo *</label><select id="pres_mot_' + id + '"></select></div>' +
+      '<div><label>Data da resposta *</label><input type="text" id="pres_data_' + id + '" inputmode="numeric" value="' + pBR(pHoje()) + '" data-input="mascararData(this)"></div>' +
+      '<div><label>Observação</label><input type="text" id="pres_obs_' + id + '" placeholder="Opcional (obrigatória em Outro motivo)"></div>' +
+      '<div class="full pend-botoes"><button type="button" class="pend-resp" data-click="concluirPendencia(\'' + id + '\')">Confirmar resposta</button><button type="button" data-click="abrirResposta(\'' + id + '\')">Cancelar</button></div></div>';
+    atualizarMotivosPend(id);
+  }
+  function atualizarMotivosPend(id) {
+    var r = pAchar(id); if (!r) return;
+    var t = TIPOS_PENDENCIA[r.pd.tipo] || TIPOS_PENDENCIA.isencao;
+    var res = document.getElementById('pres_res_' + id).value, sel = document.getElementById('pres_mot_' + id);
+    sel.innerHTML = '';
+    (res === 'Deferido' ? t.deferido : t.indeferido).forEach(function(m) { var o = document.createElement('option'); o.value = m; o.textContent = m; sel.appendChild(o); });
+  }
+  function concluirPendencia(id) {
+    var r = pAchar(id); if (!r) return;
+    var data = pDeBR(document.getElementById('pres_data_' + id).value);
+    if (!data) { mostrarAviso('ATENÇÃO: a data da resposta deve ser uma data real (dd/mm/aaaa).'); return; }
+    if (data < r.pd.abertura) { mostrarAviso('ATENÇÃO: a resposta não pode ser anterior à abertura (' + pBR(r.pd.abertura) + ').'); return; }
+    var motivo = document.getElementById('pres_mot_' + id).value, obs = document.getElementById('pres_obs_' + id).value.trim();
+    if (/^Outro motivo|descrever/i.test(motivo) && !obs) { mostrarAviso('ATENÇÃO: descreva o motivo na observação.'); document.getElementById('pres_obs_' + id).focus(); return; }
+    r.pd.status = 'concluida'; r.pd.resultado = document.getElementById('pres_res_' + id).value; r.pd.motivo = motivo; r.pd.respostaObs = obs;
+    r.pd.respostaData = data; r.pd.respostaTs = Date.now();
+    pendGravar(r.lista); renderPendencias(); atualizarBadgePendencias();
+    mostrarAviso('Pendência respondida: ' + r.pd.resultado + (data <= r.pd.prazo ? ' (no prazo).' : ' (fora do prazo).'), 'ok');
+  }
+
+  // ---- contador e lembretes ----
+  function atualizarBadgePendencias() {
+    var abertas = pendLer().filter(function(pd) { return pd.status === 'aberta'; });
+    var urgente = abertas.some(function(pd) { var c = pSituacao(pd).classe; return c === 'vencida' || c === 'hoje'; });
+    ['pend_badge', 'pend_badge_topo'].forEach(function(id) {
+      var b = document.getElementById(id); if (!b) return;
+      b.textContent = abertas.length ? String(abertas.length) : '';
+      b.classList.toggle('tem', abertas.length > 0);
+      b.classList.toggle('alerta', urgente);
+    });
+  }
+  // Intervalo entre lembretes (ms). null = uma vez por dia; -1 = ainda não lembra.
+  function pIntervaloLembrete(pd) {
+    if (pKind(pd) === 'refat') return -1;              // refaturamento: sem data, sem lembrete
+    var sit = pSituacao(pd);
+    if (pKind(pd) === 'servico') {
+      if (sit.classe === 'agendada') return -1;          // antes da data: sem alerta
+      return sit.classe === 'vencida' ? 15 * 60000 : 30 * 60000;
+    }
+    var dias = sit.dias;
+    if (dias < 0) return 15 * 60000;
+    if (dias === 0) return 30 * 60000;
+    if (dias === 1) return 2 * 3600000;
+    if (dias === 2) return 4 * 3600000;
+    return null;
+  }
+  function pDevido(pd, agora) {
+    var iv = pIntervaloLembrete(pd), ult = pd.ultimoLembrete || 0;
+    if (iv === -1) return false;
+    if (iv === null) return pIso(new Date(ult)) !== pHoje();
+    return agora - ult >= iv;
+  }
+  function verificarLembretes(soAtualizar) {
+    atualizarBadgePendencias();
+    var painel = document.getElementById('painel_pend');
+    if (painel && painel.style.display !== 'none') renderPendencias();
+    if (soAtualizar) return;
+    var lista = pendLer(), agora = Date.now();
+    var devidas = lista.filter(function(pd) { return pd.status === 'aberta' && pDevido(pd, agora); });
+    if (!devidas.length) return;
+    devidas.sort(function(a, b) { return pSituacao(a).classe === 'vencida' ? -1 : pSituacao(b).classe === 'vencida' ? 1 : 0; });
+    devidas.forEach(function(pd) { pd.ultimoLembrete = agora; });
+    pendGravar(lista);
+    mostrarLembrete(devidas);
+  }
+  function mostrarLembrete(devidas) {
+    var grave = devidas.some(function(pd) { return pSituacao(pd).classe === 'vencida'; });
+    var box = document.getElementById('pend_lembrete');
+    document.getElementById('pend_lembrete_tit').textContent = (grave ? '🚨 ' : '⏰ ') + (grave ? 'Pendência atrasada! ' : '') + (devidas.length === 1 ? '1 pendência para resolver' : devidas.length + ' pendências para resolver');
+    document.getElementById('pend_lembrete_lista').innerHTML = devidas.map(function(pd) {
+      return '<li><b>' + pEsc(pSituacao(pd).texto) + '</b> — ' + pEsc(pd.origem) + (pd.comentario ? ': ' + pEsc(pd.comentario) : '') + (pd.solicitante ? ' (' + pEsc(pd.solicitante) + ')' : '') + '</li>';
+    }).join('');
+    box.classList.toggle('urgente', grave);
+    box.style.display = 'block';
+    if ('Notification' in window && Notification.permission === 'granted') {
+      try { new Notification(grave ? 'Pendência ATRASADA — Textos Padrões' : 'Pendências — Textos Padrões', { body: devidas.map(function(pd) { return pSituacao(pd).texto + ': ' + (pd.comentario || pd.origem); }).join('\n'), tag: 'tp-pendencias', renotify: true, requireInteraction: grave }); } catch (e) {}
+    }
+  }
+  function fecharLembrete() { document.getElementById('pend_lembrete').style.display = 'none'; }
+  function verPendencias() { fecharLembrete(); mostrarAbaPrincipal('pend'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  function ativarAvisosNavegador() {
+    if (!('Notification' in window)) { mostrarAviso('Este navegador não permite avisos.'); return; }
+    if (Notification.permission === 'denied') { mostrarAviso('Os avisos foram bloqueados neste navegador. Libere nas configurações do site (cadeado na barra de endereço).', 'longo'); return; }
+    Notification.requestPermission().then(function(p) { mostrarAviso(p === 'granted' ? 'Avisos do navegador ativados.' : 'Avisos do navegador não foram ativados.', p === 'granted' ? 'ok' : ''); renderPendencias(); });
+  }
+  (function iniciarPendencias() {
+    var limite = Date.now() - PEND_DIAS_CONCLUIDAS * 86400000, l = pendLer();
+    var l2 = l.filter(function(pd) { return pd.status === 'aberta' || (pd.respostaTs || 0) >= limite; });
+    if (l2.length !== l.length) pendGravar(l2);
+    montarListaServicosPend();
+    pendServicoMudou();
+    atualizarBadgePendencias();
+    setTimeout(function() { verificarLembretes(); }, 3000);
+    setInterval(function() { verificarLembretes(); }, 60000);
+    document.addEventListener('visibilitychange', function() { if (!document.hidden) verificarLembretes(); });
+  })();
+
   // === HISTÓRICO DE TEXTOS GERADOS ===
   // Cada texto gerado (NOTA + AGENDA) é guardado no localStorage deste
   // navegador, com data/hora e serviço. Fica só nesta máquina; mantém os
@@ -4857,8 +5408,7 @@
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   }
   function histNomeServico(containerId) {
-    var selG = grupoVisivelDe(containerId);
-    if (selG && selG.selectedIndex >= 0) return GRUPOS_SERVICO[selG.getAttribute('data-grupo')].nome + ' — ' + selG.options[selG.selectedIndex].text;
+    if (nomeServicoAtivo[containerId]) return nomeServicoAtivo[containerId];
     var nome = containerId;
     var btn = document.querySelector('#service_nav .sub-btn[data-click*="\'' + containerId + '\'"]');
     if (btn) nome = btn.textContent.trim();
@@ -5052,7 +5602,7 @@
   // ?v=2.6.1) levam direto para a produção.
   // PUBLICAR: troque o código abaixo e o campo "versao" do versao.json pelo mesmo
   // valor (ex.: a data e hora da publicação). Ele é interno e não aparece na tela.
-  var VERSAO_ATUAL = '2.8.1';
+  var VERSAO_ATUAL = '2.9.2';
   var SITE_PRODUCAO = 'https://caiquelopess.github.io/Texto-Padr-o-de-Nota/';
   var NA_WEB = /^https?:$/.test(location.protocol);
 

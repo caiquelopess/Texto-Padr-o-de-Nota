@@ -1,7 +1,11 @@
 {
-  "versao": "2.8.1",
-  "data": "16/11/2026",
+  "versao": "2.9.2",
+  "data": "17/11/2026",
   "novidades": [
+    "Pendências: opção Refaturamento, só com contrato e motivo, sem data de lembrete",
+    "Pendências: escolha o serviço, preencha normalmente e deixe um comentário com data de lembrete; na data o atendente é avisado, depois dela o alerta fica grave; ao concluir, o texto é gerado e vai para o Histórico",
+    "Pendências: a Análise de Isenção de Débitos vira pendência com prazo de 5 dias úteis, com lembretes cada vez mais frequentes perto do prazo e resposta Deferido/Indeferido",
+    "Troca de Titularidade e Reativação: cada tipo volta a ter o próprio botão na lista de serviços",
     "Análise de isenção de débitos: período (de/até) opcional; em branco sai \"Não se aplica\"",
     "Ícone da página na aba do navegador (L da Logos com as pétalas da Neoenergia)",
     "Fim das versões: o site abre sempre na publicação mais recente, sem botão de atualizar",

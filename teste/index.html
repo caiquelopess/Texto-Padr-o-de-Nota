@@ -644,7 +644,8 @@
     .pend-no-servico textarea { width: 100%; resize: vertical; }
     .pend-no-servico .actions .btn { flex: 1 1 auto; }
     .pend-coment { margin: 8px 0 0; padding: 8px 10px; border-radius: var(--r-control); background: var(--input-bg-soft); font-size: 13.5px; color: var(--strong); white-space: pre-wrap; }
-    .pend-item.agendada { border-left-color: var(--border-strong); }
+    .pend-item.agendada, .pend-item.semdata { border-left-color: var(--border-strong); }
+    .pend-item.semdata .pend-status { background: var(--glass-soft); color: var(--muted); }
     .pend-concluidas summary { cursor: pointer; font-size: 13px; color: var(--muted); padding: 6px 0; }
     .pend-cadencia { font-size: 12px; color: var(--muted); margin: 18px 0 0; line-height: 1.6; }
     /* lembrete flutuante */
@@ -2122,10 +2123,13 @@
     <div class="pend-resumo" id="pend_resumo"></div>
     <div class="pend-form">
       <div class="form-grid" style="margin-bottom: 14px;">
-        <div class="field-group full-width"><label>Adicionar pendência — escolha o serviço</label><select id="pend_servico"></select></div>
+        <div class="field-group full-width"><label>Adicionar pendência — escolha o serviço</label><select id="pend_servico" data-change="pendServicoMudou()"></select></div>
+        <div class="field-group" id="grp_pref_contrato" style="display: none;"><label>Contrato a ser refaturado *</label><input type="text" id="pref_contrato" inputmode="numeric" placeholder="Ex: 7001234567"></div>
+        <div class="field-group" id="grp_pref_motivo" style="display: none;"><label>Motivo *</label><input type="text" id="pref_motivo" placeholder="Ex: Leitura informada pelo cliente divergente"></div>
       </div>
       <div class="pend-acoes" style="margin-bottom: 0;">
-        <button type="button" class="btn" data-click="iniciarPendenciaServico()">Abrir o serviço e preencher</button>
+        <button type="button" class="btn" id="btn_pend_abrir" data-click="iniciarPendenciaServico()">Abrir o serviço e preencher</button>
+        <button type="button" class="btn" id="btn_pend_refat" style="display: none;" data-click="adicionarPendenciaRefat()">Adicionar pendência</button>
         <button type="button" class="btn btn-clear" id="btn_pend_notif" data-click="ativarAvisosNavegador()">Ativar avisos do navegador</button>
       </div>
     </div>
@@ -4258,6 +4262,7 @@
     calcularRefat: calcularRefat, gerarCalcRefat: gerarCalcRefat, limparCalcRefat: limparCalcRefat,
     gerarRefatUrgente: gerarRefatUrgente, limparRefatUrgente: limparRefatUrgente, toggleRefatUrgente: toggleRefatUrgente,
     gerarAnaliseIsencao: gerarAnaliseIsencao, gerarIsencaoDeb: gerarIsencaoDeb, toggleIsencaoDeb: toggleIsencaoDeb,
+    pendServicoMudou: pendServicoMudou, adicionarPendenciaRefat: adicionarPendenciaRefat, concluirPendenciaRefat: concluirPendenciaRefat,
     iniciarPendenciaServico: iniciarPendenciaServico, salvarPendenciaServico: salvarPendenciaServico, concluirPendenciaServico: concluirPendenciaServico,
     sairModoPendencia: sairModoPendencia, retomarPendencia: retomarPendencia, editarComentario: editarComentario,
     abrirResposta: abrirResposta, atualizarMotivosPend: atualizarMotivosPend, concluirPendencia: concluirPendencia, informarNota: informarNota,
@@ -4954,7 +4959,7 @@
 
   function pendLer() { try { var a = JSON.parse(localStorage.getItem(PEND_CHAVE) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
   function pendGravar(l) { try { localStorage.setItem(PEND_CHAVE, JSON.stringify(l)); } catch (e) { mostrarAviso('Não foi possível salvar as pendências neste navegador.'); } }
-  function pKind(pd) { return pd.kind === 'servico' ? 'servico' : 'prazo'; }
+  function pKind(pd) { return pd.kind === 'servico' || pd.kind === 'refat' ? pd.kind : 'prazo'; }
 
   // ---- datas e dias úteis (datas como 'aaaa-mm-dd') ----
   function pIso(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -4985,6 +4990,9 @@
   }
   // classe: agendada | ok | proxima | hoje | vencida | concluida
   function pSituacao(pd) {
+    if (pKind(pd) === 'refat') return pd.status === 'concluida'
+      ? { classe: 'concluida', texto: 'Concluída em ' + pBR(pd.respostaData), dias: null }
+      : { classe: 'semdata', texto: 'Sem data — aguardando refaturamento', dias: null };
     if (pd.status === 'concluida') {
       if (pKind(pd) === 'servico') return { classe: 'concluida', texto: 'Concluída em ' + pBR(pd.respostaData), dias: null };
       return { classe: 'concluida', texto: 'Respondida em ' + pBR(pd.respostaData) + (pd.respostaData <= pd.prazo ? ' (no prazo)' : ' (fora do prazo)'), dias: null };
@@ -5030,6 +5038,7 @@
   function montarListaServicosPend() {
     var sel = document.getElementById('pend_servico'); if (!sel) return;
     sel.innerHTML = '';
+    var oR = document.createElement('option'); oR.value = PEND_REFAT; oR.textContent = 'Refaturamento (só contrato e motivo)'; sel.appendChild(oR);
     document.querySelectorAll('#service_nav .sub-btn').forEach(function(b) {
       var m = /trocarAba\('([^']+)'/.exec(b.getAttribute('data-click') || ''); if (!m) return;
       var o = document.createElement('option'); o.value = m[1]; o.textContent = b.textContent.trim(); sel.appendChild(o);
@@ -5158,17 +5167,50 @@
     setTimeout(function() { mostrarAviso('Pendência concluída. O texto foi gerado e está no Histórico.', 'ok'); }, 900);
   }
 
+  // ---- Refaturamento: pendência simples (contrato + motivo, sem data) ----
+  var PEND_REFAT = '__refat';
+  function pendServicoMudou() {
+    var refat = getVal('pend_servico') === PEND_REFAT;
+    ['grp_pref_contrato', 'grp_pref_motivo'].forEach(function(id) { document.getElementById(id).style.display = refat ? 'flex' : 'none'; });
+    document.getElementById('btn_pend_abrir').style.display = refat ? 'none' : '';
+    document.getElementById('btn_pend_refat').style.display = refat ? '' : 'none';
+  }
+  function adicionarPendenciaRefat() {
+    var contrato = getVal('pref_contrato'), motivo = getVal('pref_motivo');
+    if (!contrato) { mostrarAviso('ATENÇÃO: informe o contrato a ser refaturado.'); document.getElementById('pref_contrato').focus(); return; }
+    if (!motivo) { mostrarAviso('ATENÇÃO: informe o motivo do refaturamento.'); document.getElementById('pref_motivo').focus(); return; }
+    var lista = pendLer(), chave = contrato.replace(/\D/g, '') || contrato.toLowerCase();
+    var dup = lista.some(function(pd) { return pKind(pd) === 'refat' && pd.status === 'aberta' && ((pd.contrato || '').replace(/\D/g, '') || (pd.contrato || '').toLowerCase()) === chave; });
+    if (dup) { mostrarAviso('Já existe uma pendência de refaturamento em aberto para o contrato ' + contrato + '.'); return; }
+    lista.unshift({ id: pNovoId(), kind: 'refat', origem: 'Refaturamento', contrato: contrato, comentario: motivo, solicitante: '', abertura: pHoje(), status: 'aberta' });
+    pendGravar(lista);
+    document.getElementById('pref_contrato').value = ''; document.getElementById('pref_motivo').value = '';
+    renderPendencias(); atualizarBadgePendencias();
+    mostrarAviso('Pendência de refaturamento adicionada para o contrato ' + contrato + '.', 'ok');
+  }
+  function concluirPendenciaRefat(id) {
+    var r = pAchar(id); if (!r) return;
+    if (!confirm('Confirmar que o contrato ' + r.pd.contrato + ' foi refaturado?')) return;
+    r.pd.status = 'concluida'; r.pd.respostaData = pHoje(); r.pd.respostaTs = Date.now();
+    r.pd.texto = 'Refaturamento concluído\nContrato: ' + r.pd.contrato + '\nMotivo: ' + r.pd.comentario + '\nConcluído em: ' + pBR(r.pd.respostaData);
+    pendGravar(r.lista);
+    nomeServicoAtivo['sf-pend-refat'] = 'Refaturamento (pendência)';
+    salvarNoHistorico('sf-pend-refat', r.pd.texto, '');
+    renderPendencias(); atualizarBadgePendencias();
+    mostrarAviso('Refaturamento concluído e registrado no Histórico.', 'ok');
+  }
+
   // ---- lista ----
   function renderPendencias() {
     var lista = pendLer(), limite = Date.now() - PEND_DIAS_CONCLUIDAS * 86400000;
-    var chaveOrd = function(pd) { return pKind(pd) === 'servico' ? pd.lembrete : pd.prazo; };
+    var chaveOrd = function(pd) { return pKind(pd) === 'refat' ? 'z' + pd.abertura : pKind(pd) === 'servico' ? pd.lembrete : pd.prazo; };
     var abertas = lista.filter(function(pd) { return pd.status === 'aberta'; }).sort(function(a, b) { return chaveOrd(a) < chaveOrd(b) ? -1 : chaveOrd(a) > chaveOrd(b) ? 1 : 0; });
     var concl = lista.filter(function(pd) { return pd.status === 'concluida' && (pd.respostaTs || 0) >= limite; }).sort(function(a, b) { return (b.respostaTs || 0) - (a.respostaTs || 0); });
-    var cont = { vencida: 0, hoje: 0, proxima: 0, ok: 0, agendada: 0 };
+    var cont = { vencida: 0, hoje: 0, proxima: 0, ok: 0, agendada: 0, semdata: 0 };
     abertas.forEach(function(pd) { cont[pSituacao(pd).classe]++; });
     document.getElementById('pend_resumo').innerHTML =
       '<span class="pend-chip vencida">Atrasadas/vencidas: <b>' + cont.vencida + '</b></span><span class="pend-chip hoje">Para hoje: <b>' + cont.hoje + '</b></span>' +
-      '<span class="pend-chip">Próximas: <b>' + (cont.proxima + cont.ok + cont.agendada) + '</b></span>';
+      '<span class="pend-chip">Próximas: <b>' + (cont.proxima + cont.ok + cont.agendada) + '</b></span><span class="pend-chip">Refaturamento (sem data): <b>' + cont.semdata + '</b></span>';
     document.getElementById('pend_lista').innerHTML = abertas.length ? abertas.map(pCard).join('') : '<div class="pend-vazio">Nenhuma pendência em aberto.</div>';
     document.getElementById('pend_concl_tit').textContent = 'Concluídas nos últimos ' + PEND_DIAS_CONCLUIDAS + ' dias (' + concl.length + ')';
     document.getElementById('pend_concl').innerHTML = concl.length ? concl.map(pCard).join('') : '<div class="pend-vazio">Nenhuma pendência concluída.</div>';
@@ -5180,7 +5222,18 @@
     }
   }
   function pCard(pd) {
-    var sit = pSituacao(pd), aberta = pd.status === 'aberta', servico = pKind(pd) === 'servico';
+    var sit = pSituacao(pd), aberta = pd.status === 'aberta', servico = pKind(pd) === 'servico', refat = pKind(pd) === 'refat';
+    if (refat) {
+      return '<div class="pend-item ' + sit.classe + '" id="pitem_' + pd.id + '">' +
+        '<div class="pend-topo"><span class="pend-tipo">Refaturamento</span><span class="pend-status">' + pEsc(sit.texto) + '</span></div>' +
+        '<p class="pend-coment">' + pEsc(pd.comentario) + '</p>' +
+        '<p class="pend-info"><b>Contrato ' + pEsc(pd.contrato) + '</b> · criada em ' + pBR(pd.abertura) + '</p>' +
+        '<div class="pend-botoes">' +
+        (aberta ? '<button type="button" class="pend-resp" data-click="concluirPendenciaRefat(\'' + pd.id + '\')">Concluir refaturamento</button>' +
+                  '<button type="button" data-click="editarComentario(\'' + pd.id + '\')">Alterar motivo</button>'
+                : '<button type="button" data-click="reabrirPendencia(\'' + pd.id + '\')">Reabrir</button>') +
+        '<button type="button" class="pend-del" data-click="excluirPendencia(\'' + pd.id + '\')">Excluir</button></div></div>';
+    }
     var info = servico
       ? '<b>' + pEsc(pd.solicitante || '—') + '</b> · criada em ' + pBR(pd.abertura) + ' · <b>lembrete em ' + pBR(pd.lembrete) + '</b>'
       : '<b>' + pEsc(pd.solicitante || '—') + '</b>' + (pd.cc ? ' · CC ' + pEsc(pd.cc) : '') + (pd.nota ? ' · Nota ' + pEsc(pd.nota) : '') +
@@ -5269,6 +5322,7 @@
   }
   // Intervalo entre lembretes (ms). null = uma vez por dia; -1 = ainda não lembra.
   function pIntervaloLembrete(pd) {
+    if (pKind(pd) === 'refat') return -1;              // refaturamento: sem data, sem lembrete
     var sit = pSituacao(pd);
     if (pKind(pd) === 'servico') {
       if (sit.classe === 'agendada') return -1;          // antes da data: sem alerta
@@ -5325,6 +5379,7 @@
     var l2 = l.filter(function(pd) { return pd.status === 'aberta' || (pd.respostaTs || 0) >= limite; });
     if (l2.length !== l.length) pendGravar(l2);
     montarListaServicosPend();
+    pendServicoMudou();
     atualizarBadgePendencias();
     setTimeout(function() { verificarLembretes(); }, 3000);
     setInterval(function() { verificarLembretes(); }, 60000);
@@ -5547,7 +5602,7 @@
   // ?v=2.6.1) levam direto para a produção.
   // PUBLICAR: troque o código abaixo e o campo "versao" do versao.json pelo mesmo
   // valor (ex.: a data e hora da publicação). Ele é interno e não aparece na tela.
-  var VERSAO_ATUAL = '2.9.1';
+  var VERSAO_ATUAL = '2.9.2';
   var SITE_PRODUCAO = 'https://caiquelopess.github.io/Texto-Padr-o-de-Nota/';
   var NA_WEB = /^https?:$/.test(location.protocol);
 

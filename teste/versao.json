@@ -1,7 +1,8 @@
 {
-  "versao": "2.9.1",
+  "versao": "2.9.2",
   "data": "17/11/2026",
   "novidades": [
+    "Pendências: opção Refaturamento, só com contrato e motivo, sem data de lembrete",
     "Pendências: escolha o serviço, preencha normalmente e deixe um comentário com data de lembrete; na data o atendente é avisado, depois dela o alerta fica grave; ao concluir, o texto é gerado e vai para o Histórico",
     "Pendências: a Análise de Isenção de Débitos vira pendência com prazo de 5 dias úteis, com lembretes cada vez mais frequentes perto do prazo e resposta Deferido/Indeferido",
     "Troca de Titularidade e Reativação: cada tipo volta a ter o próprio botão na lista de serviços",

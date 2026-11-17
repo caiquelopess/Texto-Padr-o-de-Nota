@@ -862,7 +862,6 @@
         <button type="button" class="sub-btn" data-click="trocarAba('sf-movein-moveout', this)">Estorno Movein e Moveout</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-insp', this)">Inspeção e ligação 91*</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-analise-isencao', this)">Isenção de Débitos</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-rde-doc', this)">Laudos e Orçamentos - Agenda</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-nova', this)">Ligação Nova</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-muc', this)">Ligação MUC</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-lp', this)">Ligação Provisória</button>
@@ -880,7 +879,8 @@
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ref-padrao', this)">Reforma Padrão</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-relig', this)">Religação</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reloc-rede', this)">Relocação de poste/deslocamento de rede</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-danos-eletricos', this)">Ressarcimento Danos Elétricos</button>
+        <button type="button" class="sub-btn" data-click="trocarAba('sf-danos-eletricos', this)">Ressarcimento de Danos Elétricos — Abertura de Nota</button>
+        <button type="button" class="sub-btn" data-click="trocarAba('sf-rde-doc', this)">Ressarcimento de Danos Elétricos — Recebimento de Documentação (laudos e orçamentos)</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-outros-danos', this)">Ressarcimento de Danos Não Elétricos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-res', this)">Restituição de valores</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-selagem', this)">Selagem do Medidor</button>
@@ -1722,6 +1722,7 @@
     <!-- 23. RESSARCIMENTO DE DANOS ELÉTRICOS -->
     <div class="subform" id="sf-danos-eletricos">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
+      <div class="alert-box"><b>Antes de abrir a nota:</b> todas as análises e documentos necessários para abertura da nota foram verificados?</div>
       <div class="alert-box">O e-mail para recebimento da comunicação informado na abertura da nota, deve ser o mesmo e-mail do cadastro.</div>
       <div class="form-grid">
         <div class="field-group"><label>Solicitante: *</label><input type="text" id="rde_solic" placeholder="Nome completo" required></div>
@@ -1741,6 +1742,8 @@
     <!-- 24. RESSARCIMENTO DE DANOS NÃO ELÉTRICOS -->
     <div class="subform" id="sf-outros-danos">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
+      <div class="alert-box"><b>Atenção:</b> para recebimento da documentação, será necessária abertura de uma nova nota, mencionando a nota anterior.</div>
+      <div class="alert-box"><b>Antes de abrir a nota:</b> todas as análises e documentos necessários para abertura da nota foram verificados?</div>
       <div class="alert-box">- O e-mail para recebimento da comunicação informado na abertura da nota, deve ser o mesmo e-mail do cadastro.<br>Para recebimento da documentação, será necessária abertura de uma nova nota, mencionando a nota anterior</div>
       <div class="form-grid">
         <div class="field-group"><label>Nome e sobrenome do cliente: *</label><input type="text" id="rod_solic" placeholder="Nome e sobrenome completo" required></div>
@@ -3505,7 +3508,8 @@
   function gerarDanosEletricos() {
     if (!validarCampos('sf-danos-eletricos')) return;
     var cons = (getVal('rde_conserto') === 'sim') ? 'Sim (X) Não ( )' : 'Sim ( ) Não (X)';
-    var txt = 'Solicitante: ' + getVal('rde_solic') +
+    var txt = 'Título: RESSARCIMENTO DE DANOS ELÉTRICOS - ABERTURA DE NOTA' +
+      '\nSolicitante: ' + getVal('rde_solic') +
       '\nRelato da ocorrência: ' + getVal('rde_relato') +
       '\nData e horário do início do ocorrido: ' + getVal('rde_dt_ini') +
       '\nData e horário do fim do ocorrido: ' + getVal('rde_dt_fim') +
@@ -3520,7 +3524,8 @@
 
   function gerarOutrosDanos() {
     if (!validarCampos('sf-outros-danos')) return;
-    var txt = 'Nome e sobrenome do cliente: ' + getVal('rod_solic') +
+    var txt = 'Título: RESSARCIMENTO DE DANOS NÃO ELÉTRICOS' +
+      '\nNome e sobrenome do cliente: ' + getVal('rod_solic') +
       '\nRelatos da ocorrência: ' + getVal('rod_relato') +
       '\nData e horário do início do ocorrido: ' + getVal('rod_dt_ini') +
       '\nData e horário do fim do ocorrido: ' + getVal('rod_dt_fim') +
@@ -3598,7 +3603,8 @@
     if (valDesist === '1') desist = 'Nenhum ( ) (X) 1 ( ) 2';
     else if (valDesist === '2') desist = 'Nenhum ( ) ( ) 1 (X) 2';
 
-    var txt = 'Solicitante ' + getVal('rdedoc_solic') + ' compareceu à loja/credenciado para análise a documentação de ressarcimento de danos elétricos.\n' +
+    var txt = 'Título: RESSARCIMENTO DE DANOS ELÉTRICOS - RECEBIMENTO DE DOCUMENTAÇÃO\n' +
+      'Solicitante ' + getVal('rdedoc_solic') + ' compareceu à loja/credenciado para análise a documentação de ressarcimento de danos elétricos.\n' +
       'Cliente apresentou laudo (s) e orçamento (s) de oficina (s) Credenciada(s)? ' + cred + '\n' +
       'Quantidade Orçamento (s) ' + orc + '\n' +
       'Detalhar de quais equipamentos : ' + getVal('rdedoc_equip') + '\n' +
@@ -5602,7 +5608,7 @@
   // ?v=2.6.1) levam direto para a produção.
   // PUBLICAR: troque o código abaixo e o campo "versao" do versao.json pelo mesmo
   // valor (ex.: a data e hora da publicação). Ele é interno e não aparece na tela.
-  var VERSAO_ATUAL = '2.9.2';
+  var VERSAO_ATUAL = '2.9.3';
   var SITE_PRODUCAO = 'https://caiquelopess.github.io/Texto-Padr-o-de-Nota/';
   var NA_WEB = /^https?:$/.test(location.protocol);
 

@@ -4,3 +4,6 @@ playwright-report/
 coverage/
 reports/
 .stryker-tmp/
+dist/
+.wrangler/
+.dev.vars

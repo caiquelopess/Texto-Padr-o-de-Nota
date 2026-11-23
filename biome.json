@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["src/**", "tests/**", "scripts/**", "*.mjs", "*.json", "!index.html", "!teste", "!package-lock.json"]
+    "includes": ["src/**", "functions/**", "tests/**", "scripts/**", "*.mjs", "*.json", "!index.html", "!teste", "!package-lock.json", "!dist", "!.wrangler"]
   },
   "formatter": {
     "enabled": true,

@@ -3,11 +3,28 @@
   "private": true,
   "description": "Gerador de textos de NOTA e AGENDA — testes e qualidade",
   "scripts": {
-    "serve": "node tests/support/servidor.mjs",
-    "test": "playwright test",
-    "test:report": "playwright show-report"
+    "build": "node scripts/build.mjs",
+    "build:check": "node scripts/build.mjs --check",
+    "lint": "biome check",
+    "lint:fix": "biome check --write",
+    "knip": "knip",
+    "arquitetura": "depcruise src scripts tests --config .dependency-cruiser.cjs",
+    "test:unit": "c8 --reporter=text --reporter=lcov --all --src src/nucleo --include=src/nucleo/** --exclude=src/nucleo/index.mjs --exclude=src/nucleo/globais.mjs --check-coverage --lines 95 --branches 90 node --test tests/unit/*.test.mjs",
+    "test:e2e": "playwright test",
+    "test": "npm run test:unit && npm run test:e2e",
+    "mutacao": "stryker run",
+    "commitlint": "commitlint",
+    "verificar": "npm run build:check && npm run lint && npm run knip && npm run arquitetura && npm run test"
   },
   "devDependencies": {
-    "@playwright/test": "1.63.0"
+    "@biomejs/biome": "2.6.8",
+    "@commitlint/cli": "21.2.4",
+    "@commitlint/config-conventional": "21.2.4",
+    "@playwright/test": "1.63.0",
+    "@stryker-mutator/core": "10.1.1",
+    "c8": "12.0.0",
+    "dependency-cruiser": "18.9.0",
+    "esbuild": "0.28.2",
+    "knip": "6.48.0"
   }
 }

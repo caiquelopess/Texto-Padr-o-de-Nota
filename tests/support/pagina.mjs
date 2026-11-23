@@ -14,8 +14,7 @@ export const test = base.extend({
 });
 export { expect };
 
-export const abrirServico = (page, id) =>
-  page.evaluate((i) => window.trocarAba(i, document.querySelector(`#service_nav .sub-btn[data-click*="'${i}'"]`)), id);
+export const abrirServico = (page, id) => page.evaluate((i) => window.trocarAba(i, document.querySelector(`#service_nav .sub-btn[data-click*="'${i}'"]`)), id);
 
 // Preenche todos os campos obrigatórios visíveis com valores fictícios coerentes com o tipo do campo.
 export async function preencherObrigatorios(page, sf) {

@@ -1,7 +1,8 @@
 {
-  "versao": "2.9.4",
+  "versao": "2.9.5",
   "data": "23/11/2026",
   "novidades": [
+    "Login com usuário e senha (no novo endereço do Cloudflare): mostra quem está conectado, Trocar senha e Sair no topo",
     "Manutenção interna: código organizado em módulos e verificado automaticamente (sem mudança para o atendente)",
     "Ressarcimento de Danos: Elétricos — Abertura de Nota, Elétricos — Recebimento de Documentação (separado) e Não Elétricos, com o Título e os avisos do Texto Padrão Lojas",
     "Pendências: opção Refaturamento, só com contrato e motivo, sem data de lembrete",

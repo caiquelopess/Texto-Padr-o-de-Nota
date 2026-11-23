@@ -1,0 +1,13 @@
+{
+  "name": "textos-padroes-neoenergia",
+  "private": true,
+  "description": "Gerador de textos de NOTA e AGENDA — testes e qualidade",
+  "scripts": {
+    "serve": "node tests/support/servidor.mjs",
+    "test": "playwright test",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}

@@ -23,3 +23,9 @@ Gerador de textos de NOTA e AGENDA para os serviços de atendimento.
 Mudanças novas vão primeiro para **https://caiquelopess.github.io/Texto-Padr-o-de-Nota/teste/** (pasta `teste/`).
 A cópia de teste mostra uma faixa "AMBIENTE DE TESTE", guarda um histórico separado e confere atualizações só em `teste/versao.json`.
 Depois de aprovada, a versão é copiada para a raiz (produção) com `AMBIENTE_TESTE = false`.
+
+## Testes automatizados
+
+`npm ci && npx playwright install chromium && npm test` — roda na cópia de teste (`/teste/`), no computador e no celular:
+regras (telefone, CPF/CNPJ, dias úteis), textos exatos dos modelos oficiais, os 45 serviços gerando texto, histórico, pendências, temas, calculadora e declaração.
+Roda sozinho em todo PR (GitHub Actions). Quando um modelo de texto mudar de propósito, atualize `tests/e2e/modelos-oficiais.spec.mjs` no mesmo PR.

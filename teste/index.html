@@ -1245,12 +1245,12 @@
         <div class="field-group"><label>Período (de)</label><input type="text" id="ise_de" inputmode="numeric" placeholder="dd/mm/aaaa — em branco = Não se aplica" data-input="mascararData(this)"></div>
         <div class="field-group"><label>Período (até)</label><input type="text" id="ise_ate" inputmode="numeric" placeholder="dd/mm/aaaa — em branco = Não se aplica" data-input="mascararData(this)"></div>
         <div class="field-group full-width"><label>Documentação apresentada com comprovação de posse (inserir cópia no SAP KM) *</label><input type="text" id="ise_doc_posse" list="ise_docs_lista" placeholder="Ex: Contrato de locação, Contrato de Compra e Venda, Matrícula do imóvel" required>
-          <datalist id="ise_docs_lista"><option value="Contrato de locação"><option value="Contrato de Compra e Venda"><option value="Matrícula do imóvel"></datalist></div>
+          <datalist id="ise_docs_lista"><option value="Contrato de locação"></option><option value="Contrato de Compra e Venda"></option><option value="Matrícula do imóvel"></option></datalist></div>
         <div class="field-group"><label>Dados da Receita Federal (inserir cópia no SAP KM) *</label><select id="ise_rec"><option value="regular">regular</option><option value="pendente de regularização">pendente de regularização</option><option value="indisponível">indisponível</option></select></div>
         <div class="field-group"><label>Cliente ciente do faturamento da fatura de período final de *</label><input type="text" id="ise_periodo_final" placeholder="Ex: 10/10/2026 a 14/11/2026 ou Não se aplica" required></div>
         <div class="field-group"><label>Critério de fatura final *</label><select id="ise_crit"><option value="Faturado por média">Faturado por média</option><option value="Leitura fornecida pelo cliente">Leitura fornecida pelo cliente</option><option value="Não se aplica">Não se aplica</option></select></div>
         <div class="field-group"><label>Fatura final entregue de que forma *</label><input type="text" id="ise_forma" list="ise_forma_lista" placeholder="Ex: Impressa na loja, E-mail ou Não se aplica" required>
-          <datalist id="ise_forma_lista"><option value="Impressa na loja"><option value="Por e-mail"><option value="Não se aplica"></datalist></div>
+          <datalist id="ise_forma_lista"><option value="Impressa na loja"></option><option value="Por e-mail"></option><option value="Não se aplica"></option></datalist></div>
         <div class="field-group"><label>Unidade consumidora MMGD Geradora? *</label><select id="ise_mmgd"><option value="Não">Não</option><option value="Sim">Sim</option></select></div>
         <div class="field-group"><label>Número da Tarefa Neo aberta</label><input type="text" id="ise_neo" placeholder="Em branco = Não se aplica"></div>
       </div>
@@ -2212,6 +2212,175 @@
 </div>
 
 <script>
+  // ---- núcleo (src/nucleo) ----
+  (() => {
+    var __defProp = Object.defineProperty;
+    var __export = (target, all) => {
+      for (var name in all)
+        __defProp(target, name, { get: all[name], enumerable: true });
+    };
+
+    // src/nucleo/index.mjs
+    var index_exports = {};
+    __export(index_exports, {
+      calcDias: () => calcDias,
+      calcLerData: () => calcLerData,
+      calcLerNumero: () => calcLerNumero,
+      compararVersoes: () => compararVersoes,
+      declFormatarDoc: () => declFormatarDoc,
+      formatarTelefones: () => formatarTelefones,
+      notaCaps: () => notaCaps,
+      notaReativVirtual: () => notaReativVirtual,
+      pBR: () => pBR,
+      pData: () => pData,
+      pDeBR: () => pDeBR,
+      pDiasCorridos: () => pDiasCorridos,
+      pFeriados: () => pFeriados,
+      pHoje: () => pHoje,
+      pIso: () => pIso,
+      pSomarUteis: () => pSomarUteis,
+      pUteisAte: () => pUteisAte,
+      pUtil: () => pUtil,
+      telefonesPadraoNota: () => telefonesPadraoNota,
+      valorReais: () => valorReais
+    });
+
+    // src/nucleo/datas.mjs
+    var pFeriadosCache = {};
+    function pIso(d) {
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    }
+    function pHoje() {
+      return pIso(/* @__PURE__ */ new Date());
+    }
+    function pDeBR(br) {
+      const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(br || "").trim());
+      if (!m) return null;
+      const d = new Date(+m[3], +m[2] - 1, +m[1]);
+      return d.getDate() === +m[1] && d.getMonth() === +m[2] - 1 ? pIso(d) : null;
+    }
+    function pBR(iso) {
+      const x = String(iso || "").split("-");
+      return x.length === 3 ? `${x[2]}/${x[1]}/${x[0]}` : "";
+    }
+    function pData(iso) {
+      const x = iso.split("-");
+      return new Date(+x[0], +x[1] - 1, +x[2]);
+    }
+    function pDiasCorridos(a, b) {
+      return Math.round((pData(b) - pData(a)) / 864e5);
+    }
+    function pFeriados(ano) {
+      if (pFeriadosCache[ano]) return pFeriadosCache[ano];
+      const f = {};
+      ["01-01", "04-21", "05-01", "07-02", "09-07", "10-12", "11-02", "11-15", "11-20", "12-25"].forEach((md) => {
+        f[`${ano}-${md}`] = true;
+      });
+      const a = ano % 19, b = Math.floor(ano / 100), c = ano % 100, d = Math.floor(b / 4), e = b % 4, g = Math.floor((8 * b + 13) / 25), h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 19 * l) / 433), mes = Math.floor((h + l - 7 * m + 90) / 25), dia = (h + l - 7 * m + 33 * mes + 19) % 32;
+      const sextaSanta = new Date(ano, mes - 1, dia);
+      sextaSanta.setDate(sextaSanta.getDate() - 2);
+      f[pIso(sextaSanta)] = true;
+      pFeriadosCache[ano] = f;
+      return f;
+    }
+    function pUtil(iso) {
+      const d = pData(iso), w = d.getDay();
+      return w !== 0 && w !== 6 && !pFeriados(d.getFullYear())[iso];
+    }
+    function pSomarUteis(iso, n) {
+      let d = pData(iso), c = 0;
+      while (c < n) {
+        d.setDate(d.getDate() + 1);
+        if (pUtil(pIso(d))) c++;
+      }
+      return pIso(d);
+    }
+    function pUteisAte(prazoIso) {
+      const hoje = pHoje();
+      if (hoje === prazoIso) return 0;
+      const [ini, fim] = [hoje, prazoIso].sort();
+      const d = pData(ini);
+      let c = 0;
+      while (pIso(d) < fim) {
+        d.setDate(d.getDate() + 1);
+        if (pUtil(pIso(d))) c++;
+      }
+      return hoje < prazoIso ? c : -Math.max(c, 1);
+    }
+
+    // src/nucleo/formatos.mjs
+    function telefonesPadraoNota(valor) {
+      return String(valor || "").split(/\s*\/\s*|[;,]+/).map((t) => {
+        const d = t.replace(/\D/g, "");
+        return d.length >= 10 ? `${d.slice(0, 2)}-${d.slice(2)}` : d;
+      }).filter(Boolean).join(" / ");
+    }
+    function formatarTelefones(valor) {
+      const partes = valor.split(/[/;,]+/);
+      const saida = [];
+      for (let i = 0; i < partes.length; i++) {
+        const d = partes[i].replace(/\D/g, "");
+        if (!d) continue;
+        if (d.length === 11) saida.push(`(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`);
+        else if (d.length === 10) saida.push(`(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`);
+        else return null;
+      }
+      return saida.length ? saida.join(" / ") : null;
+    }
+    function declFormatarDoc(v) {
+      const d = String(v || "").replace(/\D/g, "");
+      if (d.length === 11) return d.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, "$1.$2.$3-$4");
+      if (d.length === 14) return d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
+      return null;
+    }
+    function notaCaps(t) {
+      return String(t || "").toUpperCase().replace(/\s+/g, " ").trim();
+    }
+    function notaReativVirtual(medidor, leitura) {
+      return `TRATA-SE DE REATIVAÇÃO VIRTUAL MEDIDOR EM CAMPO N° ${medidor} / ${leitura ? `LEITURA ${leitura}` : "NAO INFORMOU LEITURA"}`;
+    }
+    function valorReais(t) {
+      let v = String(t || "").replace(/[^\d,.-]/g, "");
+      if (v.indexOf(",") >= 0) v = v.replace(/\./g, "").replace(",", ".");
+      const n = parseFloat(v);
+      return Number.isNaN(n) ? null : n;
+    }
+
+    // src/nucleo/refat.mjs
+    function calcLerNumero(txt) {
+      let t = String(txt || "").trim().replace(/\s/g, "");
+      if (!t) return null;
+      if (t.indexOf(",") >= 0) t = t.replace(/\./g, "").replace(",", ".");
+      else if (/^\d{1,3}(\.\d{3})+$/.test(t)) t = t.replace(/\./g, "");
+      if (!/^-?\d+(\.\d+)?$/.test(t)) return NaN;
+      return parseFloat(t);
+    }
+    function calcLerData(txt) {
+      const m = /^(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{4})$/.exec(String(txt || "").trim());
+      if (!m) return null;
+      const d = parseInt(m[1], 10), mo = parseInt(m[2], 10), a = parseInt(m[3], 10);
+      const dt = new Date(Date.UTC(a, mo - 1, d));
+      if (dt.getUTCFullYear() !== a || dt.getUTCMonth() !== mo - 1 || dt.getUTCDate() !== d) return null;
+      return dt;
+    }
+    function calcDias(a, b) {
+      return Math.round((b.getTime() - a.getTime()) / 864e5);
+    }
+
+    // src/nucleo/versao.mjs
+    function compararVersoes(a, b) {
+      const pa = String(a).split(/[^0-9]+/), pb = String(b).split(/[^0-9]+/);
+      for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+        const x = parseInt(pa[i] || "0", 10) || 0, y = parseInt(pb[i] || "0", 10) || 0;
+        if (x !== y) return x > y ? 1 : -1;
+      }
+      return 0;
+    }
+
+    // src/nucleo/globais.mjs
+    Object.assign(globalThis, index_exports);
+  })();
+
   // Ambiente: false = produção. A cópia em /teste/ é gerada com true:
   // faixa de aviso, histórico separado e atualizações lidas de /teste/.
   var AMBIENTE_TESTE = true;
@@ -2810,19 +2979,6 @@
     return null;
   }
 
-  // Um ou mais telefones separados por / ; ou vírgula; cada um com 10 ou 11 dígitos
-  function formatarTelefones(valor) {
-    var partes = valor.split(/[\/;,]+/);
-    var saida = [];
-    for (var i = 0; i < partes.length; i++) {
-      var d = partes[i].replace(/\D/g, '');
-      if (!d) continue;
-      if (d.length === 11) saida.push('(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7));
-      else if (d.length === 10) saida.push('(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6));
-      else return null;
-    }
-    return saida.length ? saida.join(' / ') : null;
-  }
 
   function padronizarCampos(containerId) {
     var inputs = document.querySelectorAll('#' + containerId + ' input');
@@ -3068,16 +3224,7 @@
     document.querySelectorAll('#sf-ligacao-nova .grp-ln-exp').forEach(function(g) { g.style.display = exp ? 'flex' : 'none'; });
   }
 
-  // Telefone no padrão da NOTA: 71-912341234 (vários separados por " / ")
-  function telefonesPadraoNota(valor) {
-    return String(valor || '').split(/\s*\/\s*|[;,]+/).map(function(t) {
-      var d = t.replace(/\D/g, '');
-      return d.length >= 10 ? d.slice(0, 2) + '-' + d.slice(2) : d;
-    }).filter(Boolean).join(' / ');
-  }
 
-  // NOTA em maiúsculas, sem espaços duplos
-  function notaCaps(t) { return String(t || '').toUpperCase().replace(/\s+/g, ' ').trim(); }
 
   // NOTA no padrão "LN/RT {FASE} N° {NÚMERO} {COMPLEMENTO} REF: ... CG: ... TEL: ... PC: ... PZ 5D UTEIS"
   function notaPadraoEndereco(sigla, p) {
@@ -3148,11 +3295,6 @@
     finalizarGeracao('sf-reativ-comum', notaPadraoEndereco('RT', 'rtc'), agendaPadraoEndereco('Reativação', 'rtc'), 'nota');
   }
 
-  // "TRATA-SE DE REATIVAÇÃO VIRTUAL MEDIDOR EM CAMPO N° X / LEITURA Y"
-  // ou, sem leitura, "... N° X / NAO INFORMOU LEITURA"
-  function notaReativVirtual(medidor, leitura) {
-    return 'TRATA-SE DE REATIVAÇÃO VIRTUAL MEDIDOR EM CAMPO N° ' + medidor + ' / ' + (leitura ? 'LEITURA ' + leitura : 'NAO INFORMOU LEITURA');
-  }
 
   function gerarReativVirtual() {
     if (!validarCampos('sf-reativ-virtual')) return;
@@ -4542,30 +4684,6 @@
     }
   })();
   // === CALCULADORA DE REFATURAMENTO ===
-  // Mesma lógica da planilha "Calculadora refat":
-  //   consumo        = leitura do cliente - leitura anterior
-  //   diasCliente    = data da leitura do cliente - data da fatura anterior
-  //   média diária   = consumo / diasCliente
-  //   diasEsperada   = data esperada (fatura reclamada) - data da fatura anterior
-  //   leitura esperada = leitura anterior + diasEsperada * média diária
-  //   (consumo negativo → "Valor inferior")
-  function calcLerNumero(txt) {
-    var t = String(txt || '').trim().replace(/\s/g, '');
-    if (!t) return null;
-    if (t.indexOf(',') >= 0) t = t.replace(/\./g, '').replace(',', '.');
-    else if (/^\d{1,3}(\.\d{3})+$/.test(t)) t = t.replace(/\./g, '');
-    if (!/^-?\d+(\.\d+)?$/.test(t)) return NaN;
-    return parseFloat(t);
-  }
-  function calcLerData(txt) {
-    var m = /^(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{4})$/.exec(String(txt || '').trim());
-    if (!m) return null;
-    var d = parseInt(m[1], 10), mo = parseInt(m[2], 10), a = parseInt(m[3], 10);
-    var dt = new Date(Date.UTC(a, mo - 1, d));
-    if (dt.getUTCFullYear() !== a || dt.getUTCMonth() !== mo - 1 || dt.getUTCDate() !== d) return null;
-    return dt;
-  }
-  function calcDias(a, b) { return Math.round((b.getTime() - a.getTime()) / 86400000); }
   function calcFmt(n, casas) {
     return n.toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas });
   }
@@ -4686,11 +4804,6 @@
   }
 
   // === ANÁLISE DE ISENÇÃO DE DÉBITOS (Troca de titularidade ou Reativação) ===
-  function valorReais(t) {
-    var v = String(t || '').replace(/[^\d,.-]/g, '');
-    if (v.indexOf(',') >= 0) v = v.replace(/\./g, '').replace(',', '.');
-    var n = parseFloat(v); return isNaN(n) ? null : n;
-  }
   function toggleIsencaoDeb() {
     var v = valorReais(getVal('ise_deb_total'));
     document.getElementById('grp_ise_ni').style.display = (v !== null && v > 12000) ? 'flex' : 'none';
@@ -4822,12 +4935,6 @@
 
   var MESES_DECL = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
   function declEsc(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, function(c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-  function declFormatarDoc(v) {
-    var d = String(v || '').replace(/\D/g, '');
-    if (d.length === 11) return d.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
-    if (d.length === 14) return d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
-    return null;
-  }
   function declHojeBR() {
     var h = new Date();
     return String(h.getDate()).padStart(2, '0') + '/' + String(h.getMonth() + 1).padStart(2, '0') + '/' + h.getFullYear();
@@ -4967,33 +5074,6 @@
   function pendGravar(l) { try { localStorage.setItem(PEND_CHAVE, JSON.stringify(l)); } catch (e) { mostrarAviso('Não foi possível salvar as pendências neste navegador.'); } }
   function pKind(pd) { return pd.kind === 'servico' || pd.kind === 'refat' ? pd.kind : 'prazo'; }
 
-  // ---- datas e dias úteis (datas como 'aaaa-mm-dd') ----
-  function pIso(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
-  function pHoje() { return pIso(new Date()); }
-  function pDeBR(br) { var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(br || '').trim()); if (!m) return null; var d = new Date(+m[3], +m[2] - 1, +m[1]); return (d.getDate() === +m[1] && d.getMonth() === +m[2] - 1) ? pIso(d) : null; }
-  function pBR(iso) { var x = String(iso || '').split('-'); return x.length === 3 ? x[2] + '/' + x[1] + '/' + x[0] : ''; }
-  function pData(iso) { var x = iso.split('-'); return new Date(+x[0], +x[1] - 1, +x[2]); }
-  function pDiasCorridos(a, b) { return Math.round((pData(b) - pData(a)) / 86400000); }
-  var pFeriadosCache = {};
-  function pFeriados(ano) {
-    if (pFeriadosCache[ano]) return pFeriadosCache[ano];
-    var f = {};
-    ['01-01', '04-21', '05-01', '07-02', '09-07', '10-12', '11-02', '11-15', '11-20', '12-25'].forEach(function(md) { f[ano + '-' + md] = true; });
-    var a = ano % 19, b = Math.floor(ano / 100), c = ano % 100, d = Math.floor(b / 4), e = b % 4, g = Math.floor((8 * b + 13) / 25),
-        h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 19 * l) / 433),
-        mes = Math.floor((h + l - 7 * m + 90) / 25), dia = (h + l - 7 * m + 33 * mes + 19) % 32;
-    var sextaSanta = new Date(ano, mes - 1, dia); sextaSanta.setDate(sextaSanta.getDate() - 2); f[pIso(sextaSanta)] = true;
-    return (pFeriadosCache[ano] = f);
-  }
-  function pUtil(iso) { var d = pData(iso), w = d.getDay(); return w !== 0 && w !== 6 && !pFeriados(d.getFullYear())[iso]; }
-  function pSomarUteis(iso, n) { var d = pData(iso), c = 0; while (c < n) { d.setDate(d.getDate() + 1); if (pUtil(pIso(d))) c++; } return pIso(d); }
-  function pUteisAte(prazoIso) {
-    var hoje = pHoje();
-    if (hoje === prazoIso) return 0;
-    var ini = hoje < prazoIso ? hoje : prazoIso, fim = hoje < prazoIso ? prazoIso : hoje, d = pData(ini), c = 0;
-    while (pIso(d) < fim) { d.setDate(d.getDate() + 1); if (pUtil(pIso(d))) c++; }
-    return hoje < prazoIso ? c : -Math.max(c, 1);
-  }
   // classe: agendada | ok | proxima | hoje | vencida | concluida
   function pSituacao(pd) {
     if (pKind(pd) === 'refat') return pd.status === 'concluida'
@@ -5608,18 +5688,10 @@
   // ?v=2.6.1) levam direto para a produção.
   // PUBLICAR: troque o código abaixo e o campo "versao" do versao.json pelo mesmo
   // valor (ex.: a data e hora da publicação). Ele é interno e não aparece na tela.
-  var VERSAO_ATUAL = '2.9.3';
+  var VERSAO_ATUAL = '2.9.4';
   var SITE_PRODUCAO = 'https://caiquelopess.github.io/Texto-Padr-o-de-Nota/';
   var NA_WEB = /^https?:$/.test(location.protocol);
 
-  function compararVersoes(a, b) {
-    var pa = String(a).split(/[^0-9]+/), pb = String(b).split(/[^0-9]+/);
-    for (var i = 0; i < Math.max(pa.length, pb.length); i++) {
-      var x = parseInt(pa[i] || '0', 10) || 0, y = parseInt(pb[i] || '0', 10) || 0;
-      if (x !== y) return x > y ? 1 : -1;
-    }
-    return 0;
-  }
 
   (function manterSiteAtualizado() {
     // 1) Arquivo local ou link de versão específica: vai para a produção.

@@ -1,0 +1,6 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": ["src/nucleo/globais.mjs", "tests/**/*.{mjs,test.mjs,spec.mjs}"],
+  "project": ["src/nucleo/**/*.mjs", "scripts/**/*.mjs", "tests/**/*.mjs"],
+  "ignoreDependencies": ["@stryker-mutator/command-runner"]
+}

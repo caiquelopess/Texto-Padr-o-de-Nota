@@ -24,8 +24,14 @@ Mudanças novas vão primeiro para **https://caiquelopess.github.io/Texto-Padr-o
 A cópia de teste mostra uma faixa "AMBIENTE DE TESTE", guarda um histórico separado e confere atualizações só em `teste/versao.json`.
 Depois de aprovada, a versão é copiada para a raiz (produção) com `AMBIENTE_TESTE = false`.
 
-## Testes automatizados
+## Desenvolvimento
 
-`npm ci && npx playwright install chromium && npm test` — roda na cópia de teste (`/teste/`), no computador e no celular:
-regras (telefone, CPF/CNPJ, dias úteis), textos exatos dos modelos oficiais, os 45 serviços gerando texto, histórico, pendências, temas, calculadora e declaração.
-Roda sozinho em todo PR (GitHub Actions). Quando um modelo de texto mudar de propósito, atualize `tests/e2e/modelos-oficiais.spec.mjs` no mesmo PR.
+O código-fonte fica em `src/` (núcleo de regras em `src/nucleo`, interface em `src/ui`); `npm run build` gera `index.html` e `teste/index.html`. Veja as regras completas em [AGENTS.md](AGENTS.md).
+
+```bash
+npm ci && npx playwright install chromium
+npm run verificar   # build em dia + Biome + Knip + arquitetura + unitários (cobertura) + Playwright
+npm run mutacao     # Stryker (testes de mutação do núcleo)
+```
+
+Tudo roda sozinho em cada PR (GitHub Actions). A cobertura vai para o Codecov.

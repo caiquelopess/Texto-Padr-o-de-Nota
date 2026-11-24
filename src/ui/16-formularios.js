@@ -88,35 +88,96 @@
 
     var moldura = document.createElement('div');
     moldura.className = 'form-moldura carregando-previa';
-    var el;
-    if (f.tipo === 'application/pdf') {
-      el = document.createElement('iframe');
-      el.title = 'Prévia: ' + f.nome;
-    } else {
-      el = document.createElement('img');
-      el.alt = 'Prévia: ' + f.nome;
-    }
-    el.addEventListener('load', function() { moldura.classList.remove('carregando-previa'); });
-    el.src = url;
-    moldura.appendChild(el);
     previa.appendChild(moldura);
-    imprimir.addEventListener('click', function() { imprimirFormulario(f, el, url); });
+    var paginas = []; // imagens das páginas, usadas na impressão
+    if (f.tipo === 'application/pdf') {
+      moldura.classList.add('form-pdf');
+      desenharPdf(url, moldura, paginas, f);
+    } else {
+      var img = document.createElement('img');
+      img.alt = 'Prévia: ' + f.nome;
+      img.addEventListener('load', function() { moldura.classList.remove('carregando-previa'); });
+      img.src = url;
+      moldura.appendChild(img);
+      paginas.push(url);
+    }
+    imprimir.addEventListener('click', function() {
+      if (!paginas.length) { window.open(url, '_blank', 'noopener'); return; }
+      imprimirPaginas(f.nome, paginas);
+    });
   }
 
-  function imprimirFormulario(f, el, url) {
-    // PDF: imprime direto pela prévia; se o navegador não deixar, abre em outra aba.
-    if (f.tipo === 'application/pdf') {
-      try { el.contentWindow.focus(); el.contentWindow.print(); return; } catch (e) { window.open(url, '_blank', 'noopener'); return; }
-    }
-    // Imagem: abre uma janela só com a imagem, ocupando a folha inteira, e imprime.
+  // PDF.js (cdnjs) é baixado só na primeira prévia de PDF. Ele desenha cada página
+  // como imagem, então a prévia funciona em qualquer navegador, inclusive no celular.
+  var PDFJS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+  var pdfjsPromessa = null;
+  function carregarPdfJs() {
+    if (pdfjsPromessa) return pdfjsPromessa;
+    pdfjsPromessa = new Promise(function(ok, falha) {
+      var sc = document.createElement('script');
+      sc.src = PDFJS_URL + 'pdf.min.js';
+      sc.onload = function() {
+        if (!window.pdfjsLib) { falha(new Error('pdf.js')); return; }
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_URL + 'pdf.worker.min.js';
+        ok(window.pdfjsLib);
+      };
+      sc.onerror = function() { pdfjsPromessa = null; falha(new Error('pdf.js')); };
+      document.head.appendChild(sc);
+    });
+    return pdfjsPromessa;
+  }
+
+  function desenharPdf(url, moldura, paginas, f) {
+    carregarPdfJs()
+      .then(function(pdfjs) { return pdfjs.getDocument({ url: url, withCredentials: true }).promise; })
+      .then(function(doc) {
+        if (formSelecionado !== f.id) return;
+        var largura = Math.min(moldura.clientWidth || 800, 1000);
+        var escala = Math.min(2, window.devicePixelRatio || 1) * 1.5;
+        var cadeia = Promise.resolve();
+        for (var n = 1; n <= doc.numPages; n++) {
+          (function(n) {
+            cadeia = cadeia.then(function() { return doc.getPage(n); }).then(function(pg) {
+              if (formSelecionado !== f.id) return;
+              var vp = pg.getViewport({ scale: escala });
+              var c = document.createElement('canvas');
+              c.width = vp.width; c.height = vp.height;
+              c.style.maxWidth = largura + 'px';
+              c.setAttribute('aria-label', 'Página ' + n + ' de ' + f.nome);
+              return pg.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise.then(function() {
+                moldura.classList.remove('carregando-previa');
+                moldura.appendChild(c);
+                paginas.push(c.toDataURL('image/png'));
+              });
+            });
+          })(n);
+        }
+        return cadeia;
+      })
+      .catch(function() {
+        // sem internet para o PDF.js ou PDF com problema: tenta o leitor do próprio navegador
+        if (formSelecionado !== f.id) return;
+        moldura.classList.remove('carregando-previa', 'form-pdf');
+        moldura.innerHTML = '';
+        var fr = document.createElement('iframe');
+        fr.title = 'Prévia: ' + f.nome;
+        fr.src = url;
+        moldura.appendChild(fr);
+      });
+  }
+
+  function imprimirPaginas(titulo, paginas) {
     var w = window.open('', '_blank');
-    if (!w) { window.open(url, '_blank', 'noopener'); return; }
-    w.document.title = f.nome;
+    if (!w) { mostrarAviso('Permita janelas pop-up para imprimir.'); return; }
+    w.document.title = titulo;
     var estilo = w.document.createElement('style');
-    estilo.textContent = '@page{margin:8mm}html,body{margin:0}img{display:block;width:100%;height:auto}';
+    estilo.textContent = '@page{margin:0}html,body{margin:0}img{display:block;width:100%;height:auto;page-break-after:always}img:last-child{page-break-after:auto}';
     w.document.head.appendChild(estilo);
-    var img = w.document.createElement('img');
-    img.onload = function() { w.focus(); w.print(); };
-    img.src = url;
-    w.document.body.appendChild(img);
+    var faltam = paginas.length;
+    paginas.forEach(function(src) {
+      var img = w.document.createElement('img');
+      img.onload = img.onerror = function() { if (--faltam === 0) { w.focus(); w.print(); } };
+      img.src = src;
+      w.document.body.appendChild(img);
+    });
   }

@@ -803,6 +803,25 @@
     .aviso-mudanca-acoes { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
     .aviso-mudanca-acoes .btn { flex: 0 0 auto; text-decoration: none; }
     body:has(.aviso-mudanca) { flex-direction: column; align-items: center; }
+
+    /* === FORMULÁRIOS === */
+    .form-area { display: grid; grid-template-columns: minmax(220px, 300px) 1fr; gap: 16px; margin-top: 12px; align-items: start; }
+    .form-lista { display: flex; flex-direction: column; gap: 2px; max-height: 70vh; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--r-card); padding: 4px; background: var(--card-bg); }
+    .form-item { justify-content: space-between; animation: formEntra 160ms var(--ease) both; }
+    .form-tipo { font-size: 11px; opacity: 0.6; font-weight: 600; }
+    .form-skel { height: 38px; margin: 2px; border-radius: 6px; background: linear-gradient(90deg, var(--border) 25%, transparent 50%, var(--border) 75%); background-size: 200% 100%; animation: formSkel 1.1s linear infinite; opacity: 0.6; }
+    .form-previa { min-height: 200px; }
+    .form-previa-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+    .form-acoes { display: flex; gap: 8px; }
+    .form-acoes .btn { width: auto; margin: 0; padding: 8px 18px; text-decoration: none; }
+    .form-moldura { position: relative; border: 1px solid var(--border); border-radius: var(--r-card); overflow: hidden; background: #fff; animation: formEntra 180ms var(--ease) both; }
+    .form-moldura iframe { display: block; width: 100%; height: 70vh; border: 0; }
+    .form-moldura img { display: block; max-width: 100%; margin: 0 auto; }
+    .form-moldura.carregando-previa { min-height: 300px; background: linear-gradient(90deg, #f1f1f4 25%, #fafafa 50%, #f1f1f4 75%); background-size: 200% 100%; animation: formSkel 1.1s linear infinite; }
+    @keyframes formSkel { to { background-position: -200% 0; } }
+    @keyframes formEntra { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+    @media (max-width: 720px) { .form-area { grid-template-columns: 1fr; } .form-lista { max-height: 40vh; } .form-moldura iframe { height: 60vh; } }
+    @media (prefers-reduced-motion: reduce) { .form-item, .form-moldura, .form-skel { animation: none; } }
   </style>
 </head>
 <body>
@@ -844,6 +863,7 @@
     <button type="button" class="nav-tab inativa" data-aba="calc" role="tab" aria-selected="false" data-click="mostrarAbaPrincipal('calc', this)">CALCULADORA DE REFAT</button>
     <button type="button" class="nav-tab inativa" data-aba="decl" role="tab" aria-selected="false" data-click="mostrarAbaPrincipal('decl', this)">DECLARAÇÃO DE LIGAÇÃO</button>
     <button type="button" class="nav-tab inativa" data-aba="pend" role="tab" aria-selected="false" data-click="mostrarAbaPrincipal('pend', this)">PENDÊNCIAS<span class="pend-badge" id="pend_badge"></span></button>
+    <button type="button" class="nav-tab inativa" data-aba="form" role="tab" aria-selected="false" data-click="mostrarAbaPrincipal('form', this)">FORMULÁRIOS</button>
   </div>
 
   <div class="content" id="painel_agenda">
@@ -2144,6 +2164,20 @@
         <div><button type="button" class="copy-btn" data-click="imprimirDeclaracao()">Imprimir / Salvar PDF</button></div>
       </div>
       <div class="decl-papel"><div class="decl-folha" id="decl_folha"></div></div>
+    </div>
+  </div>
+
+  <div class="content" id="painel_form" style="display: none;">
+    <h2 class="tensao-titulo">Formulários</h2>
+    <p class="tensao-desc">Busque pelo nome, confira a prévia e imprima ou baixe.</p>
+    <div class="search-row">
+      <input type="text" id="busca_form" placeholder="Buscar formulário... ex: declaração, procuração" data-input="filtrarFormularios()" autocomplete="off" aria-controls="form_lista">
+    </div>
+    <div class="form-area">
+      <div class="form-lista" id="form_lista" role="listbox" aria-label="Formulários"></div>
+      <div class="form-previa" id="form_previa">
+        <div class="form-vazio" id="form_previa_vazia">Escolha um formulário para ver a prévia.</div>
+      </div>
     </div>
   </div>
 
@@ -4080,8 +4114,11 @@
     if (pD) pD.style.display = qual === 'decl' ? '' : 'none';
     var pP = document.getElementById('painel_pend');
     if (pP) pP.style.display = qual === 'pend' ? '' : 'none';
+    var pF = document.getElementById('painel_form');
+    if (pF) pF.style.display = qual === 'form' ? '' : 'none';
+    if (qual === 'form' && typeof carregarFormularios === 'function') carregarFormularios();
     if (qual === 'pend' && typeof renderPendencias === 'function') renderPendencias();
-    var titulos = { tensao: 'Tensão Fornecimento', calc: 'Calculadora de Refaturamento', decl: 'Declaração de Ligação', pend: 'Pendências' };
+    var titulos = { tensao: 'Tensão Fornecimento', calc: 'Calculadora de Refaturamento', decl: 'Declaração de Ligação', pend: 'Pendências', form: 'Formulários' };
     var tituloPrincipal = document.getElementById('titulo_principal');
     if (tituloPrincipal) tituloPrincipal.textContent = titulos[qual] || 'Textos Padrões';
     document.querySelectorAll('.nav-tab').forEach(function(t) {
@@ -4407,7 +4444,7 @@
   // tambem para linhas de fatura criadas dinamicamente).
   var ACOES = {
     trocarAba: trocarAba, exportarDados: exportarDados, importarDados: importarDados, alternarServicos: alternarServicos, alternarTema: alternarTema,
-    abrirTemas: abrirTemas, escolherTema: escolherTema, filtrarServicos: filtrarServicos,
+    abrirTemas: abrirTemas, escolherTema: escolherTema, filtrarServicos: filtrarServicos, filtrarFormularios: filtrarFormularios,
     mascararDataHoraRod: mascararDataHoraRod, mascararData: mascararData, mascararDataOuMes: mascararDataOuMes,
     selecionarSugestaoBusca: selecionarSugestaoBusca,
     mostrarAbaPrincipal: mostrarAbaPrincipal, filtrarCidades: filtrarCidades, buscarCidade: buscarCidade, selecionarCidadeTensao: selecionarCidadeTensao,
@@ -5741,7 +5778,7 @@
   // ?v=2.6.1) levam direto para a produção.
   // PUBLICAR: troque o código abaixo e o campo "versao" do versao.json pelo mesmo
   // valor (ex.: a data e hora da publicação). Ele é interno e não aparece na tela.
-  var VERSAO_ATUAL = '2.9.8';
+  var VERSAO_ATUAL = '2.10.0';
   var SITE_PRODUCAO = 'https://textos-padroes.pages.dev/';   // endereço oficial (Cloudflare, com login)
   var NA_WEB = /^https?:$/.test(location.protocol);
 
@@ -5919,6 +5956,128 @@
     if (cont) cont.parentNode.insertBefore(faixa, cont);
   }
   mostrarAvisoMudanca(false);
+  // === FORMULÁRIOS (para impressão) ===
+  // A lista vem do servidor (/api/formularios) só na primeira vez que a aba é aberta.
+  // O responsável envia os arquivos em Administração → Formulários.
+  var formularios = null;
+  var formSelecionado = null;
+
+  function formNormalizar(t) {
+    return String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  }
+
+  function carregarFormularios() {
+    var lista = document.getElementById('form_lista');
+    if (formularios) { filtrarFormularios(); return; }
+    lista.innerHTML = '<div class="form-skel"></div><div class="form-skel"></div><div class="form-skel"></div>';
+    if (!NA_WEB || !window.fetch) { formMensagem('Os formulários ficam disponíveis no endereço com login.'); return; }
+    fetch('/api/formularios', { cache: 'no-store', credentials: 'same-origin' })
+      .then(function(r) {
+        var ct = r.headers.get('content-type') || '';
+        if (!r.ok || ct.indexOf('json') < 0) throw new Error('sem lista');
+        return r.json();
+      })
+      .then(function(l) { formularios = Array.isArray(l) ? l : []; filtrarFormularios(); })
+      .catch(function() { formMensagem('Os formulários ficam disponíveis no endereço com login.'); });
+  }
+
+  function formMensagem(txt) {
+    var lista = document.getElementById('form_lista');
+    lista.innerHTML = '';
+    var d = document.createElement('div');
+    d.className = 'form-vazio';
+    d.textContent = txt;
+    lista.appendChild(d);
+  }
+
+  function filtrarFormularios() {
+    if (!formularios) return;
+    var termo = formNormalizar(getVal('busca_form'));
+    var achados = formularios.filter(function(f) { return formNormalizar(f.nome).indexOf(termo) >= 0; });
+    if (!formularios.length) { formMensagem('Nenhum formulário cadastrado ainda.'); return; }
+    if (!achados.length) { formMensagem('Nenhum formulário com esse nome.'); return; }
+    var lista = document.getElementById('form_lista');
+    lista.innerHTML = '';
+    achados.forEach(function(f) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'sug-item form-item' + (formSelecionado === f.id ? ' destaque' : '');
+      b.setAttribute('role', 'option');
+      b.setAttribute('data-id', f.id);
+      b.textContent = f.nome;
+      var tipo = document.createElement('span');
+      tipo.className = 'form-tipo';
+      tipo.textContent = f.tipo === 'application/pdf' ? 'PDF' : 'Imagem';
+      b.appendChild(tipo);
+      b.addEventListener('click', function() { mostrarFormulario(f); });
+      lista.appendChild(b);
+    });
+    if (achados.length === 1 && termo) mostrarFormulario(achados[0]);
+  }
+
+  function mostrarFormulario(f) {
+    formSelecionado = f.id;
+    document.querySelectorAll('#form_lista .form-item').forEach(function(b) {
+      b.classList.toggle('destaque', b.getAttribute('data-id') === f.id);
+    });
+    var url = '/api/formularios/' + encodeURIComponent(f.id);
+    var previa = document.getElementById('form_previa');
+    previa.innerHTML = '';
+    var topo = document.createElement('div');
+    topo.className = 'form-previa-topo';
+    var titulo = document.createElement('b');
+    titulo.textContent = f.nome;
+    topo.appendChild(titulo);
+    var acoes = document.createElement('span');
+    acoes.className = 'form-acoes';
+    var imprimir = document.createElement('button');
+    imprimir.type = 'button';
+    imprimir.className = 'btn';
+    imprimir.id = 'btn_form_imprimir';
+    imprimir.textContent = 'Imprimir';
+    var baixar = document.createElement('a');
+    baixar.className = 'btn btn-clear';
+    baixar.href = url + '?baixar=1';
+    baixar.textContent = 'Baixar';
+    acoes.appendChild(imprimir);
+    acoes.appendChild(baixar);
+    topo.appendChild(acoes);
+    previa.appendChild(topo);
+
+    var moldura = document.createElement('div');
+    moldura.className = 'form-moldura carregando-previa';
+    var el;
+    if (f.tipo === 'application/pdf') {
+      el = document.createElement('iframe');
+      el.title = 'Prévia: ' + f.nome;
+    } else {
+      el = document.createElement('img');
+      el.alt = 'Prévia: ' + f.nome;
+    }
+    el.addEventListener('load', function() { moldura.classList.remove('carregando-previa'); });
+    el.src = url;
+    moldura.appendChild(el);
+    previa.appendChild(moldura);
+    imprimir.addEventListener('click', function() { imprimirFormulario(f, el, url); });
+  }
+
+  function imprimirFormulario(f, el, url) {
+    // PDF: imprime direto pela prévia; se o navegador não deixar, abre em outra aba.
+    if (f.tipo === 'application/pdf') {
+      try { el.contentWindow.focus(); el.contentWindow.print(); return; } catch (e) { window.open(url, '_blank', 'noopener'); return; }
+    }
+    // Imagem: abre uma janela só com a imagem, ocupando a folha inteira, e imprime.
+    var w = window.open('', '_blank');
+    if (!w) { window.open(url, '_blank', 'noopener'); return; }
+    w.document.title = f.nome;
+    var estilo = w.document.createElement('style');
+    estilo.textContent = '@page{margin:8mm}html,body{margin:0}img{display:block;width:100%;height:auto}';
+    w.document.head.appendChild(estilo);
+    var img = w.document.createElement('img');
+    img.onload = function() { w.focus(); w.print(); };
+    img.src = url;
+    w.document.body.appendChild(img);
+  }
 </script>
 
 </body>

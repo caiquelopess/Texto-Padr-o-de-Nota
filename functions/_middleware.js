@@ -19,7 +19,8 @@ import {
   senhaValida,
   usuarioValido,
 } from './_lib/autenticacao.js';
-import { telaAdmin, telaLogin, telaTrocarSenha } from './_lib/telas.js';
+import { idValido, listarFormularios, nomeDoArquivo, nomeValido, TAMANHO_MAXIMO, tipoDoArquivo } from './_lib/formularios.js';
+import { telaAdmin, telaFormularios, telaLogin, telaTrocarSenha } from './_lib/telas.js';
 
 const COOKIE = '__Host-tp_sessao';
 const SEGURANCA = {
@@ -150,6 +151,55 @@ async function admin(request, env, reg) {
   return tela({ erro: 'Ação desconhecida.' });
 }
 
+const json = (dados, status = 200) =>
+  new Response(JSON.stringify(dados), { status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store', ...SEGURANCA } });
+
+async function adminFormularios(request, env, reg) {
+  if (!reg.admin) return html('<!doctype html><meta charset="utf-8"><p>Acesso restrito ao responsável.</p>', 403);
+  const tela = async (msg = {}) =>
+    html(telaFormularios({ usuario: reg.usuario, formularios: await listarFormularios(env.USUARIOS), ...msg }), msg.erro ? 400 : 200);
+  if (request.method !== 'POST') return tela();
+  const form = await request.formData();
+  const acao = String(form.get('acao') || '');
+  if (acao === 'remover') {
+    const id = String(form.get('id') || '');
+    if (!idValido(id)) return tela({ erro: 'Formulário inválido.' });
+    await env.USUARIOS.delete(`f:${id}`);
+    await env.USUARIOS.delete(`fa:${id}`);
+    return tela({ ok: 'Formulário removido.' });
+  }
+  if (acao !== 'enviar') return tela({ erro: 'Ação desconhecida.' });
+  const nome = nomeValido(form.get('nome'));
+  const arquivo = form.get('arquivo');
+  if (!nome) return tela({ erro: 'Dê um nome ao formulário (2 a 120 caracteres).' });
+  if (!arquivo || typeof arquivo === 'string' || !arquivo.size) return tela({ erro: 'Escolha o arquivo.' });
+  if (arquivo.size > TAMANHO_MAXIMO) return tela({ erro: 'O arquivo passa de 10 MB.' });
+  const bytes = await arquivo.arrayBuffer();
+  const tipo = tipoDoArquivo(bytes);
+  if (!tipo) return tela({ erro: 'Só são aceitos PDF, PNG ou JPG.' });
+  const id = crypto.randomUUID();
+  await env.USUARIOS.put(`fa:${id}`, bytes);
+  await env.USUARIOS.put(`f:${id}`, JSON.stringify({ id, nome, tipo, tamanho: bytes.byteLength, criado: Date.now(), por: reg.usuario }));
+  return tela({ ok: `Formulário "${nome}" enviado.` });
+}
+
+async function entregarFormulario(env, id, baixar) {
+  if (!idValido(id)) return json({ erro: 'não encontrado' }, 404);
+  const meta = await env.USUARIOS.get(`f:${id}`, 'json');
+  const bytes = meta && (await env.USUARIOS.get(`fa:${id}`, 'arrayBuffer'));
+  if (!bytes) return json({ erro: 'não encontrado' }, 404);
+  return new Response(bytes, {
+    headers: {
+      ...SEGURANCA,
+      // a prévia abre dentro do próprio site (iframe), então aqui o site pode emoldurar
+      'x-frame-options': 'SAMEORIGIN',
+      'content-type': meta.tipo,
+      'content-disposition': `${baixar ? 'attachment' : 'inline'}; filename="${nomeDoArquivo(meta.nome, meta.tipo)}"`,
+      'cache-control': 'private, max-age=300',
+    },
+  });
+}
+
 export async function onRequest(context) {
   const { request, env, next } = context;
   const url = new URL(request.url);
@@ -172,12 +222,18 @@ export async function onRequest(context) {
   const reg = await sessaoAtual(request, env);
   if (!reg) {
     // pedidos de fundo (ex.: versao.json) recebem 401; navegação vai para a tela de login
-    if (caminho.endsWith('.json'))
+    if (caminho.endsWith('.json') || caminho.startsWith('/api/'))
       return new Response('{"erro":"sem sessao"}', { status: 401, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
     return redirecionar(`/entrar?destino=${encodeURIComponent(caminho + url.search)}`);
   }
   if (caminho === '/trocar-senha') return trocarSenha(request, env, reg);
   if (caminho === '/admin') return admin(request, env, reg);
+  if (caminho === '/admin/formularios') return adminFormularios(request, env, reg);
+  if (caminho === '/api/formularios') {
+    const lista = await listarFormularios(env.USUARIOS);
+    return json(lista.map(({ id, nome, tipo, tamanho }) => ({ id, nome, tipo, tamanho })));
+  }
+  if (caminho.startsWith('/api/formularios/')) return entregarFormulario(env, caminho.slice(17), url.searchParams.has('baixar'));
   if (caminho === '/api/sessao') {
     return new Response(JSON.stringify({ usuario: reg.usuario, admin: !!reg.admin }), {
       headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },

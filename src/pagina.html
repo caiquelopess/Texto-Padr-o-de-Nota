@@ -54,6 +54,7 @@
     <button type="button" class="nav-tab inativa" data-aba="calc" role="tab" aria-selected="false" data-click="mostrarAbaPrincipal('calc', this)">CALCULADORA DE REFAT</button>
     <button type="button" class="nav-tab inativa" data-aba="decl" role="tab" aria-selected="false" data-click="mostrarAbaPrincipal('decl', this)">DECLARAÇÃO DE LIGAÇÃO</button>
     <button type="button" class="nav-tab inativa" data-aba="pend" role="tab" aria-selected="false" data-click="mostrarAbaPrincipal('pend', this)">PENDÊNCIAS<span class="pend-badge" id="pend_badge"></span></button>
+    <button type="button" class="nav-tab inativa" data-aba="form" role="tab" aria-selected="false" data-click="mostrarAbaPrincipal('form', this)">FORMULÁRIOS</button>
   </div>
 
   <div class="content" id="painel_agenda">
@@ -1354,6 +1355,20 @@
         <div><button type="button" class="copy-btn" data-click="imprimirDeclaracao()">Imprimir / Salvar PDF</button></div>
       </div>
       <div class="decl-papel"><div class="decl-folha" id="decl_folha"></div></div>
+    </div>
+  </div>
+
+  <div class="content" id="painel_form" style="display: none;">
+    <h2 class="tensao-titulo">Formulários</h2>
+    <p class="tensao-desc">Busque pelo nome, confira a prévia e imprima ou baixe.</p>
+    <div class="search-row">
+      <input type="text" id="busca_form" placeholder="Buscar formulário... ex: declaração, procuração" data-input="filtrarFormularios()" autocomplete="off" aria-controls="form_lista">
+    </div>
+    <div class="form-area">
+      <div class="form-lista" id="form_lista" role="listbox" aria-label="Formulários"></div>
+      <div class="form-previa" id="form_previa">
+        <div class="form-vazio" id="form_previa_vazia">Escolha um formulário para ver a prévia.</div>
+      </div>
     </div>
   </div>
 

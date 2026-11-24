@@ -99,7 +99,7 @@ export function telaAdmin({ usuario, usuarios = [], erro = '', ok = '' }) {
     .join('');
   return pagina(
     'Administração',
-    `<div class="topo"><h1>Administração de usuários</h1><a href="/">← Voltar ao sistema</a></div><p class="sub">Conectado como ${esc(usuario)} · <a href="/sair" style="color:var(--neon)">Sair</a></p><div class="linha-neon"></div>
+    `<div class="topo"><h1>Administração de usuários</h1><a href="/">← Voltar ao sistema</a></div><p class="sub">Conectado como ${esc(usuario)} · <a href="/admin/formularios" style="color:var(--neon)">Formulários</a> · <a href="/sair" style="color:var(--neon)">Sair</a></p><div class="linha-neon"></div>
 ${erro ? `<p class="erro" role="alert">${esc(erro)}</p>` : ''}${ok ? `<p class="okmsg" role="status">${esc(ok)}</p>` : ''}
 <form method="post" action="/admin" data-carrega><input type="hidden" name="acao" value="criar">
 <div class="grade"><div><label for="nu">Novo usuário</label><input id="nu" name="usuario" placeholder="nome.sobrenome" required></div>
@@ -108,6 +108,32 @@ ${erro ? `<p class="erro" role="alert">${esc(erro)}</p>` : ''}${ok ? `<p class="
 <button type="submit">Criar</button></div></form>
 <p class="aviso">Passe a senha provisória ao atendente e peça para ele trocar em "Trocar senha". ⚠️ Não usar a senha real dos sistemas corporativos.</p>
 <table><thead><tr><th>Usuário</th><th>Situação</th><th>Criado em</th><th>Último acesso</th><th>Ações</th></tr></thead><tbody>${linhas || '<tr><td colspan="5">Nenhum usuário ainda.</td></tr>'}</tbody></table>`,
+    true,
+  );
+}
+
+const tamanho = (n) => (n >= 1048576 ? `${(n / 1048576).toFixed(1).replace('.', ',')} MB` : `${Math.max(1, Math.round(n / 1024))} KB`);
+
+export function telaFormularios({ usuario, formularios = [], erro = '', ok = '' }) {
+  const linhas = formularios
+    .map(
+      (
+        f,
+      ) => `<tr><td><b>${esc(f.nome)}</b></td><td>${esc((f.tipo || '').split('/')[1]?.toUpperCase())}</td><td>${tamanho(f.tamanho || 0)}</td><td>${data(f.criado)}</td>
+<td><a href="/api/formularios/${esc(f.id)}" target="_blank" rel="noopener" style="color:var(--neon);margin-right:8px">ver</a>
+<form method="post" action="/admin/formularios" onsubmit="return confirm('Remover o formulário ${esc(f.nome).replace(/&#39;/g, '')}?')"><input type="hidden" name="acao" value="remover"><input type="hidden" name="id" value="${esc(f.id)}"><button type="submit" class="perigo">Remover</button></form></td></tr>`,
+    )
+    .join('');
+  return pagina(
+    'Formulários',
+    `<div class="topo"><h1>Formulários para impressão</h1><a href="/admin">← Usuários</a></div><p class="sub">Conectado como ${esc(usuario)} · <a href="/" style="color:var(--neon)">Voltar ao sistema</a></p><div class="linha-neon"></div>
+${erro ? `<p class="erro" role="alert">${esc(erro)}</p>` : ''}${ok ? `<p class="okmsg" role="status">${esc(ok)}</p>` : ''}
+<form method="post" action="/admin/formularios" enctype="multipart/form-data" data-carrega><input type="hidden" name="acao" value="enviar">
+<div class="grade"><div><label for="fn">Nome do formulário (é por ele que os atendentes buscam)</label><input id="fn" name="nome" placeholder="ex.: Declaração de Residência" minlength="2" maxlength="120" required></div>
+<div><label for="fa">Arquivo (PDF, PNG ou JPG, até 10 MB)</label><input id="fa" name="arquivo" type="file" accept="application/pdf,image/png,image/jpeg" required></div>
+<span></span><button type="submit">Enviar</button></div></form>
+<p class="aviso">Os formulários ficam visíveis para todos os usuários com login. ⚠️ Envie só modelos em branco — nunca documentos com dados de clientes.</p>
+<table><thead><tr><th>Nome</th><th>Tipo</th><th>Tamanho</th><th>Enviado em</th><th>Ações</th></tr></thead><tbody>${linhas || '<tr><td colspan="5">Nenhum formulário ainda.</td></tr>'}</tbody></table>`,
     true,
   );
 }

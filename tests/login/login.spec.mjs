@@ -122,3 +122,34 @@ test('formulário vindo de outro site é recusado', async ({ request }) => {
   });
   expect(r.status()).toBe(403);
 });
+
+test('administrador envia formulário; atendente encontra, vê e baixa', async ({ page, request }) => {
+  expect((await request.get('/api/formularios')).status()).toBe(401);
+  await entrar(page, 'admin.teste', 'senha-admin-teste');
+  await noSistema(page);
+  await page.goto('/admin/formularios');
+  await page.fill('#fn', 'Declaração de Residência');
+  await page.setInputFiles('#fa', { name: 'falso.pdf', mimeType: 'application/pdf', buffer: Buffer.from('<html>não é pdf</html>') });
+  await page.click('form[data-carrega] button[type=submit]');
+  await expect(page.locator('.erro')).toContainText('Só são aceitos PDF, PNG ou JPG');
+  await page.fill('#fn', 'Declaração de Residência');
+  await page.setInputFiles('#fa', 'tests/support/formulario-exemplo.pdf');
+  await page.click('form[data-carrega] button[type=submit]');
+  await expect(page.locator('.okmsg')).toContainText('enviado');
+
+  const lista = await (await page.request.get('/api/formularios')).json();
+  expect(lista.map((f) => f.nome)).toEqual(['Declaração de Residência']);
+  const arq = await page.request.get(`/api/formularios/${lista[0].id}?baixar=1`);
+  expect(arq.headers()['content-type']).toBe('application/pdf');
+  expect(arq.headers()['content-disposition']).toBe('attachment; filename="declaracao-de-residencia.pdf"');
+
+  await page.goto('/');
+  await page.click('[data-aba="form"]');
+  await page.fill('#busca_form', 'resid');
+  await expect(page.locator('#form_previa iframe')).toBeVisible();
+
+  await page.goto('/admin/formularios');
+  page.once('dialog', (d) => d.accept());
+  await page.click('button.perigo');
+  await expect(page.locator('.okmsg')).toHaveText('Formulário removido.');
+});

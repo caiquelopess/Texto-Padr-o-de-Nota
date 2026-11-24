@@ -789,3 +789,22 @@
     .aviso-mudanca-acoes { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
     .aviso-mudanca-acoes .btn { flex: 0 0 auto; text-decoration: none; }
     body:has(.aviso-mudanca) { flex-direction: column; align-items: center; }
+
+    /* === FORMULÁRIOS === */
+    .form-area { display: grid; grid-template-columns: minmax(220px, 300px) 1fr; gap: 16px; margin-top: 12px; align-items: start; }
+    .form-lista { display: flex; flex-direction: column; gap: 2px; max-height: 70vh; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--r-card); padding: 4px; background: var(--card-bg); }
+    .form-item { justify-content: space-between; animation: formEntra 160ms var(--ease) both; }
+    .form-tipo { font-size: 11px; opacity: 0.6; font-weight: 600; }
+    .form-skel { height: 38px; margin: 2px; border-radius: 6px; background: linear-gradient(90deg, var(--border) 25%, transparent 50%, var(--border) 75%); background-size: 200% 100%; animation: formSkel 1.1s linear infinite; opacity: 0.6; }
+    .form-previa { min-height: 200px; }
+    .form-previa-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+    .form-acoes { display: flex; gap: 8px; }
+    .form-acoes .btn { width: auto; margin: 0; padding: 8px 18px; text-decoration: none; }
+    .form-moldura { position: relative; border: 1px solid var(--border); border-radius: var(--r-card); overflow: hidden; background: #fff; animation: formEntra 180ms var(--ease) both; }
+    .form-moldura iframe { display: block; width: 100%; height: 70vh; border: 0; }
+    .form-moldura img { display: block; max-width: 100%; margin: 0 auto; }
+    .form-moldura.carregando-previa { min-height: 300px; background: linear-gradient(90deg, #f1f1f4 25%, #fafafa 50%, #f1f1f4 75%); background-size: 200% 100%; animation: formSkel 1.1s linear infinite; }
+    @keyframes formSkel { to { background-position: -200% 0; } }
+    @keyframes formEntra { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+    @media (max-width: 720px) { .form-area { grid-template-columns: 1fr; } .form-lista { max-height: 40vh; } .form-moldura iframe { height: 60vh; } }
+    @media (prefers-reduced-motion: reduce) { .form-item, .form-moldura, .form-skel { animation: none; } }

@@ -1,7 +1,8 @@
 {
-  "versao": "2.9.8",
+  "versao": "2.10.0",
   "data": "24/11/2026",
   "novidades": [
+    "Nova aba Formulários: busque pelo nome, veja a prévia, imprima ou baixe",
     "Novo serviço: Atualização Cadastral (Erro de Endereço, Unificar PN, Correção de Nome)",
     "O endereço antigo funciona até 25/11/2026; a partir de 26/11 leva sozinho para https://textos-padroes.pages.dev",
     "Novo endereço com login: https://textos-padroes.pages.dev — Histórico → Exportar/Importar dados leva seu histórico e pendências para lá",

@@ -10,8 +10,11 @@
     if (pD) pD.style.display = qual === 'decl' ? '' : 'none';
     var pP = document.getElementById('painel_pend');
     if (pP) pP.style.display = qual === 'pend' ? '' : 'none';
+    var pF = document.getElementById('painel_form');
+    if (pF) pF.style.display = qual === 'form' ? '' : 'none';
+    if (qual === 'form' && typeof carregarFormularios === 'function') carregarFormularios();
     if (qual === 'pend' && typeof renderPendencias === 'function') renderPendencias();
-    var titulos = { tensao: 'Tensão Fornecimento', calc: 'Calculadora de Refaturamento', decl: 'Declaração de Ligação', pend: 'Pendências' };
+    var titulos = { tensao: 'Tensão Fornecimento', calc: 'Calculadora de Refaturamento', decl: 'Declaração de Ligação', pend: 'Pendências', form: 'Formulários' };
     var tituloPrincipal = document.getElementById('titulo_principal');
     if (tituloPrincipal) tituloPrincipal.textContent = titulos[qual] || 'Textos Padrões';
     document.querySelectorAll('.nav-tab').forEach(function(t) {

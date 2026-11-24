@@ -7,7 +7,7 @@
       .then(function(r) { return r.ok ? r.json() : null; })
       .then(function(s) {
         if (!s || !s.usuario) return;
-        var acoes = document.querySelector('.header-actions');
+        var acoes = document.getElementById('lateral_usuario') || document.querySelector('.header-actions');
         if (!acoes) return;
         // Menu do usuário: o nome no topo abre Administração, Trocar senha e Sair.
         var caixa = document.createElement('span');
@@ -26,7 +26,13 @@
         nome.className = 'menu-usuario-nome';
         nome.textContent = s.usuario;
         botao.appendChild(ini);
-        botao.appendChild(nome);
+        var info = document.createElement('span');
+        info.className = 'menu-usuario-info';
+        info.appendChild(nome);
+        var papel = document.createElement('small');
+        papel.textContent = s.admin ? 'Administrador' : 'Atendente';
+        info.appendChild(papel);
+        botao.appendChild(info);
         var menu = document.createElement('div');
         menu.className = 'tema-menu menu-usuario-lista';
         menu.setAttribute('role', 'menu');

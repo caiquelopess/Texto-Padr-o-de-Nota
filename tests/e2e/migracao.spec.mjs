@@ -42,8 +42,49 @@ test('aviso de mudança no endereço antigo', async ({ page }) => {
   await expect(aviso).toContainText('mudou de endereço');
   await expect(aviso.locator('a')).toHaveAttribute('href', 'https://textos-padroes.pages.dev/');
   await expect(aviso.locator('[data-click="exportarDados()"]')).toBeVisible();
+  await expect(aviso).toContainText('funciona normalmente até 25/11/2026');
+  // é um balão flutuante: dá para minimizar e reabrir
+  await aviso.locator('.aviso-mudanca-fechar').click();
+  await expect(aviso).toBeHidden();
+  await page.click('.aviso-mudanca-mini');
+  await expect(aviso).toBeVisible();
 });
 
 test('fora do endereço antigo não há aviso', async ({ page }) => {
   await expect(page.locator('.aviso-mudanca')).toHaveCount(0);
+});
+
+test('endereço antigo: layout antigo, aviso em balão e sistema usável', async ({ browser }) => {
+  const { readFileSync } = await import('node:fs');
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  await page.route('https://caiquelopess.github.io/**', (r) => {
+    const caminho = new URL(r.request().url()).pathname.replace('/Texto-Padr-o-de-Nota/', '') || 'index.html';
+    try {
+      r.fulfill({ body: readFileSync(caminho), contentType: caminho.endsWith('.json') ? 'application/json' : 'text/html' });
+    } catch {
+      r.fulfill({ status: 404, body: '' });
+    }
+  });
+  // data fixa antes do redirecionamento (26/11/2026)
+  await page.addInitScript(() => {
+    const D = Date;
+    const agora = D.UTC(2026, 10, 24, 12);
+    window.Date = class extends D {
+      constructor(...a) {
+        super(...(a.length ? a : [agora]));
+      }
+      static now() {
+        return agora;
+      }
+    };
+  });
+  await page.goto('https://caiquelopess.github.io/Texto-Padr-o-de-Nota/');
+  await expect(page.locator('.aviso-mudanca')).toBeVisible();
+  await expect(page.locator('.lateral')).toHaveCount(0);
+  await expect(page.locator('.nav-tabs .nav-tab')).toHaveCount(6);
+  expect((await page.locator('.container').boundingBox()).width).toBeGreaterThan(900);
+  await page.click('#btn_alternar_servicos');
+  await page.click('#service_nav .sub-btn >> text="Religação"');
+  await expect(page.locator('#sf-relig')).toHaveClass(/active/);
+  await page.close();
 });

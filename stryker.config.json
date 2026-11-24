@@ -2,7 +2,7 @@
   "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "testRunner": "command",
   "commandRunner": { "command": "node --test tests/unit/*.test.mjs" },
-  "mutate": ["src/nucleo/**/*.mjs", "!src/nucleo/index.mjs", "!src/nucleo/globais.mjs"],
+  "mutate": ["src/nucleo/**/*.mjs", "!src/nucleo/index.mjs", "!src/nucleo/globais.mjs", "functions/_lib/autenticacao.js"],
   "reporters": ["clear-text", "progress", "html"],
   "thresholds": { "high": 85, "low": 70, "break": 80 },
   "tempDirName": ".stryker-tmp",

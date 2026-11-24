@@ -780,3 +780,6 @@
     :root[data-paleta="contraste"] .calc-destaque strong, :root[data-paleta="contraste"] .tensao-result-valor { color: #FFE600 !important; }
     :root[data-paleta="contraste"] a { color: #00E5FF; }
     :root[data-paleta="contraste"] .decl-folha a { color: #0000FF; }
+    /* ---- Sessão (login Cloudflare) ---- */
+    .sessao-usuario { display: inline-flex; gap: 8px; align-items: center; flex-wrap: wrap; animation: fadeIn 200ms var(--ease); }
+    .sessao-link { text-decoration: none; }

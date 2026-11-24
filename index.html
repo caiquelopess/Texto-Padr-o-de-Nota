@@ -794,6 +794,9 @@
     :root[data-paleta="contraste"] .calc-destaque strong, :root[data-paleta="contraste"] .tensao-result-valor { color: #FFE600 !important; }
     :root[data-paleta="contraste"] a { color: #00E5FF; }
     :root[data-paleta="contraste"] .decl-folha a { color: #0000FF; }
+    /* ---- Sessão (login Cloudflare) ---- */
+    .sessao-usuario { display: inline-flex; gap: 8px; align-items: center; flex-wrap: wrap; animation: fadeIn 200ms var(--ease); }
+    .sessao-link { text-decoration: none; }
   </style>
 </head>
 <body>
@@ -5688,7 +5691,7 @@
   // ?v=2.6.1) levam direto para a produção.
   // PUBLICAR: troque o código abaixo e o campo "versao" do versao.json pelo mesmo
   // valor (ex.: a data e hora da publicação). Ele é interno e não aparece na tela.
-  var VERSAO_ATUAL = '2.9.4';
+  var VERSAO_ATUAL = '2.9.5';
   var SITE_PRODUCAO = 'https://caiquelopess.github.io/Texto-Padr-o-de-Nota/';
   var NA_WEB = /^https?:$/.test(location.protocol);
 
@@ -5756,6 +5759,38 @@
       if (document.visibilityState === 'hidden') { if (pendente && !temTextoDigitado()) recarregar(); }
       else verificar();
     });
+  })();
+  // === SESSÃO (login no Cloudflare) ===
+  // Com login ativo, mostra no topo quem está conectado, "Trocar senha", "Sair"
+  // e, para o responsável, "Administração". Sem login (GitHub Pages), nada aparece.
+  (function mostrarSessao() {
+    if (!NA_WEB || !window.fetch) return;
+    fetch('/api/sessao', { cache: 'no-store', credentials: 'same-origin' })
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(s) {
+        if (!s || !s.usuario) return;
+        var acoes = document.querySelector('.header-actions');
+        if (!acoes) return;
+        var caixa = document.createElement('span');
+        caixa.className = 'sessao-usuario';
+        var nome = document.createElement('span');
+        nome.className = 'badge';
+        nome.title = 'Usuário conectado';
+        nome.textContent = s.usuario;
+        caixa.appendChild(nome);
+        var links = [['/trocar-senha', 'Trocar senha']];
+        if (s.admin) links.unshift(['/admin', 'Administração']);
+        links.push(['/sair', 'Sair']);
+        links.forEach(function(l) {
+          var a = document.createElement('a');
+          a.className = 'theme-toggle sessao-link';
+          a.href = l[0];
+          a.textContent = l[1];
+          caixa.appendChild(a);
+        });
+        acoes.appendChild(caixa);
+      })
+      .catch(function() {});
   })();
 </script>
 

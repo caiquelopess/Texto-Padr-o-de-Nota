@@ -8,13 +8,15 @@
     "lint": "biome check",
     "lint:fix": "biome check --write",
     "knip": "knip",
-    "arquitetura": "depcruise src scripts tests --config .dependency-cruiser.cjs",
-    "test:unit": "c8 --reporter=text --reporter=lcov --all --src src/nucleo --include=src/nucleo/** --exclude=src/nucleo/index.mjs --exclude=src/nucleo/globais.mjs --check-coverage --lines 95 --branches 90 node --test tests/unit/*.test.mjs",
+    "arquitetura": "depcruise src functions scripts tests --config .dependency-cruiser.cjs",
+    "test:unit": "c8 --reporter=text --reporter=lcov --all --src src/nucleo --src functions --include=src/nucleo/** --include=functions/_lib/autenticacao.js --exclude=src/nucleo/index.mjs --exclude=src/nucleo/globais.mjs --check-coverage --lines 95 --branches 90 node --test tests/unit/*.test.mjs",
     "test:e2e": "playwright test",
-    "test": "npm run test:unit && npm run test:e2e",
+    "test": "npm run test:unit && npm run test:e2e && npm run test:login",
     "mutacao": "stryker run",
     "commitlint": "commitlint",
-    "verificar": "npm run build:check && npm run lint && npm run knip && npm run arquitetura && npm run test"
+    "verificar": "npm run build:check && npm run lint && npm run knip && npm run arquitetura && npm run test",
+    "test:login": "playwright test -c playwright.login.config.mjs",
+    "dist": "node scripts/dist.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.8",
@@ -25,6 +27,7 @@
     "c8": "12.0.0",
     "dependency-cruiser": "18.9.0",
     "esbuild": "0.28.2",
-    "knip": "6.48.0"
+    "knip": "6.48.0",
+    "wrangler": "4.167.0"
   }
 }

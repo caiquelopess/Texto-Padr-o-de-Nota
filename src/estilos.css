@@ -810,3 +810,77 @@
     @keyframes formEntra { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
     @media (max-width: 720px) { .form-area { grid-template-columns: 1fr; } .form-lista { max-height: 40vh; } .form-moldura iframe { height: 60vh; } }
     @media (prefers-reduced-motion: reduce) { .form-item, .form-moldura, .form-skel { animation: none; } }
+
+    /* === ORGANIZAÇÃO (#17) === */
+    .svc-grupo { margin-bottom: 10px; }
+    .svc-grupo:last-child { margin-bottom: 0; }
+    .svc-grupo-titulo { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted, var(--label)); opacity: .75; margin: 2px 0 8px; }
+    .mais-usados { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 10px; animation: fadeIn 200ms var(--ease); }
+    .mais-usados-rotulo { font-size: 12px; font-weight: 600; opacity: .7; margin-right: 4px; }
+    .chip-servico { border: 1px solid var(--border); background: var(--primary-soft); color: var(--text); border-radius: 999px; padding: 6px 12px; font-size: 12.5px; font-weight: 500; cursor: pointer; transition: border-color 150ms var(--ease), background-color 150ms var(--ease); }
+    .chip-servico:hover { border-color: var(--neon-1, var(--border-strong)); }
+    .chip-servico:focus-visible { outline: 2px solid var(--ring-focus-solid); outline-offset: 2px; }
+    .menu-usuario { position: relative; }
+    .menu-usuario-lista { width: 220px; }
+    .avatar-iniciais { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; font-size: 10.5px; font-weight: 700; background: linear-gradient(135deg, var(--neon-1, #22e5ff), var(--neon-2, #ff3df2)); color: #05060d; }
+    @media (max-width: 640px) { .menu-usuario-nome { display: none; } .menu-usuario-lista { right: 0; left: auto; } }
+
+    /* === LAYOUT CORPORATIVO: BARRA LATERAL === */
+    body.layout-lateral { display: grid; grid-template-columns: 264px minmax(0, 1fr); gap: 0; padding: 0; align-items: start; min-height: 100vh; }
+    body.layout-lateral .container { max-width: 1180px; width: calc(100% - 48px); margin: 24px auto 48px; }
+    body.layout-lateral header { padding: 18px 28px; align-items: center; }
+    body.layout-lateral header .header-actions:empty { display: none; }
+    .lateral { position: sticky; top: 0; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; padding: 18px 14px; background: var(--glass-strong, var(--card-bg)); border-right: 1px solid var(--glass-border, var(--border)); -webkit-backdrop-filter: blur(22px) saturate(140%); backdrop-filter: blur(22px) saturate(140%); scrollbar-width: thin; z-index: 50; animation: fadeIn 200ms var(--ease); }
+    .lateral .lateral-marca { margin: 2px 6px 4px; gap: 12px; flex-wrap: nowrap; }
+    .lateral .brand-logo { height: 28px; }
+    .lateral .brand-logo-logos { height: 19px; }
+    .lateral-topo { display: flex; align-items: center; gap: 6px; padding: 8px; border: 1px solid var(--glass-border, var(--border)); border-radius: 12px; background: var(--glass-soft, var(--surface)); }
+    .lateral-usuario { flex: 1 1 auto; min-width: 0; }
+    .lateral-usuario .menu-usuario { display: block; }
+    .lateral-usuario #btn_usuario { width: 100%; justify-content: flex-start; gap: 9px; padding: 4px 6px; border: 0; background: transparent; box-shadow: none; text-align: left; }
+    .lateral-usuario .avatar-iniciais { width: 32px; height: 32px; font-size: 12px; flex: none; }
+    .menu-usuario-info { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
+    .menu-usuario-info .menu-usuario-nome { font-size: 13px; font-weight: 600; color: var(--strong, var(--text)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .menu-usuario-info small { font-size: 11px; color: var(--muted); }
+    .lateral-usuario .menu-usuario-lista { left: 0; right: auto; width: 230px; }
+    .lateral-usuario:empty::before { content: "Textos Padrões"; display: block; padding: 6px; font-size: 13px; font-weight: 600; color: var(--strong, var(--text)); }
+    .lateral-atalhos { display: flex; gap: 4px; flex: none; }
+    .lateral-icone.theme-toggle { position: relative; width: 36px; height: 36px; padding: 0; justify-content: center; border-radius: 10px; }
+    .lateral-icone > span:not(.theme-icon):not(.pend-badge):not(.hist-contador) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .lateral-icone .theme-icon { margin: 0; }
+    .lateral-icone .pend-badge, .lateral-icone .hist-contador { position: absolute; top: -5px; right: -5px; min-width: 17px; height: 17px; padding: 0 4px; font-size: 10px; line-height: 17px; border-radius: 999px; }
+    .lateral-nav { display: flex; flex-direction: column; gap: 2px; }
+    .lateral-secao { font-size: 10.5px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); padding: 6px 10px; }
+    body.layout-lateral .lateral-nav .nav-tab { display: flex; align-items: center; gap: 11px; width: 100%; text-align: left; padding: 10px 12px; border: 0; border-left: 3px solid transparent; border-radius: 8px; box-shadow: none; text-transform: none; letter-spacing: 0; font-size: 13.5px; font-weight: 500; color: var(--label, var(--muted)); background: transparent; transition: background-color 150ms var(--ease), color 150ms var(--ease); }
+    body.layout-lateral .lateral-nav .nav-tab svg { flex: none; opacity: .75; }
+    body.layout-lateral .lateral-nav .nav-tab:hover { background: var(--primary-soft); color: var(--strong, var(--text)); }
+    body.layout-lateral .lateral-nav .nav-tab.ativa { background: var(--primary-soft); color: var(--strong, var(--text)); font-weight: 600; border-left-color: var(--neon-1, var(--primary)); }
+    body.layout-lateral .lateral-nav .nav-tab.ativa svg { opacity: 1; color: var(--neon-1, var(--primary)); }
+    .lateral-nav-nome { flex: 1 1 auto; }
+    .lateral-rodape { margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding-top: 12px; border-top: 1px solid var(--glass-line, var(--border)); }
+    .lateral-rodape .tema-wrap .theme-toggle { width: 100%; justify-content: flex-start; }
+    .lateral-rodape .tema-menu { top: auto; bottom: calc(100% + 8px); left: 0; right: auto; }
+    .lateral-rodape .badge { text-align: center; }
+    @media (max-width: 900px) {
+      body.layout-lateral { display: block; }
+      .lateral { position: sticky; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 12px; border-right: 0; border-bottom: 1px solid var(--glass-border, var(--border)); }
+      .lateral .lateral-marca { display: none; }
+      .lateral-topo { padding: 4px 6px; }
+      .lateral-nav { flex: 1 1 100%; flex-direction: row; overflow-x: auto; scrollbar-width: none; }
+      .lateral-secao { display: none; }
+      body.layout-lateral .lateral-nav .nav-tab { width: auto; white-space: nowrap; border-left: 0; border-bottom: 2px solid transparent; border-radius: 8px 8px 0 0; padding: 8px 10px; }
+      body.layout-lateral .lateral-nav .nav-tab.ativa { border-bottom-color: var(--neon-1, var(--primary)); }
+      .lateral-topo { flex: 1 1 0; min-width: 0; order: 1; }
+      .lateral-rodape { margin: 0; padding: 0; border: 0; flex: none; order: 2; }
+      .lateral-nav { order: 3; }
+      .lateral-rodape #lbl_tema { display: none; }
+      .lateral-rodape .tema-wrap .theme-toggle { width: 44px; height: 44px; padding: 0; justify-content: center; border-radius: 12px; }
+      .lateral-rodape .badge { display: none; }
+      .lateral-rodape .tema-wrap .theme-toggle { width: auto; }
+      .lateral-rodape .tema-menu { top: calc(100% + 8px); bottom: auto; left: auto; right: 0; }
+      body.layout-lateral .container { width: calc(100% - 24px); margin: 12px auto 32px; }
+      .lateral-usuario .menu-usuario-nome { display: block; }
+    }
+    body.tema-no-usuario .lateral-rodape .tema-wrap { display: none; }
+    .menu-usuario .tema-menu-usuario { top: calc(100% + 8px); bottom: auto; left: 0; right: auto; }
+    @media (max-width: 900px) { .menu-usuario .tema-menu-usuario { width: min(330px, calc(100vw - 32px)); } }

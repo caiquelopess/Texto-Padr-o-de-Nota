@@ -156,3 +156,21 @@ test('administrador envia formulário; atendente encontra, vê e baixa', async (
   await page.click('button.perigo');
   await expect(page.locator('.okmsg')).toHaveText('Formulário removido.');
 });
+
+test('menu do usuário no topo reúne as opções da conta', async ({ page }) => {
+  await entrar(page, 'admin.teste', 'senha-admin-teste');
+  await noSistema(page);
+  await expect(page.locator('#btn_usuario')).toContainText('admin.teste');
+  await expect(page.locator('.menu-usuario-lista')).toBeHidden();
+  await page.click('#btn_usuario');
+  await expect(page.locator('.menu-usuario-lista a')).toHaveText(['Administração', 'Formulários (enviar)', 'Trocar senha', 'Sair']);
+  await expect(page.locator('#btn_usuario_tema')).toContainText('Tema');
+  await page.click('#btn_usuario_tema');
+  await expect(page.locator('#tema_menu')).toBeVisible();
+  await expect(page.locator('.menu-usuario-lista')).toBeHidden();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#tema_menu')).toBeHidden();
+  await page.click('#btn_usuario');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.menu-usuario-lista')).toBeHidden();
+});

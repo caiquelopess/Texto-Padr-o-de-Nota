@@ -253,15 +253,49 @@ async function receberSugestao(request, env, reg) {
 
 async function adminSugestoes(request, env, reg) {
   if (!ehGestor(env, reg.usuario)) return html('<!doctype html><meta charset="utf-8"><p>Acesso restrito ao gestor geral do sistema.</p>', 403);
+  const url = new URL(request.url);
+  let ver = url.searchParams.get('ver') === 'concluidas' ? 'concluidas' : 'pendentes';
   let ok = '';
+  let erro = '';
   if (request.method === 'POST') {
-    const id = String((await request.formData()).get('id') || '');
-    if (/^[a-z0-9-]{6,40}$/.test(id)) {
+    const form = await request.formData();
+    const id = String(form.get('id') || '');
+    const acao = String(form.get('acao') || 'concluir');
+    const sug = /^[a-z0-9-]{6,40}$/.test(id) ? await env.USUARIOS.get(`s:${id}`, 'json') : null;
+    if (!sug) erro = 'Sugestão não encontrada.';
+    else if (acao === 'concluir') {
+      Object.assign(sug, { status: 'concluida', concluidaEm: Date.now(), concluidaPor: reg.usuario });
+      await env.USUARIOS.put(`s:${id}`, JSON.stringify(sug));
+      await registrar(env.USUARIOS, reg.usuario, 'Concluiu a sugestão', `${sug.usuario}: ${sug.texto.slice(0, 60)}`);
+      ok = 'Sugestão marcada como concluída. Ela continua na aba "Concluídas".';
+    } else if (acao === 'reabrir') {
+      sug.status = 'pendente';
+      delete sug.concluidaEm;
+      delete sug.concluidaPor;
+      await env.USUARIOS.put(`s:${id}`, JSON.stringify(sug));
+      await registrar(env.USUARIOS, reg.usuario, 'Reabriu a sugestão', `${sug.usuario}: ${sug.texto.slice(0, 60)}`);
+      ok = 'Sugestão reaberta.';
+      ver = 'pendentes';
+    } else if (acao === 'excluir') {
       await env.USUARIOS.delete(`s:${id}`);
-      ok = 'Sugestão marcada como concluída.';
-    }
+      await registrar(env.USUARIOS, reg.usuario, 'Excluiu a sugestão', `${sug.usuario}: ${sug.texto.slice(0, 60)}`);
+      ok = 'Sugestão excluída.';
+    } else erro = 'Ação desconhecida.';
   }
-  return html(telaSugestoes({ usuario: reg.usuario, sugestoes: await listarSugestoes(env.USUARIOS), ok }));
+  const todas = await listarSugestoes(env.USUARIOS);
+  const concluidas = todas.filter((s) => s.status === 'concluida');
+  const pendentes = todas.filter((s) => s.status !== 'concluida');
+  return html(
+    telaSugestoes({
+      usuario: reg.usuario,
+      ver,
+      sugestoes: ver === 'concluidas' ? concluidas : pendentes,
+      total: { pendentes: pendentes.length, concluidas: concluidas.length },
+      ok,
+      erro,
+    }),
+    erro ? 400 : 200,
+  );
 }
 
 export async function onRequest(context) {

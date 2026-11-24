@@ -230,9 +230,28 @@ test('atendente envia sugestão pelo menu; responsável lê e conclui', async ({
   await page.goto('/admin/sugestoes');
   await expect(page.locator('tbody')).toContainText('Incluir o serviço de Cadastro de Irrigante');
   await expect(page.locator('tbody')).toContainText('Novo serviço ou formulário');
-  await page.click('tbody button');
+  // "Concluída" não apaga: vai para a aba Concluídas e dá para reabrir
+  await page.getByRole('button', { name: 'Concluída' }).click();
   await expect(page.locator('.okmsg')).toContainText('concluída');
   await expect(page.locator('tbody')).toContainText('Nenhuma sugestão pendente');
+  await page.click('a.aba >> text=Concluídas');
+  await expect(page.locator('tbody')).toContainText('Incluir o serviço de Cadastro de Irrigante');
+  await expect(page.locator('tbody')).toContainText('Concluída em');
+  await page.getByRole('button', { name: 'Reabrir' }).click();
+  await expect(page.locator('.okmsg')).toHaveText('Sugestão reaberta.');
+  await expect(page.locator('tbody')).toContainText('Incluir o serviço de Cadastro de Irrigante');
+  // excluir pede confirmação; cancelando, nada muda
+  page.once('dialog', (d) => d.dismiss());
+  await page.getByRole('button', { name: 'Excluir' }).click();
+  await expect(page.locator('tbody')).toContainText('Incluir o serviço de Cadastro de Irrigante');
+  page.once('dialog', (d) => d.accept());
+  await page.getByRole('button', { name: 'Excluir' }).click();
+  await expect(page.locator('.okmsg')).toHaveText('Sugestão excluída.');
+  await expect(page.locator('tbody')).toContainText('Nenhuma sugestão pendente');
+  await page.goto('/admin/auditoria');
+  await expect(page.locator('tbody')).toContainText('Excluiu a sugestão');
+  await expect(page.locator('tbody')).toContainText('Reabriu a sugestão');
+  await expect(page.locator('tbody')).toContainText('Concluiu a sugestão');
 });
 
 test('gestor geral é protegido e só ele vê as sugestões', async ({ page, browser }) => {

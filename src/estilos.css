@@ -810,3 +810,17 @@
     @keyframes formEntra { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
     @media (max-width: 720px) { .form-area { grid-template-columns: 1fr; } .form-lista { max-height: 40vh; } .form-moldura iframe { height: 60vh; } }
     @media (prefers-reduced-motion: reduce) { .form-item, .form-moldura, .form-skel { animation: none; } }
+
+    /* === ORGANIZAÇÃO (#17) === */
+    .svc-grupo { margin-bottom: 10px; }
+    .svc-grupo:last-child { margin-bottom: 0; }
+    .svc-grupo-titulo { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted, var(--label)); opacity: .75; margin: 2px 0 8px; }
+    .mais-usados { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 10px; animation: fadeIn 200ms var(--ease); }
+    .mais-usados-rotulo { font-size: 12px; font-weight: 600; opacity: .7; margin-right: 4px; }
+    .chip-servico { border: 1px solid var(--border); background: var(--primary-soft); color: var(--text); border-radius: 999px; padding: 6px 12px; font-size: 12.5px; font-weight: 500; cursor: pointer; transition: border-color 150ms var(--ease), background-color 150ms var(--ease); }
+    .chip-servico:hover { border-color: var(--neon-1, var(--border-strong)); }
+    .chip-servico:focus-visible { outline: 2px solid var(--ring-focus-solid); outline-offset: 2px; }
+    .menu-usuario { position: relative; }
+    .menu-usuario-lista { width: 220px; }
+    .avatar-iniciais { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; font-size: 10.5px; font-weight: 700; background: linear-gradient(135deg, var(--neon-1, #22e5ff), var(--neon-2, #ff3df2)); color: #05060d; }
+    @media (max-width: 640px) { .menu-usuario-nome { display: none; } .menu-usuario-lista { right: 0; left: auto; } }

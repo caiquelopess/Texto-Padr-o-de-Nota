@@ -9,23 +9,48 @@
         if (!s || !s.usuario) return;
         var acoes = document.querySelector('.header-actions');
         if (!acoes) return;
+        // Menu do usuário: o nome no topo abre Administração, Trocar senha e Sair.
         var caixa = document.createElement('span');
-        caixa.className = 'sessao-usuario';
+        caixa.className = 'sessao-usuario menu-usuario';
+        var botao = document.createElement('button');
+        botao.type = 'button';
+        botao.className = 'theme-toggle';
+        botao.id = 'btn_usuario';
+        botao.setAttribute('aria-haspopup', 'true');
+        botao.setAttribute('aria-expanded', 'false');
+        botao.title = 'Usuário conectado';
+        var ini = document.createElement('span');
+        ini.className = 'avatar-iniciais';
+        ini.textContent = s.usuario.split('.').map(function(p) { return p.charAt(0); }).join('').slice(0, 2).toUpperCase();
         var nome = document.createElement('span');
-        nome.className = 'badge';
-        nome.title = 'Usuário conectado';
+        nome.className = 'menu-usuario-nome';
         nome.textContent = s.usuario;
-        caixa.appendChild(nome);
+        botao.appendChild(ini);
+        botao.appendChild(nome);
+        var menu = document.createElement('div');
+        menu.className = 'tema-menu menu-usuario-lista';
+        menu.setAttribute('role', 'menu');
+        menu.style.display = 'none';
         var links = [['/trocar-senha', 'Trocar senha']];
-        if (s.admin) links.unshift(['/admin', 'Administração']);
+        if (s.admin) links.unshift(['/admin', 'Administração'], ['/admin/formularios', 'Formulários (enviar)']);
         links.push(['/sair', 'Sair']);
         links.forEach(function(l) {
           var a = document.createElement('a');
-          a.className = 'theme-toggle sessao-link';
+          a.className = 'tema-opcao sessao-link';
+          a.setAttribute('role', 'menuitem');
           a.href = l[0];
           a.textContent = l[1];
-          caixa.appendChild(a);
+          menu.appendChild(a);
         });
+        var abrir = function(sim) {
+          menu.style.display = sim ? '' : 'none';
+          botao.setAttribute('aria-expanded', sim ? 'true' : 'false');
+        };
+        botao.addEventListener('click', function(ev) { ev.stopPropagation(); abrir(menu.style.display === 'none'); });
+        document.addEventListener('click', function(ev) { if (!caixa.contains(ev.target)) abrir(false); });
+        document.addEventListener('keydown', function(ev) { if (ev.key === 'Escape') abrir(false); });
+        caixa.appendChild(botao);
+        caixa.appendChild(menu);
         acoes.appendChild(caixa);
       })
       .catch(function() {});

@@ -64,8 +64,9 @@
       <span class="svc-count" id="svc_count">46 serviços</span>
       <button type="button" class="nav-toggle fechado" id="btn_alternar_servicos" data-click="alternarServicos(this)" aria-expanded="false" aria-controls="painel_servicos"><span class="nav-toggle-label">Exibir serviços</span><span class="chev"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></span></button>
     </div>
+    <div class="mais-usados" id="mais_usados" style="display: none;"></div>
     <div class="search-row">
-      <input type="text" id="busca_servico" placeholder="Buscar serviço... ex: reclamação, religação, parcelamento" data-input="filtrarServicos()" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="busca_sugestoes" aria-autocomplete="list">
+      <input type="text" id="busca_servico" placeholder="Buscar serviço...  (atalho: /)   ex: reclamação, religação, parcelamento" aria-keyshortcuts="/" data-input="filtrarServicos()" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="busca_sugestoes" aria-autocomplete="list">
       <div class="search-sugestoes" id="busca_sugestoes" role="listbox"></div>
     </div>
     <div id="painel_servicos" style="display: none;">

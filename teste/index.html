@@ -824,6 +824,20 @@
     @keyframes formEntra { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
     @media (max-width: 720px) { .form-area { grid-template-columns: 1fr; } .form-lista { max-height: 40vh; } .form-moldura iframe { height: 60vh; } }
     @media (prefers-reduced-motion: reduce) { .form-item, .form-moldura, .form-skel { animation: none; } }
+
+    /* === ORGANIZAÇÃO (#17) === */
+    .svc-grupo { margin-bottom: 10px; }
+    .svc-grupo:last-child { margin-bottom: 0; }
+    .svc-grupo-titulo { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted, var(--label)); opacity: .75; margin: 2px 0 8px; }
+    .mais-usados { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 10px; animation: fadeIn 200ms var(--ease); }
+    .mais-usados-rotulo { font-size: 12px; font-weight: 600; opacity: .7; margin-right: 4px; }
+    .chip-servico { border: 1px solid var(--border); background: var(--primary-soft); color: var(--text); border-radius: 999px; padding: 6px 12px; font-size: 12.5px; font-weight: 500; cursor: pointer; transition: border-color 150ms var(--ease), background-color 150ms var(--ease); }
+    .chip-servico:hover { border-color: var(--neon-1, var(--border-strong)); }
+    .chip-servico:focus-visible { outline: 2px solid var(--ring-focus-solid); outline-offset: 2px; }
+    .menu-usuario { position: relative; }
+    .menu-usuario-lista { width: 220px; }
+    .avatar-iniciais { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; font-size: 10.5px; font-weight: 700; background: linear-gradient(135deg, var(--neon-1, #22e5ff), var(--neon-2, #ff3df2)); color: #05060d; }
+    @media (max-width: 640px) { .menu-usuario-nome { display: none; } .menu-usuario-lista { right: 0; left: auto; } }
   </style>
 </head>
 <body>
@@ -875,8 +889,9 @@
       <span class="svc-count" id="svc_count">46 serviços</span>
       <button type="button" class="nav-toggle fechado" id="btn_alternar_servicos" data-click="alternarServicos(this)" aria-expanded="false" aria-controls="painel_servicos"><span class="nav-toggle-label">Exibir serviços</span><span class="chev"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></span></button>
     </div>
+    <div class="mais-usados" id="mais_usados" style="display: none;"></div>
     <div class="search-row">
-      <input type="text" id="busca_servico" placeholder="Buscar serviço... ex: reclamação, religação, parcelamento" data-input="filtrarServicos()" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="busca_sugestoes" aria-autocomplete="list">
+      <input type="text" id="busca_servico" placeholder="Buscar serviço...  (atalho: /)   ex: reclamação, religação, parcelamento" aria-keyshortcuts="/" data-input="filtrarServicos()" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="busca_sugestoes" aria-autocomplete="list">
       <div class="search-sugestoes" id="busca_sugestoes" role="listbox"></div>
     </div>
     <div id="painel_servicos" style="display: none;">
@@ -5780,7 +5795,7 @@
   // ?v=2.6.1) levam direto para a produção.
   // PUBLICAR: troque o código abaixo e o campo "versao" do versao.json pelo mesmo
   // valor (ex.: a data e hora da publicação). Ele é interno e não aparece na tela.
-  var VERSAO_ATUAL = '2.10.0';
+  var VERSAO_ATUAL = '2.11.0';
   var SITE_PRODUCAO = 'https://textos-padroes.pages.dev/';   // endereço oficial (Cloudflare, com login)
   var NA_WEB = /^https?:$/.test(location.protocol);
 
@@ -5860,23 +5875,48 @@
         if (!s || !s.usuario) return;
         var acoes = document.querySelector('.header-actions');
         if (!acoes) return;
+        // Menu do usuário: o nome no topo abre Administração, Trocar senha e Sair.
         var caixa = document.createElement('span');
-        caixa.className = 'sessao-usuario';
+        caixa.className = 'sessao-usuario menu-usuario';
+        var botao = document.createElement('button');
+        botao.type = 'button';
+        botao.className = 'theme-toggle';
+        botao.id = 'btn_usuario';
+        botao.setAttribute('aria-haspopup', 'true');
+        botao.setAttribute('aria-expanded', 'false');
+        botao.title = 'Usuário conectado';
+        var ini = document.createElement('span');
+        ini.className = 'avatar-iniciais';
+        ini.textContent = s.usuario.split('.').map(function(p) { return p.charAt(0); }).join('').slice(0, 2).toUpperCase();
         var nome = document.createElement('span');
-        nome.className = 'badge';
-        nome.title = 'Usuário conectado';
+        nome.className = 'menu-usuario-nome';
         nome.textContent = s.usuario;
-        caixa.appendChild(nome);
+        botao.appendChild(ini);
+        botao.appendChild(nome);
+        var menu = document.createElement('div');
+        menu.className = 'tema-menu menu-usuario-lista';
+        menu.setAttribute('role', 'menu');
+        menu.style.display = 'none';
         var links = [['/trocar-senha', 'Trocar senha']];
-        if (s.admin) links.unshift(['/admin', 'Administração']);
+        if (s.admin) links.unshift(['/admin', 'Administração'], ['/admin/formularios', 'Formulários (enviar)']);
         links.push(['/sair', 'Sair']);
         links.forEach(function(l) {
           var a = document.createElement('a');
-          a.className = 'theme-toggle sessao-link';
+          a.className = 'tema-opcao sessao-link';
+          a.setAttribute('role', 'menuitem');
           a.href = l[0];
           a.textContent = l[1];
-          caixa.appendChild(a);
+          menu.appendChild(a);
         });
+        var abrir = function(sim) {
+          menu.style.display = sim ? '' : 'none';
+          botao.setAttribute('aria-expanded', sim ? 'true' : 'false');
+        };
+        botao.addEventListener('click', function(ev) { ev.stopPropagation(); abrir(menu.style.display === 'none'); });
+        document.addEventListener('click', function(ev) { if (!caixa.contains(ev.target)) abrir(false); });
+        document.addEventListener('keydown', function(ev) { if (ev.key === 'Escape') abrir(false); });
+        caixa.appendChild(botao);
+        caixa.appendChild(menu);
         acoes.appendChild(caixa);
       })
       .catch(function() {});
@@ -6141,6 +6181,115 @@
       w.document.body.appendChild(img);
     });
   }
+  // === ORGANIZAÇÃO DA INTERFACE (#17) ===
+  // Agrupa os serviços por categoria, mostra os "mais usados" deste computador,
+  // junta as opções da conta num menu e adiciona atalhos de teclado.
+  // Os botões continuam dentro de #service_nav: nada muda para o resto do sistema.
+  var CATEGORIAS = [
+    ['Ligação e Reativação', /^(Liga[çc][aã]o|Reativa|Religa|Inspe[çc][aã]o e liga|Desligamento)/i],
+    ['Titularidade e Cadastro', /^(Troca de Titularidade|Atualiza[çc][aã]o Cadastral|Modifica[çc][aã]o Contratual|Cadastro de Parceiro|BPC)/i],
+    ['Faturamento e Débitos', /^(Conta Paga|DATA BOA|D[ée]bito autom|Isen[çc][aã]o de D[ée]bitos|Restitui|Estorno|TR DE PARTIDAS|Tarefa NEO|Bloqueio de Cobran|Defesa Adm)/i],
+    ['Parcelamento', /Parcelamento/i],
+    ['Ressarcimento', /^Ressarcimento/i],
+    ['Medição e Rede', /^(Aferi|Medidor|Selagem|Verifica[çc][aã]o de Equip|Reforma Padr|Reloca|Servi[çc]o no Ramal|Tele grava)/i],
+    ['Reclamações e Outros', /./],
+  ];
+
+  function categoriaDe(nome) {
+    for (var i = 0; i < CATEGORIAS.length; i++) if (CATEGORIAS[i][1].test(nome)) return CATEGORIAS[i][0];
+    return CATEGORIAS[CATEGORIAS.length - 1][0];
+  }
+
+  (function agruparServicos() {
+    var nav = document.getElementById('service_nav');
+    if (!nav) return;
+    var grupos = {};
+    CATEGORIAS.forEach(function(c) {
+      var g = document.createElement('div');
+      g.className = 'svc-grupo';
+      var h = document.createElement('div');
+      h.className = 'svc-grupo-titulo';
+      h.textContent = c[0];
+      g.appendChild(h);
+      grupos[c[0]] = g;
+    });
+    Array.prototype.slice.call(nav.querySelectorAll('.sub-btn')).forEach(function(b) {
+      grupos[categoriaDe(b.textContent.trim())].appendChild(b);
+    });
+    CATEGORIAS.forEach(function(c) {
+      if (grupos[c[0]].children.length > 1) nav.appendChild(grupos[c[0]]);
+    });
+  })();
+
+  // ---- Mais usados (últimos 30 dias do histórico deste computador) ----
+  function botaoServicoPorNome(nome, sf) {
+    var btns = document.querySelectorAll('#service_nav .sub-btn');
+    var porSf = null;
+    for (var i = 0; i < btns.length; i++) {
+      if (btns[i].textContent.trim() === nome) return btns[i];
+      if (!porSf && (btns[i].getAttribute('data-click') || '').indexOf("'" + sf + "'") >= 0) porSf = btns[i];
+    }
+    return porSf;
+  }
+
+  function renderMaisUsados() {
+    var caixa = document.getElementById('mais_usados');
+    if (!caixa || typeof histLer !== 'function') return;
+    var contagem = {};
+    histLer().forEach(function(h) {
+      var nome = String(h.servico || '').split(' — ')[0];
+      var b = botaoServicoPorNome(nome, h.sf);
+      if (!b) return;
+      var chave = b.getAttribute('data-click');
+      contagem[chave] = contagem[chave] || { botao: b, n: 0 };
+      contagem[chave].n++;
+    });
+    var top = Object.keys(contagem).map(function(k) { return contagem[k]; })
+      .sort(function(a, b) { return b.n - a.n; }).slice(0, 6);
+    caixa.innerHTML = '';
+    caixa.style.display = top.length ? '' : 'none';
+    if (!top.length) return;
+    var rot = document.createElement('span');
+    rot.className = 'mais-usados-rotulo';
+    rot.textContent = 'Mais usados';
+    caixa.appendChild(rot);
+    top.forEach(function(it) {
+      var chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'chip-servico';
+      chip.textContent = it.botao.textContent.trim();
+      chip.addEventListener('click', function() { it.botao.click(); });
+      caixa.appendChild(chip);
+    });
+  }
+  renderMaisUsados();
+  if (typeof salvarNoHistorico === 'function') {
+    var salvarNoHistoricoOriginal = salvarNoHistorico;
+    salvarNoHistorico = function() {
+      salvarNoHistoricoOriginal.apply(null, arguments);
+      renderMaisUsados();
+    };
+  }
+
+  // ---- Atalhos de teclado ----
+  //   /           → busca de serviço
+  //   Ctrl+Enter  → gera o texto do serviço aberto
+  document.addEventListener('keydown', function(ev) {
+    var alvo = ev.target;
+    var digitando = alvo && (alvo.tagName === 'INPUT' || alvo.tagName === 'TEXTAREA' || alvo.tagName === 'SELECT' || alvo.isContentEditable);
+    if (ev.key === '/' && !digitando && !ev.ctrlKey && !ev.metaKey && !ev.altKey) {
+      var busca = document.getElementById('busca_servico');
+      var painel = document.getElementById('painel_agenda');
+      if (busca && painel && painel.style.display !== 'none') { ev.preventDefault(); busca.focus(); busca.select(); }
+      return;
+    }
+    if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey)) {
+      var aberto = document.querySelector('.subform.active');
+      if (!aberto || (document.getElementById('painel_agenda') || {}).style.display === 'none') return;
+      var gerar = aberto.querySelector(':scope > .actions .btn:not(.btn-clear):not(.btn-edit)');
+      if (gerar) { ev.preventDefault(); gerar.click(); }
+    }
+  });
 </script>
 
 </body>

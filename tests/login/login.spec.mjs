@@ -6,6 +6,16 @@ const entrar = async (page, usuario, senha, destino = '/') => {
   await page.fill('#senha', senha);
   await page.click('button[type=submit]');
 };
+// primeiro acesso com senha provisória: o sistema obriga a criar a própria senha
+const primeiroAcesso = async (page, usuario, provisoria, nova) => {
+  await entrar(page, usuario, provisoria);
+  await expect(page).toHaveURL(/\/trocar-senha$/);
+  await page.fill('#atual', provisoria);
+  await page.fill('#nova', nova);
+  await page.fill('#confirma', nova);
+  await page.click('button[type=submit]');
+  await expect(page).toHaveURL('http://localhost:8788/');
+};
 const noSistema = (page) => expect(page.locator('#service_nav')).toBeAttached();
 const criar = async (page, usuario, senha) => {
   await page.goto('/admin');
@@ -49,8 +59,33 @@ test('primeiro acesso do administrador e criação de usuários', async ({ page 
   await expect(page.locator('tbody tr')).toHaveCount(3);
 });
 
-test('atendente entra, volta para a página pedida e não acessa a administração', async ({ page }) => {
+test('primeiro acesso: obriga a trocar a senha provisória antes de usar o sistema', async ({ page }) => {
   await entrar(page, 'maria.silva', '1234', '/teste/');
+  await expect(page).toHaveURL(/\/trocar-senha$/);
+  await expect(page.locator('h1')).toHaveText('Crie sua senha');
+  await expect(page.locator('.aviso').first()).toContainText('senha provisória');
+  // nada mais abre até trocar
+  expect((await page.request.get('/api/sessao')).status()).toBe(403);
+  await page.goto('/teste/');
+  await expect(page).toHaveURL(/\/trocar-senha$/);
+  await page.goto('/admin');
+  await expect(page).toHaveURL(/\/trocar-senha$/);
+  // a nova senha não pode ser igual à provisória
+  await page.fill('#atual', '1234');
+  await page.fill('#nova', '1234');
+  await page.fill('#confirma', '1234');
+  await page.click('button[type=submit]');
+  await expect(page.locator('.erro')).toContainText('diferente da senha atual');
+  await page.fill('#atual', '1234');
+  await page.fill('#nova', 'minha1');
+  await page.fill('#confirma', 'minha1');
+  await page.click('button[type=submit]');
+  await expect(page).toHaveURL('http://localhost:8788/');
+  await noSistema(page);
+});
+
+test('atendente entra, volta para a página pedida e não acessa a administração', async ({ page }) => {
+  await entrar(page, 'maria.silva', 'minha1', '/teste/');
   await expect(page).toHaveURL(/\/teste\/$/);
   await noSistema(page);
   expect((await page.request.get('/versao.json')).status()).toBe(200);
@@ -60,19 +95,19 @@ test('atendente entra, volta para a página pedida e não acessa a administraç�
 });
 
 test('não redireciona para fora do site depois do login', async ({ page }) => {
-  await entrar(page, 'maria.silva', '1234', '//site-malicioso.com');
+  await entrar(page, 'maria.silva', 'minha1', '//site-malicioso.com');
   await expect(page).toHaveURL('http://localhost:8788/');
 });
 
 test('trocar a própria senha', async ({ page }) => {
-  await entrar(page, 'maria.silva', '1234');
+  await entrar(page, 'maria.silva', 'minha1');
   await page.goto('/trocar-senha');
-  await page.fill('#atual', '1234');
+  await page.fill('#atual', 'minha1');
   await page.fill('#nova', 'nova1');
   await page.fill('#confirma', 'nova2');
   await page.click('button[type=submit]');
   await expect(page.locator('.erro')).toContainText('não é igual');
-  await page.fill('#atual', '1234');
+  await page.fill('#atual', 'minha1');
   await page.fill('#nova', 'nova1');
   await page.fill('#confirma', 'nova1');
   await page.click('button[type=submit]');
@@ -80,7 +115,7 @@ test('trocar a própria senha', async ({ page }) => {
   await page.goto('/');
   await noSistema(page);
   await page.goto('/sair');
-  await entrar(page, 'maria.silva', '1234');
+  await entrar(page, 'maria.silva', 'minha1');
   await expect(page.locator('.erro')).toBeVisible();
   await entrar(page, 'maria.silva', 'nova1');
   await noSistema(page);
@@ -88,7 +123,7 @@ test('trocar a própria senha', async ({ page }) => {
 
 test('redefinir senha e desativar derrubam a sessão aberta do atendente', async ({ browser }) => {
   const atendente = await browser.newPage();
-  await entrar(atendente, 'joao.souza', 'a!b@');
+  await primeiroAcesso(atendente, 'joao.souza', 'a!b@', 'joao1');
   await noSistema(atendente);
   const adm = await browser.newPage();
   await entrar(adm, 'admin.teste', 'senha-admin-teste');
@@ -98,13 +133,14 @@ test('redefinir senha e desativar derrubam a sessão aberta do atendente', async
   await expect(adm.locator('.okmsg')).toContainText('Senha de joao.souza redefinida');
   await atendente.goto('/');
   await expect(atendente).toHaveURL(/\/entrar/);
-  await entrar(atendente, 'joao.souza', 'prov1');
+  // senha redefinida também é provisória: troca obrigatória de novo
+  await primeiroAcesso(atendente, 'joao.souza', 'prov1', 'joao2');
   await noSistema(atendente);
   await adm.locator('tr', { hasText: 'joao.souza' }).getByRole('button', { name: 'Desativar' }).click();
   await expect(adm.locator('.okmsg')).toHaveText('Usuário joao.souza desativado.');
   await atendente.goto('/');
   await expect(atendente).toHaveURL(/\/entrar/);
-  await entrar(atendente, 'joao.souza', 'prov1');
+  await entrar(atendente, 'joao.souza', 'joao2');
   await expect(atendente.locator('.erro')).toContainText('desativado');
 });
 
@@ -212,8 +248,9 @@ test('gestor geral é protegido e só ele vê as sugestões', async ({ page, bro
 
   const ctx = await browser.newContext({ baseURL: 'http://localhost:8788' });
   const outro = await ctx.newPage();
-  await entrar(outro, 'chefe.equipe', 'senha-chefe', '/admin');
-  const linhaGestor = outro.locator('tr', { hasText: 'admin.teste' });
+  await primeiroAcesso(outro, 'chefe.equipe', 'senha-chefe', 'chefe-nova');
+  await outro.goto('/admin');
+  const linhaGestor = outro.locator('tr', { has: outro.locator('td:first-child', { hasText: 'admin.teste' }) });
   await expect(linhaGestor).toContainText('protegido');
   await expect(linhaGestor.locator('button')).toHaveCount(0);
   // mesmo forçando o pedido, o servidor recusa
@@ -222,4 +259,32 @@ test('gestor geral é protegido e só ele vê as sugestões', async ({ page, bro
   expect((await outro.request.get('/admin/sugestoes')).status()).toBe(403);
   await expect(outro.locator('a[href="/admin/sugestoes"]')).toHaveCount(0);
   await ctx.close();
+});
+
+test('auditoria: mostra quem criou cada acesso e quem enviou cada formulário', async ({ page, browser }) => {
+  await entrar(page, 'admin.teste', 'senha-admin-teste');
+  await page.goto('/admin');
+  await expect(page.locator('tr', { hasText: 'chefe.equipe' })).toContainText('admin.teste');
+  // um administrador comum cria um acesso e envia um formulário
+  const ctx = await browser.newContext({ baseURL: 'http://localhost:8788' });
+  const chefe = await ctx.newPage();
+  await entrar(chefe, 'chefe.equipe', 'chefe-nova');
+  await criar(chefe, 'ana.lima', '4321');
+  await expect(chefe.locator('tr', { hasText: 'ana.lima' })).toContainText('chefe.equipe');
+  await chefe.goto('/admin/formularios');
+  await chefe.fill('#fn', 'Termo de Ciência');
+  await chefe.setInputFiles('#fa', 'tests/support/formulario-exemplo.pdf');
+  await chefe.click('form[data-carrega] button[type=submit]');
+  await expect(chefe.locator('tr', { hasText: 'Termo de Ciência' })).toContainText('chefe.equipe');
+  expect((await chefe.request.get('/admin/auditoria')).status()).toBe(403);
+  await ctx.close();
+  // o gestor vê tudo na auditoria, do mais recente para o mais antigo
+  await page.goto('/admin/auditoria');
+  const linhas = page.locator('tbody tr');
+  await expect(linhas.nth(0)).toContainText('chefe.equipe');
+  await expect(linhas.nth(0)).toContainText('Enviou o formulário');
+  await expect(linhas.nth(0)).toContainText('Termo de Ciência');
+  await expect(linhas.nth(1)).toContainText('Criou acesso de atendente');
+  await expect(linhas.nth(1)).toContainText('ana.lima');
+  await expect(page.locator('tbody')).toContainText('Redefiniu a senha');
 });

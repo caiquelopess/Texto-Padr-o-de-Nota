@@ -4,6 +4,8 @@
 //   SEGREDO_SESSAO — segredo aleatório para assinar o cookie de sessão
 //   ADMIN_USUARIO  — usuário do administrador (ex.: caique.lopes)
 //   ADMIN_SENHA    — senha inicial do administrador (usada só no primeiro acesso)
+
+import { listarAuditoria, registrar } from './_lib/auditoria.js';
 import {
   BLOQUEIO_SEGUNDOS,
   conferirSenha,
@@ -21,7 +23,7 @@ import {
 } from './_lib/autenticacao.js';
 import { idValido, listarFormularios, nomeDoArquivo, nomeValido, TAMANHO_MAXIMO, tipoDoArquivo } from './_lib/formularios.js';
 import { LIMITE_DIA, listarSugestoes, validarSugestao } from './_lib/sugestoes.js';
-import { telaAdmin, telaFormularios, telaLogin, telaSugestoes, telaTrocarSenha } from './_lib/telas.js';
+import { telaAdmin, telaAuditoria, telaFormularios, telaLogin, telaSugestoes, telaTrocarSenha } from './_lib/telas.js';
 
 const COOKIE = '__Host-tp_sessao';
 const SEGURANCA = {
@@ -104,16 +106,20 @@ async function entrar(request, env) {
 }
 
 async function trocarSenha(request, env, reg) {
-  if (request.method !== 'POST') return html(telaTrocarSenha({ usuario: reg.usuario }));
+  const obrigatoria = !!reg.trocarSenha;
+  if (request.method !== 'POST') return html(telaTrocarSenha({ usuario: reg.usuario, obrigatoria }));
   const form = await request.formData();
   const [atual, nova, confirma] = ['atual', 'nova', 'confirma'].map((k) => String(form.get(k) || ''));
-  const erro = (e) => html(telaTrocarSenha({ usuario: reg.usuario, erro: e }), 400);
+  const erro = (e) => html(telaTrocarSenha({ usuario: reg.usuario, obrigatoria, erro: e }), 400);
   if (!(await conferirSenha(atual, reg))) return erro('Senha atual incorreta.');
   if (!senhaValida(nova)) return erro('A nova senha precisa ter no mínimo 4 caracteres.');
   if (nova !== confirma) return erro('A confirmação não é igual à nova senha.');
+  if (nova === atual) return erro('A nova senha precisa ser diferente da senha atual.');
   Object.assign(reg, await gerarHash(nova), { versaoSenha: reg.versaoSenha + 1 });
+  delete reg.trocarSenha;
   await gravarUsuario(env, reg);
   const token = await criarSessao(env.SEGREDO_SESSAO, reg.usuario, reg.versaoSenha);
+  if (obrigatoria) return redirecionar('/', { 'set-cookie': cookieSessao(token, DURACAO_SESSAO_MS / 1000) });
   return html(telaTrocarSenha({ usuario: reg.usuario, ok: 'Senha alterada.' }), 200, { 'set-cookie': cookieSessao(token, DURACAO_SESSAO_MS / 1000) });
 }
 
@@ -132,7 +138,17 @@ async function admin(request, env, reg) {
   if (acao === 'criar') {
     if (existente) return tela({ erro: `O usuário ${alvo} já existe.` });
     if (!senhaValida(senha)) return tela({ erro: 'A senha provisória precisa ter no mínimo 4 caracteres.' });
-    await gravarUsuario(env, { usuario: alvo, ...(await gerarHash(senha)), admin: form.get('admin') === '1', ativo: true, versaoSenha: 1, criado: Date.now() });
+    await gravarUsuario(env, {
+      usuario: alvo,
+      ...(await gerarHash(senha)),
+      admin: form.get('admin') === '1',
+      ativo: true,
+      versaoSenha: 1,
+      criado: Date.now(),
+      criadoPor: reg.usuario,
+      trocarSenha: true,
+    });
+    await registrar(env.USUARIOS, reg.usuario, form.get('admin') === '1' ? 'Criou acesso de administrador' : 'Criou acesso de atendente', alvo);
     return tela({ ok: `Usuário ${alvo} criado.` });
   }
   if (!existente) return tela({ erro: `O usuário ${alvo} não existe.` });
@@ -140,19 +156,22 @@ async function admin(request, env, reg) {
   if (ehGestor(env, alvo)) return tela({ erro: 'O gestor geral do sistema não pode ser alterado por outros administradores.' });
   if (acao === 'redefinir') {
     if (!senhaValida(senha)) return tela({ erro: 'A senha provisória precisa ter no mínimo 4 caracteres.' });
-    Object.assign(existente, await gerarHash(senha), { versaoSenha: existente.versaoSenha + 1 });
+    Object.assign(existente, await gerarHash(senha), { versaoSenha: existente.versaoSenha + 1, trocarSenha: true });
     await gravarUsuario(env, existente);
     await env.USUARIOS.delete(`t:${alvo}`);
+    await registrar(env.USUARIOS, reg.usuario, 'Redefiniu a senha', alvo);
     return tela({ ok: `Senha de ${alvo} redefinida. As sessões abertas dele foram encerradas.` });
   }
   if (acao === 'desativar' || acao === 'ativar') {
     existente.ativo = acao === 'ativar';
     existente.versaoSenha += 1;
     await gravarUsuario(env, existente);
+    await registrar(env.USUARIOS, reg.usuario, existente.ativo ? 'Ativou o acesso' : 'Desativou o acesso', alvo);
     return tela({ ok: `Usuário ${alvo} ${existente.ativo ? 'ativado' : 'desativado'}.` });
   }
   if (acao === 'remover') {
     await env.USUARIOS.delete(`u:${alvo}`);
+    await registrar(env.USUARIOS, reg.usuario, 'Removeu o acesso', alvo);
     return tela({ ok: `Usuário ${alvo} removido.` });
   }
   return tela({ erro: 'Ação desconhecida.' });
@@ -174,8 +193,10 @@ async function adminFormularios(request, env, reg) {
   if (acao === 'remover') {
     const id = String(form.get('id') || '');
     if (!idValido(id)) return tela({ erro: 'Formulário inválido.' });
+    const antigo = await env.USUARIOS.get(`f:${id}`, 'json');
     await env.USUARIOS.delete(`f:${id}`);
     await env.USUARIOS.delete(`fa:${id}`);
+    if (antigo) await registrar(env.USUARIOS, reg.usuario, 'Removeu o formulário', antigo.nome);
     return tela({ ok: 'Formulário removido.' });
   }
   if (acao !== 'enviar') return tela({ erro: 'Ação desconhecida.' });
@@ -190,6 +211,7 @@ async function adminFormularios(request, env, reg) {
   const id = crypto.randomUUID();
   await env.USUARIOS.put(`fa:${id}`, bytes);
   await env.USUARIOS.put(`f:${id}`, JSON.stringify({ id, nome, tipo, tamanho: bytes.byteLength, criado: Date.now(), por: reg.usuario }));
+  await registrar(env.USUARIOS, reg.usuario, 'Enviou o formulário', nome);
   return tela({ ok: `Formulário "${nome}" enviado.` });
 }
 
@@ -269,7 +291,16 @@ export async function onRequest(context) {
     return redirecionar(`/entrar?destino=${encodeURIComponent(caminho + url.search)}`);
   }
   if (caminho === '/trocar-senha') return trocarSenha(request, env, reg);
+  // Senha provisória: até criar a própria senha, o usuário só acessa "Trocar senha" e "Sair".
+  if (reg.trocarSenha) {
+    if (caminho.endsWith('.json') || caminho.startsWith('/api/')) return json({ erro: 'troque a senha provisória' }, 403);
+    return redirecionar('/trocar-senha');
+  }
   if (caminho === '/admin') return admin(request, env, reg);
+  if (caminho === '/admin/auditoria') {
+    if (!ehGestor(env, reg.usuario)) return html('<!doctype html><meta charset="utf-8"><p>Acesso restrito ao gestor geral do sistema.</p>', 403);
+    return html(telaAuditoria({ usuario: reg.usuario, registros: await listarAuditoria(env.USUARIOS) }));
+  }
   if (caminho === '/admin/sugestoes') return adminSugestoes(request, env, reg);
   if (caminho === '/api/sugestoes') return receberSugestao(request, env, reg);
   if (caminho === '/admin/formularios') return adminFormularios(request, env, reg);

@@ -164,7 +164,10 @@ const json = (dados, status = 200) =>
 async function adminFormularios(request, env, reg) {
   if (!reg.admin) return html('<!doctype html><meta charset="utf-8"><p>Acesso restrito ao responsável.</p>', 403);
   const tela = async (msg = {}) =>
-    html(telaFormularios({ usuario: reg.usuario, formularios: await listarFormularios(env.USUARIOS), ...msg }), msg.erro ? 400 : 200);
+    html(
+      telaFormularios({ usuario: reg.usuario, gestor: normalizarUsuario(env.ADMIN_USUARIO), formularios: await listarFormularios(env.USUARIOS), ...msg }),
+      msg.erro ? 400 : 200,
+    );
   if (request.method !== 'POST') return tela();
   const form = await request.formData();
   const acao = String(form.get('acao') || '');

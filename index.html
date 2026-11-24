@@ -4459,26 +4459,27 @@
   // Temas: cada um combina o modo base (escuro/claro) com uma paleta.
   // A escolha fica salva neste computador. 'dark'/'light' (versões antigas)
   // viram Neon Escuro / Neon Claro.
+  // Seleção corporativa (#26). Os ids antigos continuam valendo para a paleta (CSS);
+  // quem usava um tema retirado passa automaticamente para o mais parecido.
   var TEMAS = [
-    { id: 'neon-escuro',     nome: 'Neon Escuro',      base: 'dark',  paleta: '',                fundo: '#05060D', cor: '#22E5FF' },
-    { id: 'neon-claro',      nome: 'Neon Claro',       base: 'light', paleta: '',                fundo: '#F4F6FB', cor: '#0891B2' },
-    { id: 'preto-vermelho',  nome: 'Preto e Vermelho', base: 'dark',  paleta: 'preto-vermelho',  fundo: '#070505', cor: '#FF3B47' },
-    { id: 'branco-vermelho', nome: 'Branco e Vermelho',base: 'light', paleta: 'branco-vermelho', fundo: '#FBF7F7', cor: '#D61F2C' },
-    { id: 'preto-azul',      nome: 'Preto e Azul',     base: 'dark',  paleta: 'preto-azul',      fundo: '#04060C', cor: '#3B9CFF' },
-    { id: 'branco-azul',     nome: 'Branco e Azul',    base: 'light', paleta: 'branco-azul',     fundo: '#F5F8FD', cor: '#1D4ED8' },
-    { id: 'preto-verde',     nome: 'Preto e Verde',    base: 'dark',  paleta: 'preto-verde',     fundo: '#030805', cor: '#2BE07A' },
-    { id: 'branco-verde',    nome: 'Branco e Verde',   base: 'light', paleta: 'branco-verde',    fundo: '#F5FAF6', cor: '#15803D' },
-    { id: 'sepia',           nome: 'Sépia / Papel',    base: 'light', paleta: 'sepia',           fundo: '#F3EAD7', cor: '#8A5A2B' },
-    { id: 'ardosia',         nome: 'Ardósia',          base: 'dark',  paleta: 'ardosia',         fundo: '#1B222C', cor: '#93B4D6' },
-    { id: 'logos',           nome: 'Logos Executive',  base: 'dark',  paleta: 'logos',           fundo: '#0D0E12', cor: '#E8174E' },
-    { id: 'contraste',       nome: 'Alto Contraste',   base: 'dark',  paleta: 'contraste',       fundo: '#000000', cor: '#FFE600' }
+    { id: 'branco-verde', nome: 'Claro Corporativo',  base: 'light', paleta: 'branco-verde', fundo: '#F5FAF6', cor: '#15803D' },
+    { id: 'ardosia',      nome: 'Escuro Corporativo', base: 'dark',  paleta: 'ardosia',      fundo: '#1B222C', cor: '#93B4D6' },
+    { id: 'logos',        nome: 'Logos Executive',    base: 'dark',  paleta: 'logos',        fundo: '#0D0E12', cor: '#E8174E' },
+    { id: 'sepia',        nome: 'Conforto Visual',    base: 'light', paleta: 'sepia',        fundo: '#F3EAD7', cor: '#8A5A2B' },
+    { id: 'contraste',    nome: 'Alto Contraste',     base: 'dark',  paleta: 'contraste',    fundo: '#000000', cor: '#FFE600' }
   ];
-  var temaAtual = 'neon-escuro';
-  function acharTema(id) { for (var i = 0; i < TEMAS.length; i++) if (TEMAS[i].id === id) return TEMAS[i]; return TEMAS[0]; }
+  var TEMAS_RETIRADOS = {
+    'neon-escuro': 'ardosia', 'preto-vermelho': 'ardosia', 'preto-azul': 'ardosia', 'preto-verde': 'ardosia', dark: 'ardosia',
+    'neon-claro': 'branco-verde', 'branco-vermelho': 'branco-verde', 'branco-azul': 'branco-verde', light: 'branco-verde'
+  };
+  var temaAtual = 'branco-verde';
+  function acharTema(id) {
+    id = TEMAS_RETIRADOS[id] || id;
+    for (var i = 0; i < TEMAS.length; i++) if (TEMAS[i].id === id) return TEMAS[i];
+    return TEMAS[0];
+  }
 
   function aplicarTema(id) {
-    if (id === 'dark') id = 'neon-escuro';
-    if (id === 'light') id = 'neon-claro';
     var t = acharTema(id);
     temaAtual = t.id;
     var raiz = document.documentElement;
@@ -4539,7 +4540,8 @@
   (function() {
     var salvo = null;
     try { salvo = localStorage.getItem('tp_tema'); } catch (e) {}
-    aplicarTema(salvo || 'neon-escuro');
+    aplicarTema(salvo || 'branco-verde');
+    if (salvo && TEMAS_RETIRADOS[salvo]) { try { localStorage.setItem('tp_tema', temaAtual); } catch (e) {} }
   })();
 
   var servicosVisiveis = false;

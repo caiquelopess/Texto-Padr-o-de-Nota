@@ -30,7 +30,7 @@
         info.className = 'menu-usuario-info';
         info.appendChild(nome);
         var papel = document.createElement('small');
-        papel.textContent = s.admin ? 'Administrador' : 'Atendente';
+        papel.textContent = s.gestor ? 'Gestor geral' : s.admin ? 'Administrador' : 'Atendente';
         info.appendChild(papel);
         botao.appendChild(info);
         var menu = document.createElement('div');
@@ -39,6 +39,7 @@
         menu.style.display = 'none';
         var links = [['/trocar-senha', 'Trocar senha']];
         if (s.admin) links.unshift(['/admin', 'Administração'], ['/admin/formularios', 'Formulários (enviar)']);
+        if (s.gestor) links.splice(2, 0, ['/admin/sugestoes', 'Sugestões recebidas']);
         links.push(['/sair', 'Sair']);
         // Tema: abre a lista de temas dentro do próprio card do usuário
         var temaMenu = document.getElementById('tema_menu');
@@ -60,6 +61,14 @@
           temaMenu.classList.add('tema-menu-usuario');
           document.body.classList.add('tema-no-usuario');
         }
+        var itemSug = document.createElement('button');
+        itemSug.type = 'button';
+        itemSug.className = 'tema-opcao sessao-link';
+        itemSug.id = 'btn_usuario_sugestao';
+        itemSug.setAttribute('role', 'menuitem');
+        itemSug.textContent = 'Enviar sugestão';
+        itemSug.addEventListener('click', function() { abrir(false); abrirSugestao(); });
+        menu.appendChild(itemSug);
         links.forEach(function(l) {
           var a = document.createElement('a');
           a.className = 'tema-opcao sessao-link';

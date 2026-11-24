@@ -24,6 +24,7 @@ Objetivo permanente: **reduzir o tempo de atendimento**. Toda mudança deve deix
 - `npm run build` gera `index.html` (produção) e `teste/index.html` (`AMBIENTE_TESTE = true`: faixa amarela, histórico/pendências separados). O CI recusa PR com os gerados desatualizados.
 - Ao mudar o site, aumente `VERSAO_ATUAL` (em `src/ui/13-site-sempre-atualizado.js`) e o `versao.json`/`teste/versao.json` (a página recarrega sozinha só com a tela limpa).
 - **Login (Cloudflare Pages Functions):** `functions/_middleware.js` (portaria), `functions/_lib/autenticacao.js` (regras puras, com teste unitário) e `functions/_lib/telas.js` (login, troca de senha, administração). Nunca guardar senha em texto; nada de credenciais no código. Configuração em `docs/CONFIGURACAO.md`.
+- **Gestor geral:** o usuário de `ADMIN_USUARIO` é o gestor do sistema. Nenhum outro administrador pode removê-lo, desativá-lo ou redefinir a senha dele, e só ele lê as sugestões (`/admin/sugestoes`).
 - Produção = `main`, publicada pelo Cloudflare Pages (com login) e, até a migração terminar, pelo GitHub Pages. Mesclar o PR = publicar; por isso só com aprovação.
 
 ## Antes de abrir o PR

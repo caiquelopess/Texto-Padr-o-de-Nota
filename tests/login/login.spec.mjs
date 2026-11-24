@@ -56,7 +56,7 @@ test('atendente entra, volta para a página pedida e não acessa a administraç�
   expect((await page.request.get('/versao.json')).status()).toBe(200);
   expect((await page.goto('/admin')).status()).toBe(403);
   const sessao = await (await page.request.get('/api/sessao')).json();
-  expect(sessao).toEqual({ usuario: 'maria.silva', admin: false });
+  expect(sessao).toEqual({ usuario: 'maria.silva', admin: false, gestor: false });
 });
 
 test('não redireciona para fora do site depois do login', async ({ page }) => {
@@ -163,7 +163,7 @@ test('menu do usuário no topo reúne as opções da conta', async ({ page }) =>
   await expect(page.locator('#btn_usuario')).toContainText('admin.teste');
   await expect(page.locator('.menu-usuario-lista')).toBeHidden();
   await page.click('#btn_usuario');
-  await expect(page.locator('.menu-usuario-lista a')).toHaveText(['Administração', 'Formulários (enviar)', 'Trocar senha', 'Sair']);
+  await expect(page.locator('.menu-usuario-lista a')).toHaveText(['Administração', 'Formulários (enviar)', 'Sugestões recebidas', 'Trocar senha', 'Sair']);
   await expect(page.locator('#btn_usuario_tema')).toContainText('Tema');
   await page.click('#btn_usuario_tema');
   await expect(page.locator('#tema_menu')).toBeVisible();
@@ -173,4 +173,53 @@ test('menu do usuário no topo reúne as opções da conta', async ({ page }) =>
   await page.click('#btn_usuario');
   await page.keyboard.press('Escape');
   await expect(page.locator('.menu-usuario-lista')).toBeHidden();
+});
+
+test('atendente envia sugestão pelo menu; responsável lê e conclui', async ({ page }) => {
+  await entrar(page, 'admin.teste', 'senha-admin-teste');
+  await noSistema(page);
+  await page.click('#btn_usuario');
+  await page.click('#btn_usuario_sugestao');
+  await expect(page.locator('#sug_overlay')).toBeVisible();
+  await page.fill('#sug_texto', 'oi');
+  await page.click('#btn_sug_enviar');
+  await expect(page.locator('#sug_status')).toContainText('mínimo 5');
+  await page.evaluate(() => {
+    document.getElementById('sug_tipo').value = 'Novo serviço ou formulário';
+  });
+  await page.fill('#sug_texto', 'Incluir o serviço de Cadastro de Irrigante');
+  await page.click('#btn_sug_enviar');
+  await expect(page.locator('#sug_status')).toHaveText('Enviada. Obrigado!');
+  await expect(page.locator('#sug_overlay')).toBeHidden();
+  await page.goto('/admin/sugestoes');
+  await expect(page.locator('tbody')).toContainText('Incluir o serviço de Cadastro de Irrigante');
+  await expect(page.locator('tbody')).toContainText('Novo serviço ou formulário');
+  await page.click('tbody button');
+  await expect(page.locator('.okmsg')).toContainText('concluída');
+  await expect(page.locator('tbody')).toContainText('Nenhuma sugestão pendente');
+});
+
+test('gestor geral é protegido e só ele vê as sugestões', async ({ page, browser }) => {
+  await entrar(page, 'admin.teste', 'senha-admin-teste');
+  await criar(page, 'outro.admin', 'senha-outro');
+  // marca como admin pelo formulário de criação não é possível depois; cria um admin novo
+  await page.goto('/admin');
+  await page.fill('#nu', 'chefe.equipe');
+  await page.fill('#ns', 'senha-chefe');
+  await page.check('input[name=admin]');
+  await page.click('form[data-carrega] button[type=submit]');
+  await expect(page.locator('tbody')).toContainText('(gestor geral)');
+
+  const ctx = await browser.newContext({ baseURL: 'http://localhost:8788' });
+  const outro = await ctx.newPage();
+  await entrar(outro, 'chefe.equipe', 'senha-chefe', '/admin');
+  const linhaGestor = outro.locator('tr', { hasText: 'admin.teste' });
+  await expect(linhaGestor).toContainText('protegido');
+  await expect(linhaGestor.locator('button')).toHaveCount(0);
+  // mesmo forçando o pedido, o servidor recusa
+  const r = await outro.request.post('/admin', { form: { acao: 'remover', usuario: 'admin.teste' }, headers: { origin: 'http://localhost:8788' } });
+  expect(await r.text()).toContain('não pode ser alterado por outros administradores');
+  expect((await outro.request.get('/admin/sugestoes')).status()).toBe(403);
+  await expect(outro.locator('a[href="/admin/sugestoes"]')).toHaveCount(0);
+  await ctx.close();
 });

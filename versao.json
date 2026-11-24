@@ -1,7 +1,8 @@
 {
-  "versao": "2.11.1",
+  "versao": "2.12.0",
   "data": "24/11/2026",
   "novidades": [
+    "Temas corporativos (Claro, Escuro, Logos, Conforto Visual, Alto Contraste); enviar sugestão pelo menu do usuário; balões de ajuda; administração no novo padrão",
     "Endereço antigo volta a funcionar normalmente (aviso de mudança em balão)",
     "Serviços agrupados por categoria, \"Mais usados\", menu do usuário e atalhos ( / busca · Ctrl+Enter gera)",
     "Nova aba Formulários: busque pelo nome, veja a prévia, imprima ou baixe",

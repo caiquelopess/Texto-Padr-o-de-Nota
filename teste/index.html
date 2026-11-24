@@ -898,6 +898,19 @@
     .menu-usuario .tema-menu-usuario { top: calc(100% + 8px); bottom: auto; left: 0; right: auto; }
     @media (max-width: 900px) { .menu-usuario .tema-menu-usuario { width: min(330px, calc(100vw - 32px)); } }
 
+    /* === SUGESTÕES (#10) e BALÕES (#12) === */
+    .sug-painel { max-width: 560px; }
+    .sug-painel .field-group { margin-bottom: 12px; }
+    .sug-painel textarea { width: 100%; resize: vertical; }
+    .sug-contador { display: block; text-align: right; font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .sug-status { min-height: 18px; margin: 0 0 8px; font-size: 13px; }
+    .sug-status.ok { color: #16a34a; }
+    .sug-status.erro { color: #dc2626; }
+    .balao-dica { position: fixed; z-index: 2000; max-width: 280px; padding: 7px 10px; border-radius: 8px; font-size: 12.5px; line-height: 1.4; font-weight: 500; color: #fff; background: rgba(17, 20, 32, 0.96); box-shadow: 0 8px 24px -8px rgba(0,0,0,.45); pointer-events: none; opacity: 0; transform: translateY(3px); transition: opacity 120ms var(--ease), transform 120ms var(--ease); }
+    .balao-dica.visivel { opacity: 1; transform: none; }
+    :root[data-paleta="contraste"] .balao-dica { background: #FFE600; color: #000; font-size: 14px; }
+    @media (prefers-reduced-motion: reduce) { .balao-dica { transition: none; } }
+    @media (hover: none) { .balao-dica { display: none; } }
     /* Aviso do endereço antigo: balão flutuante (não empurra o layout) */
     .aviso-mudanca { position: fixed; right: 16px; bottom: 16px; z-index: 1500; width: min(420px, calc(100vw - 32px)); max-width: none; margin: 0; padding: 16px 40px 16px 16px; font-size: 13px; line-height: 1.5; box-shadow: 0 20px 50px -20px rgba(0,0,0,.55); background: var(--card-bg); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); animation: fadeIn 220ms var(--ease); }
     .aviso-mudanca-fechar { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; border: 0; border-radius: 8px; background: transparent; color: inherit; cursor: pointer; }
@@ -2331,6 +2344,34 @@
   <p class="pend-lembrete-tit" id="pend_lembrete_tit"></p>
   <ul id="pend_lembrete_lista"></ul>
   <div class="pend-lembrete-acoes"><button type="button" class="btn" data-click="verPendencias()">Ver pendências</button><button type="button" class="btn btn-clear" data-click="fecharLembrete()">Lembrar depois</button></div>
+</div>
+
+<div class="hist-overlay" id="sug_overlay" style="display: none;">
+  <div class="hist-painel sug-painel" role="dialog" aria-modal="true" aria-labelledby="sug_titulo">
+    <div class="hist-topo">
+      <h2 id="sug_titulo">Enviar sugestão</h2>
+      <button type="button" class="btn btn-clear hist-fechar" data-click="fecharSugestao()" aria-label="Fechar">✕</button>
+    </div>
+    <p class="hist-nota">Sua mensagem vai para o responsável pelo sistema. ⚠️ Não coloque dados de clientes (nome, CPF, conta, endereço).</p>
+    <div class="field-group full-width">
+      <label for="sug_tipo">Tipo</label>
+      <select id="sug_tipo">
+        <option value="Sugestão">Sugestão</option>
+        <option value="Problema">Problema</option>
+        <option value="Novo serviço ou formulário">Novo serviço ou formulário</option>
+      </select>
+    </div>
+    <div class="field-group full-width">
+      <label for="sug_texto">Mensagem</label>
+      <textarea id="sug_texto" rows="6" maxlength="2000" placeholder="Ex.: incluir o serviço X; o texto de Y deveria trazer Z..."></textarea>
+      <small class="sug-contador" id="sug_contador">0 / 2000</small>
+    </div>
+    <p class="sug-status" id="sug_status" role="status"></p>
+    <div class="actions">
+      <button type="button" class="btn" id="btn_sug_enviar" data-click="enviarSugestao()">Enviar</button>
+      <button type="button" class="btn btn-clear" data-click="fecharSugestao()">Cancelar</button>
+    </div>
+  </div>
 </div>
 
 <div class="hist-overlay" id="hist_overlay" style="display: none;" data-click="fecharHistoricoFundo(this)">
@@ -4422,26 +4463,27 @@
   // Temas: cada um combina o modo base (escuro/claro) com uma paleta.
   // A escolha fica salva neste computador. 'dark'/'light' (versões antigas)
   // viram Neon Escuro / Neon Claro.
+  // Seleção corporativa (#26). Os ids antigos continuam valendo para a paleta (CSS);
+  // quem usava um tema retirado passa automaticamente para o mais parecido.
   var TEMAS = [
-    { id: 'neon-escuro',     nome: 'Neon Escuro',      base: 'dark',  paleta: '',                fundo: '#05060D', cor: '#22E5FF' },
-    { id: 'neon-claro',      nome: 'Neon Claro',       base: 'light', paleta: '',                fundo: '#F4F6FB', cor: '#0891B2' },
-    { id: 'preto-vermelho',  nome: 'Preto e Vermelho', base: 'dark',  paleta: 'preto-vermelho',  fundo: '#070505', cor: '#FF3B47' },
-    { id: 'branco-vermelho', nome: 'Branco e Vermelho',base: 'light', paleta: 'branco-vermelho', fundo: '#FBF7F7', cor: '#D61F2C' },
-    { id: 'preto-azul',      nome: 'Preto e Azul',     base: 'dark',  paleta: 'preto-azul',      fundo: '#04060C', cor: '#3B9CFF' },
-    { id: 'branco-azul',     nome: 'Branco e Azul',    base: 'light', paleta: 'branco-azul',     fundo: '#F5F8FD', cor: '#1D4ED8' },
-    { id: 'preto-verde',     nome: 'Preto e Verde',    base: 'dark',  paleta: 'preto-verde',     fundo: '#030805', cor: '#2BE07A' },
-    { id: 'branco-verde',    nome: 'Branco e Verde',   base: 'light', paleta: 'branco-verde',    fundo: '#F5FAF6', cor: '#15803D' },
-    { id: 'sepia',           nome: 'Sépia / Papel',    base: 'light', paleta: 'sepia',           fundo: '#F3EAD7', cor: '#8A5A2B' },
-    { id: 'ardosia',         nome: 'Ardósia',          base: 'dark',  paleta: 'ardosia',         fundo: '#1B222C', cor: '#93B4D6' },
-    { id: 'logos',           nome: 'Logos Executive',  base: 'dark',  paleta: 'logos',           fundo: '#0D0E12', cor: '#E8174E' },
-    { id: 'contraste',       nome: 'Alto Contraste',   base: 'dark',  paleta: 'contraste',       fundo: '#000000', cor: '#FFE600' }
+    { id: 'branco-verde', nome: 'Claro Corporativo',  base: 'light', paleta: 'branco-verde', fundo: '#F5FAF6', cor: '#15803D' },
+    { id: 'ardosia',      nome: 'Escuro Corporativo', base: 'dark',  paleta: 'ardosia',      fundo: '#1B222C', cor: '#93B4D6' },
+    { id: 'logos',        nome: 'Logos Executive',    base: 'dark',  paleta: 'logos',        fundo: '#0D0E12', cor: '#E8174E' },
+    { id: 'sepia',        nome: 'Conforto Visual',    base: 'light', paleta: 'sepia',        fundo: '#F3EAD7', cor: '#8A5A2B' },
+    { id: 'contraste',    nome: 'Alto Contraste',     base: 'dark',  paleta: 'contraste',    fundo: '#000000', cor: '#FFE600' }
   ];
-  var temaAtual = 'neon-escuro';
-  function acharTema(id) { for (var i = 0; i < TEMAS.length; i++) if (TEMAS[i].id === id) return TEMAS[i]; return TEMAS[0]; }
+  var TEMAS_RETIRADOS = {
+    'neon-escuro': 'ardosia', 'preto-vermelho': 'ardosia', 'preto-azul': 'ardosia', 'preto-verde': 'ardosia', dark: 'ardosia',
+    'neon-claro': 'branco-verde', 'branco-vermelho': 'branco-verde', 'branco-azul': 'branco-verde', light: 'branco-verde'
+  };
+  var temaAtual = 'branco-verde';
+  function acharTema(id) {
+    id = TEMAS_RETIRADOS[id] || id;
+    for (var i = 0; i < TEMAS.length; i++) if (TEMAS[i].id === id) return TEMAS[i];
+    return TEMAS[0];
+  }
 
   function aplicarTema(id) {
-    if (id === 'dark') id = 'neon-escuro';
-    if (id === 'light') id = 'neon-claro';
     var t = acharTema(id);
     temaAtual = t.id;
     var raiz = document.documentElement;
@@ -4502,7 +4544,8 @@
   (function() {
     var salvo = null;
     try { salvo = localStorage.getItem('tp_tema'); } catch (e) {}
-    aplicarTema(salvo || 'neon-escuro');
+    aplicarTema(salvo || 'branco-verde');
+    if (salvo && TEMAS_RETIRADOS[salvo]) { try { localStorage.setItem('tp_tema', temaAtual); } catch (e) {} }
   })();
 
   var servicosVisiveis = false;
@@ -4526,7 +4569,7 @@
   // tambem para linhas de fatura criadas dinamicamente).
   var ACOES = {
     trocarAba: trocarAba, exportarDados: exportarDados, importarDados: importarDados, alternarServicos: alternarServicos, alternarTema: alternarTema,
-    abrirTemas: abrirTemas, escolherTema: escolherTema, filtrarServicos: filtrarServicos, filtrarFormularios: filtrarFormularios,
+    abrirTemas: abrirTemas, escolherTema: escolherTema, filtrarServicos: filtrarServicos, filtrarFormularios: filtrarFormularios, fecharSugestao: fecharSugestao, enviarSugestao: enviarSugestao,
     mascararDataHoraRod: mascararDataHoraRod, mascararData: mascararData, mascararDataOuMes: mascararDataOuMes,
     selecionarSugestaoBusca: selecionarSugestaoBusca,
     mostrarAbaPrincipal: mostrarAbaPrincipal, filtrarCidades: filtrarCidades, buscarCidade: buscarCidade, selecionarCidadeTensao: selecionarCidadeTensao,
@@ -5860,7 +5903,7 @@
   // ?v=2.6.1) levam direto para a produção.
   // PUBLICAR: troque o código abaixo e o campo "versao" do versao.json pelo mesmo
   // valor (ex.: a data e hora da publicação). Ele é interno e não aparece na tela.
-  var VERSAO_ATUAL = '2.11.1';
+  var VERSAO_ATUAL = '2.12.0';
   var SITE_PRODUCAO = 'https://textos-padroes.pages.dev/';   // endereço oficial (Cloudflare, com login)
   var NA_WEB = /^https?:$/.test(location.protocol);
 
@@ -5961,7 +6004,7 @@
         info.className = 'menu-usuario-info';
         info.appendChild(nome);
         var papel = document.createElement('small');
-        papel.textContent = s.admin ? 'Administrador' : 'Atendente';
+        papel.textContent = s.gestor ? 'Gestor geral' : s.admin ? 'Administrador' : 'Atendente';
         info.appendChild(papel);
         botao.appendChild(info);
         var menu = document.createElement('div');
@@ -5970,6 +6013,7 @@
         menu.style.display = 'none';
         var links = [['/trocar-senha', 'Trocar senha']];
         if (s.admin) links.unshift(['/admin', 'Administração'], ['/admin/formularios', 'Formulários (enviar)']);
+        if (s.gestor) links.splice(2, 0, ['/admin/sugestoes', 'Sugestões recebidas']);
         links.push(['/sair', 'Sair']);
         // Tema: abre a lista de temas dentro do próprio card do usuário
         var temaMenu = document.getElementById('tema_menu');
@@ -5991,6 +6035,14 @@
           temaMenu.classList.add('tema-menu-usuario');
           document.body.classList.add('tema-no-usuario');
         }
+        var itemSug = document.createElement('button');
+        itemSug.type = 'button';
+        itemSug.className = 'tema-opcao sessao-link';
+        itemSug.id = 'btn_usuario_sugestao';
+        itemSug.setAttribute('role', 'menuitem');
+        itemSug.textContent = 'Enviar sugestão';
+        itemSug.addEventListener('click', function() { abrir(false); abrirSugestao(); });
+        menu.appendChild(itemSug);
         links.forEach(function(l) {
           var a = document.createElement('a');
           a.className = 'tema-opcao sessao-link';
@@ -6481,6 +6533,133 @@
     document.body.insertBefore(lateral, container);
     document.body.classList.add('layout-lateral');
   })();
+  // === SUGESTÕES (#10) — modal aberto pelo menu do usuário ===
+  function abrirSugestao() {
+    document.getElementById('sug_status').textContent = '';
+    document.getElementById('sug_status').className = 'sug-status';
+    document.getElementById('sug_overlay').style.display = 'flex';
+    document.getElementById('sug_texto').focus();
+  }
+  function fecharSugestao() { document.getElementById('sug_overlay').style.display = 'none'; }
+  function enviarSugestao() {
+    var status = document.getElementById('sug_status');
+    var btn = document.getElementById('btn_sug_enviar');
+    var texto = getVal('sug_texto');
+    if (texto.length < 5) { status.className = 'sug-status erro'; status.textContent = 'Escreva um pouco mais (mínimo 5 caracteres).'; return; }
+    btn.disabled = true;
+    btn.classList.add('carregando');
+    fetch('/api/sugestoes', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ tipo: getVal('sug_tipo'), texto: texto })
+    })
+      .then(function(r) { return r.json().catch(function() { return {}; }).then(function(d) { return { ok: r.ok, d: d }; }); })
+      .then(function(res) {
+        if (!res.ok) throw new Error(res.d.erro || 'Não foi possível enviar agora.');
+        document.getElementById('sug_texto').value = '';
+        atualizarContadorSugestao();
+        status.className = 'sug-status ok';
+        status.textContent = 'Enviada. Obrigado!';
+        setTimeout(fecharSugestao, 1200);
+      })
+      .catch(function(e) { status.className = 'sug-status erro'; status.textContent = e.message || 'Não foi possível enviar agora.'; })
+      .then(function() { btn.disabled = false; btn.classList.remove('carregando'); });
+  }
+  function atualizarContadorSugestao() {
+    document.getElementById('sug_contador').textContent = getVal('sug_texto').length + ' / 2000';
+  }
+  document.getElementById('sug_texto').addEventListener('input', atualizarContadorSugestao);
+  document.getElementById('sug_overlay').addEventListener('click', function(ev) { if (ev.target === this) fecharSugestao(); });
+  document.addEventListener('keydown', function(ev) {
+    if (ev.key === 'Escape' && document.getElementById('sug_overlay').style.display !== 'none') fecharSugestao();
+  });
+  // === BALÕES INFORMATIVOS (#12) ===
+  // Ao parar o mouse (ou focar pelo teclado) num elemento com data-dica ou title,
+  // aparece um balão explicando o que ele faz. O "title" nativo é convertido para
+  // não aparecer duas vezes.
+  var DICAS = {
+    '[data-aba="agenda"]': 'Gerar textos de Agenda e Nota para o SAP',
+    '[data-aba="tensao"]': 'Consultar a tensão de fornecimento por município',
+    '[data-aba="calc"]': 'Calcular a leitura esperada para refaturamento',
+    '[data-aba="decl"]': 'Montar a declaração de ligação para impressão',
+    '[data-aba="pend"]': 'Atendimentos guardados para terminar depois',
+    '[data-aba="form"]': 'Buscar, ver e imprimir formulários',
+    '#btn_alternar_servicos': 'Mostrar ou esconder a lista completa de serviços',
+    '#busca_servico': 'Digite parte do nome do serviço (atalho: tecla /)',
+    '.copy-btn': 'Copia o texto para colar no SAP',
+    '.subform > .actions .btn:not(.btn-clear):not(.btn-edit)': 'Gera o texto e já copia (atalho: Ctrl+Enter)',
+    '.subform > .actions .btn-clear': 'Apaga tudo o que foi preenchido neste serviço',
+    '#btn_usuario': 'Sua conta: tema, sugestões, senha e sair',
+  };
+  function aplicarDicas(raiz) {
+    Object.keys(DICAS).forEach(function(sel) {
+      (raiz || document).querySelectorAll(sel).forEach(function(el) {
+        if (!el.hasAttribute('data-dica')) el.setAttribute('data-dica', DICAS[sel]);
+      });
+    });
+  }
+  var balao = document.createElement('div');
+  balao.className = 'balao-dica';
+  balao.id = 'balao_dica';
+  balao.setAttribute('role', 'tooltip');
+  document.body.appendChild(balao);
+  var dicaTimer = null, dicaAlvo = null;
+
+  function alvoComDica(el) {
+    while (el && el !== document.body) {
+      if (el.nodeType === 1) {
+        if (el.hasAttribute('title') && el.getAttribute('title')) {
+          el.setAttribute('data-dica', el.getAttribute('title'));
+          el.removeAttribute('title');
+        }
+        if (el.hasAttribute('data-dica')) return el;
+      }
+      el = el.parentNode;
+    }
+    return null;
+  }
+  function mostrarDica(el) {
+    dicaAlvo = el;
+    balao.textContent = el.getAttribute('data-dica');
+    balao.classList.add('visivel');
+    el.setAttribute('aria-describedby', 'balao_dica');
+    var r = el.getBoundingClientRect(), b = balao.getBoundingClientRect();
+    // na barra lateral (computador), o balão fica à direita para não cobrir os outros itens
+    if (el.closest('.lateral') && window.innerWidth > 900 && r.right + b.width + 12 < window.innerWidth) {
+      balao.classList.remove('abaixo');
+      balao.style.left = r.right + 10 + 'px';
+      balao.style.top = r.top + r.height / 2 - b.height / 2 + 'px';
+      return;
+    }
+    var x = Math.min(Math.max(8, r.left + r.width / 2 - b.width / 2), window.innerWidth - b.width - 8);
+    var y = r.top - b.height - 8;
+    balao.classList.toggle('abaixo', y < 8);
+    if (y < 8) y = r.bottom + 8;
+    balao.style.left = x + 'px';
+    balao.style.top = y + 'px';
+  }
+  function esconderDica() {
+    clearTimeout(dicaTimer);
+    if (dicaAlvo) dicaAlvo.removeAttribute('aria-describedby');
+    dicaAlvo = null;
+    balao.classList.remove('visivel');
+  }
+  document.addEventListener('mouseover', function(ev) {
+    var el = alvoComDica(ev.target);
+    if (el === dicaAlvo) return;
+    esconderDica();
+    if (el) dicaTimer = setTimeout(function() { mostrarDica(el); }, 450);
+  });
+  document.addEventListener('focusin', function(ev) {
+    var el = alvoComDica(ev.target);
+    esconderDica();
+    if (el && ev.target.matches(':focus-visible')) mostrarDica(el);
+  });
+  document.addEventListener('focusout', esconderDica);
+  document.addEventListener('mousedown', esconderDica);
+  document.addEventListener('keydown', function(ev) { if (ev.key === 'Escape') esconderDica(); });
+  window.addEventListener('scroll', esconderDica, true);
+  aplicarDicas();
 </script>
 
 </body>

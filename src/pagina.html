@@ -1443,6 +1443,34 @@
   <div class="pend-lembrete-acoes"><button type="button" class="btn" data-click="verPendencias()">Ver pendências</button><button type="button" class="btn btn-clear" data-click="fecharLembrete()">Lembrar depois</button></div>
 </div>
 
+<div class="hist-overlay" id="sug_overlay" style="display: none;">
+  <div class="hist-painel sug-painel" role="dialog" aria-modal="true" aria-labelledby="sug_titulo">
+    <div class="hist-topo">
+      <h2 id="sug_titulo">Enviar sugestão</h2>
+      <button type="button" class="btn btn-clear hist-fechar" data-click="fecharSugestao()" aria-label="Fechar">✕</button>
+    </div>
+    <p class="hist-nota">Sua mensagem vai para o responsável pelo sistema. ⚠️ Não coloque dados de clientes (nome, CPF, conta, endereço).</p>
+    <div class="field-group full-width">
+      <label for="sug_tipo">Tipo</label>
+      <select id="sug_tipo">
+        <option value="Sugestão">Sugestão</option>
+        <option value="Problema">Problema</option>
+        <option value="Novo serviço ou formulário">Novo serviço ou formulário</option>
+      </select>
+    </div>
+    <div class="field-group full-width">
+      <label for="sug_texto">Mensagem</label>
+      <textarea id="sug_texto" rows="6" maxlength="2000" placeholder="Ex.: incluir o serviço X; o texto de Y deveria trazer Z..."></textarea>
+      <small class="sug-contador" id="sug_contador">0 / 2000</small>
+    </div>
+    <p class="sug-status" id="sug_status" role="status"></p>
+    <div class="actions">
+      <button type="button" class="btn" id="btn_sug_enviar" data-click="enviarSugestao()">Enviar</button>
+      <button type="button" class="btn btn-clear" data-click="fecharSugestao()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <div class="hist-overlay" id="hist_overlay" style="display: none;" data-click="fecharHistoricoFundo(this)">
   <div class="hist-painel" role="dialog" aria-modal="true" aria-labelledby="hist_titulo">
     <div class="hist-topo">

@@ -11,7 +11,7 @@ test('todos os serviços da lista geram texto', async ({ page }) => {
     const sf = s.id.split('|')[0];
     await abrirServico(page, s.id);
     await page.evaluate((sf) => window.limparForm(sf), sf);
-    await page.waitForTimeout(30);
+    await page.waitForTimeout(200); // campos que aparecem conforme a escolha têm animação curta
     await preencherObrigatorios(page, sf);
     await page.evaluate(() => {
       document.getElementById('out-nota').value = '';

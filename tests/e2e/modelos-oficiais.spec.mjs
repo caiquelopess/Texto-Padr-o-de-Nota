@@ -154,7 +154,7 @@ test('Atualização Cadastral: os três motivos', async ({ page }) => {
   await preencher(page, { ac_nome: 'Maria Teste', ac_tel: '71993501519', ac_email: 'maria@email.com', ac_rg: '1234567', ac_cnh: '', ac_id: '' });
   await gerar(page, 'sf-atualizacao-cadastral');
   expect(await nota(page)).toBe(
-    'Gentileza Atualizar Cadastro\nMotivo: Erro de Endereço\nNome: Maria Teste\nTelefone: (71) 99350-1519\nE-mail: maria@email.com\nRG: 1234567\nCNH: Não informado\nID (identificação profissional): Não informado',
+    'Gentileza Atualizar Cadastro\nMotivo: Erro de Endereço\nNome: Maria Teste\nTelefone: (71) 99350-1519\nE-mail: maria@email.com\nRG: 1234567',
   );
 
   await page.evaluate(() => window.limparForm('sf-atualizacao-cadastral'));

@@ -7,16 +7,17 @@
   function gerarAtualizacaoCadastral() {
     if (!validarCampos('sf-atualizacao-cadastral')) return;
     var motivo = getVal('ac_motivo');
-    var ni = function(id) { return getVal(id) || 'Não informado'; };
+    // campos em branco não entram no texto
+    var linha = function(rotulo, id) { var v = getVal(id); return v ? '\n' + rotulo + ': ' + v : ''; };
     var txt = 'Gentileza Atualizar Cadastro' +
       '\nMotivo: ' + motivo +
-      (motivo === 'Unificar PN' ? '\nPNs: ' + getVal('ac_pns') : '') +
-      '\nNome: ' + getVal('ac_nome') +
-      '\nTelefone: ' + getVal('ac_tel') +
-      '\nE-mail: ' + getVal('ac_email') +
-      '\nRG: ' + ni('ac_rg') +
-      '\nCNH: ' + ni('ac_cnh') +
-      '\nID (identificação profissional): ' + ni('ac_id');
+      (motivo === 'Unificar PN' ? linha('PNs', 'ac_pns') : '') +
+      linha('Nome', 'ac_nome') +
+      linha('Telefone', 'ac_tel') +
+      linha('E-mail', 'ac_email') +
+      linha('RG', 'ac_rg') +
+      linha('CNH', 'ac_cnh') +
+      linha('ID (identificação profissional)', 'ac_id');
     finalizarGeracao('sf-atualizacao-cadastral', txt, txt, 'nota');
   }
 

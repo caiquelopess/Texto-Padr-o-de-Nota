@@ -802,7 +802,6 @@
       background: var(--warning-bg); color: var(--text); font-size: 14px; line-height: 1.55; animation: fadeIn 200ms var(--ease); }
     .aviso-mudanca-acoes { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
     .aviso-mudanca-acoes .btn { flex: 0 0 auto; text-decoration: none; }
-    body:has(.aviso-mudanca) { flex-direction: column; align-items: center; }
 
     /* === FORMULÁRIOS === */
     .form-area { display: grid; grid-template-columns: minmax(220px, 300px) 1fr; gap: 16px; margin-top: 12px; align-items: start; }
@@ -898,6 +897,12 @@
     body.tema-no-usuario .lateral-rodape .tema-wrap { display: none; }
     .menu-usuario .tema-menu-usuario { top: calc(100% + 8px); bottom: auto; left: 0; right: auto; }
     @media (max-width: 900px) { .menu-usuario .tema-menu-usuario { width: min(330px, calc(100vw - 32px)); } }
+
+    /* Aviso do endereço antigo: balão flutuante (não empurra o layout) */
+    .aviso-mudanca { position: fixed; right: 16px; bottom: 16px; z-index: 1500; width: min(420px, calc(100vw - 32px)); max-width: none; margin: 0; padding: 16px 40px 16px 16px; font-size: 13px; line-height: 1.5; box-shadow: 0 20px 50px -20px rgba(0,0,0,.55); background: var(--card-bg); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); animation: fadeIn 220ms var(--ease); }
+    .aviso-mudanca-fechar { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; border: 0; border-radius: 8px; background: transparent; color: inherit; cursor: pointer; }
+    .aviso-mudanca-fechar:hover { background: var(--primary-soft); }
+    .aviso-mudanca-mini { position: fixed; right: 16px; bottom: 16px; z-index: 1500; padding: 9px 14px; border-radius: 999px; border: 1px solid var(--warning-border); background: var(--card-bg); color: var(--text); font-weight: 600; font-size: 12.5px; cursor: pointer; box-shadow: 0 10px 30px -12px rgba(0,0,0,.5); }
   </style>
 </head>
 <body>
@@ -5855,7 +5860,7 @@
   // ?v=2.6.1) levam direto para a produção.
   // PUBLICAR: troque o código abaixo e o campo "versao" do versao.json pelo mesmo
   // valor (ex.: a data e hora da publicação). Ele é interno e não aparece na tela.
-  var VERSAO_ATUAL = '2.11.0';
+  var VERSAO_ATUAL = '2.11.1';
   var SITE_PRODUCAO = 'https://textos-padroes.pages.dev/';   // endereço oficial (Cloudflare, com login)
   var NA_WEB = /^https?:$/.test(location.protocol);
 
@@ -6071,17 +6076,31 @@
   function mostrarAvisoMudanca(forcar) {
     if (!forcar && !ehEnderecoAntigo()) return;
     if (DATA_REDIRECIONAR && pIso(new Date()) >= DATA_REDIRECIONAR) { location.replace(SITE_PRODUCAO); return; }
-    var faixa = document.createElement('div');
-    faixa.className = 'aviso-mudanca';
-    faixa.setAttribute('role', 'alert');
-    faixa.innerHTML = '<b>O Textos Padrões mudou de endereço e agora tem login.</b> ' +
+    // Balão flutuante no canto: avisa sem atrapalhar o uso do sistema.
+    var balao = document.createElement('div');
+    balao.className = 'aviso-mudanca';
+    balao.setAttribute('role', 'status');
+    balao.innerHTML = '<button type="button" class="aviso-mudanca-fechar" aria-label="Minimizar aviso">✕</button>' +
+      '<b>O Textos Padrões mudou de endereço e agora tem login.</b> ' +
       '1) Clique em <b>Exportar meus dados</b> para salvar seu histórico e suas pendências. ' +
       '2) Abra o novo endereço, entre com seu usuário e use <b>Histórico → Importar dados</b>.' +
-      (DATA_REDIRECIONAR ? ' A partir de ' + pBR(DATA_REDIRECIONAR) + ' este endereço deixa de funcionar.' : '') +
+      (DATA_REDIRECIONAR ? ' Este endereço funciona normalmente até ' + pBR(pSomarDiasIso(DATA_REDIRECIONAR, -1)) + '.' : '') +
       '<span class="aviso-mudanca-acoes"><button type="button" class="btn" data-click="exportarDados()">Exportar meus dados</button>' +
       '<a class="btn btn-clear" href="' + SITE_PRODUCAO + '">Ir para o novo endereço</a></span>';
-    var cont = document.querySelector('.container');
-    if (cont) cont.parentNode.insertBefore(faixa, cont);
+    var mini = document.createElement('button');
+    mini.type = 'button';
+    mini.className = 'aviso-mudanca-mini';
+    mini.textContent = 'Novo endereço do sistema';
+    mini.style.display = 'none';
+    balao.querySelector('.aviso-mudanca-fechar').addEventListener('click', function() { balao.style.display = 'none'; mini.style.display = ''; });
+    mini.addEventListener('click', function() { balao.style.display = ''; mini.style.display = 'none'; });
+    document.body.appendChild(balao);
+    document.body.appendChild(mini);
+  }
+  function pSomarDiasIso(iso, dias) {
+    var d = new Date(iso + 'T12:00:00');
+    d.setDate(d.getDate() + dias);
+    return pIso(d);
   }
   mostrarAvisoMudanca(false);
   // === FORMULÁRIOS (para impressão) ===
@@ -6397,6 +6416,8 @@
     var header = container && container.querySelector('header');
     var abas = container && container.querySelector('.nav-tabs');
     if (!container || !header || !abas) return;
+    // No endereço antigo (GitHub Pages, até a migração) fica o layout antigo.
+    if (typeof ehEnderecoAntigo === 'function' && ehEnderecoAntigo()) return;
 
     var lateral = document.createElement('aside');
     lateral.className = 'lateral';

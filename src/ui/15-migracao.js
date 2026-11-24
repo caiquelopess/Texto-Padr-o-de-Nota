@@ -62,16 +62,30 @@
   function mostrarAvisoMudanca(forcar) {
     if (!forcar && !ehEnderecoAntigo()) return;
     if (DATA_REDIRECIONAR && pIso(new Date()) >= DATA_REDIRECIONAR) { location.replace(SITE_PRODUCAO); return; }
-    var faixa = document.createElement('div');
-    faixa.className = 'aviso-mudanca';
-    faixa.setAttribute('role', 'alert');
-    faixa.innerHTML = '<b>O Textos Padrões mudou de endereço e agora tem login.</b> ' +
+    // Balão flutuante no canto: avisa sem atrapalhar o uso do sistema.
+    var balao = document.createElement('div');
+    balao.className = 'aviso-mudanca';
+    balao.setAttribute('role', 'status');
+    balao.innerHTML = '<button type="button" class="aviso-mudanca-fechar" aria-label="Minimizar aviso">✕</button>' +
+      '<b>O Textos Padrões mudou de endereço e agora tem login.</b> ' +
       '1) Clique em <b>Exportar meus dados</b> para salvar seu histórico e suas pendências. ' +
       '2) Abra o novo endereço, entre com seu usuário e use <b>Histórico → Importar dados</b>.' +
-      (DATA_REDIRECIONAR ? ' A partir de ' + pBR(DATA_REDIRECIONAR) + ' este endereço deixa de funcionar.' : '') +
+      (DATA_REDIRECIONAR ? ' Este endereço funciona normalmente até ' + pBR(pSomarDiasIso(DATA_REDIRECIONAR, -1)) + '.' : '') +
       '<span class="aviso-mudanca-acoes"><button type="button" class="btn" data-click="exportarDados()">Exportar meus dados</button>' +
       '<a class="btn btn-clear" href="' + SITE_PRODUCAO + '">Ir para o novo endereço</a></span>';
-    var cont = document.querySelector('.container');
-    if (cont) cont.parentNode.insertBefore(faixa, cont);
+    var mini = document.createElement('button');
+    mini.type = 'button';
+    mini.className = 'aviso-mudanca-mini';
+    mini.textContent = 'Novo endereço do sistema';
+    mini.style.display = 'none';
+    balao.querySelector('.aviso-mudanca-fechar').addEventListener('click', function() { balao.style.display = 'none'; mini.style.display = ''; });
+    mini.addEventListener('click', function() { balao.style.display = ''; mini.style.display = 'none'; });
+    document.body.appendChild(balao);
+    document.body.appendChild(mini);
+  }
+  function pSomarDiasIso(iso, dias) {
+    var d = new Date(iso + 'T12:00:00');
+    d.setDate(d.getDate() + dias);
+    return pIso(d);
   }
   mostrarAvisoMudanca(false);

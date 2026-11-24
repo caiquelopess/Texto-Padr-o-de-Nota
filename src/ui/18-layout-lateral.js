@@ -19,6 +19,8 @@
     var header = container && container.querySelector('header');
     var abas = container && container.querySelector('.nav-tabs');
     if (!container || !header || !abas) return;
+    // No endereço antigo (GitHub Pages, até a migração) fica o layout antigo.
+    if (typeof ehEnderecoAntigo === 'function' && ehEnderecoAntigo()) return;
 
     var lateral = document.createElement('aside');
     lateral.className = 'lateral';

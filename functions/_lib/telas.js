@@ -151,22 +151,28 @@ ${erro ? `<p class="erro" role="alert">${esc(erro)}</p>` : ''}${ok ? `<p class="
   );
 }
 
-export function telaSugestoes({ usuario, sugestoes = [], ok = '' }) {
+export function telaSugestoes({ usuario, ver = 'pendentes', sugestoes = [], total = { pendentes: 0, concluidas: 0 }, ok = '', erro = '' }) {
+  const concl = ver === 'concluidas';
+  const botao = (s, acao, rotulo, classe, confirmar = '') =>
+    `<form method="post" action="/admin/sugestoes?ver=${ver}"${confirmar ? ` onsubmit="return confirm('${confirmar}')"` : ''}><input type="hidden" name="id" value="${esc(s.id)}"><input type="hidden" name="acao" value="${acao}"><button type="submit" class="${classe}">${rotulo}</button></form>`;
   const itens = sugestoes
     .map(
       (
         s,
-      ) => `<tr><td style="white-space:nowrap">${data(s.criado)}</td><td><b>${esc(s.usuario)}</b></td><td>${esc(s.tipo)}</td><td style="white-space:pre-wrap">${esc(s.texto)}</td>
-<td><form method="post" action="/admin/sugestoes"><input type="hidden" name="id" value="${esc(s.id)}"><button type="submit" class="secundario">Concluída</button></form></td></tr>`,
+      ) => `<tr><td style="white-space:nowrap">${data(s.criado)}</td><td><b>${esc(s.usuario)}</b></td><td>${esc(s.tipo)}</td><td style="white-space:pre-wrap">${esc(s.texto)}${concl ? `<br><small style="color:var(--muted)">Concluída em ${data(s.concluidaEm)} por ${esc(s.concluidaPor)}</small>` : ''}</td>
+<td style="white-space:nowrap">${concl ? botao(s, 'reabrir', 'Reabrir', 'secundario') : botao(s, 'concluir', 'Concluída', 'secundario')}${botao(s, 'excluir', 'Excluir', 'perigo', 'Excluir esta sugestão de vez? Não dá para desfazer.')}</td></tr>`,
     )
     .join('');
+  const aba = (chave, rotulo, n) =>
+    `<a href="/admin/sugestoes?ver=${chave}" class="aba${ver === chave ? ' ativa' : ''}"${ver === chave ? ' aria-current="page"' : ''}>${rotulo} <span>${n}</span></a>`;
   return paginaAdmin(
     'Sugestões',
     'sugestoes',
     { usuario, gestor: usuario },
     `<h1>Sugestões recebidas</h1><p class="sub">Enviadas pelos atendentes no menu do usuário. Visível só para o gestor geral.</p><div class="linha-neon"></div>
-${ok ? `<p class="okmsg" role="status">${esc(ok)}</p>` : ''}
-<table><thead><tr><th>Quando</th><th>Quem</th><th>Tipo</th><th>Mensagem</th><th></th></tr></thead><tbody>${itens || '<tr><td colspan="5">Nenhuma sugestão pendente.</td></tr>'}</tbody></table>`,
+${erro ? `<p class="erro" role="alert">${esc(erro)}</p>` : ''}${ok ? `<p class="okmsg" role="status">${esc(ok)}</p>` : ''}
+<nav class="abas">${aba('pendentes', 'Pendentes', total.pendentes)}${aba('concluidas', 'Concluídas', total.concluidas)}</nav>
+<table><thead><tr><th>Quando</th><th>Quem</th><th>Tipo</th><th>Mensagem</th><th></th></tr></thead><tbody>${itens || `<tr><td colspan="5">${concl ? 'Nenhuma sugestão concluída.' : 'Nenhuma sugestão pendente.'}</td></tr>`}</tbody></table>`,
   );
 }
 
@@ -182,6 +188,7 @@ body.adm{display:grid;grid-template-columns:248px minmax(0,1fr);align-items:star
 .adm-nav a{display:flex;gap:10px;align-items:center;padding:9px 12px;border-radius:8px;border-left:3px solid transparent;color:var(--muted);text-decoration:none;font-size:13.5px;font-weight:500}
 .adm-nav a:hover{background:var(--realce);color:var(--txt)}.adm-nav a.ativo{background:var(--realce);color:var(--txt);font-weight:600;border-left-color:var(--neon)}
 .adm-rodape{margin-top:auto}
+.abas{display:flex;gap:6px;margin:4px 0 6px;border-bottom:1px solid var(--borda)}.abas .aba{padding:9px 14px;color:var(--muted);text-decoration:none;font-weight:600;font-size:13.5px;border-bottom:2px solid transparent;margin-bottom:-1px}.abas .aba.ativa{color:var(--txt);border-bottom-color:var(--neon)}.abas .aba span{display:inline-block;min-width:20px;padding:0 6px;margin-left:4px;border-radius:999px;background:var(--realce);font-size:11.5px;text-align:center}
 .adm-principal{padding:28px;max-width:1080px;width:100%;margin:0 auto}
 .adm-principal .cartao{max-width:none}
 .adm-principal h1{font-size:22px}

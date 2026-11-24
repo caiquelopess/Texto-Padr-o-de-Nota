@@ -783,3 +783,9 @@
     /* ---- Sessão (login Cloudflare) ---- */
     .sessao-usuario { display: inline-flex; gap: 8px; align-items: center; flex-wrap: wrap; animation: fadeIn 200ms var(--ease); }
     .sessao-link { text-decoration: none; }
+    /* ---- Aviso de mudança de endereço (site antigo) ---- */
+    .aviso-mudanca { width: 100%; max-width: 1020px; margin: 0 auto 16px; padding: 14px 16px; border-radius: var(--r-card); border: 1px solid var(--warning-border);
+      background: var(--warning-bg); color: var(--text); font-size: 14px; line-height: 1.55; animation: fadeIn 200ms var(--ease); }
+    .aviso-mudanca-acoes { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+    .aviso-mudanca-acoes .btn { flex: 0 0 auto; text-decoration: none; }
+    body:has(.aviso-mudanca) { flex-direction: column; align-items: center; }

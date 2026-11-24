@@ -2,7 +2,7 @@
 
 Gerador de textos de NOTA e AGENDA para os serviços de atendimento.
 
-**Acesse:** https://caiquelopess.github.io/Texto-Padr-o-de-Nota/
+**Acesse:** https://textos-padroes.pages.dev (com login)
 
 ## Como funciona
 

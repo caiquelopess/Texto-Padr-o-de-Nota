@@ -5,7 +5,7 @@
   // do proprio script, via addEventListener com delegacao no document (vale
   // tambem para linhas de fatura criadas dinamicamente).
   var ACOES = {
-    trocarAba: trocarAba, alternarServicos: alternarServicos, alternarTema: alternarTema,
+    trocarAba: trocarAba, exportarDados: exportarDados, importarDados: importarDados, alternarServicos: alternarServicos, alternarTema: alternarTema,
     abrirTemas: abrirTemas, escolherTema: escolherTema, filtrarServicos: filtrarServicos,
     mascararDataHoraRod: mascararDataHoraRod, mascararData: mascararData, mascararDataOuMes: mascararDataOuMes,
     selecionarSugestaoBusca: selecionarSugestaoBusca,

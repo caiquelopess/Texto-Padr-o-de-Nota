@@ -141,3 +141,31 @@ test('nenhum texto usa forma de tratamento (Sr./Sra.)', async ({ page }) => {
   const rotulos = await page.$$eval('#painel_agenda label', (ls) => ls.map((l) => l.textContent).filter((t) => /\bSr\(a\)|Sr\. ou Sra/.test(t)));
   expect(rotulos).toEqual([]);
 });
+
+test('Atualização Cadastral: os três motivos', async ({ page }) => {
+  const escolher = (v) =>
+    page.evaluate((v) => {
+      const s = document.getElementById('ac_motivo');
+      s.value = v;
+      s.dispatchEvent(new Event('change', { bubbles: true }));
+    }, v);
+  await abrirServico(page, 'sf-atualizacao-cadastral');
+  await expect(page.locator('#alerta_ac_nome')).toBeHidden();
+  await preencher(page, { ac_nome: 'Maria Teste', ac_tel: '71993501519', ac_email: 'maria@email.com', ac_rg: '1234567', ac_cnh: '', ac_id: '' });
+  await gerar(page, 'sf-atualizacao-cadastral');
+  expect(await nota(page)).toBe(
+    'Gentileza Atualizar Cadastro\nMotivo: Erro de Endereço\nNome: Maria Teste\nTelefone: (71) 99350-1519\nE-mail: maria@email.com\nRG: 1234567\nCNH: Não informado\nID (identificação profissional): Não informado',
+  );
+
+  await page.evaluate(() => window.limparForm('sf-atualizacao-cadastral'));
+  await escolher('Unificar PN');
+  await expect(page.locator('#ac_pns')).toBeVisible();
+  await preencher(page, { ac_pns: '1010000001, 1010000002', ac_nome: 'Maria Teste', ac_tel: '71993501519', ac_email: 'Não informado' });
+  await gerar(page, 'sf-atualizacao-cadastral');
+  expect((await nota(page)).split('\n').slice(0, 3)).toEqual(['Gentileza Atualizar Cadastro', 'Motivo: Unificar PN', 'PNs: 1010000001, 1010000002']);
+
+  await page.evaluate(() => window.limparForm('sf-atualizacao-cadastral'));
+  await escolher('Correção de Nome');
+  await expect(page.locator('#alerta_ac_nome')).toContainText('OneCode (2º Nível)');
+  await expect(page.locator('#ac_pns')).toBeHidden();
+});

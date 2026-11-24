@@ -60,7 +60,7 @@
 
     <!-- SUB-NAVEGAÇÃO DE SERVIÇOS -->
     <div class="nav-toolbar">
-      <span class="svc-count" id="svc_count">45 serviços</span>
+      <span class="svc-count" id="svc_count">46 serviços</span>
       <button type="button" class="nav-toggle fechado" id="btn_alternar_servicos" data-click="alternarServicos(this)" aria-expanded="false" aria-controls="painel_servicos"><span class="nav-toggle-label">Exibir serviços</span><span class="chev"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></span></button>
     </div>
     <div class="search-row">
@@ -70,6 +70,7 @@
     <div id="painel_servicos" style="display: none;">
       <div class="service-nav" id="service_nav">
         <button type="button" class="sub-btn" data-click="trocarAba('sf-afericao', this)">Aferição</button>
+        <button type="button" class="sub-btn" data-click="trocarAba('sf-atualizacao-cadastral', this)">Atualização Cadastral</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-bloq-cobranca', this)">Bloqueio de Cobrança</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-icms', this)">Cadastro de Parceiro - Isenção ICMS</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-canc-parc', this)">Cancelamento de Parcelamento</button>
@@ -474,6 +475,23 @@
         <div class="field-group"><label>Número da Tarefa Neo aberta</label><input type="text" id="ise_neo" placeholder="Em branco = Não se aplica"></div>
       </div>
       <div class="actions"><button type="button" class="btn" data-click="gerarIsencaoDeb()">Gerar Texto e Copiar NOTA</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-isencao-deb')">Limpar Tudo</button></div>
+    </div>
+
+    <!-- ATUALIZAÇÃO CADASTRAL -->
+    <div class="subform" id="sf-atualizacao-cadastral">
+      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
+      <div class="alert-box" id="alerta_ac_nome" style="display: none;"><b>Atenção:</b> se for <b>apenas correção do nome</b>, pode ser feito no <b>OneCode (2º Nível)</b>.</div>
+      <div class="form-grid">
+        <div class="field-group full-width"><label for="ac_motivo">Motivo *</label><select id="ac_motivo" data-change="toggleAtualizacaoCadastral()"><option value="Erro de Endereço">Erro de Endereço</option><option value="Unificar PN">Unificar PN</option><option value="Correção de Nome">Correção de Nome</option></select></div>
+        <div class="field-group full-width" id="grp_ac_pns" style="display: none;"><label for="ac_pns">PNs a unificar *</label><input type="text" id="ac_pns" placeholder="Ex: 1010000001, 1010000002" required></div>
+        <div class="field-group"><label for="ac_nome">Nome *</label><input type="text" id="ac_nome" placeholder="Nome completo" required></div>
+        <div class="field-group"><label for="ac_tel">Telefone *</label><input type="text" id="ac_tel" placeholder="Ex: 71993501519" required></div>
+        <div class="field-group"><label for="ac_email">E-mail *</label><input type="text" id="ac_email" placeholder="cliente@email.com ou Não informado" required></div>
+        <div class="field-group"><label for="ac_rg">RG</label><input type="text" id="ac_rg" placeholder="Em branco = Não informado"></div>
+        <div class="field-group"><label for="ac_cnh">CNH</label><input type="text" id="ac_cnh" placeholder="Em branco = Não informado"></div>
+        <div class="field-group"><label for="ac_id">ID (identificação profissional)</label><input type="text" id="ac_id" placeholder="Em branco = Não informado"></div>
+      </div>
+      <div class="actions"><button type="button" class="btn" data-click="gerarAtualizacaoCadastral()">Gerar Texto e Copiar NOTA</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-atualizacao-cadastral')">Limpar Tudo</button></div>
     </div>
 
     <!-- ISENÇÃO DE DÉBITOS (pedido de análise) -->

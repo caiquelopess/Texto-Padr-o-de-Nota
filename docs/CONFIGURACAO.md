@@ -62,6 +62,7 @@ Com o projeto ligado ao GitHub, cada PR ganha um link `https://<código>.textos-
 
 > Se algum token ou senha for colado em chat, e-mail ou mensagem, gere outro (no Codecov: **Regenerate**; no Cloudflare: edite o secret).
 
-## Depois que o site com login estiver funcionando (próximo PR)
-- Exportar o histórico e as pendências do endereço antigo (GitHub Pages) e importar no novo — o navegador guarda esses dados por endereço.
-- Apontar o site antigo para o novo endereço e tornar o repositório privado.
+## Migração do endereço antigo (GitHub Pages)
+1. Avise a equipe: no endereço antigo aparece o aviso de mudança com **Exportar meus dados**. Cada atendente exporta, abre `https://textos-padroes.pages.dev`, entra e usa **Histórico → Importar dados** (junta sem duplicar).
+2. Defina o prazo: em `src/ui/15-migracao.js`, `DATA_REDIRECIONAR = 'aaaa-mm-dd'` (por PR). A partir dessa data o endereço antigo leva sozinho para o novo.
+3. Depois do prazo, torne o repositório **privado** (GitHub → Settings → General → Danger Zone → Change visibility). O GitHub Pages gratuito para de publicar; o Cloudflare continua normalmente.

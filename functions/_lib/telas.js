@@ -73,13 +73,14 @@ ${erro ? `<p class="erro" role="alert">${esc(erro)}</p>` : ''}
   );
 }
 
-export function telaTrocarSenha({ usuario, erro = '', ok = '' }) {
+export function telaTrocarSenha({ usuario, obrigatoria = false, erro = '', ok = '' }) {
   return pagina(
     'Trocar senha',
-    `<div class="topo"><h1>Trocar senha</h1><a href="/">← Voltar ao sistema</a></div><p class="sub">${esc(usuario)}</p><div class="linha-neon"></div>
+    `<div class="topo"><h1>${obrigatoria ? 'Crie sua senha' : 'Trocar senha'}</h1>${obrigatoria ? '<a href="/sair">Sair</a>' : '<a href="/">← Voltar ao sistema</a>'}</div><p class="sub">${esc(usuario)}</p><div class="linha-neon"></div>
+${obrigatoria ? '<p class="aviso" style="margin:0 0 6px">Primeiro acesso: você entrou com uma <b>senha provisória</b>. Crie a sua senha para começar a usar o sistema.</p>' : ''}
 ${erro ? `<p class="erro" role="alert">${esc(erro)}</p>` : ''}${ok ? `<p class="okmsg" role="status">${esc(ok)}</p>` : ''}
 <form method="post" action="/trocar-senha" data-carrega>
-<label for="atual">Senha atual</label><input id="atual" name="atual" type="password" autocomplete="current-password" required>
+<label for="atual">${obrigatoria ? 'Senha provisória (recebida do administrador)' : 'Senha atual'}</label><input id="atual" name="atual" type="password" autocomplete="current-password" required>
 <label for="nova">Nova senha (mínimo 4 caracteres)</label><input id="nova" name="nova" type="password" autocomplete="new-password" minlength="4" required>
 <label for="confirma">Repita a nova senha</label><input id="confirma" name="confirma" type="password" autocomplete="new-password" minlength="4" required>
 <button type="submit">Salvar nova senha</button></form>${AVISO_SENHA}`,
@@ -94,7 +95,7 @@ export function telaAdmin({ usuario, gestor = '', usuarios = [], erro = '', ok =
       (
         u,
       ) => `<tr><td><b>${esc(u.usuario)}</b>${u.usuario === gestor ? ' <span style="color:var(--neon2)">(gestor geral)</span>' : u.admin ? ' <span style="color:var(--neon)">(admin)</span>' : ''}</td>
-<td>${u.ativo ? 'Ativo' : '<span style="color:var(--perigo)">Desativado</span>'}</td><td>${data(u.criado)}</td><td>${data(u.ultimoAcesso)}</td>
+<td>${u.ativo ? 'Ativo' : '<span style="color:var(--perigo)">Desativado</span>'}</td><td>${data(u.criado)}</td><td>${esc(u.criadoPor || '—')}</td><td>${data(u.ultimoAcesso)}</td>
 <td>${
         u.usuario === usuario
           ? '<a href="/trocar-senha" style="color:var(--neon)">trocar minha senha</a>'
@@ -119,7 +120,7 @@ ${erro ? `<p class="erro" role="alert">${esc(erro)}</p>` : ''}${ok ? `<p class="
 <label class="check" style="margin:0 0 12px"><input type="checkbox" name="admin" value="1"> admin</label>
 <button type="submit">Criar</button></div></form>
 <p class="aviso">Passe a senha provisória ao atendente e peça para ele trocar em "Trocar senha". ⚠️ Não usar a senha real dos sistemas corporativos.</p>
-<table><thead><tr><th>Usuário</th><th>Situação</th><th>Criado em</th><th>Último acesso</th><th>Ações</th></tr></thead><tbody>${linhas || '<tr><td colspan="5">Nenhum usuário ainda.</td></tr>'}</tbody></table>`,
+<table><thead><tr><th>Usuário</th><th>Situação</th><th>Criado em</th><th>Criado por</th><th>Último acesso</th><th>Ações</th></tr></thead><tbody>${linhas || '<tr><td colspan="6">Nenhum usuário ainda.</td></tr>'}</tbody></table>`,
   );
 }
 
@@ -130,7 +131,7 @@ export function telaFormularios({ usuario, gestor = '', formularios = [], erro =
     .map(
       (
         f,
-      ) => `<tr><td><b>${esc(f.nome)}</b></td><td>${esc((f.tipo || '').split('/')[1]?.toUpperCase())}</td><td>${tamanho(f.tamanho || 0)}</td><td>${data(f.criado)}</td>
+      ) => `<tr><td><b>${esc(f.nome)}</b></td><td>${esc((f.tipo || '').split('/')[1]?.toUpperCase())}</td><td>${tamanho(f.tamanho || 0)}</td><td>${data(f.criado)}</td><td>${esc(f.por || '—')}</td>
 <td><a href="/api/formularios/${esc(f.id)}" target="_blank" rel="noopener" style="color:var(--neon);margin-right:8px">ver</a>
 <form method="post" action="/admin/formularios" onsubmit="return confirm('Remover o formulário ${esc(f.nome).replace(/&#39;/g, '')}?')"><input type="hidden" name="acao" value="remover"><input type="hidden" name="id" value="${esc(f.id)}"><button type="submit" class="perigo">Remover</button></form></td></tr>`,
     )
@@ -146,7 +147,7 @@ ${erro ? `<p class="erro" role="alert">${esc(erro)}</p>` : ''}${ok ? `<p class="
 <div><label for="fa">Arquivo (PDF, PNG ou JPG, até 10 MB)</label><input id="fa" name="arquivo" type="file" accept="application/pdf,image/png,image/jpeg" required></div>
 <span></span><button type="submit">Enviar</button></div></form>
 <p class="aviso">Os formulários ficam visíveis para todos os usuários com login. ⚠️ Envie só modelos em branco — nunca documentos com dados de clientes.</p>
-<table><thead><tr><th>Nome</th><th>Tipo</th><th>Tamanho</th><th>Enviado em</th><th>Ações</th></tr></thead><tbody>${linhas || '<tr><td colspan="5">Nenhum formulário ainda.</td></tr>'}</tbody></table>`,
+<table><thead><tr><th>Nome</th><th>Tipo</th><th>Tamanho</th><th>Enviado em</th><th>Enviado por</th><th>Ações</th></tr></thead><tbody>${linhas || '<tr><td colspan="6">Nenhum formulário ainda.</td></tr>'}</tbody></table>`,
   );
 }
 
@@ -207,9 +208,22 @@ function paginaAdmin(titulo, ativo, { usuario, gestor }, corpo) {
 <body class="adm"><aside class="adm-lateral" aria-label="Menu da administração">
 <div class="adm-marca">Textos Padrões<small>Administração</small></div>
 <div class="adm-usuario"><span class="adm-avatar">${esc(iniciais(usuario))}</span><span><b>${esc(usuario)}</b><small>${ehGestor ? 'Gestor geral' : 'Administrador'}</small></span></div>
-<nav class="adm-nav"><div class="adm-secao">Gestão</div>${item('/admin', 'Usuários', 'usuarios')}${item('/admin/formularios', 'Formulários', 'formularios')}${ehGestor ? item('/admin/sugestoes', 'Sugestões', 'sugestoes') : ''}
+<nav class="adm-nav"><div class="adm-secao">Gestão</div>${item('/admin', 'Usuários', 'usuarios')}${item('/admin/formularios', 'Formulários', 'formularios')}${ehGestor ? item('/admin/sugestoes', 'Sugestões', 'sugestoes') + item('/admin/auditoria', 'Auditoria', 'auditoria') : ''}
 <div class="adm-secao">Conta</div>${item('/', '← Voltar ao sistema', '')}${item('/trocar-senha', 'Trocar senha', '')}${item('/sair', 'Sair', '')}</nav>
 </aside><main class="adm-principal"><div class="cartao largo">${corpo}</div></main>
 <script>document.querySelectorAll('form[data-carrega]').forEach(f=>f.addEventListener('submit',()=>{const b=f.querySelector('button[type=submit]');if(b){b.disabled=true;b.classList.add('carregando');}}));</script>
 </body></html>`;
+}
+
+export function telaAuditoria({ usuario, registros = [] }) {
+  const linhas = registros
+    .map((r) => `<tr><td style="white-space:nowrap">${data(r.quando)}</td><td><b>${esc(r.quem)}</b></td><td>${esc(r.acao)}</td><td>${esc(r.alvo)}</td></tr>`)
+    .join('');
+  return paginaAdmin(
+    'Auditoria',
+    'auditoria',
+    { usuario, gestor: usuario },
+    `<h1>Auditoria</h1><p class="sub">Quem criou acessos, redefiniu senhas, ativou, desativou ou removeu usuários e quem enviou ou removeu formulários. Últimos 300 registros, guardados por 1 ano. Visível só para o gestor geral.</p><div class="linha-neon"></div>
+<table><thead><tr><th>Quando</th><th>Quem</th><th>Ação</th><th>Sobre</th></tr></thead><tbody>${linhas || '<tr><td colspan="4">Nenhum registro ainda.</td></tr>'}</tbody></table>`,
+  );
 }

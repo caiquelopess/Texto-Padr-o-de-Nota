@@ -40,6 +40,26 @@
         var links = [['/trocar-senha', 'Trocar senha']];
         if (s.admin) links.unshift(['/admin', 'Administração'], ['/admin/formularios', 'Formulários (enviar)']);
         links.push(['/sair', 'Sair']);
+        // Tema: abre a lista de temas dentro do próprio card do usuário
+        var temaMenu = document.getElementById('tema_menu');
+        if (temaMenu && typeof abrirTemas === 'function') {
+          var itemTema = document.createElement('button');
+          itemTema.type = 'button';
+          itemTema.className = 'tema-opcao sessao-link';
+          itemTema.id = 'btn_usuario_tema';
+          itemTema.setAttribute('role', 'menuitem');
+          var lbl = document.getElementById('lbl_tema');
+          itemTema.textContent = 'Tema' + (lbl && lbl.textContent ? ': ' + lbl.textContent : '');
+          itemTema.addEventListener('click', function(ev) {
+            ev.stopPropagation();
+            abrir(false);
+            abrirTemas();
+          });
+          menu.appendChild(itemTema);
+          caixa.appendChild(temaMenu);
+          temaMenu.classList.add('tema-menu-usuario');
+          document.body.classList.add('tema-no-usuario');
+        }
         links.forEach(function(l) {
           var a = document.createElement('a');
           a.className = 'tema-opcao sessao-link';

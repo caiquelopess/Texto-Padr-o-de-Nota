@@ -881,3 +881,6 @@
       body.layout-lateral .container { width: calc(100% - 24px); margin: 12px auto 32px; }
       .lateral-usuario .menu-usuario-nome { display: block; }
     }
+    body.tema-no-usuario .lateral-rodape .tema-wrap { display: none; }
+    .menu-usuario .tema-menu-usuario { top: calc(100% + 8px); bottom: auto; left: 0; right: auto; }
+    @media (max-width: 900px) { .menu-usuario .tema-menu-usuario { width: min(330px, calc(100vw - 32px)); } }

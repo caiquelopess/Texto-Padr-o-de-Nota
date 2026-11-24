@@ -20,7 +20,8 @@ import {
   usuarioValido,
 } from './_lib/autenticacao.js';
 import { idValido, listarFormularios, nomeDoArquivo, nomeValido, TAMANHO_MAXIMO, tipoDoArquivo } from './_lib/formularios.js';
-import { telaAdmin, telaFormularios, telaLogin, telaTrocarSenha } from './_lib/telas.js';
+import { LIMITE_DIA, listarSugestoes, validarSugestao } from './_lib/sugestoes.js';
+import { telaAdmin, telaFormularios, telaLogin, telaSugestoes, telaTrocarSenha } from './_lib/telas.js';
 
 const COOKIE = '__Host-tp_sessao';
 const SEGURANCA = {
@@ -51,6 +52,10 @@ async function listarUsuarios(env) {
   } while (cursor);
   return lista.sort((a, b) => a.usuario.localeCompare(b.usuario));
 }
+
+// Gestor geral: o usuário configurado em ADMIN_USUARIO. Só ele lê as sugestões
+// e nenhum outro administrador pode removê-lo, desativá-lo ou trocar a senha dele.
+const ehGestor = (env, usuario) => usuario === normalizarUsuario(env.ADMIN_USUARIO);
 
 function configurado(env) {
   return env.USUARIOS && env.SEGREDO_SESSAO && env.SEGREDO_SESSAO.length >= 32 && env.ADMIN_USUARIO && env.ADMIN_SENHA;
@@ -114,7 +119,8 @@ async function trocarSenha(request, env, reg) {
 
 async function admin(request, env, reg) {
   if (!reg.admin) return html('<!doctype html><meta charset="utf-8"><p>Acesso restrito ao responsável.</p>', 403);
-  const tela = async (msg = {}) => html(telaAdmin({ usuario: reg.usuario, usuarios: await listarUsuarios(env), ...msg }), msg.erro ? 400 : 200);
+  const tela = async (msg = {}) =>
+    html(telaAdmin({ usuario: reg.usuario, gestor: normalizarUsuario(env.ADMIN_USUARIO), usuarios: await listarUsuarios(env), ...msg }), msg.erro ? 400 : 200);
   if (request.method !== 'POST') return tela();
   const form = await request.formData();
   const acao = String(form.get('acao') || '');
@@ -131,6 +137,7 @@ async function admin(request, env, reg) {
   }
   if (!existente) return tela({ erro: `O usuário ${alvo} não existe.` });
   if (alvo === reg.usuario) return tela({ erro: 'Para a sua própria conta, use "Trocar senha".' });
+  if (ehGestor(env, alvo)) return tela({ erro: 'O gestor geral do sistema não pode ser alterado por outros administradores.' });
   if (acao === 'redefinir') {
     if (!senhaValida(senha)) return tela({ erro: 'A senha provisória precisa ter no mínimo 4 caracteres.' });
     Object.assign(existente, await gerarHash(senha), { versaoSenha: existente.versaoSenha + 1 });
@@ -200,6 +207,38 @@ async function entregarFormulario(env, id, baixar) {
   });
 }
 
+async function receberSugestao(request, env, reg) {
+  if (request.method !== 'POST') return json({ erro: 'use POST' }, 405);
+  let dados;
+  try {
+    dados = await request.json();
+  } catch {
+    return json({ erro: 'Pedido inválido.' }, 400);
+  }
+  const v = validarSugestao(dados);
+  if (v.erro) return json({ erro: v.erro }, 400);
+  const chaveLimite = `sl:${reg.usuario}:${new Date().toISOString().slice(0, 10)}`;
+  const enviadas = Number((await env.USUARIOS.get(chaveLimite)) || 0);
+  if (enviadas >= LIMITE_DIA) return json({ erro: 'Limite de sugestões de hoje atingido. Tente amanhã.' }, 429);
+  const id = `${Date.now().toString(36)}-${crypto.randomUUID().slice(0, 8)}`;
+  await env.USUARIOS.put(`s:${id}`, JSON.stringify({ id, usuario: reg.usuario, tipo: v.tipo, texto: v.texto, criado: Date.now() }));
+  await env.USUARIOS.put(chaveLimite, String(enviadas + 1), { expirationTtl: 172800 });
+  return json({ ok: true });
+}
+
+async function adminSugestoes(request, env, reg) {
+  if (!ehGestor(env, reg.usuario)) return html('<!doctype html><meta charset="utf-8"><p>Acesso restrito ao gestor geral do sistema.</p>', 403);
+  let ok = '';
+  if (request.method === 'POST') {
+    const id = String((await request.formData()).get('id') || '');
+    if (/^[a-z0-9-]{6,40}$/.test(id)) {
+      await env.USUARIOS.delete(`s:${id}`);
+      ok = 'Sugestão marcada como concluída.';
+    }
+  }
+  return html(telaSugestoes({ usuario: reg.usuario, sugestoes: await listarSugestoes(env.USUARIOS), ok }));
+}
+
 export async function onRequest(context) {
   const { request, env, next } = context;
   const url = new URL(request.url);
@@ -228,6 +267,8 @@ export async function onRequest(context) {
   }
   if (caminho === '/trocar-senha') return trocarSenha(request, env, reg);
   if (caminho === '/admin') return admin(request, env, reg);
+  if (caminho === '/admin/sugestoes') return adminSugestoes(request, env, reg);
+  if (caminho === '/api/sugestoes') return receberSugestao(request, env, reg);
   if (caminho === '/admin/formularios') return adminFormularios(request, env, reg);
   if (caminho === '/api/formularios') {
     const lista = await listarFormularios(env.USUARIOS);
@@ -235,7 +276,7 @@ export async function onRequest(context) {
   }
   if (caminho.startsWith('/api/formularios/')) return entregarFormulario(env, caminho.slice(17), url.searchParams.has('baixar'));
   if (caminho === '/api/sessao') {
-    return new Response(JSON.stringify({ usuario: reg.usuario, admin: !!reg.admin }), {
+    return new Response(JSON.stringify({ usuario: reg.usuario, admin: !!reg.admin, gestor: ehGestor(env, reg.usuario) }), {
       headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },
     });
   }

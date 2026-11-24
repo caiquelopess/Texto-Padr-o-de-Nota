@@ -82,15 +82,19 @@ ${erro ? `<p class="erro" role="alert">${esc(erro)}</p>` : ''}${ok ? `<p class="
 
 const data = (ms) => (ms ? new Date(ms).toLocaleString('pt-BR', { timeZone: 'America/Bahia', dateStyle: 'short', timeStyle: 'short' }) : '—');
 
-export function telaAdmin({ usuario, usuarios = [], erro = '', ok = '' }) {
+export function telaAdmin({ usuario, gestor = '', usuarios = [], erro = '', ok = '' }) {
   const linhas = usuarios
     .map(
-      (u) => `<tr><td><b>${esc(u.usuario)}</b>${u.admin ? ' <span style="color:var(--neon)">(admin)</span>' : ''}</td>
+      (
+        u,
+      ) => `<tr><td><b>${esc(u.usuario)}</b>${u.usuario === gestor ? ' <span style="color:var(--neon2)">(gestor geral)</span>' : u.admin ? ' <span style="color:var(--neon)">(admin)</span>' : ''}</td>
 <td>${u.ativo ? 'Ativo' : '<span style="color:var(--perigo)">Desativado</span>'}</td><td>${data(u.criado)}</td><td>${data(u.ultimoAcesso)}</td>
 <td>${
         u.usuario === usuario
           ? '<a href="/trocar-senha" style="color:var(--neon)">trocar minha senha</a>'
-          : `<form method="post" action="/admin" onsubmit="var s=prompt('Nova senha provisória para ${esc(u.usuario)} (mínimo 4 caracteres):');if(!s)return false;this.senha.value=s;">
+          : u.usuario === gestor
+            ? '<span style="color:var(--muted)">protegido</span>'
+            : `<form method="post" action="/admin" onsubmit="var s=prompt('Nova senha provisória para ${esc(u.usuario)} (mínimo 4 caracteres):');if(!s)return false;this.senha.value=s;">
 <input type="hidden" name="acao" value="redefinir"><input type="hidden" name="usuario" value="${esc(u.usuario)}"><input type="hidden" name="senha"><button type="submit" class="secundario">Redefinir senha</button></form>
 <form method="post" action="/admin"><input type="hidden" name="acao" value="${u.ativo ? 'desativar' : 'ativar'}"><input type="hidden" name="usuario" value="${esc(u.usuario)}"><button type="submit" class="secundario">${u.ativo ? 'Desativar' : 'Ativar'}</button></form>
 <form method="post" action="/admin" onsubmit="return confirm('Remover ${esc(u.usuario)}? Esta ação não pode ser desfeita.')"><input type="hidden" name="acao" value="remover"><input type="hidden" name="usuario" value="${esc(u.usuario)}"><button type="submit" class="perigo">Remover</button></form>`
@@ -99,7 +103,7 @@ export function telaAdmin({ usuario, usuarios = [], erro = '', ok = '' }) {
     .join('');
   return pagina(
     'Administração',
-    `<div class="topo"><h1>Administração de usuários</h1><a href="/">← Voltar ao sistema</a></div><p class="sub">Conectado como ${esc(usuario)} · <a href="/admin/formularios" style="color:var(--neon)">Formulários</a> · <a href="/sair" style="color:var(--neon)">Sair</a></p><div class="linha-neon"></div>
+    `<div class="topo"><h1>Administração de usuários</h1><a href="/">← Voltar ao sistema</a></div><p class="sub">Conectado como ${esc(usuario)} · <a href="/admin/formularios" style="color:var(--neon)">Formulários</a> ${usuario === gestor ? '· <a href="/admin/sugestoes" style="color:var(--neon)">Sugestões</a> ' : ''}· <a href="/sair" style="color:var(--neon)">Sair</a></p><div class="linha-neon"></div>
 ${erro ? `<p class="erro" role="alert">${esc(erro)}</p>` : ''}${ok ? `<p class="okmsg" role="status">${esc(ok)}</p>` : ''}
 <form method="post" action="/admin" data-carrega><input type="hidden" name="acao" value="criar">
 <div class="grade"><div><label for="nu">Novo usuário</label><input id="nu" name="usuario" placeholder="nome.sobrenome" required></div>
@@ -134,6 +138,24 @@ ${erro ? `<p class="erro" role="alert">${esc(erro)}</p>` : ''}${ok ? `<p class="
 <span></span><button type="submit">Enviar</button></div></form>
 <p class="aviso">Os formulários ficam visíveis para todos os usuários com login. ⚠️ Envie só modelos em branco — nunca documentos com dados de clientes.</p>
 <table><thead><tr><th>Nome</th><th>Tipo</th><th>Tamanho</th><th>Enviado em</th><th>Ações</th></tr></thead><tbody>${linhas || '<tr><td colspan="5">Nenhum formulário ainda.</td></tr>'}</tbody></table>`,
+    true,
+  );
+}
+
+export function telaSugestoes({ usuario, sugestoes = [], ok = '' }) {
+  const itens = sugestoes
+    .map(
+      (
+        s,
+      ) => `<tr><td style="white-space:nowrap">${data(s.criado)}</td><td><b>${esc(s.usuario)}</b></td><td>${esc(s.tipo)}</td><td style="white-space:pre-wrap">${esc(s.texto)}</td>
+<td><form method="post" action="/admin/sugestoes"><input type="hidden" name="id" value="${esc(s.id)}"><button type="submit" class="secundario">Concluída</button></form></td></tr>`,
+    )
+    .join('');
+  return pagina(
+    'Sugestões',
+    `<div class="topo"><h1>Sugestões recebidas</h1><a href="/admin">← Usuários</a></div><p class="sub">Conectado como ${esc(usuario)} · <a href="/" style="color:var(--neon)">Voltar ao sistema</a></p><div class="linha-neon"></div>
+${ok ? `<p class="okmsg" role="status">${esc(ok)}</p>` : ''}
+<table><thead><tr><th>Quando</th><th>Quem</th><th>Tipo</th><th>Mensagem</th><th></th></tr></thead><tbody>${itens || '<tr><td colspan="5">Nenhuma sugestão pendente.</td></tr>'}</tbody></table>`,
     true,
   );
 }

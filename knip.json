@@ -2,5 +2,5 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "entry": ["src/nucleo/globais.mjs", "tests/**/*.{mjs,test.mjs,spec.mjs}", "functions/_middleware.js"],
   "project": ["src/nucleo/**/*.mjs", "scripts/**/*.mjs", "tests/**/*.mjs", "functions/**/*.js"],
-  "ignoreDependencies": ["@stryker-mutator/command-runner"]
+  "ignoreDependencies": ["@stryker-mutator/command-runner", "pdfjs-dist"]
 }

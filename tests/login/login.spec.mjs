@@ -145,8 +145,11 @@ test('administrador envia formulário; atendente encontra, vê e baixa', async (
 
   await page.goto('/');
   await page.click('[data-aba="form"]');
+  await page.route('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/*', (r) =>
+    r.fulfill({ path: `node_modules/pdfjs-dist/build/${r.request().url().split('/').pop()}`, contentType: 'text/javascript' }),
+  );
   await page.fill('#busca_form', 'resid');
-  await expect(page.locator('#form_previa iframe')).toBeVisible();
+  await expect(page.locator('#form_previa canvas')).toHaveCount(1);
 
   await page.goto('/admin/formularios');
   page.once('dialog', (d) => d.accept());

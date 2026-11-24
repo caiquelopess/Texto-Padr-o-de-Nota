@@ -28,6 +28,7 @@
     "dependency-cruiser": "18.9.0",
     "esbuild": "0.28.2",
     "knip": "6.48.0",
+    "pdfjs-dist": "^3.11.174",
     "wrangler": "4.167.0"
   }
 }

@@ -5,7 +5,7 @@
   // o arquivo ao que já existe (sem duplicar).
   // No endereço antigo aparece um aviso de mudança; a partir de DATA_REDIRECIONAR
   // ('aaaa-mm-dd'), ele leva sozinho para o novo endereço.
-  var DATA_REDIRECIONAR = '';
+  var DATA_REDIRECIONAR = '2026-11-26';   // endereço antigo disponível até 25/11/2026
 
   function ehEnderecoAntigo() { return /\.github\.io$/i.test(location.hostname); }
 

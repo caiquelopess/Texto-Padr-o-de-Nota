@@ -6,7 +6,7 @@
   // tambem para linhas de fatura criadas dinamicamente).
   var ACOES = {
     trocarAba: trocarAba, exportarDados: exportarDados, importarDados: importarDados, alternarServicos: alternarServicos, alternarTema: alternarTema,
-    abrirTemas: abrirTemas, escolherTema: escolherTema, filtrarServicos: filtrarServicos,
+    abrirTemas: abrirTemas, escolherTema: escolherTema, filtrarServicos: filtrarServicos, filtrarFormularios: filtrarFormularios,
     mascararDataHoraRod: mascararDataHoraRod, mascararData: mascararData, mascararDataOuMes: mascararDataOuMes,
     selecionarSugestaoBusca: selecionarSugestaoBusca,
     mostrarAbaPrincipal: mostrarAbaPrincipal, filtrarCidades: filtrarCidades, buscarCidade: buscarCidade, selecionarCidadeTensao: selecionarCidadeTensao,

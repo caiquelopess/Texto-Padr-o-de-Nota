@@ -1,0 +1,72 @@
+{
+  "id": "religacao",
+  "sf": "sf-relig",
+  "nome": "Religação",
+  "categoria": "Ligação e Reativação",
+  "descricao": "Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "botao": "Gerar Texto e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "Clica em confirmar, para gerar a nota",
+      "classeOriginal": "alert-box-danger",
+      "id": "alerta-sem-comp-relig",
+      "mostrarSe": {
+        "campo": "opcao",
+        "igual": "sem_comprovante"
+      }
+    }
+  ],
+  "campos": [
+    {
+      "id": "opcao",
+      "elementoId": "relig_opcao",
+      "rotulo": "Comprovantes:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "opcoes": ["com_comprovante", "sem_comprovante"],
+      "rotulosOpcoes": ["Apresentou comprovante de pagamento", "Não apresentou comprovantes"],
+      "largo": true
+    },
+    {
+      "id": "solic",
+      "elementoId": "relig_solic",
+      "rotulo": "Solicitante:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo"
+    },
+    {
+      "id": "tel",
+      "elementoId": "relig_tel",
+      "rotulo": "Telefone:",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84988887777"
+    },
+    {
+      "id": "ref",
+      "elementoId": "relig_ref",
+      "rotulo": "Ponto de referencia:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ponto de referência detalhado",
+      "largo": true
+    },
+    {
+      "id": "proc",
+      "elementoId": "relig_proc",
+      "rotulo": "Procurar por:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome de quem atenderá a equipe",
+      "largo": true
+    }
+  ],
+  "nota": "{{#se opcao=com_comprovante}}Cliente em loja, comprovantes apresentados, não cobrar em campo.\n{{/se}}{{#se opcao=sem_comprovante}}Cliente não apresentou comprovantes.\n{{/se}}Solicitante: {{solic}}\nTelefone: {{tel}}\nPonto de referencia: {{ref}}\nProcurar por: {{proc}}\nCiente de taxa.",
+  "agenda": "{{#se opcao=com_comprovante}}Cliente em loja, comprovantes apresentados, não cobrar em campo.\n{{/se}}{{#se opcao=sem_comprovante}}Cliente não apresentou comprovantes.\n{{/se}}Solicitante: {{solic}}\nTelefone: {{tel}}\nPonto de referencia: {{ref}}\nProcurar por: {{proc}}\nCiente de taxa."
+}

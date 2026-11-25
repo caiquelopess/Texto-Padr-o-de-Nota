@@ -1,0 +1,80 @@
+{
+  "id": "tarefa-neo",
+  "sf": "sf-tarefa-neo",
+  "nome": "Tarefa NEO transferência de Créditos",
+  "categoria": "Faturamento e Débitos",
+  "descricao": "Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "botao": "Gerar Texto de NOTA e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "Atenção a matrícula do responsável: CLB615445 - Thaiana Barbosa Sales",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "titulo",
+      "elementoId": "tneo_titulo",
+      "rotulo": "Título:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: Transferência de Créditos MMGD"
+    },
+    {
+      "id": "nome",
+      "elementoId": "tneo_nome",
+      "rotulo": "Nome:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo"
+    },
+    {
+      "id": "ccn",
+      "elementoId": "tneo_ccn",
+      "rotulo": "Conta contrato nova:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 70xxxxxxx"
+    },
+    {
+      "id": "cca",
+      "elementoId": "tneo_cca",
+      "rotulo": "Conta contrato antiga:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 70xxxxxxx"
+    },
+    {
+      "id": "tel",
+      "elementoId": "tneo_tel",
+      "rotulo": "Telefone:",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84988887777"
+    },
+    {
+      "id": "email",
+      "elementoId": "tneo_email",
+      "rotulo": "E-mail:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "desc",
+      "elementoId": "tneo_desc",
+      "rotulo": "Descrição da solicitação:",
+      "tipo": "textoLongo",
+      "obrigatorio": true,
+      "dica": "Descreva o que o cliente deseja detalhadamente...",
+      "largo": true
+    }
+  ],
+  "nota": "Título: {{titulo}}\nNome: {{nome}}\nConta contrato nova: {{ccn}}\nConta contrato antiga: {{cca}}\nTelefone: {{tel}}\nE-mail: {{email}}\nDescrição da solicitação: {{desc}}",
+  "agenda": "Título: {{titulo}}\nNome: {{nome}}\nConta contrato nova: {{ccn}}\nConta contrato antiga: {{cca}}\nTelefone: {{tel}}\nE-mail: {{email}}\nDescrição da solicitação: {{desc}}"
+}

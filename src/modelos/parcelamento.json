@@ -1,0 +1,121 @@
+{
+  "id": "parcelamento",
+  "sf": "sf-parcelamento",
+  "nome": "Parcelamento",
+  "categoria": "Parcelamento",
+  "descricao": "Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "botao": "Gerar Texto e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "<b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.",
+      "classeOriginal": "alert-box alerta-cnpj"
+    },
+    {
+      "html": "⚠️ Acima de 10 mil imprimir, solicitar assinatura do cliente e inserir no sapkm",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "tipo",
+      "elementoId": "parc_tipo",
+      "rotulo": "Tipo de Cliente",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "opcoes": ["pf", "pj"],
+      "rotulosOpcoes": ["Pessoa Física", "Pessoa Jurídica"],
+      "largo": true
+    },
+    {
+      "id": "solic",
+      "elementoId": "parc_solic",
+      "rotulo": "Solicitante",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo"
+    },
+    {
+      "id": "empresa",
+      "elementoId": "parc_empresa",
+      "rotulo": "Empresa Representada",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Razão social / Nome da empresa",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "pj"
+      }
+    },
+    {
+      "id": "rec",
+      "elementoId": "parc_rec",
+      "rotulo": "Dados da Receita Federal",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "opcoes": ["regular", "pendente regularizacao"]
+    },
+    {
+      "id": "tel",
+      "elementoId": "parc_tel",
+      "rotulo": "Telefone",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84988887777"
+    },
+    {
+      "id": "email",
+      "elementoId": "parc_email",
+      "rotulo": "E-mail",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "divida",
+      "elementoId": "parc_divida",
+      "rotulo": "Valor da Dívida R$",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 1500,00"
+    },
+    {
+      "id": "plano",
+      "elementoId": "parc_plano",
+      "rotulo": "Plano Número",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 12345"
+    },
+    {
+      "id": "sinal",
+      "elementoId": "parc_sinal",
+      "rotulo": "Valor do Sinal R$",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 300,00"
+    },
+    {
+      "id": "qtd_parc",
+      "elementoId": "parc_qtd_parc",
+      "rotulo": "Quantidade de Parcelas (X)",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 6"
+    },
+    {
+      "id": "val_parc",
+      "elementoId": "parc_val_parc",
+      "rotulo": "Valor de cada Parcela R$",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 200,00"
+    }
+  ],
+  "nota": "{{#se tipo=pf}}Solicitante {{solic}}, dados da Receita Federal {{rec}} (Inserir cópia do cpf receita federal no SAP KM), telefone {{tel}}, E-mail {{email}}, esteve na loja para negociar a dívida no valor R${{divida}}, plano numero {{plano}} com sinal R${{sinal}} e o restante do valor divido em {{qtd_parc}} parcelas de R${{val_parc}}. Cliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.{{/se}}{{#se tipo=pj}}Solicitante {{solic}}, dados da Receita Federal {{rec}} (Inserir cópia no SAP KM), telefone {{tel}}, E-mail {{email}} representante da Empresa {{empresa}} esteve na loja de atendimento para negociar a divida no valor R${{divida}}, plano numero {{plano}} com sinal R${{sinal}} e o restante do valor divido em {{qtd_parc}} parcelas de R${{val_parc}}.\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.{{/se}}",
+  "agenda": "{{#se tipo=pf}}Solicitante {{solic}}, dados da Receita Federal {{rec}} (Inserir cópia do cpf receita federal no SAP KM), telefone {{tel}}, E-mail {{email}}, esteve na loja para negociar a dívida no valor R${{divida}}, plano numero {{plano}} com sinal R${{sinal}} e o restante do valor divido em {{qtd_parc}} parcelas de R${{val_parc}}. Cliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.{{/se}}{{#se tipo=pj}}Solicitante {{solic}}, dados da Receita Federal {{rec}} (Inserir cópia no SAP KM), telefone {{tel}}, E-mail {{email}} representante da Empresa {{empresa}} esteve na loja de atendimento para negociar a divida no valor R${{divida}}, plano numero {{plano}} com sinal R${{sinal}} e o restante do valor divido em {{qtd_parc}} parcelas de R${{val_parc}}.\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.{{/se}}"
+}

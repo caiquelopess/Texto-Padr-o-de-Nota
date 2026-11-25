@@ -1,0 +1,74 @@
+{
+  "id": "bpc-loas",
+  "sf": "sf-bpc",
+  "nome": "BPC/LOAS",
+  "categoria": "Titularidade e Cadastro",
+  "descricao": "Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "botao": "Gerar Texto e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    }
+  ],
+  "campos": [
+    {
+      "id": "titular",
+      "elementoId": "bpc_titular",
+      "rotulo": "Titular do benefício:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "opcoes": ["mesmo", "diferente"],
+      "rotulosOpcoes": ["Titular", "Não Titular"],
+      "largo": true
+    },
+    {
+      "id": "cc",
+      "elementoId": "bpc_cc",
+      "rotulo": "Numero da conta contrato:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 70xxxxxxx"
+    },
+    {
+      "id": "benef",
+      "elementoId": "bpc_benef",
+      "rotulo": "Numero do Beneficio de Prestação Continuada BPC:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Número do benefício BPC"
+    },
+    {
+      "id": "pn",
+      "elementoId": "bpc_pn",
+      "rotulo": "Numero do Parceiro de Negócios PN beneficiário:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Número do PN do beneficiário",
+      "largo": true,
+      "mostrarSe": {
+        "campo": "titular",
+        "igual": "diferente"
+      }
+    },
+    {
+      "id": "tel",
+      "elementoId": "bpc_tel",
+      "rotulo": "Telefone:",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84988887777"
+    },
+    {
+      "id": "email",
+      "elementoId": "bpc_email",
+      "rotulo": "E mail:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    }
+  ],
+  "nota": "Numero da conta contrato: {{cc}}\nNumero do Beneficio de Prestação Continuada BPC: {{benef}}\n{{#se titular=diferente}}Numero do Parceiro de Negócios PN beneficiário: {{pn}}\n{{/se}}Telefone: {{tel}}\nE mail: {{email}}",
+  "agenda": "Numero da conta contrato: {{cc}}\nNumero do Beneficio de Prestação Continuada BPC: {{benef}}\n{{#se titular=diferente}}Numero do Parceiro de Negócios PN beneficiário: {{pn}}\n{{/se}}Telefone: {{tel}}\nE mail: {{email}}"
+}

@@ -1096,18 +1096,13 @@
     </div>
     <div id="painel_servicos" style="display: none;">
       <div class="service-nav" id="service_nav">
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-afericao', this)">Aferição</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-bloq-cobranca', this)">Bloqueio de Cobrança</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-cpnb', this)">Conta Paga e Não Baixada</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-defesa-adm', this)">Defesa Administrativa P-Recurso</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-dd', this)">Desligamento Definitivo</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-movein-moveout', this)">Estorno Movein e Moveout</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-analise-isencao', this)">Isenção de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-nova', this)">Ligação Nova</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-muc', this)">Ligação MUC</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-lp', this)">Ligação Provisória</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-mc', this)">Modificação Contratual</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-parcelamento', this)">Parcelamento</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reativ-comum', this)">Reativação</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reativ-virtual', this)">Reativação Virtual</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ri|assuncao', this)">Reativação com Assunção de Débitos</button>
@@ -1117,21 +1112,15 @@
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reclamacao-gd', this)">Reclamação GD</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reclamacoes', this)">Reclamações</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ref-padrao', this)">Reforma Padrão</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-relig', this)">Religação</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-danos-eletricos', this)">Ressarcimento de Danos Elétricos — Abertura de Nota</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-rde-doc', this)">Ressarcimento de Danos Elétricos — Recebimento de Documentação (laudos e orçamentos)</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-outros-danos', this)">Ressarcimento de Danos Não Elétricos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-res', this)">Restituição de valores</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-tarefa-neo', this)">Tarefa NEO transferência de Créditos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-tele-gravacao', this)">Tele gravação</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-tr-partidas', this)">TR DE PARTIDAS</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-tt|sem_debito', this)">Troca de Titularidade sem Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-tt|com_assuncao', this)">Troca de Titularidade com Assunção de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-deb|troca', this)">Troca de Titularidade com Análise de Isenção de Débitos</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-parc-tt', this)">Troca de Titularidade com Parcelamento de Débitos</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-aparelhagem', this)">Uso de Aparelhagem Médica</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-verif-equip', this)">Verificação de Equipamento</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-bpc', this)">BPC/LOAS</button>
       </div>
     </div>
 
@@ -1712,20 +1701,6 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarRI()">Gerar Texto (Agenda e Nota) e Copiar NOTA</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-ri')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 6. MODIFICAÇÃO CONTRATUAL -->
-    <div class="subform" id="sf-mc">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box">Texto para Nota de Serviço e Agenda do Contrato</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Solicitante: *</label><input type="text" id="mc_solic" placeholder="Nome completo do solicitante" required></div>
-        <div class="field-group"><label>Motivo: *</label><input type="text" id="mc_motivo" placeholder="Ex: aumento de carga, mudança de residencial para irrigante..." required></div>
-        <div class="field-group"><label>Telefone: *</label><input type="text" id="mc_tel" placeholder="Ex: 84988887777" required></div>
-        <div class="field-group"><label>Ponto de Referência: *</label><input type="text" id="mc_ref" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group"><label>Quem procurar: *</label><input type="text" id="mc_proc" placeholder="Nome de quem atenderá a equipe" required></div>
-        <div class="field-group"><label>Possui e-mail: *</label><input type="text" id="mc_email" placeholder="cliente@email.com ou Não informado" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarMC()">Gerar Texto e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-mc')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 7. RESTITUIÇÃO DE VALORES -->
     <div class="subform" id="sf-res">
@@ -1746,19 +1721,6 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarRES()">Gerar Texto e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-res')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 8. RELIGAÇÃO -->
-    <div class="subform" id="sf-relig">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div id="alerta-sem-comp-relig" class="alert-box-danger">Clica em confirmar, para gerar a nota</div>
-      <div class="form-grid">
-        <div class="field-group full-width"><label>Comprovantes: *</label><select id="relig_opcao" data-change="toggleRelig()"><option value="com_comprovante">Apresentou comprovante de pagamento</option><option value="sem_comprovante">Não apresentou comprovantes</option></select></div>
-        <div class="field-group"><label>Solicitante: *</label><input type="text" id="relig_solic" placeholder="Nome completo" required></div>
-        <div class="field-group"><label>Telefone: *</label><input type="text" id="relig_tel" placeholder="Ex: 84988887777" required></div>
-        <div class="field-group full-width"><label>Ponto de referencia: *</label><input type="text" id="relig_ref" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group full-width"><label>Procurar por: *</label><input type="text" id="relig_proc" placeholder="Nome de quem atenderá a equipe" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarRelig()">Gerar Texto e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-relig')">Limpar Tudo</button></div>
-    </div>
 
 
     <!-- 10. LIGAÇÃO PROVISÓRIA -->
@@ -1796,69 +1758,12 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarRefPadrao()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-ref-padrao')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 13. AFERIÇÃO -->
-    <div class="subform" id="sf-afericao">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box">OBS.: Este serviço é agendado e deve ser contato a partir do terceiro dia útil (cada município tem o dia específico para atendimento que deve ser observado no Book antes da marcação).</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Solicitante: *</label><input type="text" id="af_solic" placeholder="Nome completo" required></div>
-        <div class="field-group"><label>Motivo: *</label><input type="text" id="af_motivo" placeholder="Ex: Suspeita de avaria / medição incorreta" required></div>
-        <div class="field-group"><label>Telefone: *</label><input type="text" id="af_tel" placeholder="Ex: 84988887777" required></div>
-        <div class="field-group"><label>Horário para contato: *</label><input type="text" id="af_horario" placeholder="Ex: 08h às 18h" required></div>
-        <div class="field-group"><label>Quem procurar: *</label><input type="text" id="af_proc" placeholder="Nome de quem atenderá a equipe" required></div>
-        <div class="field-group"><label>Ponto de Referência: *</label><input type="text" id="af_ref" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group"><label>Equipamento interno ou externo: *</label><select id="af_equip"><option value="Interno">Interno</option><option value="Externo">Externo</option></select></div>
-        <div class="field-group"><label>Possui e-mail: *</label><input type="text" id="af_email" placeholder="cliente@email.com ou Não informado" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarAfericao()">Gerar Texto de AGENDA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-afericao')">Limpar Tudo</button></div>
-    </div>
-
-    <!-- 14. CONTA PAGA E NÃO BAIXADA -->
-    <div class="subform" id="sf-cpnb">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box">FOP Serviços Não estruturados - Abrir apenas após 5 dias úteis da data do pagamento<br>Ao realizar a abertura da nota, é muito importante que seja inserido bloqueio de 15 dias nas faturas reclamadas e nota ser informada no grupo do 2º Nível.<br>O comprovante precisa ser anexado na nota e no SAP KM.</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Solicitante: *</label><input type="text" id="cpnb_solic" placeholder="Nome completo" required></div>
-        <div class="field-group"><label>Motivo : *</label><input type="text" id="cpnb_motivo" placeholder="Ex: Conta paga e não baixada" required></div>
-        <div class="field-group full-width"><label>Fatura (vencimento e valor) : *</label><input type="text" id="cpnb_fatura" placeholder="Ex: Venc 10/10/2026 valor R$ 150,00" required></div>
-        <div class="field-group full-width"><label>Pontos de Referência : *</label><input type="text" id="cpnb_ref" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group"><label>Telefone : *</label><input type="text" id="cpnb_tel" placeholder="Ex: 84988887777" required></div>
-        <div class="field-group"><label>E-mail: : *</label><input type="text" id="cpnb_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Informe se o cliente está negativado: *</label><input type="text" id="cpnb_neg" placeholder="Ex: Não ou Sim" required></div>
-        <div class="field-group"><label>N° da reclamação anterior (se houver):</label><input type="text" id="cpnb_ant" placeholder="Ex: 9200xxxx ou N/A"></div>
-        <div class="field-group full-width"><label>Modalidade de resposta: *</label><select id="cpnb_resp"><option value="E-mail">E-mail</option><option value="SMS">SMS</option><option value="carta">carta</option></select></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarCPNB()">Gerar Texto e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-cpnb')">Limpar Tudo</button></div>
-    </div>
 
 
 
-    <!-- 17. VERIFICAÇÃO DE EQUIPAMENTO -->
-    <div class="subform" id="sf-verif-equip">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Solicitante: *</label><input type="text" id="ve_solic" placeholder="Nome completo" required></div>
-        <div class="field-group"><label>Motivo: *</label><input type="text" id="ve_motivo" placeholder="Ex: Medidor emitindo ruído / display apagado" required></div>
-        <div class="field-group"><label>Telefone: *</label><input type="text" id="ve_tel" placeholder="Ex: 71993501519" required></div>
-        <div class="field-group"><label>Quem procurar: *</label><input type="text" id="ve_proc" placeholder="Nome de quem atenderá a equipe" required></div>
-        <div class="field-group"><label>Ponto de Referência: *</label><input type="text" id="ve_ref" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group"><label>Equipamento interno ou externo: *</label><select id="ve_equip"><option value="Interno">Interno</option><option value="Externo">Externo</option></select></div>
-        <div class="field-group full-width"><label>Possui e-mail: *</label><input type="text" id="ve_email" placeholder="cliente@email.com ou Não informado" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarVerifEquip()">Gerar Texto de AGENDA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-verif-equip')">Limpar Tudo</button></div>
-    </div>
 
 
-    <!-- 19. USO DE APARELHAGEM MÉDICA -->
-    <div class="subform" id="sf-aparelhagem">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="form-grid">
-        <div class="field-group full-width"><label>Situação *</label><select id="ap_sit"><option value="normal">Normal (Favor cadastrar internação domiciliar)</option><option value="osb">FATURA EM OSB (PERÍODO DE FATURAMENTO)</option></select></div>
-        <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="ap_tel" placeholder="Ex: 84-988887777" required></div>
-        <div class="field-group"><label>e-mail *</label><input type="text" id="ap_email" placeholder="cliente@email.com ou Não informado" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarAparelhagemMedica()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-aparelhagem')">Limpar Tudo</button></div>
-    </div>
+
 
 
 
@@ -1903,21 +1808,6 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarOutrosDanos()">Gerar Texto (Agenda e Nota) e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-outros-danos')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 25. TAREFA NEO TRANSFERÊNCIA DE CRÉDITOS -->
-    <div class="subform" id="sf-tarefa-neo">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box">Atenção a matrícula do responsável: CLB615445 - Thaiana Barbosa Sales</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Título: *</label><input type="text" id="tneo_titulo" placeholder="Ex: Transferência de Créditos MMGD" required></div>
-        <div class="field-group"><label>Nome: *</label><input type="text" id="tneo_nome" placeholder="Nome completo" required></div>
-        <div class="field-group"><label>Conta contrato nova: *</label><input type="text" id="tneo_ccn" placeholder="Ex: 70xxxxxxx" required></div>
-        <div class="field-group"><label>Conta contrato antiga: *</label><input type="text" id="tneo_cca" placeholder="Ex: 70xxxxxxx" required></div>
-        <div class="field-group"><label>Telefone: *</label><input type="text" id="tneo_tel" placeholder="Ex: 84988887777" required></div>
-        <div class="field-group"><label>E-mail: *</label><input type="text" id="tneo_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group full-width"><label>Descrição da solicitação: *</label><textarea id="tneo_desc" rows="2" placeholder="Descreva o que o cliente deseja detalhadamente..." required></textarea></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarTarefaNEO()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-tarefa-neo')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 26. DEFESA ADMINISTRATIVA P-RECURSO -->
     <div class="subform" id="sf-defesa-adm">
@@ -1939,41 +1829,8 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarDefesaAdm()">Gerar Textos (Agenda e Nota) e Copiar Nota</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-defesa-adm')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 27. PARCELAMENTO -->
-    <div class="subform" id="sf-parcelamento">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
-      <div class="alert-box">⚠️ Acima de 10 mil imprimir, solicitar assinatura do cliente e inserir no sapkm</div>
-      <div class="form-grid">
-        <div class="field-group full-width"><label>Tipo de Cliente *</label><select id="parc_tipo" data-change="toggleParcelamento()"><option value="pf">Pessoa Física</option><option value="pj">Pessoa Jurídica</option></select></div>
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="parc_solic" placeholder="Nome completo" required></div>
-        <div class="field-group" id="grp_parc_empresa" style="display: none;"><label>Empresa Representada *</label><input type="text" id="parc_empresa" placeholder="Razão social / Nome da empresa"></div>
-        <div class="field-group"><label>Dados da Receita Federal *</label><select id="parc_rec"><option value="regular">regular</option><option value="pendente regularizacao">pendente regularizacao</option></select></div>
-        <div class="field-group"><label>Telefone *</label><input type="text" id="parc_tel" placeholder="Ex: 84988887777" required></div>
-        <div class="field-group"><label>E-mail *</label><input type="text" id="parc_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Valor da Dívida R$ *</label><input type="text" id="parc_divida" placeholder="Ex: 1500,00" required></div>
-        <div class="field-group"><label>Plano Número *</label><input type="text" id="parc_plano" placeholder="Ex: 12345" required></div>
-        <div class="field-group"><label>Valor do Sinal R$ *</label><input type="text" id="parc_sinal" placeholder="Ex: 300,00" required></div>
-        <div class="field-group"><label>Quantidade de Parcelas (X) *</label><input type="text" id="parc_qtd_parc" placeholder="Ex: 6" required></div>
-        <div class="field-group"><label>Valor de cada Parcela R$ *</label><input type="text" id="parc_val_parc" placeholder="Ex: 200,00" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarParcelamento()">Gerar Texto e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-parcelamento')">Limpar Tudo</button></div>
-    </div>
 
 
-    <!-- 29. ESTORNO DE MOVEIN E MOVEOUT -->
-    <div class="subform" id="sf-movein-moveout">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box">Todo pedido de estorno Movein e Moveout tem que ser feito o texto nas duas contas contratos na agenda de cada.</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Contrato: *</label><input type="text" id="mm_contrato" placeholder="Ex: 50xxxxxxx" required></div>
-        <div class="field-group"><label>Instalação: *</label><input type="text" id="mm_inst" placeholder="Ex: 10xxxxxxx" required></div>
-        <div class="field-group"><label>Conta contrato antiga: *</label><input type="text" id="mm_cca" placeholder="Ex: 70xxxxxxx" required></div>
-        <div class="field-group"><label>Conta contrato nova: *</label><input type="text" id="mm_ccn" placeholder="Ex: 70xxxxxxx" required></div>
-        <div class="field-group full-width"><label>Pelo motivo de: (EXEMPLO TROCA DE TITULARIDADE OU NOTA 45 ANULADA NUMERO ) *</label><input type="text" id="mm_motivo" placeholder="Ex: TROCA DE TITULARIDADE INDEVIDA / NOTA 45 ANULADA NUMERO XXXXX" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarMoveInMoveOut()">Gerar Texto de AGENDA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-movein-moveout')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 30. RDE - RECEBIMENTO DE DOCUMENTAÇÃO -->
     <div class="subform" id="sf-rde-doc">
@@ -1990,40 +1847,6 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarRDEDocumentacao()">Gerar Texto de AGENDA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-rde-doc')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 31. PARCELAMENTO DE DÉBITOS ORIUNDOS DE TROCA DE TITULARIDADE -->
-    <div class="subform" id="sf-parc-tt">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box alerta-pade" id="pade_ptt"><b>Atenção:</b> Em caso de reconhecimento de débito o Termo deve ser anexado como PADE no KM já assinado pelo cliente.</div>
-      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
-      <div class="alert-box">⚠️ Inserir cópia dos dados da Receita Federal e do termo de assunção assinado no SAP KM.</div>
-      <div class="form-grid">
-        <div class="field-group full-width">
-          <label>Tipo de Cliente *</label>
-          <select id="ptt_tipo" data-change="toggleParcTT()">
-            <option value="pf">Pessoa Física</option>
-            <option value="pj">Pessoa Jurídica</option>
-          </select>
-        </div>
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="ptt_solic" placeholder="Nome completo" required></div>
-        <div class="field-group" id="grp_ptt_empresa" style="display: none;"><label>Empresa Representada *</label><input type="text" id="ptt_empresa" placeholder="Razão social / Nome da empresa"></div>
-        <div class="field-group">
-          <label>Dados da Receita Federal *</label>
-          <select id="ptt_rec">
-            <option value="regular">regular</option>
-            <option value="pendente regularizacao">pendente regularizacao</option>
-          </select>
-        </div>
-        <div class="field-group"><label>Telefone *</label><input type="text" id="ptt_tel" placeholder="Ex: 84988887777" required></div>
-        <div class="field-group"><label>E-mail *</label><input type="text" id="ptt_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Valor da Dívida R$ *</label><input type="text" id="ptt_divida" placeholder="Ex: 1500,00" required></div>
-        <div class="field-group"><label>Plano Número *</label><input type="text" id="ptt_plano" placeholder="Ex: 12345" required></div>
-        <div class="field-group"><label>Valor do Sinal R$ *</label><input type="text" id="ptt_sinal" placeholder="Ex: 300,00" required></div>
-        <div class="field-group"><label>Quantidade de Parcelas (X) *</label><input type="text" id="ptt_qtd_parc" placeholder="Ex: 6" required></div>
-        <div class="field-group"><label>Valor de cada Parcela R$ *</label><input type="text" id="ptt_val_parc" placeholder="Ex: 200,00" required></div>
-        <div class="field-group full-width"><label>Débitos oriundos da troca de titularidade (Nº/Ref): *</label><input type="text" id="ptt_origem_tt" placeholder="Informe a referência/nota/conta da troca de titularidade" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarParcTT()">Gerar Texto e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-parc-tt')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 32. TR DE PARTIDAS -->
     <div class="subform" id="sf-tr-partidas">
@@ -2090,19 +1913,6 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarBloqCobranca()">Gerar Texto de AGENDA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-bloq-cobranca')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 35. BPC/LOAS -->
-    <div class="subform" id="sf-bpc">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="form-grid">
-        <div class="field-group full-width"><label>Titular do benefício: *</label><select id="bpc_titular" data-change="toggleBPC()"><option value="mesmo">Titular</option><option value="diferente">Não Titular</option></select></div>
-        <div class="field-group"><label>Numero da conta contrato: *</label><input type="text" id="bpc_cc" placeholder="Ex: 70xxxxxxx" required></div>
-        <div class="field-group"><label>Numero do Beneficio de Prestação Continuada BPC: *</label><input type="text" id="bpc_benef" placeholder="Número do benefício BPC" required></div>
-        <div class="field-group full-width" id="grp_bpc_pn" style="display: none;"><label>Numero do Parceiro de Negócios PN beneficiário: *</label><input type="text" id="bpc_pn" placeholder="Número do PN do beneficiário"></div>
-        <div class="field-group"><label>Telefone: *</label><input type="text" id="bpc_tel" placeholder="Ex: 84988887777" required></div>
-        <div class="field-group"><label>E mail: *</label><input type="text" id="bpc_email" placeholder="cliente@email.com ou Não informado" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarBPC()">Gerar Texto e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-bpc')">Limpar Tudo</button></div>
-    </div>
 
     <!-- ÁREA DE RESULTADOS (dentro do painel Agenda e Nota: some ao trocar de aba) -->
     <div class="result-section">
@@ -2704,7 +2514,7 @@
   })();
 
   // ---- modelos embutidos (src/modelos) ----
-  var MODELOS_EMBUTIDOS = [{"id":"atualizacao-cadastral","sf":"sf-atualizacao-cadastral","nome":"Atualização Cadastral","categoria":"Titularidade e Cadastro","descricao":"Migrado do código (piloto da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"texto":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true},{"id":"alerta_ac_nome","texto":"Atenção: se for apenas correção do nome, pode ser feito no OneCode (2º Nível).","mostrarSe":{"campo":"motivo","igual":"Correção de Nome"}}],"campos":[{"id":"motivo","elementoId":"ac_motivo","rotulo":"Motivo","tipo":"opcao","obrigatorio":true,"opcoes":["Erro de Endereço","Unificar PN","Correção de Nome"]},{"id":"pns","elementoId":"ac_pns","rotulo":"PNs a unificar","tipo":"texto","obrigatorio":true,"dica":"Ex: 1010000001, 1010000002","mostrarSe":{"campo":"motivo","igual":"Unificar PN"}},{"id":"nome","elementoId":"ac_nome","rotulo":"Nome","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"tel","elementoId":"ac_tel","rotulo":"Telefone","tipo":"telefone","obrigatorio":true},{"id":"email","elementoId":"ac_email","rotulo":"E-mail","tipo":"email","obrigatorio":true},{"id":"rg","elementoId":"ac_rg","rotulo":"RG","tipo":"texto","dica":"Em branco = não entra no texto"},{"id":"cnh","elementoId":"ac_cnh","rotulo":"CNH","tipo":"texto","dica":"Em branco = não entra no texto"},{"id":"idp","elementoId":"ac_id","rotulo":"ID (identificação profissional)","tipo":"texto","dica":"Em branco = não entra no texto"}],"nota":"Gentileza Atualizar Cadastro\nMotivo: {{motivo}}\n{{#se motivo=Unificar PN}}\nPNs: {{pns}}\n{{/se}}\n{{#se nome}}\nNome: {{nome}}\n{{/se}}\n{{#se tel}}\nTelefone: {{tel}}\n{{/se}}\n{{#se email}}\nE-mail: {{email}}\n{{/se}}\n{{#se rg}}\nRG: {{rg}}\n{{/se}}\n{{#se cnh}}\nCNH: {{cnh}}\n{{/se}}\n{{#se idp}}\nID (identificação profissional): {{idp}}\n{{/se}}","agenda":"","botao":"Gerar Texto e Copiar NOTA"},{"id":"cancelamento-parcelamento","sf":"sf-canc-parc","nome":"Cancelamento de Parcelamento","categoria":"Parcelamento","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true}],"campos":[{"id":"plano","elementoId":"cparc_plano","rotulo":"Plano de parcelamento nº:","tipo":"texto","obrigatorio":true,"dica":"Ex: 12345"},{"id":"motivo","elementoId":"cparc_motivo","rotulo":"Cancelado devido a:","tipo":"texto","obrigatorio":true,"dica":"Ex: ao não pagamento do sinal."}],"nota":"Plano de parcelamento {{plano}} cancelado devido {{motivo}}","agenda":"Plano de parcelamento {{plano}} cancelado devido {{motivo}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"data-boa","sf":"sf-data-boa","nome":"DATA BOA","categoria":"Faturamento e Débitos","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"agenda","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true}],"campos":[{"id":"dia","elementoId":"db_dia","rotulo":"DIA XX","tipo":"texto","obrigatorio":true,"dica":"Ex: 10","largo":true}],"nota":"CLIENTE SOLICITA DATA BOA PARA O DIA {{dia}}","agenda":"CLIENTE SOLICITA DATA BOA PARA O DIA {{dia}}","botao":"Gerar Texto de AGENDA e Copiar"},{"id":"debito-automatico","sf":"sf-deb-auto","nome":"Débito automático","categoria":"Faturamento e Débitos","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true}],"campos":[{"id":"titular","elementoId":"da_titular","rotulo":"TITULAR SR","tipo":"texto","obrigatorio":true,"dica":"Nome completo do titular","largo":true}],"nota":"DESCADASTRO DÉBITO AUTOMÁTICO A PEDIDO DO TITULAR SR \n{{titular}}","agenda":"DESCADASTRO DÉBITO AUTOMÁTICO A PEDIDO DO TITULAR SR \n{{titular}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"inspecao-ligacao-91","sf":"sf-insp","nome":"Inspeção e ligação 91*","categoria":"Ligação e Reativação","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true},{"html":"Atenção: No caso de pessoa jurídica colocar o nome do representante legal no nome do cliente."}],"campos":[{"id":"solic","elementoId":"insp_solic","rotulo":"Solicitante","tipo":"texto","obrigatorio":true,"dica":"Nome completo (Representante legal se PJ)"},{"id":"prx","elementoId":"insp_prx","rotulo":"PRX","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"tel","elementoId":"insp_tel","rotulo":"Tel (XX-9XXXXXXXX)","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84-988887777"},{"id":"email","elementoId":"insp_email","rotulo":"e-mail","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"},{"id":"carga","elementoId":"insp_carga","rotulo":"Carga (kW)","tipo":"texto","obrigatorio":true,"dica":"Ex: 10kw"},{"id":"pg","elementoId":"insp_pg","rotulo":"PG","tipo":"texto","dica":"Opcional — nº do pagamento, se houver"},{"id":"emp","elementoId":"insp_emp","rotulo":"Empreendimento:","tipo":"texto","obrigatorio":true,"dica":"Nome do condomínio/prédio"},{"id":"bloco","elementoId":"insp_bloco","rotulo":"Bloco/Torre (quando houver)","tipo":"texto","dica":"Ex: Bloco A ou deixe em branco"},{"id":"muc","elementoId":"insp_muc","rotulo":"Referente a MUC 92*","tipo":"texto","obrigatorio":true,"dica":"Ex: 92xxxxxxx","largo":true}],"nota":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Carga {{carga}}{{#se pg}} PG {{pg}}{{/se}} Empreendimento: {{emp}}{{#se bloco}} Bloco/Torre: {{bloco}} (quando houver){{/se}} referente a MUC {{muc}}","agenda":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Carga {{carga}}{{#se pg}} PG {{pg}}{{/se}} Empreendimento: {{emp}}{{#se bloco}} Bloco/Torre: {{bloco}} (quando houver){{/se}} referente a MUC {{muc}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"isencao-icms","sf":"sf-isencao-icms","nome":"Cadastro de Parceiro - Isenção ICMS","categoria":"Titularidade e Cadastro","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true},{"html":"OBS.: Caso o cliente não esteja com CNAE B2_1 (ou está, mas atividade não é a mesma do sistema) É necessário realizar modificação contratual."}],"campos":[{"id":"ie","elementoId":"icms_ie","rotulo":"NUMERO DA INSCRICAO ESTADUAL","tipo":"texto","obrigatorio":true,"dica":"Ex: 20.123.456-7"},{"id":"ref","elementoId":"icms_ref","rotulo":"REF","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"tel","elementoId":"icms_tel","rotulo":"TEL","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84988887777"},{"id":"solic","elementoId":"icms_solic","rotulo":"SOLICITANTE","tipo":"texto","obrigatorio":true,"dica":"Nome completo do solicitante"}],"nota":"GENTILEZA CADASTRAR PRODUTOR RURAL \nNUMERO DA INSCRICAO ESTADUAL {{ie}} \nREF {{ref}}\nTEL {{tel}} \nSOLICITANTE {{solic}}","agenda":"GENTILEZA CADASTRAR PRODUTOR RURAL \nNUMERO DA INSCRICAO ESTADUAL {{ie}} \nREF {{ref}}\nTEL {{tel}} \nSOLICITANTE {{solic}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"medidor-roubado","sf":"sf-med-roub","nome":"Medidor Roubado","categoria":"Medição e Rede","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true}],"campos":[{"id":"solic","elementoId":"mr_solic","rotulo":"Solicitante","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"prx","elementoId":"mr_prx","rotulo":"PRX","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"tel","elementoId":"mr_tel","rotulo":"Tel (XX-9XXXXXXXX)","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84-988887777"},{"id":"email","elementoId":"mr_email","rotulo":"e-mail","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"},{"id":"num","elementoId":"mr_num","rotulo":"Nº Medidor Roubado","tipo":"texto","obrigatorio":true,"dica":"Ex: 12345678"},{"id":"bo","elementoId":"mr_bo","rotulo":"Nº do BO:","tipo":"texto","obrigatorio":true,"dica":"Ex: 00123/2026","largo":true}],"nota":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Nº Medidor Roubado {{num}} Nº do BO: {{bo}}","agenda":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Nº Medidor Roubado {{num}} Nº do BO: {{bo}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"relocacao-rede","sf":"sf-reloc-rede","nome":"Relocação de poste/deslocamento de rede","categoria":"Medição e Rede","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true},{"html":"FOP serviço de obra<br>ATENÇÃO: INCLUIR DOCUMENTO DE PROPRIEDADE<br>Para Isolamento De Rede, Usar Code Deslocamento De Rede E Informar Que É Deslocamento De Rede, Não Colocar A Informação Isolamento de rede"}],"campos":[{"id":"solic","elementoId":"ro_solic","rotulo":"Solicitante","tipo":"texto","obrigatorio":true,"dica":"Nome completo do solicitante"},{"id":"prx","elementoId":"ro_prx","rotulo":"PRX","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"tel","elementoId":"ro_tel","rotulo":"Tel (XX-9XXXXXXXX)","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84-988887777"},{"id":"email","elementoId":"ro_email","rotulo":"e-mail","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"},{"id":"docs","elementoId":"ro_docs","rotulo":"DOCs anexado (escritura publica, itr, iptu...)","tipo":"texto","obrigatorio":true,"dica":"Ex: Escritura pública, ITR, IPTU, termo de posse..."}],"nota":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}}. Cliente Orientado quanto aos possíveis custos DOCs anexado: {{docs}}","agenda":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}}. Cliente Orientado quanto aos possíveis custos DOCs anexado: {{docs}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"selagem-medidor","sf":"sf-selagem","nome":"Selagem do Medidor","categoria":"Medição e Rede","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true}],"campos":[{"id":"solic","elementoId":"sel_solic","rotulo":"Solicitante","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"prx","elementoId":"sel_prx","rotulo":"PRX","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"tel","elementoId":"sel_tel","rotulo":"Tel (XX-9XXXXXXXX)","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84-988887777"},{"id":"email","elementoId":"sel_email","rotulo":"e-mail","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"}],"nota":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}}","agenda":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"servico-ramal","sf":"sf-ramal","nome":"Serviço no Ramal","categoria":"Medição e Rede","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true}],"campos":[{"id":"solic","elementoId":"sram_solic","rotulo":"Solicitante","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"prx","elementoId":"sram_prx","rotulo":"PRX","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"tel","elementoId":"sram_tel","rotulo":"Tel (XX-9XXXXXXXX)","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84-988887777"},{"id":"email","elementoId":"sram_email","rotulo":"e-mail","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"},{"id":"motivo","elementoId":"sram_motivo","rotulo":"Motivo da solicitação:","tipo":"texto","obrigatorio":true,"dica":"Ex: Fiação baixa / cabo partido / ramal solto"}],"nota":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Motivo da solicitação: {{motivo}}","agenda":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Motivo da solicitação: {{motivo}}","botao":"Gerar Texto de NOTA e Copiar"}];
+  var MODELOS_EMBUTIDOS = [{"id":"afericao","sf":"sf-afericao","nome":"Aferição","categoria":"Medição e Rede","descricao":"Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"agenda","botao":"Gerar Texto de AGENDA e Copiar","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","classeOriginal":"alert-box alert-box-blink"},{"html":"OBS.: Este serviço é agendado e deve ser contato a partir do terceiro dia útil (cada município tem o dia específico para atendimento que deve ser observado no Book antes da marcação).","classeOriginal":"alert-box"}],"campos":[{"id":"solic","elementoId":"af_solic","rotulo":"Solicitante:","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"motivo","elementoId":"af_motivo","rotulo":"Motivo:","tipo":"texto","obrigatorio":true,"dica":"Ex: Suspeita de avaria / medição incorreta"},{"id":"tel","elementoId":"af_tel","rotulo":"Telefone:","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84988887777"},{"id":"horario","elementoId":"af_horario","rotulo":"Horário para contato:","tipo":"texto","obrigatorio":true,"dica":"Ex: 08h às 18h"},{"id":"proc","elementoId":"af_proc","rotulo":"Quem procurar:","tipo":"texto","obrigatorio":true,"dica":"Nome de quem atenderá a equipe"},{"id":"ref","elementoId":"af_ref","rotulo":"Ponto de Referência:","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"equip","elementoId":"af_equip","rotulo":"Equipamento interno ou externo:","tipo":"opcao","obrigatorio":true,"opcoes":["Interno","Externo"]},{"id":"email","elementoId":"af_email","rotulo":"Possui e-mail:","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"}],"nota":"","agenda":"Solicitante: {{solic}}\nMotivo: {{motivo}}\nTelefone: {{tel}}\nHorário para contato: {{horario}}\nQuem procurar: {{proc}}\nPonto de Referência: {{ref}}\nEquipamento interno ou externo: {{equip}}\nPossui e-mail: {{email}}\nCliente ciente da possível cobrança de taxa"},{"id":"aparelhagem-medica","sf":"sf-aparelhagem","nome":"Uso de Aparelhagem Médica","categoria":"Reclamações e Outros","descricao":"Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","botao":"Gerar Texto de NOTA e Copiar","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","classeOriginal":"alert-box alert-box-blink"}],"campos":[{"id":"sit","elementoId":"ap_sit","rotulo":"Situação","tipo":"opcao","obrigatorio":true,"opcoes":["normal","osb"],"rotulosOpcoes":["Normal (Favor cadastrar internação domiciliar)","FATURA EM OSB (PERÍODO DE FATURAMENTO)"],"largo":true},{"id":"tel","elementoId":"ap_tel","rotulo":"Tel (XX-9XXXXXXXX)","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84-988887777"},{"id":"email","elementoId":"ap_email","rotulo":"e-mail","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"}],"nota":"{{#se sit=osb}}FATURA EM OSB (PERÍODO DE FATURAMENTO), FATURA EM OSB para que o setor possa incluir o bloqueio.{{/se}}{{#se sit=normal}}Favor cadastrar internação domiciliar, documentação inserida no KM.{{/se}} Tel {{tel}} e-mail {{email}}","agenda":"{{#se sit=osb}}FATURA EM OSB (PERÍODO DE FATURAMENTO), FATURA EM OSB para que o setor possa incluir o bloqueio.{{/se}}{{#se sit=normal}}Favor cadastrar internação domiciliar, documentação inserida no KM.{{/se}} Tel {{tel}} e-mail {{email}}"},{"id":"atualizacao-cadastral","sf":"sf-atualizacao-cadastral","nome":"Atualização Cadastral","categoria":"Titularidade e Cadastro","descricao":"Migrado do código (piloto da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"texto":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true},{"id":"alerta_ac_nome","texto":"Atenção: se for apenas correção do nome, pode ser feito no OneCode (2º Nível).","mostrarSe":{"campo":"motivo","igual":"Correção de Nome"}}],"campos":[{"id":"motivo","elementoId":"ac_motivo","rotulo":"Motivo","tipo":"opcao","obrigatorio":true,"opcoes":["Erro de Endereço","Unificar PN","Correção de Nome"]},{"id":"pns","elementoId":"ac_pns","rotulo":"PNs a unificar","tipo":"texto","obrigatorio":true,"dica":"Ex: 1010000001, 1010000002","mostrarSe":{"campo":"motivo","igual":"Unificar PN"}},{"id":"nome","elementoId":"ac_nome","rotulo":"Nome","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"tel","elementoId":"ac_tel","rotulo":"Telefone","tipo":"telefone","obrigatorio":true},{"id":"email","elementoId":"ac_email","rotulo":"E-mail","tipo":"email","obrigatorio":true},{"id":"rg","elementoId":"ac_rg","rotulo":"RG","tipo":"texto","dica":"Em branco = não entra no texto"},{"id":"cnh","elementoId":"ac_cnh","rotulo":"CNH","tipo":"texto","dica":"Em branco = não entra no texto"},{"id":"idp","elementoId":"ac_id","rotulo":"ID (identificação profissional)","tipo":"texto","dica":"Em branco = não entra no texto"}],"nota":"Gentileza Atualizar Cadastro\nMotivo: {{motivo}}\n{{#se motivo=Unificar PN}}\nPNs: {{pns}}\n{{/se}}\n{{#se nome}}\nNome: {{nome}}\n{{/se}}\n{{#se tel}}\nTelefone: {{tel}}\n{{/se}}\n{{#se email}}\nE-mail: {{email}}\n{{/se}}\n{{#se rg}}\nRG: {{rg}}\n{{/se}}\n{{#se cnh}}\nCNH: {{cnh}}\n{{/se}}\n{{#se idp}}\nID (identificação profissional): {{idp}}\n{{/se}}","agenda":"","botao":"Gerar Texto e Copiar NOTA"},{"id":"bpc-loas","sf":"sf-bpc","nome":"BPC/LOAS","categoria":"Titularidade e Cadastro","descricao":"Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","botao":"Gerar Texto e Copiar","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","classeOriginal":"alert-box alert-box-blink"}],"campos":[{"id":"titular","elementoId":"bpc_titular","rotulo":"Titular do benefício:","tipo":"opcao","obrigatorio":true,"opcoes":["mesmo","diferente"],"rotulosOpcoes":["Titular","Não Titular"],"largo":true},{"id":"cc","elementoId":"bpc_cc","rotulo":"Numero da conta contrato:","tipo":"texto","obrigatorio":true,"dica":"Ex: 70xxxxxxx"},{"id":"benef","elementoId":"bpc_benef","rotulo":"Numero do Beneficio de Prestação Continuada BPC:","tipo":"texto","obrigatorio":true,"dica":"Número do benefício BPC"},{"id":"pn","elementoId":"bpc_pn","rotulo":"Numero do Parceiro de Negócios PN beneficiário:","tipo":"texto","obrigatorio":true,"dica":"Número do PN do beneficiário","largo":true,"mostrarSe":{"campo":"titular","igual":"diferente"}},{"id":"tel","elementoId":"bpc_tel","rotulo":"Telefone:","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84988887777"},{"id":"email","elementoId":"bpc_email","rotulo":"E mail:","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"}],"nota":"Numero da conta contrato: {{cc}}\nNumero do Beneficio de Prestação Continuada BPC: {{benef}}\n{{#se titular=diferente}}Numero do Parceiro de Negócios PN beneficiário: {{pn}}\n{{/se}}Telefone: {{tel}}\nE mail: {{email}}","agenda":"Numero da conta contrato: {{cc}}\nNumero do Beneficio de Prestação Continuada BPC: {{benef}}\n{{#se titular=diferente}}Numero do Parceiro de Negócios PN beneficiário: {{pn}}\n{{/se}}Telefone: {{tel}}\nE mail: {{email}}"},{"id":"cancelamento-parcelamento","sf":"sf-canc-parc","nome":"Cancelamento de Parcelamento","categoria":"Parcelamento","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true}],"campos":[{"id":"plano","elementoId":"cparc_plano","rotulo":"Plano de parcelamento nº:","tipo":"texto","obrigatorio":true,"dica":"Ex: 12345"},{"id":"motivo","elementoId":"cparc_motivo","rotulo":"Cancelado devido a:","tipo":"texto","obrigatorio":true,"dica":"Ex: ao não pagamento do sinal."}],"nota":"Plano de parcelamento {{plano}} cancelado devido {{motivo}}","agenda":"Plano de parcelamento {{plano}} cancelado devido {{motivo}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"conta-paga-nao-baixada","sf":"sf-cpnb","nome":"Conta Paga e Não Baixada","categoria":"Faturamento e Débitos","descricao":"Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","botao":"Gerar Texto e Copiar","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","classeOriginal":"alert-box alert-box-blink"},{"html":"FOP Serviços Não estruturados - Abrir apenas após 5 dias úteis da data do pagamento<br>Ao realizar a abertura da nota, é muito importante que seja inserido bloqueio de 15 dias nas faturas reclamadas e nota ser informada no grupo do 2º Nível.<br>O comprovante precisa ser anexado na nota e no SAP KM.","classeOriginal":"alert-box"}],"campos":[{"id":"solic","elementoId":"cpnb_solic","rotulo":"Solicitante:","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"motivo","elementoId":"cpnb_motivo","rotulo":"Motivo :","tipo":"texto","obrigatorio":true,"dica":"Ex: Conta paga e não baixada"},{"id":"fatura","elementoId":"cpnb_fatura","rotulo":"Fatura (vencimento e valor) :","tipo":"texto","obrigatorio":true,"dica":"Ex: Venc 10/10/2026 valor R$ 150,00","largo":true},{"id":"ref","elementoId":"cpnb_ref","rotulo":"Pontos de Referência :","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado","largo":true},{"id":"tel","elementoId":"cpnb_tel","rotulo":"Telefone :","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84988887777"},{"id":"email","elementoId":"cpnb_email","rotulo":"E-mail: :","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"},{"id":"neg","elementoId":"cpnb_neg","rotulo":"Informe se o cliente está negativado:","tipo":"texto","obrigatorio":true,"dica":"Ex: Não ou Sim"},{"id":"ant","elementoId":"cpnb_ant","rotulo":"N° da reclamação anterior (se houver):","tipo":"texto","dica":"Ex: 9200xxxx ou N/A"},{"id":"resp","elementoId":"cpnb_resp","rotulo":"Modalidade de resposta:","tipo":"opcao","obrigatorio":true,"opcoes":["E-mail","SMS","carta"],"largo":true}],"nota":"Solicitante: {{solic}}\nMotivo : {{motivo}}\nFatura (vencimento e valor) : {{fatura}}\nPontos de Referência : {{ref}}\nTelefone : {{tel}}\nE-mail: : {{email}}\nInforme se o cliente está negativado: {{neg}}\nSe houver reclamação anterior, informe o n° da reclamação anterior : {{ant|ou:N/A}}\nModalidade de resposta: {{resp}}\nPrazo que deverá informado e verbalizado ao cliente é de 5 dias úteis para uma primeira análise.","agenda":"Solicitante: {{solic}}\nMotivo : {{motivo}}\nFatura (vencimento e valor) : {{fatura}}\nPontos de Referência : {{ref}}\nTelefone : {{tel}}\nE-mail: : {{email}}\nInforme se o cliente está negativado: {{neg}}\nSe houver reclamação anterior, informe o n° da reclamação anterior : {{ant|ou:N/A}}\nModalidade de resposta: {{resp}}\nPrazo que deverá informado e verbalizado ao cliente é de 5 dias úteis para uma primeira análise."},{"id":"data-boa","sf":"sf-data-boa","nome":"DATA BOA","categoria":"Faturamento e Débitos","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"agenda","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true}],"campos":[{"id":"dia","elementoId":"db_dia","rotulo":"DIA XX","tipo":"texto","obrigatorio":true,"dica":"Ex: 10","largo":true}],"nota":"CLIENTE SOLICITA DATA BOA PARA O DIA {{dia}}","agenda":"CLIENTE SOLICITA DATA BOA PARA O DIA {{dia}}","botao":"Gerar Texto de AGENDA e Copiar"},{"id":"debito-automatico","sf":"sf-deb-auto","nome":"Débito automático","categoria":"Faturamento e Débitos","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true}],"campos":[{"id":"titular","elementoId":"da_titular","rotulo":"TITULAR SR","tipo":"texto","obrigatorio":true,"dica":"Nome completo do titular","largo":true}],"nota":"DESCADASTRO DÉBITO AUTOMÁTICO A PEDIDO DO TITULAR SR \n{{titular}}","agenda":"DESCADASTRO DÉBITO AUTOMÁTICO A PEDIDO DO TITULAR SR \n{{titular}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"estorno-movein-moveout","sf":"sf-movein-moveout","nome":"Estorno Movein e Moveout","categoria":"Faturamento e Débitos","descricao":"Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"agenda","botao":"Gerar Texto de AGENDA e Copiar","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","classeOriginal":"alert-box alert-box-blink"},{"html":"Todo pedido de estorno Movein e Moveout tem que ser feito o texto nas duas contas contratos na agenda de cada.","classeOriginal":"alert-box"}],"campos":[{"id":"contrato","elementoId":"mm_contrato","rotulo":"Contrato:","tipo":"texto","obrigatorio":true,"dica":"Ex: 50xxxxxxx"},{"id":"inst","elementoId":"mm_inst","rotulo":"Instalação:","tipo":"texto","obrigatorio":true,"dica":"Ex: 10xxxxxxx"},{"id":"cca","elementoId":"mm_cca","rotulo":"Conta contrato antiga:","tipo":"texto","obrigatorio":true,"dica":"Ex: 70xxxxxxx"},{"id":"ccn","elementoId":"mm_ccn","rotulo":"Conta contrato nova:","tipo":"texto","obrigatorio":true,"dica":"Ex: 70xxxxxxx"},{"id":"motivo","elementoId":"mm_motivo","rotulo":"Pelo motivo de: (EXEMPLO TROCA DE TITULARIDADE OU NOTA 45 ANULADA NUMERO )","tipo":"texto","obrigatorio":true,"dica":"Ex: TROCA DE TITULARIDADE INDEVIDA / NOTA 45 ANULADA NUMERO XXXXX","largo":true}],"nota":"Contrato: {{contrato}}\nInstalação: {{inst}}\nConta contrato antiga: {{cca}}\nConta contrato nova : {{ccn}}\nSolicito o estorno de move in e move out e instalação Pelo motivo de: {{motivo}}","agenda":"Contrato: {{contrato}}\nInstalação: {{inst}}\nConta contrato antiga: {{cca}}\nConta contrato nova : {{ccn}}\nSolicito o estorno de move in e move out e instalação Pelo motivo de: {{motivo}}"},{"id":"inspecao-ligacao-91","sf":"sf-insp","nome":"Inspeção e ligação 91*","categoria":"Ligação e Reativação","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true},{"html":"Atenção: No caso de pessoa jurídica colocar o nome do representante legal no nome do cliente."}],"campos":[{"id":"solic","elementoId":"insp_solic","rotulo":"Solicitante","tipo":"texto","obrigatorio":true,"dica":"Nome completo (Representante legal se PJ)"},{"id":"prx","elementoId":"insp_prx","rotulo":"PRX","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"tel","elementoId":"insp_tel","rotulo":"Tel (XX-9XXXXXXXX)","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84-988887777"},{"id":"email","elementoId":"insp_email","rotulo":"e-mail","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"},{"id":"carga","elementoId":"insp_carga","rotulo":"Carga (kW)","tipo":"texto","obrigatorio":true,"dica":"Ex: 10kw"},{"id":"pg","elementoId":"insp_pg","rotulo":"PG","tipo":"texto","dica":"Opcional — nº do pagamento, se houver"},{"id":"emp","elementoId":"insp_emp","rotulo":"Empreendimento:","tipo":"texto","obrigatorio":true,"dica":"Nome do condomínio/prédio"},{"id":"bloco","elementoId":"insp_bloco","rotulo":"Bloco/Torre (quando houver)","tipo":"texto","dica":"Ex: Bloco A ou deixe em branco"},{"id":"muc","elementoId":"insp_muc","rotulo":"Referente a MUC 92*","tipo":"texto","obrigatorio":true,"dica":"Ex: 92xxxxxxx","largo":true}],"nota":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Carga {{carga}}{{#se pg}} PG {{pg}}{{/se}} Empreendimento: {{emp}}{{#se bloco}} Bloco/Torre: {{bloco}} (quando houver){{/se}} referente a MUC {{muc}}","agenda":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Carga {{carga}}{{#se pg}} PG {{pg}}{{/se}} Empreendimento: {{emp}}{{#se bloco}} Bloco/Torre: {{bloco}} (quando houver){{/se}} referente a MUC {{muc}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"isencao-icms","sf":"sf-isencao-icms","nome":"Cadastro de Parceiro - Isenção ICMS","categoria":"Titularidade e Cadastro","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true},{"html":"OBS.: Caso o cliente não esteja com CNAE B2_1 (ou está, mas atividade não é a mesma do sistema) É necessário realizar modificação contratual."}],"campos":[{"id":"ie","elementoId":"icms_ie","rotulo":"NUMERO DA INSCRICAO ESTADUAL","tipo":"texto","obrigatorio":true,"dica":"Ex: 20.123.456-7"},{"id":"ref","elementoId":"icms_ref","rotulo":"REF","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"tel","elementoId":"icms_tel","rotulo":"TEL","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84988887777"},{"id":"solic","elementoId":"icms_solic","rotulo":"SOLICITANTE","tipo":"texto","obrigatorio":true,"dica":"Nome completo do solicitante"}],"nota":"GENTILEZA CADASTRAR PRODUTOR RURAL \nNUMERO DA INSCRICAO ESTADUAL {{ie}} \nREF {{ref}}\nTEL {{tel}} \nSOLICITANTE {{solic}}","agenda":"GENTILEZA CADASTRAR PRODUTOR RURAL \nNUMERO DA INSCRICAO ESTADUAL {{ie}} \nREF {{ref}}\nTEL {{tel}} \nSOLICITANTE {{solic}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"medidor-roubado","sf":"sf-med-roub","nome":"Medidor Roubado","categoria":"Medição e Rede","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true}],"campos":[{"id":"solic","elementoId":"mr_solic","rotulo":"Solicitante","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"prx","elementoId":"mr_prx","rotulo":"PRX","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"tel","elementoId":"mr_tel","rotulo":"Tel (XX-9XXXXXXXX)","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84-988887777"},{"id":"email","elementoId":"mr_email","rotulo":"e-mail","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"},{"id":"num","elementoId":"mr_num","rotulo":"Nº Medidor Roubado","tipo":"texto","obrigatorio":true,"dica":"Ex: 12345678"},{"id":"bo","elementoId":"mr_bo","rotulo":"Nº do BO:","tipo":"texto","obrigatorio":true,"dica":"Ex: 00123/2026","largo":true}],"nota":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Nº Medidor Roubado {{num}} Nº do BO: {{bo}}","agenda":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Nº Medidor Roubado {{num}} Nº do BO: {{bo}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"modificacao-contratual","sf":"sf-mc","nome":"Modificação Contratual","categoria":"Titularidade e Cadastro","descricao":"Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","botao":"Gerar Texto e Copiar","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","classeOriginal":"alert-box alert-box-blink"},{"html":"Texto para Nota de Serviço e Agenda do Contrato","classeOriginal":"alert-box"}],"campos":[{"id":"solic","elementoId":"mc_solic","rotulo":"Solicitante:","tipo":"texto","obrigatorio":true,"dica":"Nome completo do solicitante"},{"id":"motivo","elementoId":"mc_motivo","rotulo":"Motivo:","tipo":"texto","obrigatorio":true,"dica":"Ex: aumento de carga, mudança de residencial para irrigante..."},{"id":"tel","elementoId":"mc_tel","rotulo":"Telefone:","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84988887777"},{"id":"ref","elementoId":"mc_ref","rotulo":"Ponto de Referência:","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"proc","elementoId":"mc_proc","rotulo":"Quem procurar:","tipo":"texto","obrigatorio":true,"dica":"Nome de quem atenderá a equipe"},{"id":"email","elementoId":"mc_email","rotulo":"Possui e-mail:","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"}],"nota":"Solicitante: {{solic}}\nMotivo: {{motivo}}\nTelefone: {{tel}}\nPonto de Referência: {{ref}}\nQuem procurar: {{proc}}\nPossui e-mail: {{email}}","agenda":"Solicitante: {{solic}}\nMotivo: {{motivo}}\nTelefone: {{tel}}\nPonto de Referência: {{ref}}\nQuem procurar: {{proc}}\nPossui e-mail: {{email}}"},{"id":"parcelamento-troca-titularidade","sf":"sf-parc-tt","nome":"Troca de Titularidade com Parcelamento de Débitos","categoria":"Parcelamento","descricao":"Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","botao":"Gerar Texto e Copiar","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","classeOriginal":"alert-box alert-box-blink"},{"html":"<b>Atenção:</b> Em caso de reconhecimento de débito o Termo deve ser anexado como PADE no KM já assinado pelo cliente.","classeOriginal":"alert-box alerta-pade","id":"pade_ptt"},{"html":"<b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.","classeOriginal":"alert-box alerta-cnpj"},{"html":"⚠️ Inserir cópia dos dados da Receita Federal e do termo de assunção assinado no SAP KM.","classeOriginal":"alert-box"}],"campos":[{"id":"tipo","elementoId":"ptt_tipo","rotulo":"Tipo de Cliente","tipo":"opcao","obrigatorio":true,"opcoes":["pf","pj"],"rotulosOpcoes":["Pessoa Física","Pessoa Jurídica"],"largo":true},{"id":"solic","elementoId":"ptt_solic","rotulo":"Solicitante","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"empresa","elementoId":"ptt_empresa","rotulo":"Empresa Representada","tipo":"texto","obrigatorio":true,"dica":"Razão social / Nome da empresa","mostrarSe":{"campo":"tipo","igual":"pj"}},{"id":"rec","elementoId":"ptt_rec","rotulo":"Dados da Receita Federal","tipo":"opcao","obrigatorio":true,"opcoes":["regular","pendente regularizacao"]},{"id":"tel","elementoId":"ptt_tel","rotulo":"Telefone","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84988887777"},{"id":"email","elementoId":"ptt_email","rotulo":"E-mail","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"},{"id":"divida","elementoId":"ptt_divida","rotulo":"Valor da Dívida R$","tipo":"texto","obrigatorio":true,"dica":"Ex: 1500,00"},{"id":"plano","elementoId":"ptt_plano","rotulo":"Plano Número","tipo":"texto","obrigatorio":true,"dica":"Ex: 12345"},{"id":"sinal","elementoId":"ptt_sinal","rotulo":"Valor do Sinal R$","tipo":"texto","obrigatorio":true,"dica":"Ex: 300,00"},{"id":"qtd_parc","elementoId":"ptt_qtd_parc","rotulo":"Quantidade de Parcelas (X)","tipo":"texto","obrigatorio":true,"dica":"Ex: 6"},{"id":"val_parc","elementoId":"ptt_val_parc","rotulo":"Valor de cada Parcela R$","tipo":"texto","obrigatorio":true,"dica":"Ex: 200,00"},{"id":"origem_tt","elementoId":"ptt_origem_tt","rotulo":"Débitos oriundos da troca de titularidade (Nº/Ref):","tipo":"texto","obrigatorio":true,"dica":"Informe a referência/nota/conta da troca de titularidade","largo":true}],"nota":"{{#se tipo=pf}}Solicitante {{solic}}, dados da Receita Federal {{rec}} (Inserir cópia no SAP KM), telefone {{tel}}, E-mail {{email}}, esteve na loja para negociar a dívida no valor R${{divida}}, plano numero {{plano}} com sinal R${{sinal}} e o restante do valor divido em {{qtd_parc}} parcelas de R${{val_parc}}.\nOs débitos são oriundos da troca de titularidade {{origem_tt}} e foram reconhecidas através do termo de assunção assinado (Inserir cópia no SAP KM).\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.{{/se}}{{#se tipo=pj}}Solicitante {{solic}}, dados da Receita Federal {{rec}} (Inserir cópia no SAP KM), telefone {{tel}}, E-mail {{email}} representante da Empresa {{empresa}} esteve na loja de atendimento para negociar a divida no valor R${{divida}}, plano numero {{plano}} com sinal R${{sinal}} e o restante do valor divido em {{qtd_parc}} parcelas de R${{val_parc}}.\nOs débitos são oriundos da troca de titularidade {{origem_tt}} e foram reconhecidas através do termo de assunção assinado (Inserir cópia no SAP KM).\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado{{/se}}","agenda":"{{#se tipo=pf}}Solicitante {{solic}}, dados da Receita Federal {{rec}} (Inserir cópia no SAP KM), telefone {{tel}}, E-mail {{email}}, esteve na loja para negociar a dívida no valor R${{divida}}, plano numero {{plano}} com sinal R${{sinal}} e o restante do valor divido em {{qtd_parc}} parcelas de R${{val_parc}}.\nOs débitos são oriundos da troca de titularidade {{origem_tt}} e foram reconhecidas através do termo de assunção assinado (Inserir cópia no SAP KM).\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.{{/se}}{{#se tipo=pj}}Solicitante {{solic}}, dados da Receita Federal {{rec}} (Inserir cópia no SAP KM), telefone {{tel}}, E-mail {{email}} representante da Empresa {{empresa}} esteve na loja de atendimento para negociar a divida no valor R${{divida}}, plano numero {{plano}} com sinal R${{sinal}} e o restante do valor divido em {{qtd_parc}} parcelas de R${{val_parc}}.\nOs débitos são oriundos da troca de titularidade {{origem_tt}} e foram reconhecidas através do termo de assunção assinado (Inserir cópia no SAP KM).\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado{{/se}}"},{"id":"parcelamento","sf":"sf-parcelamento","nome":"Parcelamento","categoria":"Parcelamento","descricao":"Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","botao":"Gerar Texto e Copiar","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","classeOriginal":"alert-box alert-box-blink"},{"html":"<b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.","classeOriginal":"alert-box alerta-cnpj"},{"html":"⚠️ Acima de 10 mil imprimir, solicitar assinatura do cliente e inserir no sapkm","classeOriginal":"alert-box"}],"campos":[{"id":"tipo","elementoId":"parc_tipo","rotulo":"Tipo de Cliente","tipo":"opcao","obrigatorio":true,"opcoes":["pf","pj"],"rotulosOpcoes":["Pessoa Física","Pessoa Jurídica"],"largo":true},{"id":"solic","elementoId":"parc_solic","rotulo":"Solicitante","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"empresa","elementoId":"parc_empresa","rotulo":"Empresa Representada","tipo":"texto","obrigatorio":true,"dica":"Razão social / Nome da empresa","mostrarSe":{"campo":"tipo","igual":"pj"}},{"id":"rec","elementoId":"parc_rec","rotulo":"Dados da Receita Federal","tipo":"opcao","obrigatorio":true,"opcoes":["regular","pendente regularizacao"]},{"id":"tel","elementoId":"parc_tel","rotulo":"Telefone","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84988887777"},{"id":"email","elementoId":"parc_email","rotulo":"E-mail","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"},{"id":"divida","elementoId":"parc_divida","rotulo":"Valor da Dívida R$","tipo":"texto","obrigatorio":true,"dica":"Ex: 1500,00"},{"id":"plano","elementoId":"parc_plano","rotulo":"Plano Número","tipo":"texto","obrigatorio":true,"dica":"Ex: 12345"},{"id":"sinal","elementoId":"parc_sinal","rotulo":"Valor do Sinal R$","tipo":"texto","obrigatorio":true,"dica":"Ex: 300,00"},{"id":"qtd_parc","elementoId":"parc_qtd_parc","rotulo":"Quantidade de Parcelas (X)","tipo":"texto","obrigatorio":true,"dica":"Ex: 6"},{"id":"val_parc","elementoId":"parc_val_parc","rotulo":"Valor de cada Parcela R$","tipo":"texto","obrigatorio":true,"dica":"Ex: 200,00"}],"nota":"{{#se tipo=pf}}Solicitante {{solic}}, dados da Receita Federal {{rec}} (Inserir cópia do cpf receita federal no SAP KM), telefone {{tel}}, E-mail {{email}}, esteve na loja para negociar a dívida no valor R${{divida}}, plano numero {{plano}} com sinal R${{sinal}} e o restante do valor divido em {{qtd_parc}} parcelas de R${{val_parc}}. Cliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.{{/se}}{{#se tipo=pj}}Solicitante {{solic}}, dados da Receita Federal {{rec}} (Inserir cópia no SAP KM), telefone {{tel}}, E-mail {{email}} representante da Empresa {{empresa}} esteve na loja de atendimento para negociar a divida no valor R${{divida}}, plano numero {{plano}} com sinal R${{sinal}} e o restante do valor divido em {{qtd_parc}} parcelas de R${{val_parc}}.\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.{{/se}}","agenda":"{{#se tipo=pf}}Solicitante {{solic}}, dados da Receita Federal {{rec}} (Inserir cópia do cpf receita federal no SAP KM), telefone {{tel}}, E-mail {{email}}, esteve na loja para negociar a dívida no valor R${{divida}}, plano numero {{plano}} com sinal R${{sinal}} e o restante do valor divido em {{qtd_parc}} parcelas de R${{val_parc}}. Cliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.{{/se}}{{#se tipo=pj}}Solicitante {{solic}}, dados da Receita Federal {{rec}} (Inserir cópia no SAP KM), telefone {{tel}}, E-mail {{email}} representante da Empresa {{empresa}} esteve na loja de atendimento para negociar a divida no valor R${{divida}}, plano numero {{plano}} com sinal R${{sinal}} e o restante do valor divido em {{qtd_parc}} parcelas de R${{val_parc}}.\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.{{/se}}"},{"id":"religacao","sf":"sf-relig","nome":"Religação","categoria":"Ligação e Reativação","descricao":"Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","botao":"Gerar Texto e Copiar","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","classeOriginal":"alert-box alert-box-blink"},{"html":"Clica em confirmar, para gerar a nota","classeOriginal":"alert-box-danger","id":"alerta-sem-comp-relig","mostrarSe":{"campo":"opcao","igual":"sem_comprovante"}}],"campos":[{"id":"opcao","elementoId":"relig_opcao","rotulo":"Comprovantes:","tipo":"opcao","obrigatorio":true,"opcoes":["com_comprovante","sem_comprovante"],"rotulosOpcoes":["Apresentou comprovante de pagamento","Não apresentou comprovantes"],"largo":true},{"id":"solic","elementoId":"relig_solic","rotulo":"Solicitante:","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"tel","elementoId":"relig_tel","rotulo":"Telefone:","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84988887777"},{"id":"ref","elementoId":"relig_ref","rotulo":"Ponto de referencia:","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado","largo":true},{"id":"proc","elementoId":"relig_proc","rotulo":"Procurar por:","tipo":"texto","obrigatorio":true,"dica":"Nome de quem atenderá a equipe","largo":true}],"nota":"{{#se opcao=com_comprovante}}Cliente em loja, comprovantes apresentados, não cobrar em campo.\n{{/se}}{{#se opcao=sem_comprovante}}Cliente não apresentou comprovantes.\n{{/se}}Solicitante: {{solic}}\nTelefone: {{tel}}\nPonto de referencia: {{ref}}\nProcurar por: {{proc}}\nCiente de taxa.","agenda":"{{#se opcao=com_comprovante}}Cliente em loja, comprovantes apresentados, não cobrar em campo.\n{{/se}}{{#se opcao=sem_comprovante}}Cliente não apresentou comprovantes.\n{{/se}}Solicitante: {{solic}}\nTelefone: {{tel}}\nPonto de referencia: {{ref}}\nProcurar por: {{proc}}\nCiente de taxa."},{"id":"relocacao-rede","sf":"sf-reloc-rede","nome":"Relocação de poste/deslocamento de rede","categoria":"Medição e Rede","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true},{"html":"FOP serviço de obra<br>ATENÇÃO: INCLUIR DOCUMENTO DE PROPRIEDADE<br>Para Isolamento De Rede, Usar Code Deslocamento De Rede E Informar Que É Deslocamento De Rede, Não Colocar A Informação Isolamento de rede"}],"campos":[{"id":"solic","elementoId":"ro_solic","rotulo":"Solicitante","tipo":"texto","obrigatorio":true,"dica":"Nome completo do solicitante"},{"id":"prx","elementoId":"ro_prx","rotulo":"PRX","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"tel","elementoId":"ro_tel","rotulo":"Tel (XX-9XXXXXXXX)","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84-988887777"},{"id":"email","elementoId":"ro_email","rotulo":"e-mail","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"},{"id":"docs","elementoId":"ro_docs","rotulo":"DOCs anexado (escritura publica, itr, iptu...)","tipo":"texto","obrigatorio":true,"dica":"Ex: Escritura pública, ITR, IPTU, termo de posse..."}],"nota":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}}. Cliente Orientado quanto aos possíveis custos DOCs anexado: {{docs}}","agenda":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}}. Cliente Orientado quanto aos possíveis custos DOCs anexado: {{docs}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"selagem-medidor","sf":"sf-selagem","nome":"Selagem do Medidor","categoria":"Medição e Rede","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true}],"campos":[{"id":"solic","elementoId":"sel_solic","rotulo":"Solicitante","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"prx","elementoId":"sel_prx","rotulo":"PRX","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"tel","elementoId":"sel_tel","rotulo":"Tel (XX-9XXXXXXXX)","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84-988887777"},{"id":"email","elementoId":"sel_email","rotulo":"e-mail","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"}],"nota":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}}","agenda":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"servico-ramal","sf":"sf-ramal","nome":"Serviço no Ramal","categoria":"Medição e Rede","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true}],"campos":[{"id":"solic","elementoId":"sram_solic","rotulo":"Solicitante","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"prx","elementoId":"sram_prx","rotulo":"PRX","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"tel","elementoId":"sram_tel","rotulo":"Tel (XX-9XXXXXXXX)","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84-988887777"},{"id":"email","elementoId":"sram_email","rotulo":"e-mail","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"},{"id":"motivo","elementoId":"sram_motivo","rotulo":"Motivo da solicitação:","tipo":"texto","obrigatorio":true,"dica":"Ex: Fiação baixa / cabo partido / ramal solto"}],"nota":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Motivo da solicitação: {{motivo}}","agenda":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Motivo da solicitação: {{motivo}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"tarefa-neo","sf":"sf-tarefa-neo","nome":"Tarefa NEO transferência de Créditos","categoria":"Faturamento e Débitos","descricao":"Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","botao":"Gerar Texto de NOTA e Copiar","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","classeOriginal":"alert-box alert-box-blink"},{"html":"Atenção a matrícula do responsável: CLB615445 - Thaiana Barbosa Sales","classeOriginal":"alert-box"}],"campos":[{"id":"titulo","elementoId":"tneo_titulo","rotulo":"Título:","tipo":"texto","obrigatorio":true,"dica":"Ex: Transferência de Créditos MMGD"},{"id":"nome","elementoId":"tneo_nome","rotulo":"Nome:","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"ccn","elementoId":"tneo_ccn","rotulo":"Conta contrato nova:","tipo":"texto","obrigatorio":true,"dica":"Ex: 70xxxxxxx"},{"id":"cca","elementoId":"tneo_cca","rotulo":"Conta contrato antiga:","tipo":"texto","obrigatorio":true,"dica":"Ex: 70xxxxxxx"},{"id":"tel","elementoId":"tneo_tel","rotulo":"Telefone:","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84988887777"},{"id":"email","elementoId":"tneo_email","rotulo":"E-mail:","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"},{"id":"desc","elementoId":"tneo_desc","rotulo":"Descrição da solicitação:","tipo":"textoLongo","obrigatorio":true,"dica":"Descreva o que o cliente deseja detalhadamente...","largo":true}],"nota":"Título: {{titulo}}\nNome: {{nome}}\nConta contrato nova: {{ccn}}\nConta contrato antiga: {{cca}}\nTelefone: {{tel}}\nE-mail: {{email}}\nDescrição da solicitação: {{desc}}","agenda":"Título: {{titulo}}\nNome: {{nome}}\nConta contrato nova: {{ccn}}\nConta contrato antiga: {{cca}}\nTelefone: {{tel}}\nE-mail: {{email}}\nDescrição da solicitação: {{desc}}"},{"id":"verificacao-equipamento","sf":"sf-verif-equip","nome":"Verificação de Equipamento","categoria":"Medição e Rede","descricao":"Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"agenda","botao":"Gerar Texto de AGENDA e Copiar","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","classeOriginal":"alert-box alert-box-blink"}],"campos":[{"id":"solic","elementoId":"ve_solic","rotulo":"Solicitante:","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"motivo","elementoId":"ve_motivo","rotulo":"Motivo:","tipo":"texto","obrigatorio":true,"dica":"Ex: Medidor emitindo ruído / display apagado"},{"id":"tel","elementoId":"ve_tel","rotulo":"Telefone:","tipo":"telefone","obrigatorio":true,"dica":"Ex: 71993501519"},{"id":"proc","elementoId":"ve_proc","rotulo":"Quem procurar:","tipo":"texto","obrigatorio":true,"dica":"Nome de quem atenderá a equipe"},{"id":"ref","elementoId":"ve_ref","rotulo":"Ponto de Referência:","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"equip","elementoId":"ve_equip","rotulo":"Equipamento interno ou externo:","tipo":"opcao","obrigatorio":true,"opcoes":["Interno","Externo"]},{"id":"email","elementoId":"ve_email","rotulo":"Possui e-mail:","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado","largo":true}],"nota":"","agenda":"Solicitante: {{solic}}\nMotivo: {{motivo}}\nTelefone: {{tel}}\nQuem procurar: {{proc}}\nPonto de Referência: {{ref}}\nEquipamento interno ou externo: {{equip}}\nPossui e-mail: {{email}}"}];
   // Ambiente: false = produção. A cópia em /teste/ é gerada com true:
   // faixa de aviso, histórico separado e atualizações lidas de /teste/.
   var AMBIENTE_TESTE = true;
@@ -3181,11 +2991,6 @@
     document.getElementById('tt_forma_entrega').required = hasDebito;
   }
 
-  function toggleParcTT() {
-    var isPj = (document.getElementById('ptt_tipo').value === 'pj');
-    document.getElementById('grp_ptt_empresa').style.display = isPj ? 'flex' : 'none';
-    document.getElementById('ptt_empresa').required = isPj;
-  }
 
   function toggleTrPartidas() {
     var isPj = (document.getElementById('trp_tipo').value === 'pj');
@@ -3215,10 +3020,6 @@
     document.getElementById('res_conta').required = isConta;
   }
 
-  function toggleRelig() {
-    var isSem = (document.getElementById('relig_opcao').value === 'sem_comprovante');
-    document.getElementById('alerta-sem-comp-relig').style.display = isSem ? 'block' : 'none';
-  }
 
   function toggleRefPadrao() {
     var isDeslig = (document.getElementById('refp_opt').value === 'desliga_religa');
@@ -3230,11 +3031,6 @@
     document.getElementById('refp_dt_relig').required = isDeslig;
   }
 
-  function toggleParcelamento() {
-    var isPj = (document.getElementById('parc_tipo').value === 'pj');
-    document.getElementById('grp_parc_empresa').style.display = isPj ? 'flex' : 'none';
-    document.getElementById('parc_empresa').required = isPj;
-  }
 
   /* ===== PADRONIZAÇÃO: DATA, CPF/CNPJ E TELEFONE =====
      Roda dentro de validarCampos (chamado por todos os geradores, antes
@@ -3790,16 +3586,6 @@
     finalizarGeracao('sf-ri', nota, agenda, 'nota');
   }
 
-  function gerarMC() {
-    if (!validarCampos('sf-mc')) return;
-    var txt = 'Solicitante: ' + getVal('mc_solic') +
-      '\nMotivo: ' + getVal('mc_motivo') +
-      '\nTelefone: ' + getVal('mc_tel') +
-      '\nPonto de Referência: ' + getVal('mc_ref') +
-      '\nQuem procurar: ' + getVal('mc_proc') +
-      '\nPossui e-mail: ' + getVal('mc_email');
-    finalizarGeracao('sf-mc', txt, txt, 'nota');
-  }
 
   function gerarRES() {
     if (!validarCampos('sf-res')) return;
@@ -3819,19 +3605,6 @@
     finalizarGeracao('sf-res', txt, txt, 'nota');
   }
 
-  function gerarRelig() {
-    if (!validarCampos('sf-relig')) return;
-    var prefix = (getVal('relig_opcao') === 'com_comprovante')
-      ? 'Cliente em loja, comprovantes apresentados, não cobrar em campo.\n'
-      : 'Cliente não apresentou comprovantes.\n';
-    var txt = prefix +
-      'Solicitante: ' + getVal('relig_solic') +
-      '\nTelefone: ' + getVal('relig_tel') +
-      '\nPonto de referencia: ' + getVal('relig_ref') +
-      '\nProcurar por: ' + getVal('relig_proc') +
-      '\nCiente de taxa.';
-    finalizarGeracao('sf-relig', txt, txt, 'nota');
-  }
 
 
   function gerarLP() {
@@ -3855,77 +3628,15 @@
     finalizarGeracao('sf-ref-padrao', txt, txt, 'nota');
   }
 
-  function gerarAfericao() {
-    if (!validarCampos('sf-afericao')) return;
-    var txt = 'Solicitante: ' + getVal('af_solic') +
-      '\nMotivo: ' + getVal('af_motivo') +
-      '\nTelefone: ' + getVal('af_tel') +
-      '\nHorário para contato: ' + getVal('af_horario') +
-      '\nQuem procurar: ' + getVal('af_proc') +
-      '\nPonto de Referência: ' + getVal('af_ref') +
-      '\nEquipamento interno ou externo: ' + getVal('af_equip') +
-      '\nPossui e-mail: ' + getVal('af_email') +
-      '\nCliente ciente da possível cobrança de taxa';
-    finalizarGeracao('sf-afericao', '', txt, 'agenda');   // serviço sem texto de nota
-  }
-
-  function toggleBPC() {
-    var isDif = (document.getElementById('bpc_titular').value === 'diferente');
-    document.getElementById('grp_bpc_pn').style.display = isDif ? 'flex' : 'none';
-    document.getElementById('bpc_pn').required = isDif;
-  }
-
-  function gerarBPC() {
-    if (!validarCampos('sf-bpc')) return;
-    var isDif = (document.getElementById('bpc_titular').value === 'diferente');
-    var txt = 'Numero da conta contrato: ' + getVal('bpc_cc') +
-      '\nNumero do Beneficio de Prestação Continuada BPC: ' + getVal('bpc_benef') +
-      (isDif ? '\nNumero do Parceiro de Negócios PN beneficiário: ' + getVal('bpc_pn') : '') +
-      '\nTelefone: ' + getVal('bpc_tel') +
-      '\nE mail: ' + getVal('bpc_email');
-    finalizarGeracao('sf-bpc', txt, txt, 'nota');
-  }
-
-  function gerarCPNB() {
-    if (!validarCampos('sf-cpnb')) return;
-    var ant = getVal('cpnb_ant') ? '\nSe houver reclamação anterior, informe o n° da reclamação anterior : ' + getVal('cpnb_ant') : '\nSe houver reclamação anterior, informe o n° da reclamação anterior : N/A';
-    var txt = 'Solicitante: ' + getVal('cpnb_solic') +
-      '\nMotivo : ' + getVal('cpnb_motivo') +
-      '\nFatura (vencimento e valor) : ' + getVal('cpnb_fatura') +
-      '\nPontos de Referência : ' + getVal('cpnb_ref') +
-      '\nTelefone : ' + getVal('cpnb_tel') +
-      '\nE-mail: : ' + getVal('cpnb_email') +
-      '\nInforme se o cliente está negativado: ' + getVal('cpnb_neg') +
-      ant +
-      '\nModalidade de resposta: ' + getVal('cpnb_resp') +
-      '\nPrazo que deverá informado e verbalizado ao cliente é de 5 dias úteis para uma primeira análise.';
-    finalizarGeracao('sf-cpnb', txt, txt, 'nota');
-  }
 
 
 
-  function gerarVerifEquip() {
-    if (!validarCampos('sf-verif-equip')) return;
-    var txt = 'Solicitante: ' + getVal('ve_solic') +
-      '\nMotivo: ' + getVal('ve_motivo') +
-      '\nTelefone: ' + getVal('ve_tel') +
-      '\nQuem procurar: ' + getVal('ve_proc') +
-      '\nPonto de Referência: ' + getVal('ve_ref') +
-      '\nEquipamento interno ou externo: ' + getVal('ve_equip') +
-      '\nPossui e-mail: ' + getVal('ve_email');
-    finalizarGeracao('sf-verif-equip', '', txt, 'agenda');   // serviço sem texto de nota
-  }
 
 
 
-  function gerarAparelhagemMedica() {
-    if (!validarCampos('sf-aparelhagem')) return;
-    var isOSB = (getVal('ap_sit') === 'osb');
-    var txt = isOSB
-      ? 'FATURA EM OSB (PERÍODO DE FATURAMENTO), FATURA EM OSB para que o setor possa incluir o bloqueio. Tel ' + getVal('ap_tel') + ' e-mail ' + getVal('ap_email')
-      : 'Favor cadastrar internação domiciliar, documentação inserida no KM. Tel ' + getVal('ap_tel') + ' e-mail ' + getVal('ap_email');
-    finalizarGeracao('sf-aparelhagem', txt, txt, 'nota');
-  }
+
+
+
 
 
 
@@ -3963,17 +3674,6 @@
     finalizarGeracao('sf-outros-danos', txt, txt, 'nota');
   }
 
-  function gerarTarefaNEO() {
-    if (!validarCampos('sf-tarefa-neo')) return;
-    var txt = 'Título: ' + getVal('tneo_titulo') +
-      '\nNome: ' + getVal('tneo_nome') +
-      '\nConta contrato nova: ' + getVal('tneo_ccn') +
-      '\nConta contrato antiga: ' + getVal('tneo_cca') +
-      '\nTelefone: ' + getVal('tneo_tel') +
-      '\nE-mail: ' + getVal('tneo_email') +
-      '\nDescrição da solicitação: ' + getVal('tneo_desc');
-    finalizarGeracao('sf-tarefa-neo', txt, txt, 'nota');
-  }
 
   function gerarDefesaAdm() {
     if (!validarCampos('sf-defesa-adm')) return;
@@ -3991,28 +3691,8 @@
     finalizarGeracao('sf-defesa-adm', nota, agenda, 'nota');
   }
 
-  function gerarParcelamento() {
-    if (!validarCampos('sf-parcelamento')) return;
-    var isPj = (getVal('parc_tipo') === 'pj');
-    var txt = '';
-    if (!isPj) {
-      txt = 'Solicitante ' + getVal('parc_solic') + ', dados da Receita Federal ' + getVal('parc_rec') + ' (Inserir cópia do cpf receita federal no SAP KM), telefone ' + getVal('parc_tel') + ', E-mail ' + getVal('parc_email') + ', esteve na loja para negociar a dívida no valor R$' + getVal('parc_divida') + ', plano numero ' + getVal('parc_plano') + ' com sinal R$' + getVal('parc_sinal') + ' e o restante do valor divido em ' + getVal('parc_qtd_parc') + ' parcelas de R$' + getVal('parc_val_parc') + '. Cliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.';
-    } else {
-      txt = 'Solicitante ' + getVal('parc_solic') + ', dados da Receita Federal ' + getVal('parc_rec') + ' (Inserir cópia no SAP KM), telefone ' + getVal('parc_tel') + ', E-mail ' + getVal('parc_email') + ' representante da Empresa ' + getVal('parc_empresa') + ' esteve na loja de atendimento para negociar a divida no valor R$' + getVal('parc_divida') + ', plano numero ' + getVal('parc_plano') + ' com sinal R$' + getVal('parc_sinal') + ' e o restante do valor divido em ' + getVal('parc_qtd_parc') + ' parcelas de R$' + getVal('parc_val_parc') + '.\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.';
-    }
-    finalizarGeracao('sf-parcelamento', txt, txt, 'nota');
-  }
 
 
-  function gerarMoveInMoveOut() {
-    if (!validarCampos('sf-movein-moveout')) return;
-    var txt = 'Contrato: ' + getVal('mm_contrato') +
-      '\nInstalação: ' + getVal('mm_inst') +
-      '\nConta contrato antiga: ' + getVal('mm_cca') +
-      '\nConta contrato nova : ' + getVal('mm_ccn') +
-      '\nSolicito o estorno de move in e move out e instalação Pelo motivo de: ' + getVal('mm_motivo');
-    finalizarGeracao('sf-movein-moveout', txt, txt, 'agenda');
-  }
 
   function gerarRDEDocumentacao() {
     if (!validarCampos('sf-rde-doc')) return;
@@ -4034,17 +3714,6 @@
     finalizarGeracao('sf-rde-doc', txt, txt, 'agenda');
   }
 
-  function gerarParcTT() {
-    if (!validarCampos('sf-parc-tt')) return;
-    var isPj = (getVal('ptt_tipo') === 'pj');
-    var txt = '';
-    if (!isPj) {
-      txt = 'Solicitante ' + getVal('ptt_solic') + ', dados da Receita Federal ' + getVal('ptt_rec') + ' (Inserir cópia no SAP KM), telefone ' + getVal('ptt_tel') + ', E-mail ' + getVal('ptt_email') + ', esteve na loja para negociar a dívida no valor R$' + getVal('ptt_divida') + ', plano numero ' + getVal('ptt_plano') + ' com sinal R$' + getVal('ptt_sinal') + ' e o restante do valor divido em ' + getVal('ptt_qtd_parc') + ' parcelas de R$' + getVal('ptt_val_parc') + '.\nOs débitos são oriundos da troca de titularidade ' + getVal('ptt_origem_tt') + ' e foram reconhecidas através do termo de assunção assinado (Inserir cópia no SAP KM).\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.';
-    } else {
-      txt = 'Solicitante ' + getVal('ptt_solic') + ', dados da Receita Federal ' + getVal('ptt_rec') + ' (Inserir cópia no SAP KM), telefone ' + getVal('ptt_tel') + ', E-mail ' + getVal('ptt_email') + ' representante da Empresa ' + getVal('ptt_empresa') + ' esteve na loja de atendimento para negociar a divida no valor R$' + getVal('ptt_divida') + ', plano numero ' + getVal('ptt_plano') + ' com sinal R$' + getVal('ptt_sinal') + ' e o restante do valor divido em ' + getVal('ptt_qtd_parc') + ' parcelas de R$' + getVal('ptt_val_parc') + '.\nOs débitos são oriundos da troca de titularidade ' + getVal('ptt_origem_tt') + ' e foram reconhecidas através do termo de assunção assinado (Inserir cópia no SAP KM).\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado';
-    }
-    finalizarGeracao('sf-parc-tt', txt, txt, 'nota');
-  }
 
   function gerarTrPartidas() {
     if (!validarCampos('sf-tr-partidas')) return;
@@ -4212,7 +3881,6 @@
       [['ise_servico', 'troca'], ['ise_fat_solic', 'Não se aplica'], ['ise_rec', 'regular'], ['ise_crit', 'Faturado por média'], ['ise_mmgd', 'Não']].forEach(function(p) { document.getElementById(p[0]).value = p[1]; });
       setTimeout(toggleIsencaoDeb, 0);
     }
-    if (containerId === 'sf-verif-equip') { document.getElementById('ve_equip').value = 'Interno'; }
     if (containerId === 'sf-ligacao-nova') { document.getElementById('ln_modo').value = 'normal'; setTimeout(toggleLigacaoNova, 0); }
     document.querySelectorAll('#' + containerId + ' input[type="text"], #' + containerId + ' textarea').forEach(function(i) { i.value = ''; });
     if (containerId === 'sf-reclamacao-gd') { document.getElementById('gd_tipo').value = 'ausencia_fat'; toggleReclamacaoGD(); }
@@ -4228,13 +3896,9 @@
     if (containerId === 'sf-tt') { document.getElementById('tt_tipo').value = 'sem_debito'; document.getElementById('tt_mmgd').value = 'Não'; toggleTrocaTitularidade(); }
     if (containerId === 'sf-ri') { document.getElementById('ri_tipo').value = 'assuncao'; document.getElementById('ri_mmgd').value = 'Não'; toggleMMGD('ri_mmgd', 'ri_neo'); toggleReativDebitos(); }
     if (containerId === 'sf-res') { document.getElementById('res_forma_pag').value = 'conta'; toggleFormaPagRes(); }
-    if (containerId === 'sf-relig') { document.getElementById('relig_opcao').value = 'com_comprovante'; toggleRelig(); }
     if (containerId === 'sf-ref-padrao') { document.getElementById('refp_opt').value = 'mudanca'; toggleRefPadrao(); }
-    if (containerId === 'sf-parcelamento') { document.getElementById('parc_tipo').value = 'pf'; toggleParcelamento(); }
-    if (containerId === 'sf-parc-tt') { document.getElementById('ptt_tipo').value = 'pf'; toggleParcTT(); }
     if (containerId === 'sf-tr-partidas') { document.getElementById('trp_tipo').value = 'pf'; toggleTrPartidas(); }
     if (containerId === 'sf-bloq-cobranca') { document.getElementById('bloq_tipo').value = 'pagamento'; toggleBloqCobranca(); }
-    if (containerId === 'sf-bpc') { document.getElementById('bpc_titular').value = 'mesmo'; toggleBPC(); }
     
     var subA = subtipoAtivo[containerId];
     if (subA) setTimeout(function() { aplicarSubtipo(containerId, subA); }, 0);
@@ -4669,23 +4333,14 @@
     toggleReclamacoes: toggleReclamacoes, toggleCanalAtendimento: toggleCanalAtendimento,
     toggleReclamacaoGD: toggleReclamacaoGD,
     toggleTrocaTitularidade: toggleTrocaTitularidade, toggleMMGD: toggleMMGD,
-    toggleReativDebitos: toggleReativDebitos, toggleFormaPagRes: toggleFormaPagRes,
-    toggleRelig: toggleRelig, toggleRefPadrao: toggleRefPadrao,
-    toggleParcelamento: toggleParcelamento, toggleParcTT: toggleParcTT,
-    toggleTrPartidas: toggleTrPartidas, toggleBloqCobranca: toggleBloqCobranca, toggleBPC: toggleBPC,
+    toggleReativDebitos: toggleReativDebitos, toggleFormaPagRes: toggleFormaPagRes, toggleRefPadrao: toggleRefPadrao,
+    toggleTrPartidas: toggleTrPartidas, toggleBloqCobranca: toggleBloqCobranca,
     gerarReclamacaoUnificada: gerarReclamacaoUnificada, gerarReclamacaoGD: gerarReclamacaoGD,
     gerarLigacaoNova: gerarLigacaoNova, gerarLigacaoMUC: gerarLigacaoMUC, gerarReativComum: gerarReativComum, gerarReativVirtual: gerarReativVirtual, gerarDD: gerarDD, gerarTT: gerarTT,
-    gerarRI: gerarRI, gerarMC: gerarMC, gerarRES: gerarRES, gerarRelig: gerarRelig, gerarLP: gerarLP,
-    gerarRefPadrao: gerarRefPadrao, gerarAfericao: gerarAfericao, gerarCPNB: gerarCPNB,
-    gerarVerifEquip: gerarVerifEquip,
-    gerarAparelhagemMedica: gerarAparelhagemMedica,
-    gerarDanosEletricos: gerarDanosEletricos, gerarOutrosDanos: gerarOutrosDanos,
-    gerarTarefaNEO: gerarTarefaNEO, gerarDefesaAdm: gerarDefesaAdm,
-    gerarParcelamento: gerarParcelamento,
-    gerarMoveInMoveOut: gerarMoveInMoveOut, gerarRDEDocumentacao: gerarRDEDocumentacao,
-    gerarParcTT: gerarParcTT, gerarTrPartidas: gerarTrPartidas,
+    gerarRI: gerarRI, gerarRES: gerarRES, gerarLP: gerarLP,
+    gerarRefPadrao: gerarRefPadrao,
+    gerarDanosEletricos: gerarDanosEletricos, gerarOutrosDanos: gerarOutrosDanos, gerarDefesaAdm: gerarDefesaAdm, gerarRDEDocumentacao: gerarRDEDocumentacao, gerarTrPartidas: gerarTrPartidas,
     gerarTeleGravacao: gerarTeleGravacao, gerarBloqCobranca: gerarBloqCobranca,
-    gerarBPC: gerarBPC,
     toggleLigacaoNova: toggleLigacaoNova,
     calcularRefat: calcularRefat, gerarCalcRefat: gerarCalcRefat, limparCalcRefat: limparCalcRefat,
     gerarRefatUrgente: gerarRefatUrgente, limparRefatUrgente: limparRefatUrgente, toggleRefatUrgente: toggleRefatUrgente,
@@ -5968,7 +5623,7 @@
   // ?v=2.6.1) levam direto para a produção.
   // PUBLICAR: troque o código abaixo e o campo "versao" do versao.json pelo mesmo
   // valor (ex.: a data e hora da publicação). Ele é interno e não aparece na tela.
-  var VERSAO_ATUAL = '2.18.1';
+  var VERSAO_ATUAL = '2.18.2';
   var SITE_PRODUCAO = 'https://textos-padroes.pages.dev/';   // endereço oficial (Cloudflare, com login)
   var NA_WEB = /^https?:$/.test(location.protocol);
 
@@ -6954,7 +6609,7 @@
     (m.avisos || []).forEach(function(a, i) {
       if (!a || typeof a !== 'object' || !a.mostrarSe) return;
       var el = form && form.querySelector('[data-aviso="' + i + '"]');
-      if (el) el.style.display = [].concat(a.mostrarSe.igual).indexOf(String(valores[a.mostrarSe.campo] || '')) >= 0 ? '' : 'none';
+      if (el) el.style.display = [].concat(a.mostrarSe.igual).indexOf(String(valores[a.mostrarSe.campo] || '')) >= 0 ? 'block' : 'none';
     });
   }
 
@@ -6977,7 +6632,7 @@
     var el;
     if (c.tipo === 'opcao') {
       el = document.createElement('select');
-      c.opcoes.forEach(function(o) { var op = document.createElement('option'); op.value = o; op.textContent = o; el.appendChild(op); });
+      c.opcoes.forEach(function(o, i) { var op = document.createElement('option'); op.value = o; op.textContent = (c.rotulosOpcoes && c.rotulosOpcoes[i]) || o; el.appendChild(op); });
       el.addEventListener('change', function() { mdAtualizarVisiveis(m); });
     } else if (c.tipo === 'textoLongo') {
       el = document.createElement('textarea');
@@ -7012,7 +6667,7 @@
     (m.avisos || []).forEach(function(a, i) {
       var av = document.createElement('div');
       var obj = a && typeof a === 'object';
-      av.className = 'alert-box' + (obj && a.piscar ? ' alert-box-blink' : '') + (obj && a.classe ? ' ' + a.classe : '');
+      av.className = obj && a.classeOriginal && m._embutido ? a.classeOriginal : 'alert-box' + (obj && a.piscar ? ' alert-box-blink' : '') + (obj && a.classe ? ' ' + a.classe : '');
       // HTML só para modelos embutidos (vêm do repositório); os do painel são sempre texto puro
       if (obj && a.html && m._embutido) av.innerHTML = a.html;
       else av.textContent = obj ? a.texto || '' : a;
@@ -7118,6 +6773,19 @@
       .catch(function() { /* sem rede ou servidor fora: segue com a cópia guardada */ });
   }
   carregarModelos();
+
+  // "Limpar" chamado de fora (pendências, testes): nos modelos, as listas voltam à
+  // primeira opção e os campos/avisos condicionais são recalculados.
+  var limparFormBase = limparForm;
+  limparForm = function(containerId) {
+    limparFormBase(containerId);
+    Object.keys(modelosMontados).forEach(function(id) {
+      var m = modelosMontados[id];
+      if (mdSf(m) !== containerId) return;
+      document.querySelectorAll('#' + containerId + ' select').forEach(function(sel) { sel.selectedIndex = 0; });
+      mdAtualizarVisiveis(m);
+    });
+  };
   // === CATEGORIAS, SERVIÇOS OCULTOS E SCRIPTS (publicados pelo painel) ===
   // Aplica a configuração publicada em /api/atendimento: ordem e nome das categorias,
   // em que categoria cada serviço aparece, serviços ocultos e o roteiro (falas +

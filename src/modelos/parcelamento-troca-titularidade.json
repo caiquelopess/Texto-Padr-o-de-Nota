@@ -1,0 +1,135 @@
+{
+  "id": "parcelamento-troca-titularidade",
+  "sf": "sf-parc-tt",
+  "nome": "Troca de Titularidade com Parcelamento de Débitos",
+  "categoria": "Parcelamento",
+  "descricao": "Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "botao": "Gerar Texto e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "<b>Atenção:</b> Em caso de reconhecimento de débito o Termo deve ser anexado como PADE no KM já assinado pelo cliente.",
+      "classeOriginal": "alert-box alerta-pade",
+      "id": "pade_ptt"
+    },
+    {
+      "html": "<b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.",
+      "classeOriginal": "alert-box alerta-cnpj"
+    },
+    {
+      "html": "⚠️ Inserir cópia dos dados da Receita Federal e do termo de assunção assinado no SAP KM.",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "tipo",
+      "elementoId": "ptt_tipo",
+      "rotulo": "Tipo de Cliente",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "opcoes": ["pf", "pj"],
+      "rotulosOpcoes": ["Pessoa Física", "Pessoa Jurídica"],
+      "largo": true
+    },
+    {
+      "id": "solic",
+      "elementoId": "ptt_solic",
+      "rotulo": "Solicitante",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo"
+    },
+    {
+      "id": "empresa",
+      "elementoId": "ptt_empresa",
+      "rotulo": "Empresa Representada",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Razão social / Nome da empresa",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "pj"
+      }
+    },
+    {
+      "id": "rec",
+      "elementoId": "ptt_rec",
+      "rotulo": "Dados da Receita Federal",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "opcoes": ["regular", "pendente regularizacao"]
+    },
+    {
+      "id": "tel",
+      "elementoId": "ptt_tel",
+      "rotulo": "Telefone",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84988887777"
+    },
+    {
+      "id": "email",
+      "elementoId": "ptt_email",
+      "rotulo": "E-mail",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "divida",
+      "elementoId": "ptt_divida",
+      "rotulo": "Valor da Dívida R$",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 1500,00"
+    },
+    {
+      "id": "plano",
+      "elementoId": "ptt_plano",
+      "rotulo": "Plano Número",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 12345"
+    },
+    {
+      "id": "sinal",
+      "elementoId": "ptt_sinal",
+      "rotulo": "Valor do Sinal R$",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 300,00"
+    },
+    {
+      "id": "qtd_parc",
+      "elementoId": "ptt_qtd_parc",
+      "rotulo": "Quantidade de Parcelas (X)",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 6"
+    },
+    {
+      "id": "val_parc",
+      "elementoId": "ptt_val_parc",
+      "rotulo": "Valor de cada Parcela R$",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 200,00"
+    },
+    {
+      "id": "origem_tt",
+      "elementoId": "ptt_origem_tt",
+      "rotulo": "Débitos oriundos da troca de titularidade (Nº/Ref):",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Informe a referência/nota/conta da troca de titularidade",
+      "largo": true
+    }
+  ],
+  "nota": "{{#se tipo=pf}}Solicitante {{solic}}, dados da Receita Federal {{rec}} (Inserir cópia no SAP KM), telefone {{tel}}, E-mail {{email}}, esteve na loja para negociar a dívida no valor R${{divida}}, plano numero {{plano}} com sinal R${{sinal}} e o restante do valor divido em {{qtd_parc}} parcelas de R${{val_parc}}.\nOs débitos são oriundos da troca de titularidade {{origem_tt}} e foram reconhecidas através do termo de assunção assinado (Inserir cópia no SAP KM).\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.{{/se}}{{#se tipo=pj}}Solicitante {{solic}}, dados da Receita Federal {{rec}} (Inserir cópia no SAP KM), telefone {{tel}}, E-mail {{email}} representante da Empresa {{empresa}} esteve na loja de atendimento para negociar a divida no valor R${{divida}}, plano numero {{plano}} com sinal R${{sinal}} e o restante do valor divido em {{qtd_parc}} parcelas de R${{val_parc}}.\nOs débitos são oriundos da troca de titularidade {{origem_tt}} e foram reconhecidas através do termo de assunção assinado (Inserir cópia no SAP KM).\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado{{/se}}",
+  "agenda": "{{#se tipo=pf}}Solicitante {{solic}}, dados da Receita Federal {{rec}} (Inserir cópia no SAP KM), telefone {{tel}}, E-mail {{email}}, esteve na loja para negociar a dívida no valor R${{divida}}, plano numero {{plano}} com sinal R${{sinal}} e o restante do valor divido em {{qtd_parc}} parcelas de R${{val_parc}}.\nOs débitos são oriundos da troca de titularidade {{origem_tt}} e foram reconhecidas através do termo de assunção assinado (Inserir cópia no SAP KM).\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.{{/se}}{{#se tipo=pj}}Solicitante {{solic}}, dados da Receita Federal {{rec}} (Inserir cópia no SAP KM), telefone {{tel}}, E-mail {{email}} representante da Empresa {{empresa}} esteve na loja de atendimento para negociar a divida no valor R${{divida}}, plano numero {{plano}} com sinal R${{sinal}} e o restante do valor divido em {{qtd_parc}} parcelas de R${{val_parc}}.\nOs débitos são oriundos da troca de titularidade {{origem_tt}} e foram reconhecidas através do termo de assunção assinado (Inserir cópia no SAP KM).\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado{{/se}}"
+}

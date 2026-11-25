@@ -1,0 +1,87 @@
+{
+  "id": "afericao",
+  "sf": "sf-afericao",
+  "nome": "Aferição",
+  "categoria": "Medição e Rede",
+  "descricao": "Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "agenda",
+  "botao": "Gerar Texto de AGENDA e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "OBS.: Este serviço é agendado e deve ser contato a partir do terceiro dia útil (cada município tem o dia específico para atendimento que deve ser observado no Book antes da marcação).",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "elementoId": "af_solic",
+      "rotulo": "Solicitante:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo"
+    },
+    {
+      "id": "motivo",
+      "elementoId": "af_motivo",
+      "rotulo": "Motivo:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: Suspeita de avaria / medição incorreta"
+    },
+    {
+      "id": "tel",
+      "elementoId": "af_tel",
+      "rotulo": "Telefone:",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84988887777"
+    },
+    {
+      "id": "horario",
+      "elementoId": "af_horario",
+      "rotulo": "Horário para contato:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 08h às 18h"
+    },
+    {
+      "id": "proc",
+      "elementoId": "af_proc",
+      "rotulo": "Quem procurar:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome de quem atenderá a equipe"
+    },
+    {
+      "id": "ref",
+      "elementoId": "af_ref",
+      "rotulo": "Ponto de Referência:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ponto de referência detalhado"
+    },
+    {
+      "id": "equip",
+      "elementoId": "af_equip",
+      "rotulo": "Equipamento interno ou externo:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "opcoes": ["Interno", "Externo"]
+    },
+    {
+      "id": "email",
+      "elementoId": "af_email",
+      "rotulo": "Possui e-mail:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    }
+  ],
+  "nota": "",
+  "agenda": "Solicitante: {{solic}}\nMotivo: {{motivo}}\nTelefone: {{tel}}\nHorário para contato: {{horario}}\nQuem procurar: {{proc}}\nPonto de Referência: {{ref}}\nEquipamento interno ou externo: {{equip}}\nPossui e-mail: {{email}}\nCliente ciente da possível cobrança de taxa"
+}

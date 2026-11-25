@@ -1,0 +1,71 @@
+{
+  "id": "modificacao-contratual",
+  "sf": "sf-mc",
+  "nome": "Modificação Contratual",
+  "categoria": "Titularidade e Cadastro",
+  "descricao": "Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "botao": "Gerar Texto e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "Texto para Nota de Serviço e Agenda do Contrato",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "elementoId": "mc_solic",
+      "rotulo": "Solicitante:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo do solicitante"
+    },
+    {
+      "id": "motivo",
+      "elementoId": "mc_motivo",
+      "rotulo": "Motivo:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: aumento de carga, mudança de residencial para irrigante..."
+    },
+    {
+      "id": "tel",
+      "elementoId": "mc_tel",
+      "rotulo": "Telefone:",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84988887777"
+    },
+    {
+      "id": "ref",
+      "elementoId": "mc_ref",
+      "rotulo": "Ponto de Referência:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ponto de referência detalhado"
+    },
+    {
+      "id": "proc",
+      "elementoId": "mc_proc",
+      "rotulo": "Quem procurar:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome de quem atenderá a equipe"
+    },
+    {
+      "id": "email",
+      "elementoId": "mc_email",
+      "rotulo": "Possui e-mail:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    }
+  ],
+  "nota": "Solicitante: {{solic}}\nMotivo: {{motivo}}\nTelefone: {{tel}}\nPonto de Referência: {{ref}}\nQuem procurar: {{proc}}\nPossui e-mail: {{email}}",
+  "agenda": "Solicitante: {{solic}}\nMotivo: {{motivo}}\nTelefone: {{tel}}\nPonto de Referência: {{ref}}\nQuem procurar: {{proc}}\nPossui e-mail: {{email}}"
+}

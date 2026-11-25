@@ -89,20 +89,12 @@ export const SERVICOS_EMBUTIDOS = [
     "nome": "Reativação com Análise de Isenção de Débitos"
   },
   {
-    "id": "sf-ri|assuncao",
-    "nome": "Reativação com Assunção de Débitos"
+    "id": "sf-ri",
+    "nome": "Reativação com débitos"
   },
   {
     "id": "sf-reativ-virtual",
     "nome": "Reativação Virtual"
-  },
-  {
-    "id": "sf-ri|virtual_assuncao",
-    "nome": "Reativação Virtual com Assunção de Débitos"
-  },
-  {
-    "id": "sf-ri|virtual_isencao",
-    "nome": "Reativação Virtual com Isenção de Débitos"
   },
   {
     "id": "sf-reclamacao-gd",
@@ -161,20 +153,16 @@ export const SERVICOS_EMBUTIDOS = [
     "nome": "TR DE PARTIDAS"
   },
   {
+    "id": "sf-tt",
+    "nome": "Troca de Titularidade"
+  },
+  {
     "id": "sf-isencao-deb|troca",
     "nome": "Troca de Titularidade com Análise de Isenção de Débitos"
   },
   {
-    "id": "sf-tt|com_assuncao",
-    "nome": "Troca de Titularidade com Assunção de Débitos"
-  },
-  {
     "id": "sf-parc-tt",
     "nome": "Troca de Titularidade com Parcelamento de Débitos"
-  },
-  {
-    "id": "sf-tt|sem_debito",
-    "nome": "Troca de Titularidade sem Débitos"
   },
   {
     "id": "sf-aparelhagem",

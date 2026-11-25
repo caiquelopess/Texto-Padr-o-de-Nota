@@ -441,48 +441,6 @@
     finalizarGeracao('sf-reclamacoes', txt, txt, 'nota');
   }
 
-  function toggleTrocaTitularidade() {
-    setTimeout(atualizarAlertaPade, 0);
-    var tipo = document.getElementById('tt_tipo').value;
-    var isSem = (tipo === 'sem_debito');
-    var isAssuncao = (tipo === 'com_assuncao');
-    var isIsencao = (tipo === 'com_isencao');
-    var hasDebito = (isAssuncao || isIsencao);
-
-    document.getElementById('lbl_tt_solic').innerText = hasDebito ? 'Solicitante: *' : 'Solicitante (titular).: *';
-    document.getElementById('lbl_tt_cpf').innerText = 'CPF/CNPJ: *';
-    document.getElementById('lbl_tt_cca').innerText = hasDebito ? 'CC Antiga: *' : 'CC antiga: *';
-    document.getElementById('lbl_tt_ccn').innerText = hasDebito ? 'CC Nova: *' : 'Nova CC: *';
-    document.getElementById('lbl_tt_ciente_fim').innerText = hasDebito ? 'Cliente ciente fatura período final de: *' : 'Cliente ciente fatura período: *';
-
-    document.getElementById('grp_tt_rep').style.display = isSem ? 'flex' : 'none';
-    document.getElementById('tt_rep').required = isSem;
-    document.getElementById('grp_tt_fat_entregue').style.display = isSem ? 'flex' : 'none';
-
-    document.getElementById('grp_tt_retornar_termo').style.display = isAssuncao ? 'flex' : 'none';
-    document.getElementById('grp_tt_ni').style.display = isIsencao ? 'flex' : 'none';
-    document.getElementById('tt_ni').required = isIsencao;
-
-    ['grp_tt_deb_total', 'grp_tt_deb_solic', 'grp_tt_fat_solic_entregue', 'grp_tt_periodo', 'grp_tt_doc_posse', 'grp_tt_forma_entrega'].forEach(function(id) {
-      document.getElementById(id).style.display = hasDebito ? 'flex' : 'none';
-    });
-
-    document.getElementById('tt_deb_total').required = hasDebito;
-    document.getElementById('tt_deb_solic').required = hasDebito;
-    document.getElementById('tt_periodo').required = hasDebito;
-    document.getElementById('tt_doc_posse').required = hasDebito;
-    document.getElementById('tt_forma_entrega').required = hasDebito;
-  }
-
-
-  function toggleMMGD(selId, neoId) {
-    var sel = document.getElementById(selId);
-    var neo = document.getElementById(neoId);
-    if (!sel || !neo) return;
-    if (sel.value === 'Não') neo.value = 'nao';
-    else if (neo.value === 'nao') neo.value = '';
-  }
-
   function toggleFormaPagRes() {
     var isConta = (document.getElementById('res_forma_pag').value === 'conta');
     document.getElementById('grp_res_conta').style.display = isConta ? 'flex' : 'none';
@@ -505,8 +463,6 @@
   var DATAS_LIVRES = { lp_dt_lig: 1, lp_dt_deslig: 1, refp_dt_deslig: 1, refp_dt_relig: 1, def_fat_venc: 1, bloq_dt_ini: 1, bloq_dt_fim: 1 };
   // Campos "data e horário" (dd/mm/aaaa + hora no mesmo campo): fato já ocorrido
   var DATAS_HORA_PASSADAS = { rde_dt_ini: 1, rde_dt_fim: 1, rod_dt_ini: 1, rod_dt_fim: 1 };
-  // Documentos: 'doc' aceita CPF (11) ou CNPJ (14); 'cpf' só 11 dígitos; 'cnpj' só 14
-  var DOCS = { tt_cpf: 'doc', ri_cpf: 'doc' };
 
   function rotuloDoCampo(inp) {
     var labelEl = inp.previousElementSibling;
@@ -548,15 +504,6 @@
     return { ok: true, texto: doisDig(dia) + '/' + doisDig(mes) + '/' + ano };
   }
 
-  function formatarDoc(digitos, tipo) {
-    if (digitos.length === 11 && tipo !== 'cnpj') {
-      return digitos.slice(0, 3) + '.' + digitos.slice(3, 6) + '.' + digitos.slice(6, 9) + '-' + digitos.slice(9);
-    }
-    if (digitos.length === 14 && tipo !== 'cpf') {
-      return digitos.slice(0, 2) + '.' + digitos.slice(2, 5) + '.' + digitos.slice(5, 8) + '/' + digitos.slice(8, 12) + '-' + digitos.slice(12);
-    }
-    return null;
-  }
 
 
   function padronizarCampos(containerId) {
@@ -574,17 +521,6 @@
         var telFmt = formatarTelefones(valor);
         if (!telFmt) return barrarCampo(inp, 'ATENÇÃO: O telefone do campo "' + lbl + '" deve ter 10 ou 11 dígitos, com DDD. Verifique e tente novamente.');
         inp.value = telFmt;
-        continue;
-      }
-
-      // CPF / CNPJ
-      if (DOCS[id]) {
-        var docFmt = formatarDoc(valor.replace(/\D/g, ''), DOCS[id]);
-        if (!docFmt) {
-          var esperado = DOCS[id] === 'cnpj' ? 'um CNPJ com 14 números' : (DOCS[id] === 'cpf' ? 'um CPF com 11 números' : 'um CPF com 11 números ou um CNPJ com 14 números');
-          return barrarCampo(inp, 'ATENÇÃO: O campo "' + lbl + '" deve conter ' + esperado + '. Verifique e tente novamente.');
-        }
-        inp.value = docFmt;
         continue;
       }
 
@@ -888,147 +824,7 @@
     finalizarGeracao('sf-dd', txt, txt, 'nota');
   }
 
-  function gerarTT() {
-    if (!validarCampos('sf-tt')) return;
-    var tipo = getVal('tt_tipo');
-    var txt = '';
-    if (tipo === 'sem_debito') {
-      txt = 'Solicitante (titular).: ' + getVal('tt_solic') +
-        '\nSe houver, representante legal: ' + getVal('tt_rep') +
-        '\nCPF/CNPJ: ' + getVal('tt_cpf') +
-        '\nTelefone: ' + getVal('tt_tel') +
-        '\nE-mail: ' + getVal('tt_email') +
-        '\nLeitura: ' + getVal('tt_leitura') +
-        '\nCC antiga: ' + getVal('tt_cca') +
-        '\nNova CC: ' + getVal('tt_ccn') +
-        '\nDados da Receita Federal (inserir cópia no SAP KM): ' + getVal('tt_rec') +
-        '\nCliente ciente do faturamento da fatura de período: ' + getVal('tt_ciente_fim') +
-        '\nCritério de fatura final: ' + getVal('tt_crit') +
-        '\nFatura entregue: ' + getVal('tt_fat_entregue') +
-        '\nSe trata de unidade consumidora MMGD Geradora? ' + getVal('tt_mmgd') +
-        '\nNúmero da Tarefa Neo aberta: ' + getVal('tt_neo');
-    } else if (tipo === 'com_assuncao') {
-      txt = 'Solicitante: ' + getVal('tt_solic') +
-        '\nCPF/CNPJ: ' + getVal('tt_cpf') +
-        '\nTelefone com DDD: ' + getVal('tt_tel') +
-        '\nE-mail: ' + getVal('tt_email') +
-        '\nServiço: Troca ' +
-        '\nCC Antiga: ' + getVal('tt_cca') +
-        '\nCC Nova: ' + getVal('tt_ccn') +
-        '\nLeitura: ' + getVal('tt_leitura') +
-        '\nValor do débito total R$: ' + getVal('tt_deb_total') +
-        '\nInformou ao cliente para retornar no dia seguinte para assinar o termo de assunção de débitos: ' + getVal('tt_retornar_termo') +
-        '\nValor do débito responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade): ' + getVal('tt_deb_solic') +
-        '\nFatura de responsabilidade do Solicitante foi entregue: ' + getVal('tt_fat_solic_entregue') +
-        '\nPeríodo (de/até): ' + getVal('tt_periodo') +
-        '\nDocumentação apresentada com comprovação de posse (inserir cópia no SAP KM): ' + getVal('tt_doc_posse') +
-        '\nDados da Receita Federal (inserir cópia no SAP KM): ' + getVal('tt_rec') +
-        '\nCliente ciente do faturamento da fatura de período final de: ' + getVal('tt_ciente_fim') +
-        '\nCritério de fatura final: ' + getVal('tt_crit') +
-        '\nFatura final entregue de que forma: ' + getVal('tt_forma_entrega') +
-        '\nSe trata de unidade consumidora MMGD Geradora? ' + getVal('tt_mmgd') +
-        '\nNúmero da Tarefa Neo aberta: ' + getVal('tt_neo');
-    } else {
-      txt = 'Solicitante: ' + getVal('tt_solic') +
-        '\nCPF/CNPJ: ' + getVal('tt_cpf') +
-        '\nTelefone com DDD: ' + getVal('tt_tel') +
-        '\nE-mail: ' + getVal('tt_email') +
-        '\nServiço: Troca de titularidade' +
-        '\nCC Antiga: ' + getVal('tt_cca') +
-        '\nCC Nova: ' + getVal('tt_ccn') +
-        '\nLeitura: ' + getVal('tt_leitura') +
-        '\nValor do débito total R$: ' + getVal('tt_deb_total') +
-        '\nCaso débito >R$12.000, número da nota interna: ' + getVal('tt_ni') +
-        '\nValor do débito responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade): ' + getVal('tt_deb_solic') +
-        '\nFatura de responsabilidade do Solicitante foi entregue: ' + getVal('tt_fat_solic_entregue') +
-        '\nPeríodo (de/até): ' + getVal('tt_periodo') +
-        '\nDocumentação apresentada com comprovação de posse (inserir cópia no SAP KM) : ' + getVal('tt_doc_posse') +
-        '\nDados da Receita Federal (inserir cópia no SAP KM): ' + getVal('tt_rec') +
-        '\nCliente ciente do faturamento da fatura de período final de: ' + getVal('tt_ciente_fim') +
-        '\nCritério de fatura final: ' + getVal('tt_crit') +
-        '\nFatura final entregue de que forma: ' + getVal('tt_forma_entrega') +
-        '\nSe trata de unidade consumidora MMGD Geradora? ' + getVal('tt_mmgd') +
-        '\nNúmero da Tarefa Neo aberta: ' + getVal('tt_neo');
-    }
-    finalizarGeracao('sf-tt', txt, txt, 'nota');
-  }
 
-  function toggleReativDebitos() {
-    setTimeout(atualizarAlertaPade, 0);
-    var tipo = document.getElementById('ri_tipo').value;
-    var isAssuncao = (tipo === 'assuncao' || tipo === 'virtual_assuncao');
-    var isIsencao = (tipo === 'isencao' || tipo === 'virtual_isencao');
-    var isVirtual = (tipo === 'virtual_assuncao' || tipo === 'virtual_isencao');
-
-    document.getElementById('grp_ri_medidor').style.display = isVirtual ? 'flex' : 'none';
-    document.getElementById('ri_medidor').required = isVirtual;
-
-    document.getElementById('grp_ri_retornar_termo').style.display = isAssuncao ? 'flex' : 'none';
-
-    document.getElementById('grp_ri_ni').style.display = isIsencao ? 'flex' : 'none';
-    document.getElementById('ri_ni').required = isIsencao;
-  }
-
-  function gerarRI() {
-    if (!validarCampos('sf-ri')) return;
-    var tipo = getVal('ri_tipo');
-    var isAssuncao = (tipo === 'assuncao' || tipo === 'virtual_assuncao');
-    var isVirtual = (tipo === 'virtual_assuncao' || tipo === 'virtual_isencao');
-
-    var nota = '';
-    if (isVirtual) {
-      nota = notaReativVirtual(getVal('ri_medidor'), getVal('ri_leitura')) + '  Solic: ' + getVal('ri_solic') + ' Ref: ' + getVal('ri_ref') + ' Tel: ' + getVal('ri_tel') + ' Proc: ' + getVal('ri_proc');
-    } else {
-      nota = 'REATIV Ref ou geolocalização ' + getVal('ri_ref') + ' Tel ' + getVal('ri_tel') + ' Prazo 5 dias úteis Proc ' + getVal('ri_proc');
-    }
-
-    var agenda = '';
-    if (isAssuncao) {
-      agenda = 'Solicitante: ' + getVal('ri_solic') +
-        '\nCPF/CNPJ:' + getVal('ri_cpf') +
-        '\nTelefone com DDD:' + getVal('ri_tel') +
-        '\nE-mail:' + getVal('ri_email') +
-        '\nServiço: Reativação ' +
-        '\nCC Antiga: ' + getVal('ri_cca') +
-        '\nCC Nova:' + getVal('ri_ccn') +
-        '\nLeitura:' + getVal('ri_leitura') +
-        '\nValor do débito total R$:' + getVal('ri_deb_total') +
-        '\nInformou ao cliente para retornar no dia seguinte para assinar o termo de assunção de débitos: ' + getVal('ri_retornar_termo') +
-        '\nValor do débito responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade):' + getVal('ri_deb_solic') +
-        '\nFatura de responsabilidade do Solicitante foi entregue: ' + getVal('ri_fat_entregue') +
-        '\nPeríodo (de/até):' + getVal('ri_periodo') +
-        '\nDocumentação apresentada com comprovação de posse (inserir cópia no SAP KM): ' + getVal('ri_doc_posse') +
-        '\nDados da Receita Federal (inserir cópia no SAP KM): ' + getVal('ri_rec') +
-        '\nCliente ciente do faturamento da fatura de período final de: Não se aplica' +
-        '\nCritério de fatura final: Não se aplica' +
-        '\nFatura final entregue de que forma: Não se aplica' +
-        '\nSe trata de unidade consumidora MMGD Geradora? ' + getVal('ri_mmgd') +
-        '\nNúmero da Tarefa Neo aberta: ' + getVal('ri_neo');
-    } else {
-      agenda = 'Solicitante: ' + getVal('ri_solic') +
-        '\nCPF/CNPJ:' + getVal('ri_cpf') +
-        '\nTelefone com DDD:' + getVal('ri_tel') +
-        '\nE-mail:' + getVal('ri_email') +
-        '\nServiço: Reativação' +
-        '\nCC Antiga:' + getVal('ri_cca') +
-        '\nCC Nova:' + getVal('ri_ccn') +
-        '\nLeitura:' + getVal('ri_leitura') +
-        '\nValor do débito total R$:' + getVal('ri_deb_total') +
-        '\nCaso débito >R$12.000, número da nota interna:' + getVal('ri_ni') +
-        '\nValor do débito responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade):' + getVal('ri_deb_solic') +
-        '\nFatura de responsabilidade do Solicitante foi entregue: ' + getVal('ri_fat_entregue') +
-        '\nPeríodo (de/até):' + getVal('ri_periodo') +
-        '\nDocumentação apresentada com comprovação de posse (inserir cópia no SAP KM) : ' + getVal('ri_doc_posse') +
-        '\nDados da Receita Federal (inserir cópia no SAP KM): ' + getVal('ri_rec') +
-        '\nCliente ciente do faturamento da fatura de período final de: Não se aplica' +
-        '\nCritério de fatura final: não se aplica' +
-        '\nFatura final entregue de que forma: não se aplica' +
-        '\nSe trata de unidade consumidora MMGD Geradora? ' + getVal('ri_mmgd') +
-        '\nNúmero da Tarefa Neo aberta: ' + getVal('ri_neo');
-    }
-
-    finalizarGeracao('sf-ri', nota, agenda, 'nota');
-  }
 
 
   function gerarRES() {
@@ -1255,8 +1051,6 @@
     if (containerId === 'sf-reativ-comum') { document.getElementById('rtc_tipo_lig').value = 'MONO'; document.getElementById('rtc_rec').value = 'regular'; }
     if (containerId === 'sf-reativ-virtual') { document.getElementById('rtv_fase').value = 'MONO'; document.getElementById('rtv_rec').value = 'regular'; }
     if (containerId === 'sf-dd') { document.getElementById('dd_vinculo').value = 'Titular'; document.getElementById('dd_crit').value = 'media'; document.getElementById('dd_entregue').value = 'Sim'; }
-    if (containerId === 'sf-tt') { document.getElementById('tt_tipo').value = 'sem_debito'; document.getElementById('tt_mmgd').value = 'Não'; toggleTrocaTitularidade(); }
-    if (containerId === 'sf-ri') { document.getElementById('ri_tipo').value = 'assuncao'; document.getElementById('ri_mmgd').value = 'Não'; toggleMMGD('ri_mmgd', 'ri_neo'); toggleReativDebitos(); }
     if (containerId === 'sf-res') { document.getElementById('res_forma_pag').value = 'conta'; toggleFormaPagRes(); }
     
     var subA = subtipoAtivo[containerId];
@@ -1271,7 +1065,6 @@
   // Inicializa os módulos na abertura
   toggleReclamacoes();
   toggleReclamacaoGD();
-  toggleReativDebitos();
 
   function normalizarTxt(t){ return (t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
   // Busca por sugestoes: digitar NAO filtra os botoes da lista. Os servicos

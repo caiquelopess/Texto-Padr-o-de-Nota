@@ -29,7 +29,7 @@
       var el = document.getElementById(mdElemento(m, c));
       if (!el) return;
       var grupo = el.closest('.field-group');
-      grupo.style.display = visiveis[c.id] ? '' : 'none';
+      grupo.style.display = visiveis[c.id] && !c.oculto ? '' : 'none';
       // rótulo que muda conforme outro campo (ex.: PJ pede o representante legal)
       if (c.rotuloSe) grupo.querySelector('label').textContent = mdRotulo(c, valores) + (c.obrigatorio ? ' *' : '');
     });
@@ -39,6 +39,21 @@
       if (!a || typeof a !== 'object' || !a.mostrarSe) return;
       var el = form && form.querySelector('[data-aviso="' + i + '"]');
       if (el) el.style.display = [].concat(a.mostrarSe.igual).indexOf(String(valores[a.mostrarSe.campo] || '')) >= 0 ? 'block' : 'none';
+    });
+  }
+
+  // "Preencher se": quando o campo de origem muda para o valor indicado, o campo recebe
+  // um valor pronto (ex.: MMGD "Não" → Tarefa Neo "nao"); se muda para outro, o valor
+  // automático sai (o que o atendente digitou fica).
+  function mdPreencherAuto(m, origem) {
+    var valores = mdValores(m);
+    (m.campos || []).forEach(function(c) {
+      var r = c.preencherSe;
+      if (!r || (origem && r.campo !== origem)) return;
+      var el = document.getElementById(mdElemento(m, c));
+      if (!el) return;
+      if ([].concat(r.igual).indexOf(String(valores[r.campo] || '')) >= 0) el.value = r.valor;
+      else if (el.value === r.valor) el.value = '';
     });
   }
 
@@ -60,7 +75,7 @@
 
   function mdCriarCampo(m, c) {
     var grupo = document.createElement('div');
-    grupo.className = 'field-group' + (c.largo || c.tipo === 'textoLongo' || c.tipo === 'opcao' ? ' full-width' : '');
+    grupo.className = 'field-group' + (c.largo !== false && (c.largo || c.tipo === 'textoLongo' || c.tipo === 'opcao') ? ' full-width' : '');
     var id = mdElemento(m, c);
     var rot = document.createElement('label');
     rot.setAttribute('for', id);
@@ -70,7 +85,7 @@
     if (c.tipo === 'opcao') {
       el = document.createElement('select');
       c.opcoes.forEach(function(o, i) { var op = document.createElement('option'); op.value = o; op.textContent = (c.rotulosOpcoes && c.rotulosOpcoes[i]) || o; el.appendChild(op); });
-      el.addEventListener('change', function() { mdAtualizarVisiveis(m); });
+      el.addEventListener('change', function() { mdPreencherAuto(m, c.id); mdAtualizarVisiveis(m); });
     } else if (c.tipo === 'textoLongo') {
       el = document.createElement('textarea');
       el.rows = 3;
@@ -96,8 +111,7 @@
     var sf = mdSf(m);
     var antigo = document.getElementById(sf);
     if (antigo) antigo.remove();
-    var botaoAntigo = document.querySelector('#service_nav .sub-btn[data-modelo="' + m.id + '"]');
-    if (botaoAntigo) botaoAntigo.remove();
+    document.querySelectorAll('#service_nav .sub-btn[data-modelo="' + m.id + '"]').forEach(function(b) { b.remove(); });
 
     var form = document.createElement('div');
     form.className = 'subform';
@@ -143,13 +157,10 @@
     ref.parentNode.insertBefore(form, ref.nextSibling);
     mdAtualizarVisiveis(m);
 
-    // botão na lista de serviços, na categoria do modelo
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'sub-btn';
-    btn.setAttribute('data-modelo', m.id);
-    btn.setAttribute('data-click', "trocarAba('" + sf + "', this)");
-    btn.textContent = m.nome;
+    // botão na lista de serviços, na categoria do modelo (um por subtipo, quando houver)
+    var botoes = m.subtipos
+      ? m.subtipos.botoes.map(function(b) { return { alvo: sf + '|' + b.valor, nome: b.nome }; })
+      : [{ alvo: sf, nome: m.nome }];
     var grupo = null;
     document.querySelectorAll('#service_nav .svc-grupo').forEach(function(g) {
       if (g.querySelector('.svc-grupo-titulo').textContent === m.categoria) grupo = g;
@@ -163,7 +174,15 @@
       grupo.appendChild(tit);
       document.getElementById('service_nav').appendChild(grupo);
     }
-    grupo.appendChild(btn);
+    botoes.forEach(function(b) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'sub-btn';
+      btn.setAttribute('data-modelo', m.id);
+      btn.setAttribute('data-click', "trocarAba('" + b.alvo + "', this)");
+      btn.textContent = b.nome;
+      grupo.appendChild(btn);
+    });
     modelosMontados[m.id] = m;
   }
 
@@ -182,7 +201,7 @@
     Object.keys(modelosMontados).forEach(function(id) {
       if (novos[id]) return;
       var f = document.getElementById(mdSf(modelosMontados[id])); if (f) f.remove();
-      var b = document.querySelector('#service_nav .sub-btn[data-modelo="' + id + '"]'); if (b) b.remove();
+      document.querySelectorAll('#service_nav .sub-btn[data-modelo="' + id + '"]').forEach(function(b) { b.remove(); });
       delete modelosMontados[id];
     });
     if (typeof aplicarAtendimentoAtual === 'function') aplicarAtendimentoAtual();
@@ -222,6 +241,25 @@
       var m = modelosMontados[id];
       if (mdSf(m) !== containerId) return;
       document.querySelectorAll('#' + containerId + ' select').forEach(function(sel) { sel.selectedIndex = 0; });
+      (m.campos || []).forEach(function(c) {
+        if (c.preencherSe && c.preencherSe.aoLimpar) mdPreencherAuto(m, c.preencherSe.campo);
+      });
+      mdAtualizarVisiveis(m);
+    });
+  };
+
+  // Botão de subtipo (ex.: 'sf-tt|com_assuncao'): escolhe o valor no campo do subtipo.
+  // Chamado ao abrir o botão, ao limpar e ao retomar uma pendência.
+  var aplicarSubtipoBase = aplicarSubtipo;
+  aplicarSubtipo = function(sf, sub) {
+    aplicarSubtipoBase(sf, sub);
+    Object.keys(modelosMontados).forEach(function(id) {
+      var m = modelosMontados[id];
+      if (mdSf(m) !== sf || !m.subtipos || !sub) return;
+      var c = (m.campos || []).filter(function(x) { return x.id === m.subtipos.campo; })[0];
+      var el = c && document.getElementById(mdElemento(m, c));
+      if (!el || c.opcoes.indexOf(sub) < 0) return;
+      el.value = sub;
       mdAtualizarVisiveis(m);
     });
   };

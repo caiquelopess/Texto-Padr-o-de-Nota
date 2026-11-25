@@ -77,18 +77,13 @@
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-muc', this)">Ligação MUC</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reativ-comum', this)">Reativação</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reativ-virtual', this)">Reativação Virtual</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-ri|assuncao', this)">Reativação com Assunção de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-deb|reativacao', this)">Reativação com Análise de Isenção de Débitos</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-ri|virtual_assuncao', this)">Reativação Virtual com Assunção de Débitos</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-ri|virtual_isencao', this)">Reativação Virtual com Isenção de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reclamacao-gd', this)">Reclamação GD</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reclamacoes', this)">Reclamações</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-danos-eletricos', this)">Ressarcimento de Danos Elétricos — Abertura de Nota</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-rde-doc', this)">Ressarcimento de Danos Elétricos — Recebimento de Documentação (laudos e orçamentos)</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-outros-danos', this)">Ressarcimento de Danos Não Elétricos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-res', this)">Restituição de valores</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-tt|sem_debito', this)">Troca de Titularidade sem Débitos</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-tt|com_assuncao', this)">Troca de Titularidade com Assunção de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-deb|troca', this)">Troca de Titularidade com Análise de Isenção de Débitos</button>
       </div>
     </div>
@@ -565,110 +560,8 @@
     </div>
 
     <!-- 4. TROCA DE TITULARIDADE -->
-    <div class="subform" id="sf-tt">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box alerta-pade" id="pade_tt" style="display: none;"><b>Atenção:</b> Em caso de reconhecimento de débito o Termo deve ser anexado como PADE no KM já assinado pelo cliente.</div>
-      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
-      <div class="alert-box">OBS.: Nos casos de representante legal ou solicitante, deverá criar relações no PN em Outros Campos.</div>
-      <div class="form-grid">
-        <div class="field-group full-width" style="display: none;">
-          <label>Tipo de Troca *</label>
-          <select id="tt_tipo" data-change="toggleTrocaTitularidade()">
-            <option value="sem_debito">TROCA DE TITULARIDADE SEM DÉBITOS</option>
-            <option value="com_assuncao">TITULARIDADE COM ASSUNÇÃO DE DÉBITOS (RECONHECIMENTO DE DÉBITOS)</option>
-            <option value="com_isencao">TROCA DE TITULARIDADE COM ISENÇÃO DE DÉBITOS</option>
-          </select>
-        </div>
-        <div class="field-group"><label id="lbl_tt_solic">Solicitante (titular).: *</label><input type="text" id="tt_solic" placeholder="Nome completo" required></div>
-        <div class="field-group" id="grp_tt_rep"><label>Representante legal: *</label><input type="text" id="tt_rep" placeholder="Nome do representante ou Não informado" required></div>
-        <div class="field-group"><label id="lbl_tt_cpf">CPF/CNPJ: *</label><input type="text" id="tt_cpf" placeholder="000.000.000-00 ou CNPJ" required></div>
-        <div class="field-group"><label>Telefone com DDD: *</label><input type="text" id="tt_tel" placeholder="Ex: 84988887777" required></div>
-        <div class="field-group"><label>E-mail: *</label><input type="text" id="tt_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Leitura: *</label><input type="text" id="tt_leitura" placeholder="Ex: 1234 ou Sem leitura" required></div>
-        <div class="field-group"><label id="lbl_tt_cca">CC antiga: *</label><input type="text" id="tt_cca" placeholder="Conta contrato antiga" required></div>
-        <div class="field-group"><label id="lbl_tt_ccn">Nova CC: *</label><input type="text" id="tt_ccn" placeholder="Conta contrato nova ou A gerar" required></div>
-        <div class="field-group" id="grp_tt_deb_total" style="display: none;"><label>Valor do débito total R$: *</label><input type="text" id="tt_deb_total" placeholder="Ex: 1500,00"></div>
-        <div class="field-group" id="grp_tt_retornar_termo" style="display: none;">
-          <label>Informou ao cliente p/ retornar no dia seguinte p/ assinar termo de assunção: *</label>
-          <select id="tt_retornar_termo">
-            <option value="Sim">Sim</option>
-            <option value="Não">Não</option>
-          </select>
-        </div>
-        <div class="field-group" id="grp_tt_ni" style="display: none;"><label>Nota interna (>R$12.000): *</label><input type="text" id="tt_ni" placeholder="Número da NI ou Não se aplica"></div>
-        <div class="field-group full-width" id="grp_tt_deb_solic" style="display: none;"><label>Valor do débito responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade): *</label><input type="text" id="tt_deb_solic" placeholder="Valor ou Não possui"></div>
-        <div class="field-group" id="grp_tt_fat_solic_entregue" style="display: none;"><label>Fatura de responsabilidade do Solicitante foi entregue: *</label><select id="tt_fat_solic_entregue"><option value="sim">sim</option><option value="não">não</option></select></div>
-        <div class="field-group" id="grp_tt_periodo" style="display: none;"><label>Período (de/até): *</label><input type="text" id="tt_periodo" placeholder="Ex: 01/2026 até 05/2026"></div>
-        <div class="field-group full-width" id="grp_tt_doc_posse" style="display: none;"><label>Documentação apresentada com comprovação de posse (SAP KM): *</label><input type="text" id="tt_doc_posse" placeholder="Ex: Contrato de locação, Compra e Venda, matrícula..."></div>
-        <div class="field-group">
-          <label>Dados da Receita Federal (inserir cópia no SAP KM): *</label>
-          <select id="tt_rec">
-            <option value="regular">regular</option>
-            <option value="pendente de regularização">pendente de regularização</option>
-            <option value="indisponível">indisponível</option>
-          </select>
-        </div>
-        <div class="field-group"><label id="lbl_tt_ciente_fim">Cliente ciente fatura período: *</label><input type="text" id="tt_ciente_fim" placeholder="Ex: Sim" required></div>
-        <div class="field-group"><label>Critério fatura final: *</label><select id="tt_crit"><option value="Faturado por média">Faturado por média</option><option value="fornecida pelo cliente">fornecida pelo cliente</option></select></div>
-        <div class="field-group" id="grp_tt_fat_entregue"><label>Fatura entregue: *</label><select id="tt_fat_entregue"><option value="Sim">Sim</option><option value="Não">Não</option></select></div>
-        <div class="field-group" id="grp_tt_forma_entrega" style="display: none;"><label>Fatura final entregue de que forma: *</label><input type="text" id="tt_forma_entrega" placeholder="Ex: Em mãos / E-mail"></div>
-        <div class="field-group"><label>MMGD Geradora? *</label><select id="tt_mmgd" data-change="toggleMMGD('tt_mmgd', 'tt_neo')"><option value="Não">Não</option><option value="Sim">Sim</option></select></div>
-        <div class="field-group"><label>Número Tarefa Neo: *</label><input type="text" id="tt_neo" placeholder="sim ou nao / número da tarefa" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarTT()">Gerar Texto e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-tt')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 5. REATIVAÇÃO - DÉBITOS -->
-    <div class="subform" id="sf-ri">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box alerta-pade" id="pade_ri"><b>Atenção:</b> Em caso de reconhecimento de débito o Termo deve ser anexado como PADE no KM já assinado pelo cliente.</div>
-      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
-      <div class="form-grid">
-        <div class="field-group full-width" style="display: none;">
-          <label>Tipo de Reativação *</label>
-          <select id="ri_tipo" data-change="toggleReativDebitos()">
-            <option value="assuncao">REATIVAÇÃO COM ASSUNÇÃO DE DÉBITOS (RECONHECIMENTO DE DÉBITOS)</option>
-            <option value="isencao">REATIVAÇÃO COM ISENÇÃO DE DÉBITOS</option>
-            <option value="virtual_assuncao">REATIVAÇÃO VIRTUAL COM ASSUNÇÃO DE DÉBITOS (RECONHECIMENTO DE DÉBITOS)</option>
-            <option value="virtual_isencao">REATIVAÇÃO VIRTUAL COM ISENÇÃO DE DÉBITOS</option>
-          </select>
-        </div>
-        <div class="field-group"><label>Solicitante: *</label><input type="text" id="ri_solic" placeholder="Nome completo" required></div>
-        <div class="field-group"><label>CPF/CNPJ: *</label><input type="text" id="ri_cpf" placeholder="000.000.000-00 ou CNPJ" required></div>
-        <div class="field-group full-width"><label>Ref ou geolocalização (Ref p/ Nota): *</label><input type="text" id="ri_ref" placeholder="Ponto de referência detalhado ou geolocalização" required></div>
-        <div class="field-group"><label>Telefone com DDD: *</label><input type="text" id="ri_tel" placeholder="Ex: 84988887777" required></div>
-        <div class="field-group"><label>E-mail: *</label><input type="text" id="ri_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>CC Antiga: *</label><input type="text" id="ri_cca" placeholder="Conta contrato antiga" required></div>
-        <div class="field-group"><label>CC Nova: *</label><input type="text" id="ri_ccn" placeholder="Conta contrato nova ou A gerar" required></div>
-        <div class="field-group" id="grp_ri_medidor" style="display: none;"><label>Número Medidor em Campo: *</label><input type="text" id="ri_medidor" placeholder="Ex: 12345678"></div>
-        <div class="field-group"><label>Leitura: *</label><input type="text" id="ri_leitura" placeholder="Ex: 1234 ou Sem leitura" required></div>
-        <div class="field-group"><label>Valor do débito total R$: *</label><input type="text" id="ri_deb_total" placeholder="Ex: 1500,00" required></div>
-        <div class="field-group" id="grp_ri_retornar_termo">
-          <label>Informou ao cliente p/ retornar no dia seguinte p/ assinar termo de assunção: *</label>
-          <select id="ri_retornar_termo">
-            <option value="Sim">Sim</option>
-            <option value="Não">Não</option>
-          </select>
-        </div>
-        <div class="field-group" id="grp_ri_ni" style="display: none;"><label>Caso débito >R$12.000, número da nota interna: *</label><input type="text" id="ri_ni" placeholder="Número da NI ou Não se aplica"></div>
-        <div class="field-group full-width"><label>Valor do débito responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade): *</label><input type="text" id="ri_deb_solic" placeholder="Valor ou Não possui" required></div>
-        <div class="field-group"><label>Fatura de responsabilidade do Solicitante foi entregue: *</label><select id="ri_fat_entregue"><option value="sim">sim</option><option value="não">não</option></select></div>
-        <div class="field-group"><label>Período (de/até): *</label><input type="text" id="ri_periodo" placeholder="Ex: 01/2026 até 05/2026" required></div>
-        <div class="field-group full-width"><label>Documentação apresentada com comprovação de posse (inserir cópia no SAP KM): *</label><input type="text" id="ri_doc_posse" placeholder="Ex: Contrato de locação, Contrato de Compra e Venda, matrícula do imóvel..." required></div>
-        <div class="field-group">
-          <label>Dados da Receita Federal (inserir cópia no SAP KM): *</label>
-          <select id="ri_rec">
-            <option value="regular">regular</option>
-            <option value="pendente de regularização">pendente de regularização</option>
-            <option value="indisponível">indisponível</option>
-          </select>
-        </div>
-        <div class="field-group"><label>Se trata de unidade consumidora MMGD Geradora? *</label><select id="ri_mmgd" data-change="toggleMMGD('ri_mmgd', 'ri_neo')"><option value="Não">Não</option><option value="Sim">Sim</option></select></div>
-        <div class="field-group"><label>Número da Tarefa Neo aberta: *</label><input type="text" id="ri_neo" placeholder="sim ou nao / número da tarefa" required></div>
-        <div class="field-group"><label>Quem procurar (Proc p/ Nota): *</label><input type="text" id="ri_proc" placeholder="Nome de quem atenderá a equipe técnica" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarRI()">Gerar Texto (Agenda e Nota) e Copiar NOTA</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-ri')">Limpar Tudo</button></div>
-    </div>
 
 
     <!-- 7. RESTITUIÇÃO DE VALORES -->

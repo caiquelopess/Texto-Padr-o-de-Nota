@@ -1,0 +1,251 @@
+{
+  "id": "reativacao-debitos",
+  "sf": "sf-ri",
+  "nome": "Reativação com débitos",
+  "categoria": "Ligação e Reativação",
+  "descricao": "Migrado do código (lote 5 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "botao": "Gerar Texto (Agenda e Nota) e Copiar NOTA",
+  "subtipos": {
+    "campo": "tipo",
+    "botoes": [
+      {
+        "valor": "assuncao",
+        "nome": "Reativação com Assunção de Débitos"
+      },
+      {
+        "valor": "virtual_assuncao",
+        "nome": "Reativação Virtual com Assunção de Débitos"
+      },
+      {
+        "valor": "virtual_isencao",
+        "nome": "Reativação Virtual com Isenção de Débitos"
+      }
+    ]
+  },
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "<b>Atenção:</b> Em caso de reconhecimento de débito o Termo deve ser anexado como PADE no KM já assinado pelo cliente.",
+      "id": "pade_ri",
+      "classeOriginal": "alert-box alerta-pade",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": ["assuncao", "virtual_assuncao"]
+      }
+    },
+    {
+      "html": "<b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.",
+      "classeOriginal": "alert-box alerta-cnpj"
+    }
+  ],
+  "campos": [
+    {
+      "id": "tipo",
+      "elementoId": "ri_tipo",
+      "rotulo": "Tipo de Reativação",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "oculto": true,
+      "largo": true,
+      "opcoes": ["assuncao", "isencao", "virtual_assuncao", "virtual_isencao"],
+      "rotulosOpcoes": [
+        "REATIVAÇÃO COM ASSUNÇÃO DE DÉBITOS (RECONHECIMENTO DE DÉBITOS)",
+        "REATIVAÇÃO COM ISENÇÃO DE DÉBITOS",
+        "REATIVAÇÃO VIRTUAL COM ASSUNÇÃO DE DÉBITOS (RECONHECIMENTO DE DÉBITOS)",
+        "REATIVAÇÃO VIRTUAL COM ISENÇÃO DE DÉBITOS"
+      ]
+    },
+    {
+      "id": "solic",
+      "elementoId": "ri_solic",
+      "rotulo": "Solicitante:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo"
+    },
+    {
+      "id": "cpf",
+      "elementoId": "ri_cpf",
+      "rotulo": "CPF/CNPJ:",
+      "tipo": "documento",
+      "documento": "doc",
+      "obrigatorio": true,
+      "dica": "000.000.000-00 ou CNPJ"
+    },
+    {
+      "id": "ref",
+      "elementoId": "ri_ref",
+      "rotulo": "Ref ou geolocalização (Ref p/ Nota):",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ponto de referência detalhado ou geolocalização"
+    },
+    {
+      "id": "tel",
+      "elementoId": "ri_tel",
+      "rotulo": "Telefone com DDD:",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84988887777"
+    },
+    {
+      "id": "email",
+      "elementoId": "ri_email",
+      "rotulo": "E-mail:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "cca",
+      "elementoId": "ri_cca",
+      "rotulo": "CC Antiga:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Conta contrato antiga"
+    },
+    {
+      "id": "ccn",
+      "elementoId": "ri_ccn",
+      "rotulo": "CC Nova:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Conta contrato nova ou A gerar"
+    },
+    {
+      "id": "medidor",
+      "elementoId": "ri_medidor",
+      "rotulo": "Número Medidor em Campo:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 12345678",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": ["virtual_assuncao", "virtual_isencao"]
+      }
+    },
+    {
+      "id": "leitura",
+      "elementoId": "ri_leitura",
+      "rotulo": "Leitura:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 1234 ou Sem leitura"
+    },
+    {
+      "id": "deb_total",
+      "elementoId": "ri_deb_total",
+      "rotulo": "Valor do débito total R$:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 1500,00"
+    },
+    {
+      "id": "retornar_termo",
+      "elementoId": "ri_retornar_termo",
+      "rotulo": "Informou ao cliente p/ retornar no dia seguinte p/ assinar termo de assunção:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["Sim", "Não"],
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": ["assuncao", "virtual_assuncao"]
+      }
+    },
+    {
+      "id": "ni",
+      "elementoId": "ri_ni",
+      "rotulo": "Caso débito >R$12.000, número da nota interna:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Número da NI ou Não se aplica",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": ["isencao", "virtual_isencao"]
+      }
+    },
+    {
+      "id": "deb_solic",
+      "elementoId": "ri_deb_solic",
+      "rotulo": "Valor do débito responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade):",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Valor ou Não possui"
+    },
+    {
+      "id": "fat_entregue",
+      "elementoId": "ri_fat_entregue",
+      "rotulo": "Fatura de responsabilidade do Solicitante foi entregue:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["sim", "não"]
+    },
+    {
+      "id": "periodo",
+      "elementoId": "ri_periodo",
+      "rotulo": "Período (de/até):",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 01/2026 até 05/2026"
+    },
+    {
+      "id": "doc_posse",
+      "elementoId": "ri_doc_posse",
+      "rotulo": "Documentação apresentada com comprovação de posse (inserir cópia no SAP KM):",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ex: Contrato de locação, Contrato de Compra e Venda, matrícula do imóvel..."
+    },
+    {
+      "id": "rec",
+      "elementoId": "ri_rec",
+      "rotulo": "Dados da Receita Federal (inserir cópia no SAP KM):",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["regular", "pendente de regularização", "indisponível"]
+    },
+    {
+      "id": "mmgd",
+      "elementoId": "ri_mmgd",
+      "rotulo": "Se trata de unidade consumidora MMGD Geradora?",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["Não", "Sim"]
+    },
+    {
+      "id": "neo",
+      "elementoId": "ri_neo",
+      "rotulo": "Número da Tarefa Neo aberta:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "sim ou nao / número da tarefa",
+      "preencherSe": {
+        "campo": "mmgd",
+        "igual": "Não",
+        "valor": "nao",
+        "aoLimpar": true
+      }
+    },
+    {
+      "id": "proc",
+      "elementoId": "ri_proc",
+      "rotulo": "Quem procurar (Proc p/ Nota):",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome de quem atenderá a equipe técnica"
+    }
+  ],
+  "nota": "{{#se tipo=assuncao}}REATIV Ref ou geolocalização {{ref}} Tel {{tel}} Prazo 5 dias úteis Proc {{proc}}{{/se}}{{#se tipo=isencao}}REATIV Ref ou geolocalização {{ref}} Tel {{tel}} Prazo 5 dias úteis Proc {{proc}}{{/se}}{{#se tipo=virtual_assuncao}}TRATA-SE DE REATIVAÇÃO VIRTUAL MEDIDOR EM CAMPO N° {{medidor}} / LEITURA {{leitura}}  Solic: {{solic}} Ref: {{ref}} Tel: {{tel}} Proc: {{proc}}{{/se}}{{#se tipo=virtual_isencao}}TRATA-SE DE REATIVAÇÃO VIRTUAL MEDIDOR EM CAMPO N° {{medidor}} / LEITURA {{leitura}}  Solic: {{solic}} Ref: {{ref}} Tel: {{tel}} Proc: {{proc}}{{/se}}",
+  "agenda": "{{#se tipo=assuncao}}Solicitante: {{solic}}\nCPF/CNPJ:{{cpf}}\nTelefone com DDD:{{tel}}\nE-mail:{{email}}\nServiço: Reativação \nCC Antiga: {{cca}}\nCC Nova:{{ccn}}\nLeitura:{{leitura}}\nValor do débito total R$:{{deb_total}}\nInformou ao cliente para retornar no dia seguinte para assinar o termo de assunção de débitos: {{retornar_termo}}\nValor do débito responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade):{{deb_solic}}\nFatura de responsabilidade do Solicitante foi entregue: {{fat_entregue}}\nPeríodo (de/até):{{periodo}}\nDocumentação apresentada com comprovação de posse (inserir cópia no SAP KM): {{doc_posse}}\nDados da Receita Federal (inserir cópia no SAP KM): {{rec}}\nCliente ciente do faturamento da fatura de período final de: Não se aplica\nCritério de fatura final: Não se aplica\nFatura final entregue de que forma: Não se aplica\nSe trata de unidade consumidora MMGD Geradora? {{mmgd}}\nNúmero da Tarefa Neo aberta: {{neo}}{{/se}}{{#se tipo=isencao}}Solicitante: {{solic}}\nCPF/CNPJ:{{cpf}}\nTelefone com DDD:{{tel}}\nE-mail:{{email}}\nServiço: Reativação\nCC Antiga:{{cca}}\nCC Nova:{{ccn}}\nLeitura:{{leitura}}\nValor do débito total R$:{{deb_total}}\nCaso débito >R$12.000, número da nota interna:{{ni}}\nValor do débito responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade):{{deb_solic}}\nFatura de responsabilidade do Solicitante foi entregue: {{fat_entregue}}\nPeríodo (de/até):{{periodo}}\nDocumentação apresentada com comprovação de posse (inserir cópia no SAP KM) : {{doc_posse}}\nDados da Receita Federal (inserir cópia no SAP KM): {{rec}}\nCliente ciente do faturamento da fatura de período final de: Não se aplica\nCritério de fatura final: não se aplica\nFatura final entregue de que forma: não se aplica\nSe trata de unidade consumidora MMGD Geradora? {{mmgd}}\nNúmero da Tarefa Neo aberta: {{neo}}{{/se}}{{#se tipo=virtual_assuncao}}Solicitante: {{solic}}\nCPF/CNPJ:{{cpf}}\nTelefone com DDD:{{tel}}\nE-mail:{{email}}\nServiço: Reativação \nCC Antiga: {{cca}}\nCC Nova:{{ccn}}\nLeitura:{{leitura}}\nValor do débito total R$:{{deb_total}}\nInformou ao cliente para retornar no dia seguinte para assinar o termo de assunção de débitos: {{retornar_termo}}\nValor do débito responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade):{{deb_solic}}\nFatura de responsabilidade do Solicitante foi entregue: {{fat_entregue}}\nPeríodo (de/até):{{periodo}}\nDocumentação apresentada com comprovação de posse (inserir cópia no SAP KM): {{doc_posse}}\nDados da Receita Federal (inserir cópia no SAP KM): {{rec}}\nCliente ciente do faturamento da fatura de período final de: Não se aplica\nCritério de fatura final: Não se aplica\nFatura final entregue de que forma: Não se aplica\nSe trata de unidade consumidora MMGD Geradora? {{mmgd}}\nNúmero da Tarefa Neo aberta: {{neo}}{{/se}}{{#se tipo=virtual_isencao}}Solicitante: {{solic}}\nCPF/CNPJ:{{cpf}}\nTelefone com DDD:{{tel}}\nE-mail:{{email}}\nServiço: Reativação\nCC Antiga:{{cca}}\nCC Nova:{{ccn}}\nLeitura:{{leitura}}\nValor do débito total R$:{{deb_total}}\nCaso débito >R$12.000, número da nota interna:{{ni}}\nValor do débito responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade):{{deb_solic}}\nFatura de responsabilidade do Solicitante foi entregue: {{fat_entregue}}\nPeríodo (de/até):{{periodo}}\nDocumentação apresentada com comprovação de posse (inserir cópia no SAP KM) : {{doc_posse}}\nDados da Receita Federal (inserir cópia no SAP KM): {{rec}}\nCliente ciente do faturamento da fatura de período final de: Não se aplica\nCritério de fatura final: não se aplica\nFatura final entregue de que forma: não se aplica\nSe trata de unidade consumidora MMGD Geradora? {{mmgd}}\nNúmero da Tarefa Neo aberta: {{neo}}{{/se}}"
+}

@@ -1,49 +1,10 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { MD_TIPOS, mdCamposVisiveis, mdGerar, mdTestarModelo, mdValidarModelo, mdValidarValores } from '../../src/nucleo/modelos.mjs';
 
-// Atualização Cadastral escrita como dados (mesmo texto do serviço atual).
-const atualizacao = {
-  id: 'atualizacao-cadastral',
-  nome: 'Atualização Cadastral',
-  categoria: 'Titularidade e Cadastro',
-  campos: [
-    { id: 'motivo', rotulo: 'Motivo', tipo: 'opcao', obrigatorio: true, opcoes: ['Erro de Endereço', 'Unificar PN', 'Correção de Nome'] },
-    { id: 'pns', rotulo: 'PNs', tipo: 'texto', obrigatorio: true, mostrarSe: { campo: 'motivo', igual: 'Unificar PN' } },
-    { id: 'nome', rotulo: 'Nome', tipo: 'texto', obrigatorio: true },
-    { id: 'tel', rotulo: 'Telefone', tipo: 'telefone', obrigatorio: true },
-    { id: 'email', rotulo: 'E-mail', tipo: 'email', obrigatorio: true },
-    { id: 'rg', rotulo: 'RG', tipo: 'texto' },
-    { id: 'cnh', rotulo: 'CNH', tipo: 'texto' },
-    { id: 'idp', rotulo: 'ID (identificação profissional)', tipo: 'texto' },
-  ],
-  nota: [
-    'Gentileza Atualizar Cadastro',
-    'Motivo: {{motivo}}',
-    '{{#se motivo=Unificar PN}}',
-    'PNs: {{pns}}',
-    '{{/se}}',
-    '{{#se nome}}',
-    'Nome: {{nome}}',
-    '{{/se}}',
-    '{{#se tel}}',
-    'Telefone: {{tel}}',
-    '{{/se}}',
-    '{{#se email}}',
-    'E-mail: {{email}}',
-    '{{/se}}',
-    '{{#se rg}}',
-    'RG: {{rg}}',
-    '{{/se}}',
-    '{{#se cnh}}',
-    'CNH: {{cnh}}',
-    '{{/se}}',
-    '{{#se idp}}',
-    'ID (identificação profissional): {{idp}}',
-    '{{/se}}',
-  ].join('\n'),
-  agenda: '',
-};
+// O modelo de Atualização Cadastral que vai embutido no site (src/modelos).
+const atualizacao = JSON.parse(readFileSync(new URL('../../src/modelos/atualizacao-cadastral.json', import.meta.url), 'utf8'));
 
 test('equivalência: Atualização Cadastral igual ao texto oficial atual', () => {
   const v = { motivo: 'Erro de Endereço', nome: 'Maria Teste', tel: '71993501519', email: 'maria@email.com', rg: '1234567', cnh: '', idp: '' };

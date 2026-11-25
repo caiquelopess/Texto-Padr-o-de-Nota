@@ -13,6 +13,10 @@ export const SERVICOS_EMBUTIDOS = [
     "nome": "Bloqueio de Cobrança"
   },
   {
+    "id": "sf-bpc",
+    "nome": "BPC/LOAS"
+  },
+  {
     "id": "sf-isencao-icms",
     "nome": "Cadastro de Parceiro - Isenção ICMS"
   },
@@ -53,12 +57,12 @@ export const SERVICOS_EMBUTIDOS = [
     "nome": "Isenção de Débitos"
   },
   {
-    "id": "sf-ligacao-nova",
-    "nome": "Ligação Nova"
-  },
-  {
     "id": "sf-ligacao-muc",
     "nome": "Ligação MUC"
+  },
+  {
+    "id": "sf-ligacao-nova",
+    "nome": "Ligação Nova"
   },
   {
     "id": "sf-lp",
@@ -81,16 +85,16 @@ export const SERVICOS_EMBUTIDOS = [
     "nome": "Reativação"
   },
   {
-    "id": "sf-reativ-virtual",
-    "nome": "Reativação Virtual"
+    "id": "sf-isencao-deb|reativacao",
+    "nome": "Reativação com Análise de Isenção de Débitos"
   },
   {
     "id": "sf-ri|assuncao",
     "nome": "Reativação com Assunção de Débitos"
   },
   {
-    "id": "sf-isencao-deb|reativacao",
-    "nome": "Reativação com Análise de Isenção de Débitos"
+    "id": "sf-reativ-virtual",
+    "nome": "Reativação Virtual"
   },
   {
     "id": "sf-ri|virtual_assuncao",
@@ -157,20 +161,20 @@ export const SERVICOS_EMBUTIDOS = [
     "nome": "TR DE PARTIDAS"
   },
   {
-    "id": "sf-tt|sem_debito",
-    "nome": "Troca de Titularidade sem Débitos"
+    "id": "sf-isencao-deb|troca",
+    "nome": "Troca de Titularidade com Análise de Isenção de Débitos"
   },
   {
     "id": "sf-tt|com_assuncao",
     "nome": "Troca de Titularidade com Assunção de Débitos"
   },
   {
-    "id": "sf-isencao-deb|troca",
-    "nome": "Troca de Titularidade com Análise de Isenção de Débitos"
-  },
-  {
     "id": "sf-parc-tt",
     "nome": "Troca de Titularidade com Parcelamento de Débitos"
+  },
+  {
+    "id": "sf-tt|sem_debito",
+    "nome": "Troca de Titularidade sem Débitos"
   },
   {
     "id": "sf-aparelhagem",
@@ -179,9 +183,5 @@ export const SERVICOS_EMBUTIDOS = [
   {
     "id": "sf-verif-equip",
     "nome": "Verificação de Equipamento"
-  },
-  {
-    "id": "sf-bpc",
-    "nome": "BPC/LOAS"
   }
 ];

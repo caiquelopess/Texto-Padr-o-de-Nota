@@ -210,3 +210,31 @@ test('teste automático aponta campo que não passa na validação', () => {
   assert.equal(r.ok, false);
   assert.deepEqual(r.erros, ['Teste: Preencha o campo: Opção']);
 });
+
+test('padronização de datas e telefones (igual ao sistema anterior)', async () => {
+  const { mdNormalizarValores } = await import('../../src/nucleo/modelos.mjs');
+  const m = {
+    campos: [
+      { id: 'liv', rotulo: 'Ligar dia', tipo: 'data' },
+      { id: 'pas', rotulo: 'Data da ligação', tipo: 'data', dataRegra: 'passada' },
+      { id: 'tel', rotulo: 'Tel', tipo: 'telefone' },
+      { id: 'esc', rotulo: 'Escondido', tipo: 'data', mostrarSe: { campo: 'x', igual: 'sim' } },
+      { id: 'txt', rotulo: 'Texto', tipo: 'texto' },
+    ],
+  };
+  const hoje = new Date(2026, 10, 25, 15, 30);
+  assert.deepEqual(mdNormalizarValores(m, { liv: '1/2/2027', pas: ' 25 / 11 / 2026 ', tel: '71993501519', esc: 'lixo', txt: ' a ' }, hoje), {
+    valores: { liv: '01/02/2027', pas: '25/11/2026', tel: '(71) 99350-1519', esc: 'lixo', txt: ' a ' },
+    erros: [],
+  });
+  assert.deepEqual(mdNormalizarValores(m, { liv: '2026-11-01', pas: '26/11/2026', tel: '123' }, hoje).erros, [
+    'A data do campo "Ligar dia" deve estar no formato dd/mm/aaaa.',
+    'A data do campo "Data da ligação" não pode ser uma data futura.',
+    'O telefone do campo "Tel" deve ter 10 ou 11 dígitos, com DDD.',
+  ]);
+  for (const ruim of ['31/02/2026', '00/01/2026', '10/13/2026', '32/01/2026', '29/02/2025'])
+    assert.deepEqual(mdNormalizarValores(m, { liv: ruim }, hoje).erros, ['A data do campo "Ligar dia" não é uma data real. Verifique o dia e o mês.'], ruim);
+  assert.deepEqual(mdNormalizarValores(m, { liv: '29/02/2028' }, hoje).valores.liv, '29/02/2028');
+  assert.deepEqual(mdNormalizarValores(m, { esc: '1/1/2020', x: 'sim' }, hoje).valores.esc, '01/01/2020');
+  assert.deepEqual(mdNormalizarValores(m, {}).erros, []);
+});

@@ -1,0 +1,87 @@
+{
+  "id": "ligacao-provisoria",
+  "sf": "sf-lp",
+  "nome": "Ligação Provisória",
+  "categoria": "Ligação e Reativação",
+  "descricao": "Migrado do código (lote 3 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "botao": "Gerar Texto de NOTA e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "⚠️ AGENDAR EM NUMERO DO PEDIDO",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "elementoId": "lp_solic",
+      "rotulo": "Solicitante",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo do solicitante"
+    },
+    {
+      "id": "prx",
+      "elementoId": "lp_prx",
+      "rotulo": "PRX",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ponto de referência detalhado"
+    },
+    {
+      "id": "tel",
+      "elementoId": "lp_tel",
+      "rotulo": "Tel (XX-9XXXXXXXX)",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84-988887777"
+    },
+    {
+      "id": "email",
+      "elementoId": "lp_email",
+      "rotulo": "e-mail",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "carga",
+      "elementoId": "lp_carga",
+      "rotulo": "Carga (kW)",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 10kw"
+    },
+    {
+      "id": "pg",
+      "elementoId": "lp_pg",
+      "rotulo": "PG",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nº do pagamento — ex: PG 1234"
+    },
+    {
+      "id": "dt_lig",
+      "elementoId": "lp_dt_lig",
+      "rotulo": "Ligar dia",
+      "tipo": "data",
+      "obrigatorio": true,
+      "dica": "dd/mm/aaaa"
+    },
+    {
+      "id": "dt_deslig",
+      "elementoId": "lp_dt_deslig",
+      "rotulo": "Desligar dia",
+      "tipo": "data",
+      "obrigatorio": true,
+      "dica": "dd/mm/aaaa"
+    }
+  ],
+  "nota": "Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Carga {{carga}} PG {{pg}} Ligar dia {{dt_lig}} e desligar dia {{dt_deslig}}",
+  "agenda": "Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Carga {{carga}} PG {{pg}} Ligar dia {{dt_lig}} e desligar dia {{dt_deslig}}"
+}

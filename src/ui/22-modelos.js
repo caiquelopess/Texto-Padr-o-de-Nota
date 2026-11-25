@@ -40,9 +40,17 @@
 
   function mdGerarTexto(m) {
     var sf = mdSf(m);
-    var erros = mdValidarValores(m, mdValores(m));
+    // 1) padroniza (datas, telefones) e grava o valor corrigido no campo, como antes
+    var p = mdNormalizarValores(m, mdValores(m));
+    if (p.erros.length) { mostrarAviso('ATENÇÃO: ' + p.erros[0]); return; }
+    (m.campos || []).forEach(function(c) {
+      var el = document.getElementById(mdElemento(m, c));
+      if (el && el.tagName !== 'SELECT' && p.valores[c.id] !== undefined && el.value !== p.valores[c.id]) el.value = p.valores[c.id];
+    });
+    // 2) confere obrigatórios e formatos; 3) monta o texto
+    var erros = mdValidarValores(m, p.valores);
     if (erros.length) { mostrarAviso('ATENÇÃO: ' + erros[0]); return; }
-    var t = mdGerar(m, mdValores(m));
+    var t = mdGerar(m, p.valores);
     finalizarGeracao(sf, t.nota, t.agenda, m.copiar === 'agenda' ? 'agenda' : 'nota');
   }
 

@@ -386,3 +386,137 @@ test('perfis: supervisor, consulta e atendente respeitam as permissões', async 
   await expect(aud).toContainText('Criou acesso de consulta');
   await expect(aud).toContainText('Mudou o perfil: Atendente → Consulta');
 });
+
+test('modelos: rascunho, teste, publicação, versões, conflito, restauração e arquivamento', async ({ page, browser }) => {
+  const URL_BASE = 'http://localhost:8788';
+  await entrar(page, 'admin.teste', 'senha-admin-teste');
+  await page.goto('/admin/modelos');
+  await page.fill('#mi', 'cadastro-irrigante');
+  await page.fill('#mn', 'Cadastro de Irrigante');
+  await page.selectOption('#mc', 'Titularidade e Cadastro');
+  await page.click('form[data-carrega] button[type=submit]');
+  await expect(page).toHaveURL(/\/admin\/modelos\/cadastro-irrigante$/);
+
+  const campo = async (i, id, rotulo, tipo, obrig = 'nao', opcoes = '', mostrar = '') => {
+    const l = page.locator('#campos tr').nth(i);
+    await l.locator('[name=campo_id]').fill(id);
+    await l.locator('[name=campo_rotulo]').fill(rotulo);
+    await l.locator('[name=campo_tipo]').selectOption(tipo);
+    await l.locator('[name=campo_obrigatorio]').selectOption(obrig);
+    await l.locator('[name=campo_opcoes]').fill(opcoes);
+    await l.locator('[name=campo_mostrar]').fill(mostrar);
+  };
+  await campo(0, 'tipo', 'Tipo', 'opcao', 'sim', 'Novo | Renovação');
+  await campo(1, 'nome', 'Nome', 'texto', 'sim');
+  await page.click('button:has-text("+ Campo")');
+  await campo(2, 'tel', 'Telefone', 'telefone', 'sim');
+  await page.fill('#etn', 'Gentileza cadastrar irrigante\nTipo: {{tipo}}\nNome: {{nome}}\nTelefone: {{tel}}\n{{#se obs}}\nObs: {{obs}}\n{{/se}}');
+  // o teste automático pega o campo que não existe
+  await page.click('button[value=testar]');
+  await expect(page.locator('.erro')).toContainText('{{#se obs}} usa um campo que não existe');
+  await page.fill('#etn', 'Gentileza cadastrar irrigante\nTipo: {{tipo}}\nNome: {{nome}}\nTelefone: {{tel}}');
+  await page.click('button[value=testar]');
+  await expect(page.locator('.resultado-teste')).toContainText('Teste automático: passou');
+  await page.click('button[value=salvar]');
+  await expect(page.locator('.okmsg')).toContainText('Rascunho salvo');
+
+  // rascunho não aparece para os atendentes
+  expect((await (await page.request.get('/api/modelos')).json()).modelos).toEqual([]);
+
+  page.once('dialog', (d) => d.accept());
+  await page.click('button[value=publicar]');
+  await expect(page.locator('.okmsg')).toContainText('Publicado como versão 1');
+
+  // atendente: aparece na categoria e gera o texto (sem enviar dados ao servidor)
+  const ctx = await browser.newContext({ baseURL: URL_BASE });
+  const at = await ctx.newPage();
+  await entrar(at, 'chefe.equipe', 'chefe-nova');
+  await at.click('#btn_alternar_servicos');
+  const btn = at.locator('#service_nav .sub-btn[data-modelo="cadastro-irrigante"]');
+  await expect(btn).toHaveText('Cadastro de Irrigante');
+  await expect(btn.locator('xpath=..').locator('.svc-grupo-titulo')).toHaveText('Titularidade e Cadastro');
+  await btn.click();
+  const pedidos = [];
+  at.on('request', (r) => {
+    if (r.method() !== 'GET') pedidos.push(r.url());
+  });
+  await at.click('#sf-md-cadastro-irrigante .actions .btn:not(.btn-clear)');
+  await expect(at.locator('#toastAviso')).toContainText('Preencha o campo: Nome');
+  await at.fill('#md_cadastro_irrigante__nome', 'Maria Teste');
+  await at.fill('#md_cadastro_irrigante__tel', '71993501519');
+  await at.selectOption('#md_cadastro_irrigante__tipo', 'Renovação');
+  await at.click('#sf-md-cadastro-irrigante .actions .btn:not(.btn-clear)');
+  await expect(at.locator('#out-nota')).toHaveValue('Gentileza cadastrar irrigante\nTipo: Renovação\nNome: Maria Teste\nTelefone: (71) 99350-1519');
+  expect(pedidos).toEqual([]);
+
+  // edição em rascunho não muda o que o atendente usa
+  await page.fill('#etn', 'Gentileza cadastrar irrigante (v2)\nTipo: {{tipo}}\nNome: {{nome}}\nTelefone: {{tel}}');
+  await page.click('button[value=salvar]');
+  expect((await (await page.request.get('/api/modelos')).json()).modelos[0].nota).toContain('Gentileza cadastrar irrigante\n');
+
+  // conflito: outro administrador salvou antes
+  const outro = await browser.newContext({ baseURL: URL_BASE });
+  const adm2 = await outro.newPage();
+  await entrar(adm2, 'admin.teste', 'senha-admin-teste');
+  await adm2.goto('/admin/modelos/cadastro-irrigante');
+  await page.fill('#ed', 'alterado pelo primeiro');
+  await page.click('button[value=salvar]');
+  await adm2.fill('#ed', 'alterado pelo segundo');
+  await adm2.click('button[value=salvar]');
+  await expect(adm2.locator('.erro')).toContainText('Outro administrador alterou este modelo');
+  await outro.close();
+
+  // publica v2, compara e restaura a v1 para os atendentes
+  await page.goto('/admin/modelos/cadastro-irrigante');
+  page.once('dialog', (d) => d.accept());
+  await page.click('button[value=publicar]');
+  await expect(page.locator('.okmsg')).toContainText('versão 2');
+  await page.goto('/admin/modelos/cadastro-irrigante/comparar?a=1&b=2');
+  await expect(page.locator('.diff .removida')).toContainText('Gentileza cadastrar irrigante');
+  await expect(page.locator('.diff .incluida').first()).toContainText('(v2)');
+  await page.goto('/admin/modelos/cadastro-irrigante');
+  page.once('dialog', (d) => d.accept());
+  await page.locator('tr', { hasText: 'v1' }).getByRole('button', { name: 'Restaurar para os atendentes' }).click();
+  await expect(page.locator('.okmsg')).toContainText('Versão 1 restaurada');
+  const api = await (await page.request.get('/api/modelos')).json();
+  expect(api.modelos[0].nota).not.toContain('(v2)');
+  await expect(page.locator('tbody tr', { hasText: 'em uso' })).toContainText('v3');
+
+  // arquivar tira do atendimento sem apagar
+  page.once('dialog', (d) => d.accept());
+  await page.click('button:has-text("Arquivar")');
+  await expect(page.locator('.okmsg')).toContainText('Modelo arquivado');
+  expect((await (await page.request.get('/api/modelos')).json()).modelos).toEqual([]);
+  await at.reload();
+  await expect(at.locator('#service_nav .sub-btn[data-modelo="cadastro-irrigante"]')).toHaveCount(0);
+  page.once('dialog', (d) => d.accept());
+  await page.click('button:has-text("Desarquivar")');
+  expect((await (await page.request.get('/api/modelos')).json()).modelos).toHaveLength(1);
+  await ctx.close();
+
+  // supervisor edita rascunho mas não publica
+  const sup = await browser.newContext({ baseURL: URL_BASE });
+  const s = await sup.newPage();
+  await entrar(s, 'sara.supervisora', 'sara-nova');
+  await s.goto('/admin/modelos/cadastro-irrigante');
+  await expect(s.locator('button[value=publicar]')).toHaveCount(0);
+  await s.fill('#ed', 'sugestão do supervisor');
+  await s.click('button[value=enviar]');
+  await expect(s.locator('.okmsg')).toContainText('enviado para um administrador publicar');
+  const forcado = await s.request.post('/admin/modelos/cadastro-irrigante', { form: { acao: 'publicar', revisao: '1' }, headers: { origin: URL_BASE } });
+  expect(forcado.status()).toBe(403);
+  await sup.close();
+  await page.goto('/admin/modelos');
+  await expect(page.locator('tr', { hasText: 'Cadastro de Irrigante' })).toContainText('Aguardando publicação');
+
+  // auditoria
+  await page.goto('/admin/auditoria');
+  for (const t of [
+    'Criou o modelo (rascunho)',
+    'Publicou o modelo (v1)',
+    'Restaurou a versão v1 (publicada como v3)',
+    'Arquivou o modelo',
+    'Enviou o modelo para publicação',
+  ])
+    await expect(page.locator('tbody')).toContainText(t);
+});

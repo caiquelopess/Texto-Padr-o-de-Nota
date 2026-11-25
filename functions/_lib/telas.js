@@ -2,7 +2,7 @@ import { PERFIS, pode } from './permissoes.js';
 
 // Telas de login, troca de senha e administração (HTML gerado no servidor).
 
-const esc = (t) => String(t ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+export const esc = (t) => String(t ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
 const ESTILO = `
 :root{--bg:#05060d;--card:rgba(18,20,34,.72);--borda:rgba(255,255,255,.09);--txt:#e6e9f5;--muted:#8a90a8;--neon:#22e5ff;--neon2:#ff3df2;--perigo:#ff5c8a;--ok:#3dffa8;--aviso:#ffd166;--lateral:rgba(14,16,26,.85);--realce:rgba(34,229,255,.1);--botao-txt:#05060d}
@@ -56,7 +56,7 @@ const pagina = (titulo, corpo, largo = false) => `<!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex"><title>${esc(titulo)} — Textos Padrões</title><style>${ESTILO}</style></head>
 <body><main class="cartao${largo ? ' largo' : ''}">${corpo}</main>
-<script>document.querySelectorAll('form[data-carrega]').forEach(f=>f.addEventListener('submit',()=>{const b=f.querySelector('button[type=submit]');if(b){b.disabled=true;b.classList.add('carregando');}}));</script>
+<script>document.querySelectorAll('form[data-carrega]').forEach(f=>f.addEventListener('submit',(e)=>{const b=e.submitter||f.querySelector('button[type=submit]');if(b){b.classList.add('carregando');setTimeout(()=>{b.disabled=true},0);}}));</script>
 </body></html>`;
 
 const AVISO_SENHA = '<p class="aviso">⚠️ <b>Não use sua senha real de acesso aos sistemas corporativos.</b></p>';
@@ -89,7 +89,7 @@ ${erro ? `<p class="erro" role="alert">${esc(erro)}</p>` : ''}${ok ? `<p class="
   );
 }
 
-const data = (ms) => (ms ? new Date(ms).toLocaleString('pt-BR', { timeZone: 'America/Bahia', dateStyle: 'short', timeStyle: 'short' }) : '—');
+export const data = (ms) => (ms ? new Date(ms).toLocaleString('pt-BR', { timeZone: 'America/Bahia', dateStyle: 'short', timeStyle: 'short' }) : '—');
 
 export function telaAdmin({ usuario, gestor = '', perfil = 'gestor', criaveis = [], usuarios = [], erro = '', ok = '' }) {
   const opcoes = (atual) => criaveis.map((p) => `<option value="${p}"${p === atual ? ' selected' : ''}>${PERFIS[p]}</option>`).join('');
@@ -229,7 +229,7 @@ const iniciais = (u) =>
     .slice(0, 2)
     .toUpperCase();
 
-function paginaAdmin(titulo, ativo, { usuario, perfil }, corpo) {
+export function paginaAdmin(titulo, ativo, { usuario, perfil }, corpo) {
   const item = (href, nome, chave) => `<a href="${href}"${chave === ativo ? ' class="ativo" aria-current="page"' : ''}>${nome}</a>`;
   const se = (op, html) => (pode(perfil, op) ? html : '');
   return `<!doctype html>
@@ -238,10 +238,10 @@ function paginaAdmin(titulo, ativo, { usuario, perfil }, corpo) {
 <body class="adm"><aside class="adm-lateral" aria-label="Menu da administração">
 <div class="adm-marca">Textos Padrões<small>Administração</small></div>
 <div class="adm-usuario"><span class="adm-avatar">${esc(iniciais(usuario))}</span><span><b>${esc(usuario)}</b><small>${esc(PERFIS[perfil] || '')}</small></span></div>
-<nav class="adm-nav"><div class="adm-secao">Gestão</div>${item('/admin/painel', 'Dashboard', 'painel')}${se('usuarios.ver', item('/admin', 'Usuários', 'usuarios'))}${se('formularios.ver', item('/admin/formularios', 'Formulários', 'formularios'))}${se('sugestoes.ver', item('/admin/sugestoes', 'Sugestões', 'sugestoes'))}${se('auditoria.ver', item('/admin/auditoria', 'Auditoria', 'auditoria'))}
+<nav class="adm-nav"><div class="adm-secao">Gestão</div>${item('/admin/painel', 'Dashboard', 'painel')}${se('modelos.ver', item('/admin/modelos', 'Modelos de texto', 'modelos'))}${se('usuarios.ver', item('/admin', 'Usuários', 'usuarios'))}${se('formularios.ver', item('/admin/formularios', 'Formulários', 'formularios'))}${se('sugestoes.ver', item('/admin/sugestoes', 'Sugestões', 'sugestoes'))}${se('auditoria.ver', item('/admin/auditoria', 'Auditoria', 'auditoria'))}
 <div class="adm-secao">Conta</div>${item('/', '← Voltar ao sistema', '')}${item('/trocar-senha', 'Trocar senha', '')}${item('/sair', 'Sair', '')}</nav>
 </aside><main class="adm-principal"><div class="cartao largo">${corpo}</div></main>
-<script>document.querySelectorAll('form[data-carrega]').forEach(f=>f.addEventListener('submit',()=>{const b=f.querySelector('button[type=submit]');if(b){b.disabled=true;b.classList.add('carregando');}}));</script>
+<script>document.querySelectorAll('form[data-carrega]').forEach(f=>f.addEventListener('submit',(e)=>{const b=e.submitter||f.querySelector('button[type=submit]');if(b){b.classList.add('carregando');setTimeout(()=>{b.disabled=true},0);}}));</script>
 </body></html>`;
 }
 

@@ -5,6 +5,7 @@
 //   ADMIN_USUARIO  — usuário do administrador (ex.: caique.lopes)
 //   ADMIN_SENHA    — senha inicial do administrador (usada só no primeiro acesso)
 
+import { mdTestarModelo, mdValidarModelo } from '../src/nucleo/modelos.mjs';
 import { listarAuditoria, registrar } from './_lib/auditoria.js';
 import {
   BLOQUEIO_SEGUNDOS,
@@ -21,10 +22,24 @@ import {
   senhaValida,
   usuarioValido,
 } from './_lib/autenticacao.js';
+import {
+  criarModelo,
+  garantirEsquema,
+  lerModelo,
+  lerVersao,
+  listarModelos,
+  listarVersoes,
+  modelosPublicados,
+  mudarArquivamento,
+  publicar,
+  salvarRascunho,
+} from './_lib/banco.js';
 import { idValido, listarFormularios, nomeDoArquivo, nomeValido, TAMANHO_MAXIMO, tipoDoArquivo } from './_lib/formularios.js';
+import { modeloDoFormulario } from './_lib/modelos-form.js';
 import { PERFIS, perfilDe, perfisQuePodeCriar, pode, podeGerenciar } from './_lib/permissoes.js';
 import { LIMITE_DIA, listarSugestoes, validarSugestao } from './_lib/sugestoes.js';
 import { telaAdmin, telaAuditoria, telaFormularios, telaLogin, telaPainel, telaSugestoes, telaTrocarSenha } from './_lib/telas.js';
+import { telaComparar, telaEditorModelo, telaModelos, telaSemBanco } from './_lib/telas-modelos.js';
 
 const COOKIE = '__Host-tp_sessao';
 const SEGURANCA = {
@@ -376,6 +391,125 @@ async function adminSugestoes(request, env, reg) {
   );
 }
 
+// ---- Modelos de texto (D1) ----
+async function adminModelos(request, env, reg, url) {
+  const meu = perfil(env, reg);
+  if (!pode(meu, 'modelos.ver')) return proibido();
+  if (!env.BANCO) return html(telaSemBanco({ usuario: reg.usuario, perfil: meu }));
+  const db = env.BANCO;
+  await garantirEsquema(db);
+  const ctx = { usuario: reg.usuario, perfil: meu };
+  const lista = async (msg = {}) =>
+    html(telaModelos({ ...ctx, modelos: await listarModelos(db), filtro: url.searchParams.get('status') || 'todos', ...msg }), msg.erro ? 400 : 200);
+  if (request.method !== 'POST') return lista();
+  if (!pode(meu, 'modelos.editar')) return proibido('Seu perfil só pode consultar os modelos.');
+  const form = await request.formData();
+  const id = String(form.get('id') || '').trim();
+  const novo = {
+    id,
+    nome: String(form.get('nome') || '').trim(),
+    categoria: String(form.get('categoria') || '').trim(),
+    descricao: '',
+    avisos: [],
+    copiar: 'nota',
+    campos: [],
+    nota: '',
+    agenda: '',
+  };
+  const erros = mdValidarModelo({ ...novo, nota: '-' });
+  if (erros.length) return lista({ erro: erros[0] });
+  if (!(await criarModelo(db, novo, reg.usuario))) return lista({ erro: `Já existe um modelo com o identificador ${id}.` });
+  await registrar(env.USUARIOS, reg.usuario, 'Criou o modelo (rascunho)', id);
+  return redirecionar(`/admin/modelos/${id}`);
+}
+
+async function adminModelo(request, env, reg, id, url) {
+  const meu = perfil(env, reg);
+  if (!pode(meu, 'modelos.ver')) return proibido();
+  if (!env.BANCO) return html(telaSemBanco({ usuario: reg.usuario, perfil: meu }));
+  const db = env.BANCO;
+  await garantirEsquema(db);
+  const ctx = { usuario: reg.usuario, perfil: meu };
+  let registro = await lerModelo(db, id);
+  if (!registro) return html('<!doctype html><meta charset="utf-8"><p>Modelo não encontrado.</p><p><a href="/admin/modelos">Voltar</a></p>', 404);
+  const tela = async (msg = {}) =>
+    html(
+      telaEditorModelo({ ...ctx, registro: msg.registro || registro, versoes: await listarVersoes(db, id), ...msg }),
+      msg.erro || msg.problemas?.length ? 400 : 200,
+    );
+
+  if (url.pathname.endsWith('/comparar')) {
+    const lado = async (v) =>
+      v === 'rascunho' ? { rotulo: 'rascunho', m: registro.rascunho } : { rotulo: `v${v}`, m: (await lerVersao(db, id, Number(v)))?.conteudo };
+    const a = await lado(url.searchParams.get('a'));
+    const b = await lado(url.searchParams.get('b') || 'rascunho');
+    if (!a.m || !b.m) return tela({ erro: 'Versão não encontrada ou com falha de integridade.' });
+    return html(telaComparar({ ...ctx, id, rotuloA: a.rotulo, rotuloB: b.rotulo, a: a.m, b: b.m }));
+  }
+  if (request.method !== 'POST') return tela();
+  if (!pode(meu, 'modelos.editar')) return proibido('Seu perfil só pode consultar os modelos.');
+  const form = await request.formData();
+  const acao = String(form.get('acao') || '');
+  const revisao = Number(form.get('revisao'));
+  const conflito = 'Outro administrador alterou este modelo enquanto você editava. Suas mudanças não foram salvas: recarregue a página e confira.';
+  const exigePublicar = ['publicar', 'republicar', 'arquivar', 'desarquivar'].includes(acao);
+  if (exigePublicar && !pode(meu, 'modelos.publicar')) return proibido('Seu perfil pode editar rascunhos, mas a publicação é feita por um administrador.');
+
+  if (acao === 'salvar' || acao === 'testar' || acao === 'enviar' || acao === 'publicar') {
+    if (registro.status === 'arquivado') return tela({ erro: 'Desarquive o modelo para editar.' });
+    const modelo = modeloDoFormulario(form, id);
+    if (acao === 'testar') {
+      const t = mdTestarModelo(modelo);
+      return tela({ registro: { ...registro, rascunho: modelo }, problemas: t.erros, exemplos: t.ok ? t.exemplos : [] });
+    }
+    if (acao === 'publicar') {
+      const r = await publicar(db, id, revisao, modelo, reg.usuario);
+      if (!r.ok) return tela({ registro: { ...registro, rascunho: modelo }, problemas: r.erros });
+      await registrar(env.USUARIOS, reg.usuario, `Publicou o modelo (v${r.versao})`, id);
+      registro = await lerModelo(db, id);
+      return tela({ ok: `Publicado como versão ${r.versao}. Os atendentes passam a usar esta versão.` });
+    }
+    if (!(await salvarRascunho(db, id, revisao, modelo, reg.usuario, acao === 'enviar')))
+      return tela({ registro: { ...registro, rascunho: modelo }, erro: conflito });
+    await registrar(env.USUARIOS, reg.usuario, acao === 'enviar' ? 'Enviou o modelo para publicação' : 'Salvou o rascunho do modelo', id);
+    registro = await lerModelo(db, id);
+    return tela({
+      ok: acao === 'enviar' ? 'Rascunho salvo e enviado para um administrador publicar.' : 'Rascunho salvo. Os atendentes continuam usando a versão publicada.',
+    });
+  }
+  if (acao === 'arquivar' || acao === 'desarquivar') {
+    if (!(await mudarArquivamento(db, id, revisao, acao === 'arquivar', reg.usuario))) return tela({ erro: conflito });
+    await registrar(env.USUARIOS, reg.usuario, acao === 'arquivar' ? 'Arquivou o modelo' : 'Desarquivou o modelo', id);
+    registro = await lerModelo(db, id);
+    return tela({ ok: acao === 'arquivar' ? 'Modelo arquivado: saiu do atendimento (nada foi apagado).' : 'Modelo desarquivado.' });
+  }
+  if (acao === 'duplicar') {
+    const novoId = String(form.get('novo_id') || '').trim();
+    const copia = { ...registro.rascunho, id: novoId, nome: `${registro.rascunho.nome} (cópia)` };
+    const erros = mdValidarModelo({ ...copia, nota: copia.nota || '-' });
+    if (erros.length) return tela({ erro: erros[0] });
+    if (!(await criarModelo(db, copia, reg.usuario))) return tela({ erro: `Já existe um modelo com o identificador ${novoId}.` });
+    await registrar(env.USUARIOS, reg.usuario, `Duplicou o modelo ${id}`, novoId);
+    return redirecionar(`/admin/modelos/${novoId}`);
+  }
+  if (acao === 'usar_versao' || acao === 'republicar') {
+    const v = await lerVersao(db, id, Number(form.get('versao')));
+    if (!v) return tela({ erro: 'Versão não encontrada ou com falha de integridade.' });
+    if (acao === 'usar_versao') {
+      if (!(await salvarRascunho(db, id, revisao, v.conteudo, reg.usuario))) return tela({ erro: conflito });
+      await registrar(env.USUARIOS, reg.usuario, `Trouxe a versão v${v.versao} para o rascunho`, id);
+      registro = await lerModelo(db, id);
+      return tela({ ok: `Versão ${v.versao} copiada para o rascunho. Confira e publique quando quiser.` });
+    }
+    const r = await publicar(db, id, revisao, v.conteudo, reg.usuario);
+    if (!r.ok) return tela({ problemas: r.erros });
+    await registrar(env.USUARIOS, reg.usuario, `Restaurou a versão v${v.versao} (publicada como v${r.versao})`, id);
+    registro = await lerModelo(db, id);
+    return tela({ ok: `Versão ${v.versao} restaurada: os atendentes já usam o conteúdo dela (nova versão ${r.versao}).` });
+  }
+  return tela({ erro: 'Ação desconhecida.' });
+}
+
 export async function onRequest(context) {
   const { request, env, next } = context;
   const url = new URL(request.url);
@@ -414,6 +548,22 @@ export async function onRequest(context) {
   }
   if (caminho === '/admin') return admin(request, env, reg);
   if (caminho === '/admin/painel') return painel(env, reg);
+  if (caminho === '/admin/modelos') return adminModelos(request, env, reg, url);
+  if (caminho.startsWith('/admin/modelos/')) {
+    const id = caminho.slice('/admin/modelos/'.length).replace(/\/comparar$/, '');
+    if (!/^[a-z0-9][a-z0-9-]{2,59}$/.test(id)) return html('<!doctype html><meta charset="utf-8"><p>Modelo não encontrado.</p>', 404);
+    return adminModelo(request, env, reg, id, url);
+  }
+  if (caminho === '/api/modelos') {
+    // Falha no banco nunca derruba o atendimento: o site usa a cópia guardada no navegador.
+    if (!env.BANCO) return json({ geral: 0, modelos: [] });
+    try {
+      await garantirEsquema(env.BANCO);
+      return json(await modelosPublicados(env.BANCO));
+    } catch {
+      return json({ erro: 'modelos indisponíveis' }, 503);
+    }
+  }
   if (caminho === '/admin/auditoria') {
     if (!pode(perfil(env, reg), 'auditoria.ver')) return proibido('Acesso restrito ao gestor geral do sistema.');
     return html(telaAuditoria({ usuario: reg.usuario, registros: await listarAuditoria(env.USUARIOS) }));

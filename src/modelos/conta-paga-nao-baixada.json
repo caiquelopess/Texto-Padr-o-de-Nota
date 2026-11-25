@@ -1,0 +1,97 @@
+{
+  "id": "conta-paga-nao-baixada",
+  "sf": "sf-cpnb",
+  "nome": "Conta Paga e Não Baixada",
+  "categoria": "Faturamento e Débitos",
+  "descricao": "Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "botao": "Gerar Texto e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "FOP Serviços Não estruturados - Abrir apenas após 5 dias úteis da data do pagamento<br>Ao realizar a abertura da nota, é muito importante que seja inserido bloqueio de 15 dias nas faturas reclamadas e nota ser informada no grupo do 2º Nível.<br>O comprovante precisa ser anexado na nota e no SAP KM.",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "elementoId": "cpnb_solic",
+      "rotulo": "Solicitante:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo"
+    },
+    {
+      "id": "motivo",
+      "elementoId": "cpnb_motivo",
+      "rotulo": "Motivo :",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: Conta paga e não baixada"
+    },
+    {
+      "id": "fatura",
+      "elementoId": "cpnb_fatura",
+      "rotulo": "Fatura (vencimento e valor) :",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: Venc 10/10/2026 valor R$ 150,00",
+      "largo": true
+    },
+    {
+      "id": "ref",
+      "elementoId": "cpnb_ref",
+      "rotulo": "Pontos de Referência :",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ponto de referência detalhado",
+      "largo": true
+    },
+    {
+      "id": "tel",
+      "elementoId": "cpnb_tel",
+      "rotulo": "Telefone :",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84988887777"
+    },
+    {
+      "id": "email",
+      "elementoId": "cpnb_email",
+      "rotulo": "E-mail: :",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "neg",
+      "elementoId": "cpnb_neg",
+      "rotulo": "Informe se o cliente está negativado:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: Não ou Sim"
+    },
+    {
+      "id": "ant",
+      "elementoId": "cpnb_ant",
+      "rotulo": "N° da reclamação anterior (se houver):",
+      "tipo": "texto",
+      "dica": "Ex: 9200xxxx ou N/A"
+    },
+    {
+      "id": "resp",
+      "elementoId": "cpnb_resp",
+      "rotulo": "Modalidade de resposta:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "opcoes": ["E-mail", "SMS", "carta"],
+      "largo": true
+    }
+  ],
+  "nota": "Solicitante: {{solic}}\nMotivo : {{motivo}}\nFatura (vencimento e valor) : {{fatura}}\nPontos de Referência : {{ref}}\nTelefone : {{tel}}\nE-mail: : {{email}}\nInforme se o cliente está negativado: {{neg}}\nSe houver reclamação anterior, informe o n° da reclamação anterior : {{ant|ou:N/A}}\nModalidade de resposta: {{resp}}\nPrazo que deverá informado e verbalizado ao cliente é de 5 dias úteis para uma primeira análise.",
+  "agenda": "Solicitante: {{solic}}\nMotivo : {{motivo}}\nFatura (vencimento e valor) : {{fatura}}\nPontos de Referência : {{ref}}\nTelefone : {{tel}}\nE-mail: : {{email}}\nInforme se o cliente está negativado: {{neg}}\nSe houver reclamação anterior, informe o n° da reclamação anterior : {{ant|ou:N/A}}\nModalidade de resposta: {{resp}}\nPrazo que deverá informado e verbalizado ao cliente é de 5 dias úteis para uma primeira análise."
+}

@@ -34,7 +34,7 @@
     (m.avisos || []).forEach(function(a, i) {
       if (!a || typeof a !== 'object' || !a.mostrarSe) return;
       var el = form && form.querySelector('[data-aviso="' + i + '"]');
-      if (el) el.style.display = [].concat(a.mostrarSe.igual).indexOf(String(valores[a.mostrarSe.campo] || '')) >= 0 ? '' : 'none';
+      if (el) el.style.display = [].concat(a.mostrarSe.igual).indexOf(String(valores[a.mostrarSe.campo] || '')) >= 0 ? 'block' : 'none';
     });
   }
 
@@ -57,7 +57,7 @@
     var el;
     if (c.tipo === 'opcao') {
       el = document.createElement('select');
-      c.opcoes.forEach(function(o) { var op = document.createElement('option'); op.value = o; op.textContent = o; el.appendChild(op); });
+      c.opcoes.forEach(function(o, i) { var op = document.createElement('option'); op.value = o; op.textContent = (c.rotulosOpcoes && c.rotulosOpcoes[i]) || o; el.appendChild(op); });
       el.addEventListener('change', function() { mdAtualizarVisiveis(m); });
     } else if (c.tipo === 'textoLongo') {
       el = document.createElement('textarea');
@@ -92,7 +92,7 @@
     (m.avisos || []).forEach(function(a, i) {
       var av = document.createElement('div');
       var obj = a && typeof a === 'object';
-      av.className = 'alert-box' + (obj && a.piscar ? ' alert-box-blink' : '') + (obj && a.classe ? ' ' + a.classe : '');
+      av.className = obj && a.classeOriginal && m._embutido ? a.classeOriginal : 'alert-box' + (obj && a.piscar ? ' alert-box-blink' : '') + (obj && a.classe ? ' ' + a.classe : '');
       // HTML só para modelos embutidos (vêm do repositório); os do painel são sempre texto puro
       if (obj && a.html && m._embutido) av.innerHTML = a.html;
       else av.textContent = obj ? a.texto || '' : a;
@@ -198,3 +198,16 @@
       .catch(function() { /* sem rede ou servidor fora: segue com a cópia guardada */ });
   }
   carregarModelos();
+
+  // "Limpar" chamado de fora (pendências, testes): nos modelos, as listas voltam à
+  // primeira opção e os campos/avisos condicionais são recalculados.
+  var limparFormBase = limparForm;
+  limparForm = function(containerId) {
+    limparFormBase(containerId);
+    Object.keys(modelosMontados).forEach(function(id) {
+      var m = modelosMontados[id];
+      if (mdSf(m) !== containerId) return;
+      document.querySelectorAll('#' + containerId + ' select').forEach(function(sel) { sel.selectedIndex = 0; });
+      mdAtualizarVisiveis(m);
+    });
+  };

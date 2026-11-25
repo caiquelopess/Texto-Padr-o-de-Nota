@@ -1,9 +1,9 @@
 {
-  "versao": "2.19.0",
+  "versao": "2.19.1",
   "data": "25/11/2026",
   "novidades": [
-    "Mais 10 serviços migrados para modelos (sem mudança nos textos)",
-    "Endereço antigo: só Agenda e Nota e Tensão de Fornecimento",
+    "Mais 11 serviços migrados para modelos (sem mudança nos textos)",
+    "Mais 9 serviços migrados para modelos (sem mudança nos textos)",
     "Configurações gerais (aviso para todos, duração da sessão) e Atualização Cadastral migrada para modelo",
     "Backups automáticos e restauração pelo painel administrativo",
     "Categorias e serviços ocultos definidos pelo painel administrativo",

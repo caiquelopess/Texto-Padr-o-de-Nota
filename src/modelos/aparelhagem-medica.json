@@ -1,0 +1,45 @@
+{
+  "id": "aparelhagem-medica",
+  "sf": "sf-aparelhagem",
+  "nome": "Uso de Aparelhagem Médica",
+  "categoria": "Reclamações e Outros",
+  "descricao": "Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "botao": "Gerar Texto de NOTA e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    }
+  ],
+  "campos": [
+    {
+      "id": "sit",
+      "elementoId": "ap_sit",
+      "rotulo": "Situação",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "opcoes": ["normal", "osb"],
+      "rotulosOpcoes": ["Normal (Favor cadastrar internação domiciliar)", "FATURA EM OSB (PERÍODO DE FATURAMENTO)"],
+      "largo": true
+    },
+    {
+      "id": "tel",
+      "elementoId": "ap_tel",
+      "rotulo": "Tel (XX-9XXXXXXXX)",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84-988887777"
+    },
+    {
+      "id": "email",
+      "elementoId": "ap_email",
+      "rotulo": "e-mail",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    }
+  ],
+  "nota": "{{#se sit=osb}}FATURA EM OSB (PERÍODO DE FATURAMENTO), FATURA EM OSB para que o setor possa incluir o bloqueio.{{/se}}{{#se sit=normal}}Favor cadastrar internação domiciliar, documentação inserida no KM.{{/se}} Tel {{tel}} e-mail {{email}}",
+  "agenda": "{{#se sit=osb}}FATURA EM OSB (PERÍODO DE FATURAMENTO), FATURA EM OSB para que o setor possa incluir o bloqueio.{{/se}}{{#se sit=normal}}Favor cadastrar internação domiciliar, documentação inserida no KM.{{/se}} Tel {{tel}} e-mail {{email}}"
+}

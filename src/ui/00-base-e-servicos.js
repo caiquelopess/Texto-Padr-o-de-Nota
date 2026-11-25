@@ -474,11 +474,6 @@
     document.getElementById('tt_forma_entrega').required = hasDebito;
   }
 
-  function toggleParcTT() {
-    var isPj = (document.getElementById('ptt_tipo').value === 'pj');
-    document.getElementById('grp_ptt_empresa').style.display = isPj ? 'flex' : 'none';
-    document.getElementById('ptt_empresa').required = isPj;
-  }
 
   function toggleTrPartidas() {
     var isPj = (document.getElementById('trp_tipo').value === 'pj');
@@ -508,10 +503,6 @@
     document.getElementById('res_conta').required = isConta;
   }
 
-  function toggleRelig() {
-    var isSem = (document.getElementById('relig_opcao').value === 'sem_comprovante');
-    document.getElementById('alerta-sem-comp-relig').style.display = isSem ? 'block' : 'none';
-  }
 
   function toggleRefPadrao() {
     var isDeslig = (document.getElementById('refp_opt').value === 'desliga_religa');
@@ -523,11 +514,6 @@
     document.getElementById('refp_dt_relig').required = isDeslig;
   }
 
-  function toggleParcelamento() {
-    var isPj = (document.getElementById('parc_tipo').value === 'pj');
-    document.getElementById('grp_parc_empresa').style.display = isPj ? 'flex' : 'none';
-    document.getElementById('parc_empresa').required = isPj;
-  }
 
   /* ===== PADRONIZAÇÃO: DATA, CPF/CNPJ E TELEFONE =====
      Roda dentro de validarCampos (chamado por todos os geradores, antes
@@ -1083,16 +1069,6 @@
     finalizarGeracao('sf-ri', nota, agenda, 'nota');
   }
 
-  function gerarMC() {
-    if (!validarCampos('sf-mc')) return;
-    var txt = 'Solicitante: ' + getVal('mc_solic') +
-      '\nMotivo: ' + getVal('mc_motivo') +
-      '\nTelefone: ' + getVal('mc_tel') +
-      '\nPonto de Referência: ' + getVal('mc_ref') +
-      '\nQuem procurar: ' + getVal('mc_proc') +
-      '\nPossui e-mail: ' + getVal('mc_email');
-    finalizarGeracao('sf-mc', txt, txt, 'nota');
-  }
 
   function gerarRES() {
     if (!validarCampos('sf-res')) return;
@@ -1112,19 +1088,6 @@
     finalizarGeracao('sf-res', txt, txt, 'nota');
   }
 
-  function gerarRelig() {
-    if (!validarCampos('sf-relig')) return;
-    var prefix = (getVal('relig_opcao') === 'com_comprovante')
-      ? 'Cliente em loja, comprovantes apresentados, não cobrar em campo.\n'
-      : 'Cliente não apresentou comprovantes.\n';
-    var txt = prefix +
-      'Solicitante: ' + getVal('relig_solic') +
-      '\nTelefone: ' + getVal('relig_tel') +
-      '\nPonto de referencia: ' + getVal('relig_ref') +
-      '\nProcurar por: ' + getVal('relig_proc') +
-      '\nCiente de taxa.';
-    finalizarGeracao('sf-relig', txt, txt, 'nota');
-  }
 
 
   function gerarLP() {
@@ -1148,77 +1111,15 @@
     finalizarGeracao('sf-ref-padrao', txt, txt, 'nota');
   }
 
-  function gerarAfericao() {
-    if (!validarCampos('sf-afericao')) return;
-    var txt = 'Solicitante: ' + getVal('af_solic') +
-      '\nMotivo: ' + getVal('af_motivo') +
-      '\nTelefone: ' + getVal('af_tel') +
-      '\nHorário para contato: ' + getVal('af_horario') +
-      '\nQuem procurar: ' + getVal('af_proc') +
-      '\nPonto de Referência: ' + getVal('af_ref') +
-      '\nEquipamento interno ou externo: ' + getVal('af_equip') +
-      '\nPossui e-mail: ' + getVal('af_email') +
-      '\nCliente ciente da possível cobrança de taxa';
-    finalizarGeracao('sf-afericao', '', txt, 'agenda');   // serviço sem texto de nota
-  }
-
-  function toggleBPC() {
-    var isDif = (document.getElementById('bpc_titular').value === 'diferente');
-    document.getElementById('grp_bpc_pn').style.display = isDif ? 'flex' : 'none';
-    document.getElementById('bpc_pn').required = isDif;
-  }
-
-  function gerarBPC() {
-    if (!validarCampos('sf-bpc')) return;
-    var isDif = (document.getElementById('bpc_titular').value === 'diferente');
-    var txt = 'Numero da conta contrato: ' + getVal('bpc_cc') +
-      '\nNumero do Beneficio de Prestação Continuada BPC: ' + getVal('bpc_benef') +
-      (isDif ? '\nNumero do Parceiro de Negócios PN beneficiário: ' + getVal('bpc_pn') : '') +
-      '\nTelefone: ' + getVal('bpc_tel') +
-      '\nE mail: ' + getVal('bpc_email');
-    finalizarGeracao('sf-bpc', txt, txt, 'nota');
-  }
-
-  function gerarCPNB() {
-    if (!validarCampos('sf-cpnb')) return;
-    var ant = getVal('cpnb_ant') ? '\nSe houver reclamação anterior, informe o n° da reclamação anterior : ' + getVal('cpnb_ant') : '\nSe houver reclamação anterior, informe o n° da reclamação anterior : N/A';
-    var txt = 'Solicitante: ' + getVal('cpnb_solic') +
-      '\nMotivo : ' + getVal('cpnb_motivo') +
-      '\nFatura (vencimento e valor) : ' + getVal('cpnb_fatura') +
-      '\nPontos de Referência : ' + getVal('cpnb_ref') +
-      '\nTelefone : ' + getVal('cpnb_tel') +
-      '\nE-mail: : ' + getVal('cpnb_email') +
-      '\nInforme se o cliente está negativado: ' + getVal('cpnb_neg') +
-      ant +
-      '\nModalidade de resposta: ' + getVal('cpnb_resp') +
-      '\nPrazo que deverá informado e verbalizado ao cliente é de 5 dias úteis para uma primeira análise.';
-    finalizarGeracao('sf-cpnb', txt, txt, 'nota');
-  }
 
 
 
-  function gerarVerifEquip() {
-    if (!validarCampos('sf-verif-equip')) return;
-    var txt = 'Solicitante: ' + getVal('ve_solic') +
-      '\nMotivo: ' + getVal('ve_motivo') +
-      '\nTelefone: ' + getVal('ve_tel') +
-      '\nQuem procurar: ' + getVal('ve_proc') +
-      '\nPonto de Referência: ' + getVal('ve_ref') +
-      '\nEquipamento interno ou externo: ' + getVal('ve_equip') +
-      '\nPossui e-mail: ' + getVal('ve_email');
-    finalizarGeracao('sf-verif-equip', '', txt, 'agenda');   // serviço sem texto de nota
-  }
 
 
 
-  function gerarAparelhagemMedica() {
-    if (!validarCampos('sf-aparelhagem')) return;
-    var isOSB = (getVal('ap_sit') === 'osb');
-    var txt = isOSB
-      ? 'FATURA EM OSB (PERÍODO DE FATURAMENTO), FATURA EM OSB para que o setor possa incluir o bloqueio. Tel ' + getVal('ap_tel') + ' e-mail ' + getVal('ap_email')
-      : 'Favor cadastrar internação domiciliar, documentação inserida no KM. Tel ' + getVal('ap_tel') + ' e-mail ' + getVal('ap_email');
-    finalizarGeracao('sf-aparelhagem', txt, txt, 'nota');
-  }
+
+
+
 
 
 
@@ -1256,17 +1157,6 @@
     finalizarGeracao('sf-outros-danos', txt, txt, 'nota');
   }
 
-  function gerarTarefaNEO() {
-    if (!validarCampos('sf-tarefa-neo')) return;
-    var txt = 'Título: ' + getVal('tneo_titulo') +
-      '\nNome: ' + getVal('tneo_nome') +
-      '\nConta contrato nova: ' + getVal('tneo_ccn') +
-      '\nConta contrato antiga: ' + getVal('tneo_cca') +
-      '\nTelefone: ' + getVal('tneo_tel') +
-      '\nE-mail: ' + getVal('tneo_email') +
-      '\nDescrição da solicitação: ' + getVal('tneo_desc');
-    finalizarGeracao('sf-tarefa-neo', txt, txt, 'nota');
-  }
 
   function gerarDefesaAdm() {
     if (!validarCampos('sf-defesa-adm')) return;
@@ -1284,28 +1174,8 @@
     finalizarGeracao('sf-defesa-adm', nota, agenda, 'nota');
   }
 
-  function gerarParcelamento() {
-    if (!validarCampos('sf-parcelamento')) return;
-    var isPj = (getVal('parc_tipo') === 'pj');
-    var txt = '';
-    if (!isPj) {
-      txt = 'Solicitante ' + getVal('parc_solic') + ', dados da Receita Federal ' + getVal('parc_rec') + ' (Inserir cópia do cpf receita federal no SAP KM), telefone ' + getVal('parc_tel') + ', E-mail ' + getVal('parc_email') + ', esteve na loja para negociar a dívida no valor R$' + getVal('parc_divida') + ', plano numero ' + getVal('parc_plano') + ' com sinal R$' + getVal('parc_sinal') + ' e o restante do valor divido em ' + getVal('parc_qtd_parc') + ' parcelas de R$' + getVal('parc_val_parc') + '. Cliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.';
-    } else {
-      txt = 'Solicitante ' + getVal('parc_solic') + ', dados da Receita Federal ' + getVal('parc_rec') + ' (Inserir cópia no SAP KM), telefone ' + getVal('parc_tel') + ', E-mail ' + getVal('parc_email') + ' representante da Empresa ' + getVal('parc_empresa') + ' esteve na loja de atendimento para negociar a divida no valor R$' + getVal('parc_divida') + ', plano numero ' + getVal('parc_plano') + ' com sinal R$' + getVal('parc_sinal') + ' e o restante do valor divido em ' + getVal('parc_qtd_parc') + ' parcelas de R$' + getVal('parc_val_parc') + '.\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.';
-    }
-    finalizarGeracao('sf-parcelamento', txt, txt, 'nota');
-  }
 
 
-  function gerarMoveInMoveOut() {
-    if (!validarCampos('sf-movein-moveout')) return;
-    var txt = 'Contrato: ' + getVal('mm_contrato') +
-      '\nInstalação: ' + getVal('mm_inst') +
-      '\nConta contrato antiga: ' + getVal('mm_cca') +
-      '\nConta contrato nova : ' + getVal('mm_ccn') +
-      '\nSolicito o estorno de move in e move out e instalação Pelo motivo de: ' + getVal('mm_motivo');
-    finalizarGeracao('sf-movein-moveout', txt, txt, 'agenda');
-  }
 
   function gerarRDEDocumentacao() {
     if (!validarCampos('sf-rde-doc')) return;
@@ -1327,17 +1197,6 @@
     finalizarGeracao('sf-rde-doc', txt, txt, 'agenda');
   }
 
-  function gerarParcTT() {
-    if (!validarCampos('sf-parc-tt')) return;
-    var isPj = (getVal('ptt_tipo') === 'pj');
-    var txt = '';
-    if (!isPj) {
-      txt = 'Solicitante ' + getVal('ptt_solic') + ', dados da Receita Federal ' + getVal('ptt_rec') + ' (Inserir cópia no SAP KM), telefone ' + getVal('ptt_tel') + ', E-mail ' + getVal('ptt_email') + ', esteve na loja para negociar a dívida no valor R$' + getVal('ptt_divida') + ', plano numero ' + getVal('ptt_plano') + ' com sinal R$' + getVal('ptt_sinal') + ' e o restante do valor divido em ' + getVal('ptt_qtd_parc') + ' parcelas de R$' + getVal('ptt_val_parc') + '.\nOs débitos são oriundos da troca de titularidade ' + getVal('ptt_origem_tt') + ' e foram reconhecidas através do termo de assunção assinado (Inserir cópia no SAP KM).\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado.';
-    } else {
-      txt = 'Solicitante ' + getVal('ptt_solic') + ', dados da Receita Federal ' + getVal('ptt_rec') + ' (Inserir cópia no SAP KM), telefone ' + getVal('ptt_tel') + ', E-mail ' + getVal('ptt_email') + ' representante da Empresa ' + getVal('ptt_empresa') + ' esteve na loja de atendimento para negociar a divida no valor R$' + getVal('ptt_divida') + ', plano numero ' + getVal('ptt_plano') + ' com sinal R$' + getVal('ptt_sinal') + ' e o restante do valor divido em ' + getVal('ptt_qtd_parc') + ' parcelas de R$' + getVal('ptt_val_parc') + '.\nOs débitos são oriundos da troca de titularidade ' + getVal('ptt_origem_tt') + ' e foram reconhecidas através do termo de assunção assinado (Inserir cópia no SAP KM).\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado';
-    }
-    finalizarGeracao('sf-parc-tt', txt, txt, 'nota');
-  }
 
   function gerarTrPartidas() {
     if (!validarCampos('sf-tr-partidas')) return;
@@ -1505,7 +1364,6 @@
       [['ise_servico', 'troca'], ['ise_fat_solic', 'Não se aplica'], ['ise_rec', 'regular'], ['ise_crit', 'Faturado por média'], ['ise_mmgd', 'Não']].forEach(function(p) { document.getElementById(p[0]).value = p[1]; });
       setTimeout(toggleIsencaoDeb, 0);
     }
-    if (containerId === 'sf-verif-equip') { document.getElementById('ve_equip').value = 'Interno'; }
     if (containerId === 'sf-ligacao-nova') { document.getElementById('ln_modo').value = 'normal'; setTimeout(toggleLigacaoNova, 0); }
     document.querySelectorAll('#' + containerId + ' input[type="text"], #' + containerId + ' textarea').forEach(function(i) { i.value = ''; });
     if (containerId === 'sf-reclamacao-gd') { document.getElementById('gd_tipo').value = 'ausencia_fat'; toggleReclamacaoGD(); }
@@ -1521,13 +1379,9 @@
     if (containerId === 'sf-tt') { document.getElementById('tt_tipo').value = 'sem_debito'; document.getElementById('tt_mmgd').value = 'Não'; toggleTrocaTitularidade(); }
     if (containerId === 'sf-ri') { document.getElementById('ri_tipo').value = 'assuncao'; document.getElementById('ri_mmgd').value = 'Não'; toggleMMGD('ri_mmgd', 'ri_neo'); toggleReativDebitos(); }
     if (containerId === 'sf-res') { document.getElementById('res_forma_pag').value = 'conta'; toggleFormaPagRes(); }
-    if (containerId === 'sf-relig') { document.getElementById('relig_opcao').value = 'com_comprovante'; toggleRelig(); }
     if (containerId === 'sf-ref-padrao') { document.getElementById('refp_opt').value = 'mudanca'; toggleRefPadrao(); }
-    if (containerId === 'sf-parcelamento') { document.getElementById('parc_tipo').value = 'pf'; toggleParcelamento(); }
-    if (containerId === 'sf-parc-tt') { document.getElementById('ptt_tipo').value = 'pf'; toggleParcTT(); }
     if (containerId === 'sf-tr-partidas') { document.getElementById('trp_tipo').value = 'pf'; toggleTrPartidas(); }
     if (containerId === 'sf-bloq-cobranca') { document.getElementById('bloq_tipo').value = 'pagamento'; toggleBloqCobranca(); }
-    if (containerId === 'sf-bpc') { document.getElementById('bpc_titular').value = 'mesmo'; toggleBPC(); }
     
     var subA = subtipoAtivo[containerId];
     if (subA) setTimeout(function() { aplicarSubtipo(containerId, subA); }, 0);

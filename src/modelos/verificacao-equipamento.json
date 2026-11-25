@@ -1,0 +1,76 @@
+{
+  "id": "verificacao-equipamento",
+  "sf": "sf-verif-equip",
+  "nome": "Verificação de Equipamento",
+  "categoria": "Medição e Rede",
+  "descricao": "Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "agenda",
+  "botao": "Gerar Texto de AGENDA e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "elementoId": "ve_solic",
+      "rotulo": "Solicitante:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo"
+    },
+    {
+      "id": "motivo",
+      "elementoId": "ve_motivo",
+      "rotulo": "Motivo:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: Medidor emitindo ruído / display apagado"
+    },
+    {
+      "id": "tel",
+      "elementoId": "ve_tel",
+      "rotulo": "Telefone:",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 71993501519"
+    },
+    {
+      "id": "proc",
+      "elementoId": "ve_proc",
+      "rotulo": "Quem procurar:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome de quem atenderá a equipe"
+    },
+    {
+      "id": "ref",
+      "elementoId": "ve_ref",
+      "rotulo": "Ponto de Referência:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ponto de referência detalhado"
+    },
+    {
+      "id": "equip",
+      "elementoId": "ve_equip",
+      "rotulo": "Equipamento interno ou externo:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "opcoes": ["Interno", "Externo"]
+    },
+    {
+      "id": "email",
+      "elementoId": "ve_email",
+      "rotulo": "Possui e-mail:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado",
+      "largo": true
+    }
+  ],
+  "nota": "",
+  "agenda": "Solicitante: {{solic}}\nMotivo: {{motivo}}\nTelefone: {{tel}}\nQuem procurar: {{proc}}\nPonto de Referência: {{ref}}\nEquipamento interno ou externo: {{equip}}\nPossui e-mail: {{email}}"
+}

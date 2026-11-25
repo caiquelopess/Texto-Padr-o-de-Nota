@@ -1,0 +1,64 @@
+{
+  "id": "estorno-movein-moveout",
+  "sf": "sf-movein-moveout",
+  "nome": "Estorno Movein e Moveout",
+  "categoria": "Faturamento e Débitos",
+  "descricao": "Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "agenda",
+  "botao": "Gerar Texto de AGENDA e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "Todo pedido de estorno Movein e Moveout tem que ser feito o texto nas duas contas contratos na agenda de cada.",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "contrato",
+      "elementoId": "mm_contrato",
+      "rotulo": "Contrato:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 50xxxxxxx"
+    },
+    {
+      "id": "inst",
+      "elementoId": "mm_inst",
+      "rotulo": "Instalação:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 10xxxxxxx"
+    },
+    {
+      "id": "cca",
+      "elementoId": "mm_cca",
+      "rotulo": "Conta contrato antiga:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 70xxxxxxx"
+    },
+    {
+      "id": "ccn",
+      "elementoId": "mm_ccn",
+      "rotulo": "Conta contrato nova:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 70xxxxxxx"
+    },
+    {
+      "id": "motivo",
+      "elementoId": "mm_motivo",
+      "rotulo": "Pelo motivo de: (EXEMPLO TROCA DE TITULARIDADE OU NOTA 45 ANULADA NUMERO )",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: TROCA DE TITULARIDADE INDEVIDA / NOTA 45 ANULADA NUMERO XXXXX",
+      "largo": true
+    }
+  ],
+  "nota": "Contrato: {{contrato}}\nInstalação: {{inst}}\nConta contrato antiga: {{cca}}\nConta contrato nova : {{ccn}}\nSolicito o estorno de move in e move out e instalação Pelo motivo de: {{motivo}}",
+  "agenda": "Contrato: {{contrato}}\nInstalação: {{inst}}\nConta contrato antiga: {{cca}}\nConta contrato nova : {{ccn}}\nSolicito o estorno de move in e move out e instalação Pelo motivo de: {{motivo}}"
+}

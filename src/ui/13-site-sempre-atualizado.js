@@ -7,7 +7,7 @@
   // ?v=2.6.1) levam direto para a produção.
   // PUBLICAR: troque o código abaixo e o campo "versao" do versao.json pelo mesmo
   // valor (ex.: a data e hora da publicação). Ele é interno e não aparece na tela.
-  var VERSAO_ATUAL = '2.19.0';
+  var VERSAO_ATUAL = '2.19.1';
   var SITE_PRODUCAO = 'https://textos-padroes.pages.dev/';   // endereço oficial (Cloudflare, com login)
   var NA_WEB = /^https?:$/.test(location.protocol);
 

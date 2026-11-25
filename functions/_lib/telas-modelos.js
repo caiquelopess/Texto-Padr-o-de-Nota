@@ -10,7 +10,17 @@ import { data, esc, paginaAdmin } from './telas.js';
 export const SCRIPTS_ATIVOS = false;
 
 const STATUS = { rascunho: 'Rascunho', publicado: 'Publicado', arquivado: 'Arquivado' };
-const NOMES_TIPO = { texto: 'Texto', textoLongo: 'Texto longo', telefone: 'Telefone', email: 'E-mail', data: 'Data', numero: 'Número', opcao: 'Opção (lista)' };
+const NOMES_TIPO = {
+  texto: 'Texto',
+  textoLongo: 'Texto longo',
+  telefone: 'Telefone',
+  email: 'E-mail',
+  data: 'Data',
+  numero: 'Número',
+  opcao: 'Opção (lista)',
+  documento: 'CPF/CNPJ',
+  dataOuMes: 'Data ou mês/ano',
+};
 
 const ESTILO_MODELOS = `
 .filtros{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}.filtros a{padding:6px 12px;border:1px solid var(--borda);border-radius:999px;color:var(--muted);text-decoration:none;font-size:13px}

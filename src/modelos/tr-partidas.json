@@ -1,0 +1,63 @@
+{
+  "id": "tr-partidas",
+  "sf": "sf-tr-partidas",
+  "nome": "TR DE PARTIDAS",
+  "categoria": "Faturamento e Débitos",
+  "descricao": "Migrado do código (lote 4 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "botao": "Gerar Texto e Copiar",
+  "avisos": [
+    { "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️", "classeOriginal": "alert-box alert-box-blink" },
+    { "html": "<b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.", "classeOriginal": "alert-box alerta-cnpj" },
+    { "html": "Transferência de Partidas (Pessoa Física e Pessoa Jurídica)", "classeOriginal": "alert-box" }
+  ],
+  "campos": [
+    {
+      "id": "tipo",
+      "elementoId": "trp_tipo",
+      "rotulo": "Tipo de Cliente",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "opcoes": ["pf", "pj"],
+      "rotulosOpcoes": ["PESSOA FÍSICA", "PESSOA JURÍDICA"],
+      "largo": true
+    },
+    { "id": "cc_orig", "elementoId": "trp_cc_orig", "rotulo": "Conta contrato de origem:", "tipo": "texto", "obrigatorio": true, "dica": "Ex: 70xxxxxxx" },
+    { "id": "cc_dest", "elementoId": "trp_cc_dest", "rotulo": "Conta contrato de destino:", "tipo": "texto", "obrigatorio": true, "dica": "Ex: 70xxxxxxx" },
+    { "id": "contrato", "elementoId": "trp_contrato", "rotulo": "Contrato:", "tipo": "texto", "obrigatorio": true, "dica": "Ex: 50xxxxxxx" },
+    {
+      "id": "solic",
+      "elementoId": "trp_solic",
+      "rotulo": "Solicitante:",
+      "rotuloSe": { "campo": "tipo", "igual": "pj", "rotulo": "Representante legal da empresa:" },
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo"
+    },
+    { "id": "cpf", "elementoId": "trp_cpf", "rotulo": "CPF/CNPJ:", "tipo": "documento", "documento": "doc", "obrigatorio": true },
+    {
+      "id": "cnpj",
+      "elementoId": "trp_cnpj",
+      "rotulo": "CNPJ:",
+      "tipo": "documento",
+      "documento": "cnpj",
+      "obrigatorio": true,
+      "mostrarSe": { "campo": "tipo", "igual": "pj" }
+    },
+    { "id": "tel", "elementoId": "trp_tel", "rotulo": "Telefone:", "tipo": "telefone", "obrigatorio": true, "dica": "Ex: 84988887777" },
+    { "id": "email", "elementoId": "trp_email", "rotulo": "E-mail:", "tipo": "texto", "obrigatorio": true, "dica": "cliente@email.com ou Não informado" },
+    { "id": "valor", "elementoId": "trp_valor", "rotulo": "Valor R$:", "tipo": "texto", "obrigatorio": true, "dica": "Ex: 1500,00" },
+    { "id": "venc_de", "elementoId": "trp_venc_de", "rotulo": "Vencimento de:", "tipo": "dataOuMes", "obrigatorio": true },
+    { "id": "venc_ate", "elementoId": "trp_venc_ate", "rotulo": "Até:", "tipo": "dataOuMes", "obrigatorio": true },
+    {
+      "id": "nota",
+      "elementoId": "trp_nota",
+      "rotulo": "N.º da nota (para débito superior a R$2.000,01):",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nº da nota ou Não se aplica"
+    }
+  ],
+  "nota": "{{#se tipo=pf}}Conta contrato de origem: {{cc_orig}}\nConta contrato de destino: {{cc_dest}}\nContrato: {{contrato}}\nSolicitante: {{solic}}\nCPF/CNPJ: {{cpf}}\nTelefone: {{tel}}\n\nE-mail: {{email}}\nValor R$ {{valor}} referente ao vencimento de {{venc_de}} até {{venc_ate}};\nN.º da nota (para débito superior a R$2.000,01): {{nota}}{{/se}}{{#se tipo=pj}}Conta contrato de origem; {{cc_orig}}\nConta contrato de destino; {{cc_dest}}\nContrato: {{contrato}}\nRepresentante legal da empresa: {{solic}}\nCPF/CNPJ; {{cpf}}\nCNPJ; {{cnpj}}\n\nTelefone: {{tel}}\nE-mail: {{email}}\nValor R$ {{valor}} referente ao vencimento de {{venc_de}} até {{venc_ate}}\nN.º da nota (para débito superior a R$2.000,01) {{nota}}{{/se}}",
+  "agenda": "{{#se tipo=pf}}Conta contrato de origem: {{cc_orig}}\nConta contrato de destino: {{cc_dest}}\nContrato: {{contrato}}\nSolicitante: {{solic}}\nCPF/CNPJ: {{cpf}}\nTelefone: {{tel}}\n\nE-mail: {{email}}\nValor R$ {{valor}} referente ao vencimento de {{venc_de}} até {{venc_ate}};\nN.º da nota (para débito superior a R$2.000,01): {{nota}}{{/se}}{{#se tipo=pj}}Conta contrato de origem; {{cc_orig}}\nConta contrato de destino; {{cc_dest}}\nContrato: {{contrato}}\nRepresentante legal da empresa: {{solic}}\nCPF/CNPJ; {{cpf}}\nCNPJ; {{cnpj}}\n\nTelefone: {{tel}}\nE-mail: {{email}}\nValor R$ {{valor}} referente ao vencimento de {{venc_de}} até {{venc_ate}}\nN.º da nota (para débito superior a R$2.000,01) {{nota}}{{/se}}"
+}

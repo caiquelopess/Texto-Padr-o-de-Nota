@@ -122,7 +122,7 @@ test('validação do modelo aponta cada problema', () => {
   ])
     assert.ok(erros.includes(esperado), esperado);
   assert.ok(mdValidarModelo({ id: 'abc', nome: 'N', categoria: 'C', campos: [] }).includes('Escreva o texto da NOTA ou da AGENDA.'));
-  assert.deepEqual(MD_TIPOS.length, 7);
+  assert.deepEqual(MD_TIPOS.length, 9);
 });
 
 test('teste automático antes de publicar', () => {
@@ -149,7 +149,7 @@ test('teste automático antes de publicar', () => {
     agenda: MD_TIPOS.map((t) => `{{c_${t.toLowerCase()}}}`).join(' '),
   });
   assert.equal(todos.ok, true, todos.erros.join('; '));
-  assert.equal(todos.exemplos[0].agenda, 'Teste texto Teste textoLongo (71) 99350-1519 teste@email.com 10/11/2026 123456 Um');
+  assert.equal(todos.exemplos[0].agenda, 'Teste texto Teste textoLongo (71) 99350-1519 teste@email.com 10/11/2026 123456 Um 12345678901 10/2026');
 });
 
 test('limites das validações (início e fim do texto)', () => {
@@ -237,4 +237,62 @@ test('padronização de datas e telefones (igual ao sistema anterior)', async ()
   assert.deepEqual(mdNormalizarValores(m, { liv: '29/02/2028' }, hoje).valores.liv, '29/02/2028');
   assert.deepEqual(mdNormalizarValores(m, { esc: '1/1/2020', x: 'sim' }, hoje).valores.esc, '01/01/2020');
   assert.deepEqual(mdNormalizarValores(m, {}).erros, []);
+});
+
+test('documento (CPF/CNPJ), data ou mês e rótulo condicional', async () => {
+  const { mdNormalizarValores, mdRotulo } = await import('../../src/nucleo/modelos.mjs');
+  const m = {
+    id: 'docs',
+    nome: 'Docs',
+    categoria: 'X',
+    campos: [
+      { id: 'tipo', rotulo: 'Tipo', tipo: 'opcao', opcoes: ['pf', 'pj'] },
+      { id: 'doc', rotulo: 'CPF/CNPJ:', tipo: 'documento', obrigatorio: true, rotuloSe: { campo: 'tipo', igual: 'pj', rotulo: 'Documento PJ:' } },
+      { id: 'cpf', rotulo: 'CPF:', tipo: 'documento', documento: 'cpf' },
+      { id: 'cnpj', rotulo: 'CNPJ:', tipo: 'documento', documento: 'cnpj' },
+      { id: 'venc', rotulo: 'Vencimento:', tipo: 'dataOuMes' },
+    ],
+    nota: '{{doc}} {{cpf}} {{cnpj}} {{venc}}',
+  };
+  assert.deepEqual(mdValidarModelo(m), []);
+  assert.equal(mdTestarModelo(m).ok, true);
+  const n = (v) => mdNormalizarValores(m, { tipo: 'pf', ...v });
+  assert.deepEqual(n({ doc: '123.456.789-01', cpf: '12345678901', cnpj: '12345678000195', venc: '3/2026' }).valores, {
+    tipo: 'pf',
+    doc: '123.456.789-01',
+    cpf: '123.456.789-01',
+    cnpj: '12.345.678/0001-95',
+    venc: '03/2026',
+  });
+  assert.equal(n({ doc: '12345678000195', venc: '5/1/2027' }).valores.doc, '12.345.678/0001-95');
+  assert.equal(n({ venc: '5/1/2027' }).valores.venc, '05/01/2027');
+  assert.deepEqual(n({ doc: '123', cpf: '12345678000195', cnpj: '12345678901' }).erros, [
+    'O campo "CPF/CNPJ:" deve conter um CPF com 11 números ou um CNPJ com 14 números. Verifique e tente novamente.',
+    'O campo "CPF:" deve conter um CPF com 11 números. Verifique e tente novamente.',
+    'O campo "CNPJ:" deve conter um CNPJ com 14 números. Verifique e tente novamente.',
+  ]);
+  assert.deepEqual(mdNormalizarValores(m, { tipo: 'pj', doc: '1' }).erros[0].slice(0, 22), 'O campo "Documento PJ:');
+  assert.deepEqual(n({ venc: '13/2026' }).erros, ['O mês do campo "Vencimento:" deve ser entre 01 e 12.']);
+  for (const ruim of ['31/02/2027', '0/2026x', 'abc', '1/1/27'])
+    assert.deepEqual(n({ venc: ruim }).erros, ['O campo "Vencimento:" deve ter uma data real (dd/mm/aaaa) ou um mês/ano (mm/aaaa) válido.'], ruim);
+  assert.deepEqual(n({ venc: '00/2026' }).erros, ['O mês do campo "Vencimento:" deve ser entre 01 e 12.']);
+  // rótulo condicional e mensagens de validação
+  assert.equal(mdRotulo(m.campos[1], { tipo: 'pj' }), 'Documento PJ:');
+  assert.equal(mdRotulo(m.campos[1], { tipo: 'pf' }), 'CPF/CNPJ:');
+  assert.deepEqual(mdValidarValores(m, { tipo: 'pj' }), ['Preencha o campo: Documento PJ:']);
+  assert.deepEqual(mdValidarValores(m, { tipo: 'pf', doc: '1', venc: '1/2026' }), [
+    'CPF/CNPJ:: documento inválido.',
+    'Vencimento:: use dd/mm/aaaa ou mm/aaaa.',
+  ]);
+  assert.deepEqual(mdValidarValores(m, { tipo: 'pf', doc: '123.456.789-01', venc: '01/02/2026' }), []);
+  // estrutura
+  assert.deepEqual(mdValidarModelo({ ...m, campos: [{ ...m.campos[2], documento: 'rg' }] }).slice(0, 1), [
+    'Campo "CPF:": documento deve ser doc, cpf ou cnpj.',
+  ]);
+  assert.deepEqual(
+    mdValidarModelo({ ...m, campos: [...m.campos.slice(2), { ...m.campos[1], rotuloSe: { campo: 'x', rotulo: 'Y' } }] }).includes(
+      'Campo "CPF/CNPJ:": "rótulo se" incompleto.',
+    ),
+    true,
+  );
 });

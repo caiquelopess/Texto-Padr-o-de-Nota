@@ -475,14 +475,6 @@
   }
 
 
-  function toggleTrPartidas() {
-    var isPj = (document.getElementById('trp_tipo').value === 'pj');
-    document.getElementById('lbl_trp_solic').innerText = isPj ? 'Representante legal da empresa: *' : 'Solicitante: *';
-    document.getElementById('grp_trp_cnpj').style.display = isPj ? 'flex' : 'none';
-    document.getElementById('trp_cnpj').required = isPj;
-  }
-
-
   function toggleMMGD(selId, neoId) {
     var sel = document.getElementById(selId);
     var neo = document.getElementById(neoId);
@@ -513,10 +505,8 @@
   var DATAS_LIVRES = { lp_dt_lig: 1, lp_dt_deslig: 1, refp_dt_deslig: 1, refp_dt_relig: 1, def_fat_venc: 1, bloq_dt_ini: 1, bloq_dt_fim: 1 };
   // Campos "data e horário" (dd/mm/aaaa + hora no mesmo campo): fato já ocorrido
   var DATAS_HORA_PASSADAS = { rde_dt_ini: 1, rde_dt_fim: 1, rod_dt_ini: 1, rod_dt_fim: 1 };
-  // Campos que aceitam dd/mm/aaaa ou mm/aaaa
-  var DATAS_OU_MES = { trp_venc_de: 1, trp_venc_ate: 1 };
   // Documentos: 'doc' aceita CPF (11) ou CNPJ (14); 'cpf' só 11 dígitos; 'cnpj' só 14
-  var DOCS = { tt_cpf: 'doc', ri_cpf: 'doc', trp_cpf: 'doc', trp_cnpj: 'cnpj' };
+  var DOCS = { tt_cpf: 'doc', ri_cpf: 'doc' };
 
   function rotuloDoCampo(inp) {
     var labelEl = inp.previousElementSibling;
@@ -616,21 +606,6 @@
         continue;
       }
 
-      // dd/mm/aaaa ou mm/aaaa
-      if (DATAS_OU_MES[id]) {
-        var mm = /^(\d{1,2})\s*\/\s*(\d{4})$/.exec(valor);
-        if (mm) {
-          var mesV = parseInt(mm[1], 10);
-          if (mesV < 1 || mesV > 12) return barrarCampo(inp, 'ATENÇÃO: O mês do campo "' + lbl + '" deve ser entre 01 e 12.');
-          inp.value = doisDig(mesV) + '/' + mm[2];
-        } else {
-          var cd = conferirData(valor, false);
-          if (cd.erro) return barrarCampo(inp, 'ATENÇÃO: O campo "' + lbl + '" deve ter uma data real (dd/mm/aaaa) ou um mês/ano (mm/aaaa) válido.');
-          inp.value = cd.texto;
-        }
-        continue;
-      }
-
       // Datas dd/mm/aaaa
       if (DATAS_PASSADAS[id] || DATAS_LIVRES[id]) {
         if (id === 'rec_dt_leit' && valor.toUpperCase() === 'N/A') continue;
@@ -721,7 +696,7 @@
     reposicionarCursorData(inp, novo, Math.min(digAntes, d.length));
   }
 
-  // Data dd/mm/aaaa OU mês/ano mm/aaaa (vencimentos do TR de Partidas).
+  // Data dd/mm/aaaa OU mês/ano mm/aaaa (campos "dataOuMes" dos modelos, ex.: TR de Partidas).
   // Se os dígitos 3-4 não formam um mês válido (01 a 12), o que está
   // sendo digitado é o ano de um mm/aaaa: a "/" fica só após o mês.
   function mascararDataOuMes(inp) {
@@ -1151,34 +1126,6 @@
   }
 
 
-  function gerarTrPartidas() {
-    if (!validarCampos('sf-tr-partidas')) return;
-    var isPj = (getVal('trp_tipo') === 'pj');
-    var txt = '';
-    if (!isPj) {
-      txt = 'Conta contrato de origem: ' + getVal('trp_cc_orig') +
-        '\nConta contrato de destino: ' + getVal('trp_cc_dest') +
-        '\nContrato: ' + getVal('trp_contrato') +
-        '\nSolicitante: ' + getVal('trp_solic') +
-        '\nCPF/CNPJ: ' + getVal('trp_cpf') +
-        '\nTelefone: ' + getVal('trp_tel') +
-        '\n\nE-mail: ' + getVal('trp_email') +
-        '\nValor R$ ' + getVal('trp_valor') + ' referente ao vencimento de ' + getVal('trp_venc_de') + ' até ' + getVal('trp_venc_ate') + ';' +
-        '\nN.º da nota (para débito superior a R$2.000,01): ' + getVal('trp_nota');
-    } else {
-      txt = 'Conta contrato de origem; ' + getVal('trp_cc_orig') +
-        '\nConta contrato de destino; ' + getVal('trp_cc_dest') +
-        '\nContrato: ' + getVal('trp_contrato') +
-        '\nRepresentante legal da empresa: ' + getVal('trp_solic') +
-        '\nCPF/CNPJ; ' + getVal('trp_cpf') +
-        '\nCNPJ; ' + getVal('trp_cnpj') +
-        '\n\nTelefone: ' + getVal('trp_tel') +
-        '\nE-mail: ' + getVal('trp_email') +
-        '\nValor R$ ' + getVal('trp_valor') + ' referente ao vencimento de ' + getVal('trp_venc_de') + ' até ' + getVal('trp_venc_ate') +
-        '\nN.º da nota (para débito superior a R$2.000,01) ' + getVal('trp_nota');
-    }
-    finalizarGeracao('sf-tr-partidas', txt, txt, 'nota');
-  }
 
 
 
@@ -1311,7 +1258,6 @@
     if (containerId === 'sf-tt') { document.getElementById('tt_tipo').value = 'sem_debito'; document.getElementById('tt_mmgd').value = 'Não'; toggleTrocaTitularidade(); }
     if (containerId === 'sf-ri') { document.getElementById('ri_tipo').value = 'assuncao'; document.getElementById('ri_mmgd').value = 'Não'; toggleMMGD('ri_mmgd', 'ri_neo'); toggleReativDebitos(); }
     if (containerId === 'sf-res') { document.getElementById('res_forma_pag').value = 'conta'; toggleFormaPagRes(); }
-    if (containerId === 'sf-tr-partidas') { document.getElementById('trp_tipo').value = 'pf'; toggleTrPartidas(); }
     
     var subA = subtipoAtivo[containerId];
     if (subA) setTimeout(function() { aplicarSubtipo(containerId, subA); }, 0);

@@ -87,7 +87,6 @@
         <button type="button" class="sub-btn" data-click="trocarAba('sf-rde-doc', this)">Ressarcimento de Danos Elétricos — Recebimento de Documentação (laudos e orçamentos)</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-outros-danos', this)">Ressarcimento de Danos Não Elétricos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-res', this)">Restituição de valores</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-tr-partidas', this)">TR DE PARTIDAS</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-tt|sem_debito', this)">Troca de Titularidade sem Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-tt|com_assuncao', this)">Troca de Titularidade com Assunção de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-deb|troca', this)">Troca de Titularidade com Análise de Isenção de Débitos</button>
@@ -768,33 +767,6 @@
 
 
     <!-- 32. TR DE PARTIDAS -->
-    <div class="subform" id="sf-tr-partidas">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
-      <div class="alert-box">Transferência de Partidas (Pessoa Física e Pessoa Jurídica)</div>
-      <div class="form-grid">
-        <div class="field-group full-width">
-          <label>Tipo de Cliente *</label>
-          <select id="trp_tipo" data-change="toggleTrPartidas()">
-            <option value="pf">PESSOA FÍSICA</option>
-            <option value="pj">PESSOA JURÍDICA</option>
-          </select>
-        </div>
-        <div class="field-group"><label>Conta contrato de origem: *</label><input type="text" id="trp_cc_orig" placeholder="Ex: 70xxxxxxx" required></div>
-        <div class="field-group"><label>Conta contrato de destino: *</label><input type="text" id="trp_cc_dest" placeholder="Ex: 70xxxxxxx" required></div>
-        <div class="field-group"><label>Contrato: *</label><input type="text" id="trp_contrato" placeholder="Ex: 50xxxxxxx" required></div>
-        <div class="field-group"><label id="lbl_trp_solic">Solicitante: *</label><input type="text" id="trp_solic" placeholder="Nome completo" required></div>
-        <div class="field-group"><label>CPF/CNPJ: *</label><input type="text" id="trp_cpf" placeholder="CPF ou CNPJ — somente números" required></div>
-        <div class="field-group" id="grp_trp_cnpj" style="display: none;"><label>CNPJ: *</label><input type="text" id="trp_cnpj" placeholder="00.000.000/0000-00"></div>
-        <div class="field-group"><label>Telefone: *</label><input type="text" id="trp_tel" placeholder="Ex: 84988887777" required></div>
-        <div class="field-group"><label>E-mail: *</label><input type="text" id="trp_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Valor R$: *</label><input type="text" id="trp_valor" placeholder="Ex: 1500,00" required></div>
-        <div class="field-group"><label>Vencimento de: *</label><input type="text" id="trp_venc_de" placeholder="dd/mm/aaaa ou mm/aaaa" data-input="mascararDataOuMes(this)" required></div>
-        <div class="field-group"><label>Até: *</label><input type="text" id="trp_venc_ate" placeholder="dd/mm/aaaa ou mm/aaaa" data-input="mascararDataOuMes(this)" required></div>
-        <div class="field-group"><label>N.º da nota (para débito superior a R$2.000,01): *</label><input type="text" id="trp_nota" placeholder="Nº da nota ou Não se aplica" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarTrPartidas()">Gerar Texto e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-tr-partidas')">Limpar Tudo</button></div>
-    </div>
 
 
 

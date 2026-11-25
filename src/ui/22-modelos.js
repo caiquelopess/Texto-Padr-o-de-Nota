@@ -24,12 +24,16 @@
   function mdAtualizarVisiveis(m) {
     var visiveis = {};
     mdCamposVisiveis(m, mdValores(m)).forEach(function(c) { visiveis[c.id] = true; });
+    var valores = mdValores(m);
     (m.campos || []).forEach(function(c) {
       var el = document.getElementById(mdElemento(m, c));
-      if (el) el.closest('.field-group').style.display = visiveis[c.id] ? '' : 'none';
+      if (!el) return;
+      var grupo = el.closest('.field-group');
+      grupo.style.display = visiveis[c.id] ? '' : 'none';
+      // rótulo que muda conforme outro campo (ex.: PJ pede o representante legal)
+      if (c.rotuloSe) grupo.querySelector('label').textContent = mdRotulo(c, valores) + (c.obrigatorio ? ' *' : '');
     });
     // avisos que dependem da escolha (ex.: OneCode só em "Correção de Nome")
-    var valores = mdValores(m);
     var form = document.getElementById(mdSf(m));
     (m.avisos || []).forEach(function(a, i) {
       if (!a || typeof a !== 'object' || !a.mostrarSe) return;
@@ -76,6 +80,8 @@
       if (c.tipo === 'telefone') { el.setAttribute('inputmode', 'tel'); el.placeholder = 'Ex: 71993501519'; }
       if (c.tipo === 'email') { el.setAttribute('inputmode', 'email'); el.placeholder = 'cliente@email.com ou Não informado'; }
       if (c.tipo === 'data') { el.placeholder = 'dd/mm/aaaa'; el.setAttribute('data-input', 'mascararData(this)'); }
+      if (c.tipo === 'dataOuMes') { el.placeholder = 'dd/mm/aaaa ou mm/aaaa'; el.setAttribute('data-input', 'mascararDataOuMes(this)'); }
+      if (c.tipo === 'documento') el.placeholder = c.documento === 'cnpj' ? '00.000.000/0000-00' : 'CPF ou CNPJ — somente números';
       if (c.tipo === 'numero') el.setAttribute('inputmode', 'numeric');
       if (c.dica) el.placeholder = c.dica;
     }

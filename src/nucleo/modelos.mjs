@@ -9,7 +9,9 @@
 // Os dados preenchidos nunca saem do navegador: o motor só monta o texto localmente.
 import { formatarTelefones, telefonesPadraoNota } from './formatos.mjs';
 
-export const MD_TIPOS = ['texto', 'textoLongo', 'telefone', 'email', 'data', 'numero', 'opcao'];
+export const MD_TIPOS = ['texto', 'textoLongo', 'telefone', 'email', 'data', 'numero', 'opcao', 'documento', 'dataOuMes'];
+// Campo "documento": aceita CPF (11 números) e/ou CNPJ (14), conforme c.documento ('doc' = os dois, 'cpf', 'cnpj').
+const DOC_TIPOS = ['doc', 'cpf', 'cnpj'];
 const ID_CAMPO = /^[a-z][a-z0-9_]{0,39}$/;
 const ID_MODELO = /^[a-z0-9][a-z0-9-]{2,59}$/;
 const MARCADOR = /\{\{\s*([a-z][a-z0-9_]*)\s*(?:\|\s*([a-zA-Z]+)(?::([^}]*))?)?\s*\}\}/g;
@@ -17,6 +19,21 @@ const BLOCO = /\{\{#se\s+([a-z][a-z0-9_]*)\s*(?:=\s*([^}]*?))?\s*\}\}\n?((?:(?!\
 const FILTROS = ['maiusculas', 'telefoneNota', 'ou'];
 
 const vazio = (v) => String(v ?? '').trim() === '';
+
+// CPF/CNPJ formatado, ou null se a quantidade de números não serve para o tipo.
+function formatarDocumento(valor, tipo = 'doc') {
+  const d = String(valor || '').replace(/\D/g, '');
+  if (d.length === 11 && tipo !== 'cnpj') return d.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
+  if (d.length === 14 && tipo !== 'cpf') return d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
+  return null;
+}
+
+// Rótulo do campo com os valores atuais (regra "rotuloSe": o rótulo muda conforme outro campo).
+export function mdRotulo(campo, valores = {}) {
+  const r = campo.rotuloSe;
+  if (r && [].concat(r.igual).includes(String(valores[r.campo] ?? ''))) return r.rotulo;
+  return campo.rotulo;
+}
 
 // Campos que aparecem com os valores atuais (regra "mostrar se").
 export function mdCamposVisiveis(modelo, valores = {}) {
@@ -45,9 +62,12 @@ export function mdValidarModelo(modelo) {
     if (vazio(c.rotulo)) erros.push(`Campo "${c.id}": falta o rótulo.`);
     if (!MD_TIPOS.includes(c.tipo)) erros.push(`Campo "${rot}": tipo desconhecido.`);
     if (c.tipo === 'opcao' && !(Array.isArray(c.opcoes) && c.opcoes.length)) erros.push(`Campo "${rot}": informe as opções.`);
+    if (c.tipo === 'documento' && c.documento !== undefined && !DOC_TIPOS.includes(c.documento))
+      erros.push(`Campo "${rot}": documento deve ser doc, cpf ou cnpj.`);
   }
   for (const c of campos) {
     if (c.mostrarSe && !ids.has(c.mostrarSe.campo)) erros.push(`Campo "${c.rotulo || c.id}": "mostrar se" usa um campo que não existe.`);
+    if (c.rotuloSe && (!ids.has(c.rotuloSe.campo) || vazio(c.rotuloSe.rotulo))) erros.push(`Campo "${c.rotulo || c.id}": "rótulo se" incompleto.`);
   }
   if (vazio(modelo.nota) && vazio(modelo.agenda)) erros.push('Escreva o texto da NOTA ou da AGENDA.');
   for (const parte of ['nota', 'agenda']) {
@@ -71,7 +91,7 @@ export function mdValidarValores(modelo, valores = {}) {
   for (const c of mdCamposVisiveis(modelo, valores)) {
     const v = String(valores[c.id] ?? '').trim();
     if (!v) {
-      if (c.obrigatorio) erros.push(`Preencha o campo: ${c.rotulo}`);
+      if (c.obrigatorio) erros.push(`Preencha o campo: ${mdRotulo(c, valores)}`);
       continue;
     }
     if (c.tipo === 'telefone' && formatarTelefones(v) === null) erros.push(`${c.rotulo}: telefone com DDD (10 ou 11 dígitos).`);
@@ -79,6 +99,8 @@ export function mdValidarValores(modelo, valores = {}) {
     if (c.tipo === 'data' && !/^\d{2}\/\d{2}\/\d{4}$/.test(v)) erros.push(`${c.rotulo}: use dd/mm/aaaa.`);
     if (c.tipo === 'numero' && !/^\d+$/.test(v)) erros.push(`${c.rotulo}: só números.`);
     if (c.tipo === 'opcao' && !c.opcoes.includes(v)) erros.push(`${c.rotulo}: escolha uma das opções.`);
+    if (c.tipo === 'documento' && formatarDocumento(v, c.documento) === null) erros.push(`${c.rotulo}: documento inválido.`);
+    if (c.tipo === 'dataOuMes' && !/^\d{2}\/(\d{2}\/)?\d{4}$/.test(v)) erros.push(`${c.rotulo}: use dd/mm/aaaa ou mm/aaaa.`);
   }
   return erros;
 }
@@ -97,6 +119,33 @@ export function mdNormalizarValores(modelo, valores = {}, hoje = new Date()) {
       const t = formatarTelefones(v);
       if (t === null) erros.push(`O telefone do campo "${c.rotulo}" deve ter 10 ou 11 dígitos, com DDD.`);
       else saida[c.id] = t;
+    }
+    if (c.tipo === 'documento') {
+      const d = formatarDocumento(v, c.documento);
+      if (d === null) {
+        const esperado =
+          c.documento === 'cnpj'
+            ? 'um CNPJ com 14 números'
+            : c.documento === 'cpf'
+              ? 'um CPF com 11 números'
+              : 'um CPF com 11 números ou um CNPJ com 14 números';
+        erros.push(`O campo "${mdRotulo(c, valores)}" deve conter ${esperado}. Verifique e tente novamente.`);
+      } else saida[c.id] = d;
+    }
+    if (c.tipo === 'dataOuMes') {
+      const mm = /^(\d{1,2})\s*\/\s*(\d{4})$/.exec(v);
+      if (mm) {
+        const mes = Number(mm[1]);
+        if (mes < 1 || mes > 12) erros.push(`O mês do campo "${mdRotulo(c, valores)}" deve ser entre 01 e 12.`);
+        else saida[c.id] = `${dois(mes)}/${mm[2]}`;
+        continue;
+      }
+      const m = /^(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{4})$/.exec(v);
+      const [dia, mes, ano] = m ? [Number(m[1]), Number(m[2]), Number(m[3])] : [0, 0, 0];
+      const dt = new Date(ano, mes - 1, dia);
+      if (!m || mes < 1 || mes > 12 || dia < 1 || dt.getFullYear() !== ano || dt.getMonth() !== mes - 1 || dt.getDate() !== dia)
+        erros.push(`O campo "${mdRotulo(c, valores)}" deve ter uma data real (dd/mm/aaaa) ou um mês/ano (mm/aaaa) válido.`);
+      else saida[c.id] = `${dois(dia)}/${dois(mes)}/${ano}`;
     }
     if (c.tipo === 'data') {
       const m = /^(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{4})$/.exec(v);
@@ -155,6 +204,8 @@ function exemplo(campo) {
   if (campo.tipo === 'data') return '10/11/2026';
   if (campo.tipo === 'numero') return '123456';
   if (campo.tipo === 'opcao') return campo.opcoes[0];
+  if (campo.tipo === 'documento') return campo.documento === 'cnpj' ? '12345678000195' : '12345678901';
+  if (campo.tipo === 'dataOuMes') return '10/2026';
   return `Teste ${campo.rotulo}`;
 }
 

@@ -84,7 +84,13 @@ test('endereço antigo: layout antigo, aviso em balão e sistema usável', async
   await page.goto('https://caiquelopess.github.io/Texto-Padr-o-de-Nota/');
   await expect(page.locator('.aviso-mudanca')).toBeVisible();
   await expect(page.locator('.lateral')).toHaveCount(0);
-  await expect(page.locator('.nav-tabs .nav-tab')).toHaveCount(6);
+  // só o texto padrão e a tensão de fornecimento; histórico continua (para exportar)
+  await expect(page.locator('.nav-tabs .nav-tab')).toHaveText(['AGENDA E NOTA', 'TENSÃO FORNECIMENTO']);
+  for (const id of ['#painel_decl', '#painel_calc', '#painel_pend', '#painel_form', '#btn_pendencias']) await expect(page.locator(id)).toBeHidden();
+  await expect(page.locator('#btn_historico')).toBeVisible();
+  await page.click('.nav-tab[data-aba="tensao"]');
+  await expect(page.locator('#painel_tensao')).toBeVisible();
+  await page.click('.nav-tab[data-aba="agenda"]');
   expect((await page.locator('.container').boundingBox()).width).toBeGreaterThan(900);
   await page.click('#btn_alternar_servicos');
   await page.click('#service_nav .sub-btn >> text="Religação"');

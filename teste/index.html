@@ -6129,7 +6129,7 @@
   // ?v=2.6.1) levam direto para a produção.
   // PUBLICAR: troque o código abaixo e o campo "versao" do versao.json pelo mesmo
   // valor (ex.: a data e hora da publicação). Ele é interno e não aparece na tela.
-  var VERSAO_ATUAL = '2.18.0';
+  var VERSAO_ATUAL = '2.18.3';
   var SITE_PRODUCAO = 'https://textos-padroes.pages.dev/';   // endereço oficial (Cloudflare, com login)
   var NA_WEB = /^https?:$/.test(location.protocol);
 
@@ -6406,6 +6406,23 @@
     return pIso(d);
   }
   mostrarAvisoMudanca(false);
+
+  // No endereço antigo ficam só o texto padrão (Agenda e Nota) e a Tensão de Fornecimento.
+  // O Histórico continua, porque é por ele que se exportam os dados para o endereço novo.
+  function enxugarEnderecoAntigo(forcar) {
+    if (!forcar && !ehEnderecoAntigo()) return;
+    ['calc', 'decl', 'pend', 'form'].forEach(function(aba) {
+      var t = document.querySelector('.nav-tab[data-aba="' + aba + '"]');
+      if (t) t.remove();
+      var painel = document.getElementById('painel_' + aba);
+      if (painel) { painel.style.display = 'none'; painel.setAttribute('data-oculto-endereco-antigo', ''); }
+    });
+    ['btn_pendencias', 'pend_lembrete'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) { el.hidden = true; el.style.setProperty('display', 'none', 'important'); }
+    });
+  }
+  enxugarEnderecoAntigo(false);
   // === FORMULÁRIOS (para impressão) ===
   // A lista vem do servidor (/api/formularios) só na primeira vez que a aba é aberta.
   // O responsável envia os arquivos em Administração → Formulários.

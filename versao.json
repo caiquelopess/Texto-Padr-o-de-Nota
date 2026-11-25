@@ -1,7 +1,8 @@
 {
-  "versao": "2.13.0",
+  "versao": "2.14.0",
   "data": "25/11/2026",
   "novidades": [
+    "Perfis Gestor, Administrador, Supervisor, Atendente e Consulta; Dashboard no painel administrativo",
     "Interface própria para celular: barra de navegação embaixo, botão Gerar sempre à mão e texto gerado numa folha",
     "Sugestões: \"Concluída\" não apaga mais (aba Concluídas, Reabrir e Excluir)",
     "No primeiro acesso, o sistema pede para trocar a senha provisória",

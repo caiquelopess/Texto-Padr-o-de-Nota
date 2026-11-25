@@ -1,3 +1,5 @@
+import { PERFIS, pode } from './permissoes.js';
+
 // Telas de login, troca de senha e administração (HTML gerado no servidor).
 
 const esc = (t) => String(t ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -89,64 +91,71 @@ ${erro ? `<p class="erro" role="alert">${esc(erro)}</p>` : ''}${ok ? `<p class="
 
 const data = (ms) => (ms ? new Date(ms).toLocaleString('pt-BR', { timeZone: 'America/Bahia', dateStyle: 'short', timeStyle: 'short' }) : '—');
 
-export function telaAdmin({ usuario, gestor = '', usuarios = [], erro = '', ok = '' }) {
+export function telaAdmin({ usuario, gestor = '', perfil = 'gestor', criaveis = [], usuarios = [], erro = '', ok = '' }) {
+  const opcoes = (atual) => criaveis.map((p) => `<option value="${p}"${p === atual ? ' selected' : ''}>${PERFIS[p]}</option>`).join('');
   const linhas = usuarios
-    .map(
-      (
-        u,
-      ) => `<tr><td><b>${esc(u.usuario)}</b>${u.usuario === gestor ? ' <span style="color:var(--neon2)">(gestor geral)</span>' : u.admin ? ' <span style="color:var(--neon)">(admin)</span>' : ''}</td>
-<td>${u.ativo ? 'Ativo' : '<span style="color:var(--perigo)">Desativado</span>'}</td><td>${data(u.criado)}</td><td>${esc(u.criadoPor || '—')}</td><td>${data(u.ultimoAcesso)}</td>
-<td>${
-        u.usuario === usuario
-          ? '<a href="/trocar-senha" style="color:var(--neon)">trocar minha senha</a>'
-          : u.usuario === gestor
-            ? '<span style="color:var(--muted)">protegido</span>'
-            : `<form method="post" action="/admin" onsubmit="var s=prompt('Nova senha provisória para ${esc(u.usuario)} (mínimo 4 caracteres):');if(!s)return false;this.senha.value=s;">
+    .map((u) => {
+      const papel = u.perfil || (u.usuario === gestor ? 'gestor' : u.admin ? 'administrador' : 'atendente');
+      let acoes;
+      if (u.usuario === usuario) acoes = '<a href="/trocar-senha" style="color:var(--neon)">trocar minha senha</a>';
+      else if (u.usuario === gestor) acoes = '<span style="color:var(--muted)">protegido</span>';
+      else if (u.gerenciavel === false) acoes = '<span style="color:var(--muted)">—</span>';
+      else
+        acoes = `<form method="post" action="/admin" class="form-perfil"><input type="hidden" name="acao" value="perfil"><input type="hidden" name="usuario" value="${esc(u.usuario)}"><select name="perfil" aria-label="Perfil de ${esc(u.usuario)}" onchange="this.form.submit()">${opcoes(papel)}</select></form>
+<form method="post" action="/admin" onsubmit="var s=prompt('Nova senha provisória para ${esc(u.usuario)} (mínimo 4 caracteres):');if(!s)return false;this.senha.value=s;">
 <input type="hidden" name="acao" value="redefinir"><input type="hidden" name="usuario" value="${esc(u.usuario)}"><input type="hidden" name="senha"><button type="submit" class="secundario">Redefinir senha</button></form>
 <form method="post" action="/admin"><input type="hidden" name="acao" value="${u.ativo ? 'desativar' : 'ativar'}"><input type="hidden" name="usuario" value="${esc(u.usuario)}"><button type="submit" class="secundario">${u.ativo ? 'Desativar' : 'Ativar'}</button></form>
-<form method="post" action="/admin" onsubmit="return confirm('Remover ${esc(u.usuario)}? Esta ação não pode ser desfeita.')"><input type="hidden" name="acao" value="remover"><input type="hidden" name="usuario" value="${esc(u.usuario)}"><button type="submit" class="perigo">Remover</button></form>`
-      }</td></tr>`,
-    )
+<form method="post" action="/admin" onsubmit="return confirm('Remover ${esc(u.usuario)}? Esta ação não pode ser desfeita.')"><input type="hidden" name="acao" value="remover"><input type="hidden" name="usuario" value="${esc(u.usuario)}"><button type="submit" class="perigo">Remover</button></form>`;
+      return `<tr><td><b>${esc(u.usuario)}</b>${papel === 'gestor' ? ' <span style="color:var(--neon2)">(gestor geral)</span>' : ''}</td><td><span class="selo selo-${papel}">${PERFIS[papel]}</span></td>
+<td>${u.ativo ? 'Ativo' : '<span style="color:var(--perigo)">Desativado</span>'}</td><td>${data(u.criado)}</td><td>${esc(u.criadoPor || '—')}</td><td>${data(u.ultimoAcesso)}</td><td>${acoes}</td></tr>`;
+    })
     .join('');
-  return paginaAdmin(
-    'Administração',
-    'usuarios',
-    { usuario, gestor },
-    `<h1>Usuários</h1><p class="sub">Crie acessos para os atendentes e gerencie os existentes.</p><div class="linha-neon"></div>
-${erro ? `<p class="erro" role="alert">${esc(erro)}</p>` : ''}${ok ? `<p class="okmsg" role="status">${esc(ok)}</p>` : ''}
-<form method="post" action="/admin" data-carrega><input type="hidden" name="acao" value="criar">
-<div class="grade"><div><label for="nu">Novo usuário</label><input id="nu" name="usuario" placeholder="nome.sobrenome" required></div>
+  const criar = criaveis.length
+    ? `<form method="post" action="/admin" data-carrega><input type="hidden" name="acao" value="criar">
+<div class="grade grade-usuario"><div><label for="nu">Novo usuário</label><input id="nu" name="usuario" placeholder="nome.sobrenome" required></div>
 <div><label for="ns">Senha provisória (mín. 4)</label><input id="ns" name="senha" minlength="4" required></div>
-<label class="check" style="margin:0 0 12px"><input type="checkbox" name="admin" value="1"> admin</label>
+<div><label for="np">Perfil</label><select id="np" name="perfil">${opcoes('atendente')}</select></div>
 <button type="submit">Criar</button></div></form>
-<p class="aviso">Passe a senha provisória ao atendente e peça para ele trocar em "Trocar senha". ⚠️ Não usar a senha real dos sistemas corporativos.</p>
-<table><thead><tr><th>Usuário</th><th>Situação</th><th>Criado em</th><th>Criado por</th><th>Último acesso</th><th>Ações</th></tr></thead><tbody>${linhas || '<tr><td colspan="6">Nenhum usuário ainda.</td></tr>'}</tbody></table>`,
+<p class="aviso">Passe a senha provisória ao colaborador: no primeiro acesso o sistema pede para ele criar a própria senha. ⚠️ Não usar a senha real dos sistemas corporativos.</p>`
+    : '<p class="aviso">Seu perfil pode consultar os usuários, mas não alterar.</p>';
+  return paginaAdmin(
+    'Usuários',
+    'usuarios',
+    { usuario, perfil },
+    `<h1>Usuários</h1><p class="sub">Acessos ao sistema e seus perfis.</p><div class="linha-neon"></div>
+${erro ? `<p class="erro" role="alert">${esc(erro)}</p>` : ''}${ok ? `<p class="okmsg" role="status">${esc(ok)}</p>` : ''}
+${criar}
+<div class="tabela-rolagem"><table><thead><tr><th>Usuário</th><th>Perfil</th><th>Situação</th><th>Criado em</th><th>Criado por</th><th>Último acesso</th><th>Ações</th></tr></thead><tbody>${linhas || '<tr><td colspan="7">Nenhum usuário ainda.</td></tr>'}</tbody></table></div>`,
   );
 }
 
 const tamanho = (n) => (n >= 1048576 ? `${(n / 1048576).toFixed(1).replace('.', ',')} MB` : `${Math.max(1, Math.round(n / 1024))} KB`);
 
-export function telaFormularios({ usuario, gestor = '', formularios = [], erro = '', ok = '' }) {
+export function telaFormularios({ usuario, perfil = 'gestor', podeEnviar = true, formularios = [], erro = '', ok = '' }) {
   const linhas = formularios
     .map(
       (
         f,
       ) => `<tr><td><b>${esc(f.nome)}</b></td><td>${esc((f.tipo || '').split('/')[1]?.toUpperCase())}</td><td>${tamanho(f.tamanho || 0)}</td><td>${data(f.criado)}</td><td>${esc(f.por || '—')}</td>
 <td><a href="/api/formularios/${esc(f.id)}" target="_blank" rel="noopener" style="color:var(--neon);margin-right:8px">ver</a>
-<form method="post" action="/admin/formularios" onsubmit="return confirm('Remover o formulário ${esc(f.nome).replace(/&#39;/g, '')}?')"><input type="hidden" name="acao" value="remover"><input type="hidden" name="id" value="${esc(f.id)}"><button type="submit" class="perigo">Remover</button></form></td></tr>`,
+${podeEnviar ? `<form method="post" action="/admin/formularios" onsubmit="return confirm('Remover o formulário ${esc(f.nome).replace(/&#39;/g, '')}?')"><input type="hidden" name="acao" value="remover"><input type="hidden" name="id" value="${esc(f.id)}"><button type="submit" class="perigo">Remover</button></form>` : ''}</td></tr>`,
     )
     .join('');
   return paginaAdmin(
     'Formulários',
     'formularios',
-    { usuario, gestor },
+    { usuario, perfil },
     `<h1>Formulários para impressão</h1><p class="sub">Os atendentes encontram pelo nome na aba Formulários do sistema.</p><div class="linha-neon"></div>
 ${erro ? `<p class="erro" role="alert">${esc(erro)}</p>` : ''}${ok ? `<p class="okmsg" role="status">${esc(ok)}</p>` : ''}
-<form method="post" action="/admin/formularios" enctype="multipart/form-data" data-carrega><input type="hidden" name="acao" value="enviar">
+${
+  podeEnviar
+    ? `<form method="post" action="/admin/formularios" enctype="multipart/form-data" data-carrega><input type="hidden" name="acao" value="enviar">
 <div class="grade"><div><label for="fn">Nome do formulário (é por ele que os atendentes buscam)</label><input id="fn" name="nome" placeholder="ex.: Declaração de Residência" minlength="2" maxlength="120" required></div>
 <div><label for="fa">Arquivo (PDF, PNG ou JPG, até 10 MB)</label><input id="fa" name="arquivo" type="file" accept="application/pdf,image/png,image/jpeg" required></div>
 <span></span><button type="submit">Enviar</button></div></form>
-<p class="aviso">Os formulários ficam visíveis para todos os usuários com login. ⚠️ Envie só modelos em branco — nunca documentos com dados de clientes.</p>
+<p class="aviso">Os formulários ficam visíveis para todos os usuários com login. ⚠️ Envie só modelos em branco — nunca documentos com dados de clientes.</p>`
+    : '<p class="aviso">Seu perfil pode consultar os formulários, mas não enviar nem remover.</p>'
+}
 <table><thead><tr><th>Nome</th><th>Tipo</th><th>Tamanho</th><th>Enviado em</th><th>Enviado por</th><th>Ações</th></tr></thead><tbody>${linhas || '<tr><td colspan="6">Nenhum formulário ainda.</td></tr>'}</tbody></table>`,
   );
 }
@@ -168,7 +177,7 @@ export function telaSugestoes({ usuario, ver = 'pendentes', sugestoes = [], tota
   return paginaAdmin(
     'Sugestões',
     'sugestoes',
-    { usuario, gestor: usuario },
+    { usuario, perfil: 'gestor' },
     `<h1>Sugestões recebidas</h1><p class="sub">Enviadas pelos atendentes no menu do usuário. Visível só para o gestor geral.</p><div class="linha-neon"></div>
 ${erro ? `<p class="erro" role="alert">${esc(erro)}</p>` : ''}${ok ? `<p class="okmsg" role="status">${esc(ok)}</p>` : ''}
 <nav class="abas">${aba('pendentes', 'Pendentes', total.pendentes)}${aba('concluidas', 'Concluídas', total.concluidas)}</nav>
@@ -188,6 +197,20 @@ body.adm{display:grid;grid-template-columns:248px minmax(0,1fr);align-items:star
 .adm-nav a{display:flex;gap:10px;align-items:center;padding:9px 12px;border-radius:8px;border-left:3px solid transparent;color:var(--muted);text-decoration:none;font-size:13.5px;font-weight:500}
 .adm-nav a:hover{background:var(--realce);color:var(--txt)}.adm-nav a.ativo{background:var(--realce);color:var(--txt);font-weight:600;border-left-color:var(--neon)}
 .adm-rodape{margin-top:auto}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:8px 0 18px}
+.kpi{display:flex;flex-direction:column;gap:4px;padding:16px;border:1px solid var(--borda);border-radius:14px;background:var(--realce);animation:entra .3s cubic-bezier(.16,1,.3,1) both}
+.kpi:nth-child(2){animation-delay:.04s}.kpi:nth-child(3){animation-delay:.08s}.kpi:nth-child(4){animation-delay:.12s}.kpi:nth-child(5){animation-delay:.16s}
+.kpi-rotulo{font-size:12.5px;color:var(--muted)}.kpi-valor{font-size:30px;line-height:1.1;letter-spacing:-.02em}.kpi small{color:var(--muted);font-size:12px}
+.paineis{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}.paineis section{border:1px solid var(--borda);border-radius:14px;padding:16px}
+.paineis h2{margin:0 0 10px;font-size:15px}.lista-perfis,.lista-acoes{list-style:none;margin:0;padding:0}
+.lista-perfis li{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--borda);font-size:14px}
+.lista-acoes li{padding:7px 0;border-bottom:1px solid var(--borda);font-size:13px}.lista-acoes small{color:var(--muted)}
+.selo{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;background:var(--realce);border:1px solid var(--borda);white-space:nowrap}
+.selo-gestor,.selo-administrador{color:var(--neon)}
+.tabela-rolagem{overflow-x:auto}
+.form-perfil select{width:auto;padding:6px 8px;font-size:12px;margin-right:4px}
+.grade-usuario{grid-template-columns:1fr 1fr 180px auto}
+@media (max-width:860px){.grade-usuario{grid-template-columns:1fr}}
 .abas{display:flex;gap:6px;margin:4px 0 6px;border-bottom:1px solid var(--borda)}.abas .aba{padding:9px 14px;color:var(--muted);text-decoration:none;font-weight:600;font-size:13.5px;border-bottom:2px solid transparent;margin-bottom:-1px}.abas .aba.ativa{color:var(--txt);border-bottom-color:var(--neon)}.abas .aba span{display:inline-block;min-width:20px;padding:0 6px;margin-left:4px;border-radius:999px;background:var(--realce);font-size:11.5px;text-align:center}
 .adm-principal{padding:28px;max-width:1080px;width:100%;margin:0 auto}
 .adm-principal .cartao{max-width:none}
@@ -206,20 +229,40 @@ const iniciais = (u) =>
     .slice(0, 2)
     .toUpperCase();
 
-function paginaAdmin(titulo, ativo, { usuario, gestor }, corpo) {
-  const ehGestor = usuario === gestor;
+function paginaAdmin(titulo, ativo, { usuario, perfil }, corpo) {
   const item = (href, nome, chave) => `<a href="${href}"${chave === ativo ? ' class="ativo" aria-current="page"' : ''}>${nome}</a>`;
+  const se = (op, html) => (pode(perfil, op) ? html : '');
   return `<!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex"><title>${esc(titulo)} — Textos Padrões</title>${SCRIPT_TEMA}<style>${ESTILO}${ESTILO_ADMIN}</style></head>
 <body class="adm"><aside class="adm-lateral" aria-label="Menu da administração">
 <div class="adm-marca">Textos Padrões<small>Administração</small></div>
-<div class="adm-usuario"><span class="adm-avatar">${esc(iniciais(usuario))}</span><span><b>${esc(usuario)}</b><small>${ehGestor ? 'Gestor geral' : 'Administrador'}</small></span></div>
-<nav class="adm-nav"><div class="adm-secao">Gestão</div>${item('/admin', 'Usuários', 'usuarios')}${item('/admin/formularios', 'Formulários', 'formularios')}${ehGestor ? item('/admin/sugestoes', 'Sugestões', 'sugestoes') + item('/admin/auditoria', 'Auditoria', 'auditoria') : ''}
+<div class="adm-usuario"><span class="adm-avatar">${esc(iniciais(usuario))}</span><span><b>${esc(usuario)}</b><small>${esc(PERFIS[perfil] || '')}</small></span></div>
+<nav class="adm-nav"><div class="adm-secao">Gestão</div>${item('/admin/painel', 'Dashboard', 'painel')}${se('usuarios.ver', item('/admin', 'Usuários', 'usuarios'))}${se('formularios.ver', item('/admin/formularios', 'Formulários', 'formularios'))}${se('sugestoes.ver', item('/admin/sugestoes', 'Sugestões', 'sugestoes'))}${se('auditoria.ver', item('/admin/auditoria', 'Auditoria', 'auditoria'))}
 <div class="adm-secao">Conta</div>${item('/', '← Voltar ao sistema', '')}${item('/trocar-senha', 'Trocar senha', '')}${item('/sair', 'Sair', '')}</nav>
 </aside><main class="adm-principal"><div class="cartao largo">${corpo}</div></main>
 <script>document.querySelectorAll('form[data-carrega]').forEach(f=>f.addEventListener('submit',()=>{const b=f.querySelector('button[type=submit]');if(b){b.disabled=true;b.classList.add('carregando');}}));</script>
 </body></html>`;
+}
+
+export function telaPainel({ usuario, perfil, numeros, porPerfil = {}, recentes = [] }) {
+  const cartao = (rotulo, valor, dica = '') =>
+    `<div class="kpi"><span class="kpi-rotulo">${rotulo}</span><b class="kpi-valor">${valor}</b>${dica ? `<small>${dica}</small>` : ''}</div>`;
+  const perfis = Object.keys(PERFIS)
+    .map((p) => `<li><span>${PERFIS[p]}</span><b>${porPerfil[p] || 0}</b></li>`)
+    .join('');
+  const ultimos = recentes
+    .map((r) => `<li><small>${data(r.quando)}</small> <b>${esc(r.quem)}</b> — ${esc(r.acao)}${r.alvo ? `: ${esc(r.alvo)}` : ''}</li>`)
+    .join('');
+  return paginaAdmin(
+    'Dashboard',
+    'painel',
+    { usuario, perfil },
+    `<h1>Dashboard</h1><p class="sub">Visão geral do sistema. Dados de clientes nunca chegam aqui: ficam só no navegador de cada atendente.</p><div class="linha-neon"></div>
+<div class="kpis">${cartao('Usuários', numeros.usuarios, `${numeros.ativos} ativos`)}${cartao('Acessaram nos últimos 7 dias', numeros.acessaramSemana)}${cartao('Aguardando primeiro acesso', numeros.primeiroAcesso, 'senha provisória')}${cartao('Formulários', numeros.formularios)}${numeros.sugestoes === null ? '' : cartao('Sugestões pendentes', numeros.sugestoes)}</div>
+<div class="paineis"><section><h2>Usuários por perfil</h2><ul class="lista-perfis">${perfis}</ul></section>
+${pode(perfil, 'auditoria.ver') ? `<section><h2>Últimas ações</h2><ul class="lista-acoes">${ultimos || '<li>Nenhum registro ainda.</li>'}</ul><a href="/admin/auditoria" style="color:var(--neon);font-size:13px">Ver auditoria completa →</a></section>` : ''}</div>`,
+  );
 }
 
 export function telaAuditoria({ usuario, registros = [] }) {
@@ -229,7 +272,7 @@ export function telaAuditoria({ usuario, registros = [] }) {
   return paginaAdmin(
     'Auditoria',
     'auditoria',
-    { usuario, gestor: usuario },
+    { usuario, perfil: 'gestor' },
     `<h1>Auditoria</h1><p class="sub">Quem criou acessos, redefiniu senhas, ativou, desativou ou removeu usuários e quem enviou ou removeu formulários. Últimos 300 registros, guardados por 1 ano. Visível só para o gestor geral.</p><div class="linha-neon"></div>
 <table><thead><tr><th>Quando</th><th>Quem</th><th>Ação</th><th>Sobre</th></tr></thead><tbody>${linhas || '<tr><td colspan="4">Nenhum registro ainda.</td></tr>'}</tbody></table>`,
   );

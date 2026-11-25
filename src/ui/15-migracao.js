@@ -89,3 +89,20 @@
     return pIso(d);
   }
   mostrarAvisoMudanca(false);
+
+  // No endereço antigo ficam só o texto padrão (Agenda e Nota) e a Tensão de Fornecimento.
+  // O Histórico continua, porque é por ele que se exportam os dados para o endereço novo.
+  function enxugarEnderecoAntigo(forcar) {
+    if (!forcar && !ehEnderecoAntigo()) return;
+    ['calc', 'decl', 'pend', 'form'].forEach(function(aba) {
+      var t = document.querySelector('.nav-tab[data-aba="' + aba + '"]');
+      if (t) t.remove();
+      var painel = document.getElementById('painel_' + aba);
+      if (painel) { painel.style.display = 'none'; painel.setAttribute('data-oculto-endereco-antigo', ''); }
+    });
+    ['btn_pendencias', 'pend_lembrete'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) { el.hidden = true; el.style.setProperty('display', 'none', 'important'); }
+    });
+  }
+  enxugarEnderecoAntigo(false);

@@ -66,3 +66,9 @@ Com o projeto ligado ao GitHub, cada PR ganha um link `https://<código>.textos-
 1. Avise a equipe: no endereço antigo aparece o aviso de mudança com **Exportar meus dados**. Cada atendente exporta, abre `https://textos-padroes.pages.dev`, entra e usa **Histórico → Importar dados** (junta sem duplicar).
 2. Defina o prazo: em `src/ui/15-migracao.js`, `DATA_REDIRECIONAR = 'aaaa-mm-dd'` (por PR). A partir dessa data o endereço antigo leva sozinho para o novo.
 3. Depois do prazo, torne o repositório **privado** (GitHub → Settings → General → Danger Zone → Change visibility). O GitHub Pages gratuito para de publicar; o Cloudflare continua normalmente.
+
+## Banco D1 (modelos de texto)
+
+1. Cloudflare → **Storage & Databases → D1 SQL Database → Create**: nome `textos-padroes`.
+2. **Workers & Pages → textos-padroes → Settings → Bindings → Add → D1 database**: nome da variável **`BANCO`**, banco `textos-padroes`.
+3. As tabelas são criadas sozinhas no primeiro acesso ao painel de modelos. Sem o banco, o atendimento continua funcionando com os textos atuais.

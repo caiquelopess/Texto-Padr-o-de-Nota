@@ -8,7 +8,7 @@ export default defineConfig({
   use: { baseURL: 'http://localhost:8788', trace: 'off', screenshot: 'only-on-failure', ...devices['Desktop Chrome'] },
   webServer: {
     command:
-      'node scripts/dist.mjs && wrangler pages dev dist --kv USUARIOS --port 8788 --ip 127.0.0.1 --persist-to .wrangler/teste-login' +
+      'node scripts/dist.mjs && wrangler pages dev dist --kv USUARIOS --d1 BANCO --port 8788 --ip 127.0.0.1 --persist-to .wrangler/teste-login' +
       ' --binding SEGREDO_SESSAO=segredo-local-de-teste-com-mais-de-32-caracteres --binding ADMIN_USUARIO=admin.teste --binding ADMIN_SENHA=senha-admin-teste',
     url: 'http://localhost:8788/entrar',
     reuseExistingServer: false,

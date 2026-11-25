@@ -1,7 +1,8 @@
 {
-  "versao": "2.14.1",
+  "versao": "2.15.0",
   "data": "25/11/2026",
   "novidades": [
+    "Modelos de texto criados e publicados pelo painel administrativo aparecem como serviços",
     "Celular: menu do perfil e escolha de tema abrem corretamente",
     "Perfis Gestor, Administrador, Supervisor, Atendente e Consulta; Dashboard no painel administrativo",
     "Interface própria para celular: barra de navegação embaixo, botão Gerar sempre à mão e texto gerado numa folha",

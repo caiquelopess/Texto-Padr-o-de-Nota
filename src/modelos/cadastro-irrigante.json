@@ -1,0 +1,65 @@
+{
+  "id": "cadastro-irrigante",
+  "nome": "Cadastro de Irrigante",
+  "categoria": "Titularidade e Cadastro",
+  "descricao": "Cadastro de Produtor Rural, Irrigante e Aquicultor (benefício tarifário).",
+  "copiar": "nota",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "<b>Documentos necessários (anexar no SAP KM):</b><ul style=\"margin:6px 0 0 18px;padding:0\"><li>Autodeclaração de Irrigação e Aquicultura (Anexo I), assinada pelo titular</li><li>Formulário de Solicitação de Benefício Tarifário e Declaração de Carga Instalada</li><li>Inscrição Estadual que comprove a natureza de produtor rural</li><li>CCIR (Certificado de Cadastro de Imóvel Rural, emitido pelo INCRA)</li><li>Requerimento de Reconhecimento de Isenção do ICMS para Produtor Rural, assinado</li><li>Licenciamento ambiental e outorga de uso de recursos hídricos, ou o Termo de Compromisso (Anexo I da Portaria 30.926/2024) quando dispensada</li><li>Pessoa jurídica: CNPJ com a atividade adequada, Contrato/Estatuto Social ou Registro de Empresário Individual atualizado e Ata de eleição da diretoria (quando houver)</li><li>RG e CPF (ou CNH) do titular ou dos representantes legais; procuração quando for o caso</li></ul>",
+      "classeOriginal": "alert-box"
+    },
+    {
+      "html": "<b>Cadastro no SAP-CRM:</b> no Parceiro (PN), em <b>Outros campos → Documentos Não Fiscais</b>, inserir o Tipo ID do documento: Z_IRR (Benefício de Irrigante), Z_IE (Inscrição Estadual), Z_RURL (Carteira de Associado – Trabalhador Rural), Z_CTRU (Carteira de Trabalho – Trabalhador Rural) ou Z_ATIV (Atividade de pessoa jurídica). Atualize também documentos, datas, telefones, endereço e e-mail do PN.",
+      "classeOriginal": "alert-box"
+    },
+    {
+      "html": "<b>Observação:</b> o desconto vale no horário reservado (Neoenergia Coelba: 21h30 às 6h). O consumo deve ser exclusivo da irrigação/aquicultura, e só uma unidade consumidora por titular recebe o benefício. Prazo de análise: 30 dias.",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "rotulo": "Solicitante",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo do solicitante"
+    },
+    {
+      "id": "tel",
+      "rotulo": "Telefone",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 71993501519"
+    },
+    {
+      "id": "email",
+      "rotulo": "E-mail",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "ref",
+      "rotulo": "Ponto de referência",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ex: Sítio do Pica Pau"
+    },
+    {
+      "id": "proc",
+      "rotulo": "Quem procurar",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome de quem receberá a equipe"
+    }
+  ],
+  "nota": "Cadastro de Irrigante\n\nSolicitante: {{solic}}\nTelefone: {{tel|telefoneNota}}\nE-mail: {{email}}\nRef: {{ref}}\nQuem procurar: {{proc}}",
+  "agenda": "Cadastro de Irrigante\n\nSolicitante: {{solic}}\nTelefone: {{tel|telefoneNota}}\nE-mail: {{email}}\nRef: {{ref}}\nQuem procurar: {{proc}}"
+}

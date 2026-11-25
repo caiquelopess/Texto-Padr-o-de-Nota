@@ -17,6 +17,10 @@ export const SERVICOS_EMBUTIDOS = [
     "nome": "BPC/LOAS"
   },
   {
+    "id": "sf-md-cadastro-irrigante",
+    "nome": "Cadastro de Irrigante"
+  },
+  {
     "id": "sf-isencao-icms",
     "nome": "Cadastro de Parceiro - Isenção ICMS"
   },

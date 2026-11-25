@@ -1,7 +1,7 @@
 import { expect, test } from '../support/pagina.mjs';
 
 const MODELO = {
-  id: 'cadastro-irrigante',
+  id: 'modelo-teste-painel',
   nome: 'Cadastro de Irrigante',
   categoria: 'Titularidade e Cadastro',
   avisos: ['Confira a outorga de uso da água'],
@@ -18,18 +18,18 @@ const MODELO = {
 test('modelo publicado vira serviço; sem servidor, continua pela cópia guardada', async ({ page }) => {
   await page.route('**/api/modelos', (r) => r.fulfill({ json: { geral: 1, modelos: [MODELO, { id: 'quebrado', nome: '', campos: [] }] } }));
   await page.reload();
-  const btn = page.locator('#service_nav .sub-btn[data-modelo="cadastro-irrigante"]');
+  const btn = page.locator('#service_nav .sub-btn[data-modelo="modelo-teste-painel"]');
   await expect(btn).toHaveText('Cadastro de Irrigante');
   await expect(page.locator('#service_nav .sub-btn[data-modelo="quebrado"]')).toHaveCount(0); // modelo com defeito é ignorado
-  await page.evaluate(() => window.trocarAba('sf-md-cadastro-irrigante', document.querySelector('[data-modelo="cadastro-irrigante"]')));
-  await expect(page.locator('#sf-md-cadastro-irrigante .alert-box')).toHaveText('Confira a outorga de uso da água');
+  await page.evaluate(() => window.trocarAba('sf-md-modelo-teste-painel', document.querySelector('[data-modelo="modelo-teste-painel"]')));
+  await expect(page.locator('#sf-md-modelo-teste-painel .alert-box')).toHaveText('Confira a outorga de uso da água');
   // "mostrar se": outorga só aparece em Renovação
-  await expect(page.locator('#md_cadastro_irrigante__outorga')).toBeHidden();
-  await page.selectOption('#md_cadastro_irrigante__tipo', 'Renovação');
-  await expect(page.locator('#md_cadastro_irrigante__outorga')).toBeVisible();
-  await page.fill('#md_cadastro_irrigante__outorga', 'OUT-123');
-  await page.fill('#md_cadastro_irrigante__nome', 'Maria Teste');
-  await page.locator('#sf-md-cadastro-irrigante .actions .btn').first().click();
+  await expect(page.locator('#md_modelo_teste_painel__outorga')).toBeHidden();
+  await page.selectOption('#md_modelo_teste_painel__tipo', 'Renovação');
+  await expect(page.locator('#md_modelo_teste_painel__outorga')).toBeVisible();
+  await page.fill('#md_modelo_teste_painel__outorga', 'OUT-123');
+  await page.fill('#md_modelo_teste_painel__nome', 'Maria Teste');
+  await page.locator('#sf-md-modelo-teste-painel .actions .btn').first().click();
   await expect(page.locator('#out-nota')).toHaveValue('Cadastrar irrigante\nTipo: Renovação\nOutorga: OUT-123\nNome: Maria Teste');
   await expect(page.locator('#hist_contador_hoje')).toHaveText('1');
 
@@ -37,7 +37,7 @@ test('modelo publicado vira serviço; sem servidor, continua pela cópia guardad
   await page.unroute('**/api/modelos');
   await page.route('**/api/modelos', (r) => r.fulfill({ status: 503, body: '{}' }));
   await page.reload();
-  await expect(page.locator('#service_nav .sub-btn[data-modelo="cadastro-irrigante"]')).toHaveCount(1);
+  await expect(page.locator('#service_nav .sub-btn[data-modelo="modelo-teste-painel"]')).toHaveCount(1);
   // os serviços embutidos nunca dependem dos modelos
   expect(await page.locator('#service_nav .sub-btn').count()).toBeGreaterThanOrEqual(47);
 
@@ -45,6 +45,6 @@ test('modelo publicado vira serviço; sem servidor, continua pela cópia guardad
   await page.unroute('**/api/modelos');
   await page.route('**/api/modelos', (r) => r.fulfill({ json: { geral: 2, modelos: [] } }));
   await page.reload();
-  await expect(page.locator('#service_nav .sub-btn[data-modelo="cadastro-irrigante"]')).toHaveCount(0);
-  await expect(page.locator('#sf-md-cadastro-irrigante')).toHaveCount(0);
+  await expect(page.locator('#service_nav .sub-btn[data-modelo="modelo-teste-painel"]')).toHaveCount(0);
+  await expect(page.locator('#sf-md-modelo-teste-painel')).toHaveCount(0);
 });

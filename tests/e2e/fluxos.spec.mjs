@@ -1,16 +1,17 @@
-import { abrirServico, expect, preencherObrigatorios, test } from '../support/pagina.mjs';
+import { abrirArea, abrirServico, expect, fecharTextoGerado, preencherObrigatorios, test } from '../support/pagina.mjs';
 
 test('texto gerado vai para o histórico', async ({ page }) => {
   await abrirServico(page, 'sf-reativ-virtual');
   await preencherObrigatorios(page, 'sf-reativ-virtual');
   await page.locator('#sf-reativ-virtual > .actions .btn').first().click();
+  await fecharTextoGerado(page);
   await page.click('#btn_historico');
   await expect(page.locator('#hist_lista .hist-item')).toHaveCount(1);
   await expect(page.locator('#hist_lista .hist-serv')).toHaveText('Reativação Virtual');
 });
 
 test('calculadora de refat: leitura esperada', async ({ page }) => {
-  await page.click('[data-aba="calc"]');
+  await abrirArea(page, 'calc');
   for (const [k, v] of Object.entries({
     calc_lt_ant: '1000',
     calc_dt_ant: '09/04/2025',
@@ -24,7 +25,7 @@ test('calculadora de refat: leitura esperada', async ({ page }) => {
 });
 
 test('pendência de serviço: salvar, lembrar, retomar e concluir', async ({ page }) => {
-  await page.click('[data-aba="pend"]');
+  await abrirArea(page, 'pend');
   await page.evaluate(() => {
     const s = document.getElementById('pend_servico');
     s.value = 'sf-reativ-virtual';
@@ -60,7 +61,7 @@ test('pendência de serviço: salvar, lembrar, retomar e concluir', async ({ pag
 });
 
 test('pendência de refaturamento: sem data e sem alerta', async ({ page }) => {
-  await page.click('[data-aba="pend"]');
+  await abrirArea(page, 'pend');
   await page.fill('#pref_contrato', '7001234567');
   await page.fill('#pref_motivo', 'Leitura divergente');
   await page.click('#btn_pend_refat');
@@ -75,6 +76,7 @@ test('pendência de refaturamento: sem data e sem alerta', async ({ page }) => {
 });
 
 test('tema escolhido fica salvo', async ({ page }) => {
+  if (await page.locator('#btn_mais').isVisible()) await page.click('#btn_mais');
   await page.click('#btn_tema');
   await page.click('.tema-opcao[data-tema="contraste"]');
   await page.reload();
@@ -82,7 +84,7 @@ test('tema escolhido fica salvo', async ({ page }) => {
 });
 
 test('declaração de ligação: contrato encerrado', async ({ page }) => {
-  await page.click('[data-aba="decl"]');
+  await abrirArea(page, 'decl');
   for (const [k, v] of Object.entries({
     decl_cliente: 'Maria Teste',
     decl_codigo: '0070123',

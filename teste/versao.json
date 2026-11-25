@@ -1,7 +1,8 @@
 {
-  "versao": "2.12.2",
-  "data": "24/11/2026",
+  "versao": "2.13.0",
+  "data": "25/11/2026",
   "novidades": [
+    "Interface própria para celular: barra de navegação embaixo, botão Gerar sempre à mão e texto gerado numa folha",
     "Sugestões: \"Concluída\" não apaga mais (aba Concluídas, Reabrir e Excluir)",
     "No primeiro acesso, o sistema pede para trocar a senha provisória",
     "Temas corporativos (Claro, Escuro, Logos, Conforto Visual, Alto Contraste); enviar sugestão pelo menu do usuário; balões de ajuda; administração no novo padrão",

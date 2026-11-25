@@ -2505,6 +2505,24 @@
   // ---- núcleo (src/nucleo) ----
   (() => {
     var __defProp = Object.defineProperty;
+    var __defProps = Object.defineProperties;
+    var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+    var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+    var __hasOwnProp = Object.prototype.hasOwnProperty;
+    var __propIsEnum = Object.prototype.propertyIsEnumerable;
+    var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+    var __spreadValues = (a, b) => {
+      for (var prop in b || (b = {}))
+        if (__hasOwnProp.call(b, prop))
+          __defNormalProp(a, prop, b[prop]);
+      if (__getOwnPropSymbols)
+        for (var prop of __getOwnPropSymbols(b)) {
+          if (__propIsEnum.call(b, prop))
+            __defNormalProp(a, prop, b[prop]);
+        }
+      return a;
+    };
+    var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     var __export = (target, all) => {
       for (var name in all)
         __defProp(target, name, { get: all[name], enumerable: true });
@@ -2513,12 +2531,18 @@
     // src/nucleo/index.mjs
     var index_exports = {};
     __export(index_exports, {
+      MD_TIPOS: () => MD_TIPOS,
       calcDias: () => calcDias,
       calcLerData: () => calcLerData,
       calcLerNumero: () => calcLerNumero,
       compararVersoes: () => compararVersoes,
       declFormatarDoc: () => declFormatarDoc,
       formatarTelefones: () => formatarTelefones,
+      mdCamposVisiveis: () => mdCamposVisiveis,
+      mdGerar: () => mdGerar,
+      mdTestarModelo: () => mdTestarModelo,
+      mdValidarModelo: () => mdValidarModelo,
+      mdValidarValores: () => mdValidarValores,
       notaCaps: () => notaCaps,
       notaReativVirtual: () => notaReativVirtual,
       pBR: () => pBR,
@@ -2634,6 +2658,125 @@
       if (v.indexOf(",") >= 0) v = v.replace(/\./g, "").replace(",", ".");
       const n = parseFloat(v);
       return Number.isNaN(n) ? null : n;
+    }
+
+    // src/nucleo/modelos.mjs
+    var MD_TIPOS = ["texto", "textoLongo", "telefone", "email", "data", "numero", "opcao"];
+    var ID_CAMPO = /^[a-z][a-z0-9_]{0,39}$/;
+    var ID_MODELO = /^[a-z0-9][a-z0-9-]{2,59}$/;
+    var MARCADOR = /\{\{\s*([a-z][a-z0-9_]*)\s*(?:\|\s*([a-zA-Z]+)(?::([^}]*))?)?\s*\}\}/g;
+    var BLOCO = /\{\{#se\s+([a-z][a-z0-9_]*)\s*(?:=\s*([^}]*?))?\s*\}\}\n?((?:(?!\{\{#se\s)[\s\S])*?)\{\{\/se\}\}\n?/;
+    var FILTROS = ["maiusculas", "telefoneNota", "ou"];
+    var vazio = (v) => String(v != null ? v : "").trim() === "";
+    function mdCamposVisiveis(modelo, valores = {}) {
+      return (modelo.campos || []).filter((c) => {
+        var _a;
+        if (!c.mostrarSe) return true;
+        const atual = String((_a = valores[c.mostrarSe.campo]) != null ? _a : "");
+        const aceitos = [].concat(c.mostrarSe.igual);
+        return aceitos.includes(atual);
+      });
+    }
+    function mdValidarModelo(modelo) {
+      const erros = [];
+      if (!modelo || typeof modelo !== "object") return ["Modelo vazio."];
+      if (!ID_MODELO.test(String(modelo.id || ""))) erros.push("Identificador inválido: use de 3 a 60 letras minúsculas, números e hífen.");
+      if (vazio(modelo.nome)) erros.push("Dê um nome ao modelo.");
+      if (vazio(modelo.categoria)) erros.push("Escolha a categoria.");
+      const campos = Array.isArray(modelo.campos) ? modelo.campos : [];
+      const ids = /* @__PURE__ */ new Set();
+      for (const c of campos) {
+        const rot = c.rotulo || c.id;
+        if (!ID_CAMPO.test(String(c.id || ""))) erros.push(`Campo "${rot}": identificador inválido (letras minúsculas, números e _).`);
+        else if (ids.has(c.id)) erros.push(`Campo "${c.id}" repetido.`);
+        ids.add(c.id);
+        if (vazio(c.rotulo)) erros.push(`Campo "${c.id}": falta o rótulo.`);
+        if (!MD_TIPOS.includes(c.tipo)) erros.push(`Campo "${rot}": tipo desconhecido.`);
+        if (c.tipo === "opcao" && !(Array.isArray(c.opcoes) && c.opcoes.length)) erros.push(`Campo "${rot}": informe as opções.`);
+      }
+      for (const c of campos) {
+        if (c.mostrarSe && !ids.has(c.mostrarSe.campo)) erros.push(`Campo "${c.rotulo || c.id}": "mostrar se" usa um campo que não existe.`);
+      }
+      if (vazio(modelo.nota) && vazio(modelo.agenda)) erros.push("Escreva o texto da NOTA ou da AGENDA.");
+      for (const parte of ["nota", "agenda"]) {
+        const t = String(modelo[parte] || "");
+        const aberturas = (t.match(/\{\{#se\s/g) || []).length;
+        const fechamentos = (t.match(/\{\{\/se\}\}/g) || []).length;
+        if (aberturas !== fechamentos) erros.push(`Texto da ${parte.toUpperCase()}: blocos {{#se}} e {{/se}} não fecham.`);
+        for (const m of t.matchAll(/\{\{#se\s+([a-z][a-z0-9_]*)/g))
+          if (!ids.has(m[1])) erros.push(`Texto da ${parte.toUpperCase()}: {{#se ${m[1]}}} usa um campo que não existe.`);
+        for (const m of t.matchAll(MARCADOR)) {
+          if (!ids.has(m[1])) erros.push(`Texto da ${parte.toUpperCase()}: {{${m[1]}}} não é um campo do modelo.`);
+          if (m[2] && !FILTROS.includes(m[2])) erros.push(`Texto da ${parte.toUpperCase()}: filtro "${m[2]}" desconhecido.`);
+        }
+      }
+      return erros;
+    }
+    function mdValidarValores(modelo, valores = {}) {
+      var _a;
+      const erros = [];
+      for (const c of mdCamposVisiveis(modelo, valores)) {
+        const v = String((_a = valores[c.id]) != null ? _a : "").trim();
+        if (!v) {
+          if (c.obrigatorio) erros.push(`Preencha o campo: ${c.rotulo}`);
+          continue;
+        }
+        if (c.tipo === "telefone" && formatarTelefones(v) === null) erros.push(`${c.rotulo}: telefone com DDD (10 ou 11 dígitos).`);
+        if (c.tipo === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) && v.toLowerCase() !== "não informado") erros.push(`${c.rotulo}: e-mail inválido.`);
+        if (c.tipo === "data" && !/^\d{2}\/\d{2}\/\d{4}$/.test(v)) erros.push(`${c.rotulo}: use dd/mm/aaaa.`);
+        if (c.tipo === "numero" && !/^\d+$/.test(v)) erros.push(`${c.rotulo}: só números.`);
+        if (c.tipo === "opcao" && !c.opcoes.includes(v)) erros.push(`${c.rotulo}: escolha uma das opções.`);
+      }
+      return erros;
+    }
+    function valorFormatado(campo, bruto, filtro, argumento) {
+      let v = String(bruto != null ? bruto : "").trim();
+      if (!v) return filtro === "ou" ? argumento : "";
+      if (campo && campo.tipo === "telefone") v = filtro === "telefoneNota" ? telefonesPadraoNota(v) : formatarTelefones(v) || v;
+      if (filtro === "maiusculas") v = v.toUpperCase();
+      return v;
+    }
+    function preencher(texto, modelo, valores) {
+      var _a;
+      const porId = Object.fromEntries((modelo.campos || []).map((c) => [c.id, c]));
+      const visiveis = new Set(mdCamposVisiveis(modelo, valores).map((c) => c.id));
+      const val = (id) => visiveis.has(id) ? valores[id] : "";
+      let t = String(texto || "");
+      for (let m = BLOCO.exec(t); m; m = BLOCO.exec(t)) {
+        const [inteiro, campo, igual, corpo] = m;
+        const atual = String((_a = val(campo)) != null ? _a : "").trim();
+        const entra = igual === void 0 ? atual !== "" : atual === igual.trim();
+        t = t.slice(0, m.index) + (entra ? corpo : "") + t.slice(m.index + inteiro.length);
+      }
+      return t.replace(MARCADOR, (_, id, filtro, argumento) => valorFormatado(porId[id], val(id), filtro, argumento)).replace(/\n+$/, "");
+    }
+    function mdGerar(modelo, valores = {}) {
+      return { nota: preencher(modelo.nota, modelo, valores), agenda: preencher(modelo.agenda, modelo, valores) };
+    }
+    function exemplo(campo) {
+      if (campo.tipo === "telefone") return "71993501519";
+      if (campo.tipo === "email") return "teste@email.com";
+      if (campo.tipo === "data") return "10/11/2026";
+      if (campo.tipo === "numero") return "123456";
+      if (campo.tipo === "opcao") return campo.opcoes[0];
+      return `Teste ${campo.rotulo}`;
+    }
+    function mdTestarModelo(modelo) {
+      const erros = mdValidarModelo(modelo);
+      if (erros.length) return { ok: false, erros, exemplos: [] };
+      const base = Object.fromEntries(modelo.campos.map((c) => [c.id, exemplo(c)]));
+      const cenarios = [base];
+      for (const c of modelo.campos) if (c.tipo === "opcao") for (const op of c.opcoes.slice(1)) cenarios.push(__spreadProps(__spreadValues({}, base), { [c.id]: op }));
+      const exemplos = [];
+      for (const valores of cenarios) {
+        const problemas = mdValidarValores(modelo, valores);
+        if (problemas.length) erros.push(...problemas.map((p) => `Teste: ${p}`));
+        const saida = mdGerar(modelo, valores);
+        if (!saida.nota && !saida.agenda) erros.push("Teste: o texto gerado ficou vazio.");
+        if (/\{\{|\}\}/.test(saida.nota + saida.agenda)) erros.push("Teste: sobrou marcador {{ }} no texto gerado.");
+        exemplos.push(saida);
+      }
+      return { ok: erros.length === 0, erros: [...new Set(erros)], exemplos };
     }
 
     // src/nucleo/refat.mjs

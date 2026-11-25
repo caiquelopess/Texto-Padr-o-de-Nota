@@ -264,3 +264,25 @@ ${msgs(erro, ok, problemas)}
 <div class="tabela-rolagem"><table><thead><tr><th>Nº</th><th>Quando</th><th>Tipo</th><th>Conteúdo</th><th>Ações</th></tr></thead><tbody>${linhas || '<tr><td colspan="5">Nenhum backup ainda.</td></tr>'}</tbody></table></div>`,
   );
 }
+
+// ---- Configurações gerais ----
+export function telaConfiguracoes({ usuario, perfil, cfg, erro = '', ok = '', problemas = [] }) {
+  return pagina(
+    'Configurações',
+    'configuracoes',
+    { usuario, perfil },
+    `<h1>Configurações gerais</h1><p class="sub">Exclusivo do gestor geral. Toda alteração fica registrada na auditoria e entra nos backups.</p><div class="linha-neon"></div>
+${msgs(erro, ok, problemas)}
+<form method="post" class="editor" data-carrega><input type="hidden" name="revisao" value="${Number(cfg.revisao) || 0}">
+<fieldset><legend>Aviso geral para os atendentes</legend>
+<label for="cfa">Mensagem (vazio = sem aviso)</label><textarea id="cfa" name="avisoTexto" maxlength="300" style="min-height:70px" placeholder="Ex.: SAP fora do ar até 14h — anote os atendimentos em Pendências.">${esc(cfg.avisoTexto)}</textarea>
+<div class="grade grade-usuario"><div><label for="cft">Tipo</label><select id="cft" name="avisoTipo"><option value="info">Informação</option><option value="alerta"${cfg.avisoTipo === 'alerta' ? ' selected' : ''}>Alerta</option></select></div>
+<div><label for="cfd">Mostrar até (inclusive)</label><input id="cfd" name="avisoAte" type="date" value="${esc(cfg.avisoAte)}"></div><span></span><span></span></div>
+<p class="ajuda">Aparece no topo do sistema para todos com login. Não coloque dados de clientes.</p></fieldset>
+<fieldset><legend>Acesso</legend><div class="grade grade-usuario">
+<div><label for="cfs">Duração da sessão (horas)</label><input id="cfs" name="sessaoHoras" type="number" min="1" max="24" value="${Number(cfg.sessaoHoras)}"></div>
+<div><label for="cfg">Sugestões por pessoa por dia</label><input id="cfg" name="sugestoesDia" type="number" min="0" max="100" value="${Number(cfg.sugestoesDia)}"></div><span></span><span></span></div>
+<p class="ajuda">A nova duração da sessão vale a partir do próximo login de cada pessoa. 0 sugestões por dia desliga o envio de sugestões.</p></fieldset>
+<div class="botoes"><button type="submit">Salvar configurações</button></div></form>${cfg.alteradoEm ? `<p class="ajuda">Última alteração: ${data(cfg.alteradoEm)} por ${esc(cfg.alteradoPor)}.</p>` : ''}`,
+  );
+}

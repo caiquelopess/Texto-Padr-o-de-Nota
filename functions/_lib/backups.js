@@ -1,6 +1,6 @@
 // Backups do painel administrativo (Cloudflare D1, binding BANCO).
 // Guarda: modelos (rascunho + todas as versões), configuração do atendimento
-// (+ versões) e o perfil de cada usuário. NUNCA guarda senhas nem dados de clientes.
+// (+ versões), configurações gerais e o perfil de cada usuário. NUNCA guarda senhas nem dados de clientes.
 // Cada backup tem checksum SHA-256 e passa por validação antes de poder ser restaurado.
 // Restaurar troca tudo numa única transação (db.batch) e sempre cria antes um backup
 // "antes de restaurar", para dar para desfazer.
@@ -44,6 +44,7 @@ async function retrato(db, kv) {
     atendimento: await linhas(db, 'SELECT * FROM atendimento'),
     atendimento_versoes: await linhas(db, 'SELECT * FROM atendimento_versoes ORDER BY versao'),
     perfis,
+    configuracoes: (await kv.get('cfg', 'json')) || null,
   };
 }
 
@@ -141,6 +142,7 @@ export async function restaurarBackup(db, kv, id, por, { perfis = false } = {}) 
     db.prepare('INSERT OR IGNORE INTO atendimento (id) VALUES (1)'),
     db.prepare('UPDATE publicacao SET geral = geral + 1, alterado_em = ? WHERE id = 1').bind(Date.now()),
   ]);
+  if (d.configuracoes) await kv.put('cfg', JSON.stringify({ ...d.configuracoes, revisao: ((await kv.get('cfg', 'json'))?.revisao || 0) + 1 }));
   let perfisAplicados = 0;
   if (perfis) {
     for (const [usuario, p] of Object.entries(d.perfis || {})) {

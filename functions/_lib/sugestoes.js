@@ -1,7 +1,6 @@
 // Canal de sugestões (#10): o atendente envia pelo menu do usuário; o responsável lê na Administração.
 // KV: s:<id> — { id, usuario, tipo, texto, criado }   ·   sl:<usuario>:<dia> — contador diário
 const TIPOS = ['Sugestão', 'Problema', 'Novo serviço ou formulário'];
-export const LIMITE_DIA = 10;
 export const MAX_TEXTO = 2000;
 
 export function validarSugestao(dados) {

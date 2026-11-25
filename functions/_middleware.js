@@ -12,7 +12,6 @@ import {
   BLOQUEIO_SEGUNDOS,
   conferirSenha,
   criarSessao,
-  DURACAO_SESSAO_MS,
   destinoSeguro,
   gerarHash,
   iguais,
@@ -42,11 +41,12 @@ import {
   salvarAtendimento,
   salvarRascunho,
 } from './_lib/banco.js';
+import { avisoVigente, configuracoesDoFormulario, lerConfiguracoes, salvarConfiguracoes, validarConfiguracoes } from './_lib/configuracoes.js';
 import { idValido, listarFormularios, nomeDoArquivo, nomeValido, TAMANHO_MAXIMO, tipoDoArquivo } from './_lib/formularios.js';
 import { modeloDoFormulario } from './_lib/modelos-form.js';
 import { PERFIS, perfilDe, perfisQuePodeCriar, pode, podeGerenciar } from './_lib/permissoes.js';
 import { SERVICOS_EMBUTIDOS } from './_lib/servicos-embutidos.js';
-import { LIMITE_DIA, listarSugestoes, validarSugestao } from './_lib/sugestoes.js';
+import { listarSugestoes, validarSugestao } from './_lib/sugestoes.js';
 import { telaAdmin, telaAuditoria, telaFormularios, telaLogin, telaPainel, telaSugestoes, telaTrocarSenha } from './_lib/telas.js';
 import {
   SCRIPTS_ATIVOS,
@@ -54,6 +54,7 @@ import {
   telaBackups,
   telaComparar,
   telaCompararTexto,
+  telaConfiguracoes,
   telaEditorModelo,
   telaModelos,
   telaSemBanco,
@@ -70,6 +71,12 @@ const SEGURANCA = {
 const html = (corpo, status = 200, extras = {}) =>
   new Response(corpo, { status, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', ...SEGURANCA, ...extras } });
 const redirecionar = (local, extras = {}) => new Response(null, { status: 303, headers: { location: local, 'cache-control': 'no-store', ...extras } });
+// Sessão com a duração definida nas configurações gerais.
+async function novaSessao(env, reg) {
+  const cfg = await lerConfiguracoes(env.USUARIOS);
+  const ms = cfg.sessaoHoras * 3600 * 1000;
+  return { token: await criarSessao(env.SEGREDO_SESSAO, reg.usuario, reg.versaoSenha, Date.now(), ms), segundos: ms / 1000 };
+}
 const cookieSessao = (valor, maxAge) => `${COOKIE}=${encodeURIComponent(valor)}; Path=/; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`;
 
 const lerUsuario = async (env, u) => (u ? env.USUARIOS.get(`u:${u}`, 'json') : null);
@@ -141,8 +148,8 @@ async function entrar(request, env) {
   await registrar(env.USUARIOS, usuario, 'Entrou no sistema', usuario);
   reg.ultimoAcesso = Date.now();
   await gravarUsuario(env, reg);
-  const token = await criarSessao(env.SEGREDO_SESSAO, usuario, reg.versaoSenha);
-  return redirecionar(destino, { 'set-cookie': cookieSessao(token, DURACAO_SESSAO_MS / 1000) });
+  const s = await novaSessao(env, reg);
+  return redirecionar(destino, { 'set-cookie': cookieSessao(s.token, s.segundos) });
 }
 
 async function trocarSenha(request, env, reg) {
@@ -159,9 +166,9 @@ async function trocarSenha(request, env, reg) {
   delete reg.trocarSenha;
   await registrar(env.USUARIOS, reg.usuario, obrigatoria ? 'Criou a própria senha (primeiro acesso)' : 'Trocou a própria senha', reg.usuario);
   await gravarUsuario(env, reg);
-  const token = await criarSessao(env.SEGREDO_SESSAO, reg.usuario, reg.versaoSenha);
-  if (obrigatoria) return redirecionar('/', { 'set-cookie': cookieSessao(token, DURACAO_SESSAO_MS / 1000) });
-  return html(telaTrocarSenha({ usuario: reg.usuario, ok: 'Senha alterada.' }), 200, { 'set-cookie': cookieSessao(token, DURACAO_SESSAO_MS / 1000) });
+  const sessao = await novaSessao(env, reg);
+  if (obrigatoria) return redirecionar('/', { 'set-cookie': cookieSessao(sessao.token, sessao.segundos) });
+  return html(telaTrocarSenha({ usuario: reg.usuario, ok: 'Senha alterada.' }), 200, { 'set-cookie': cookieSessao(sessao.token, sessao.segundos) });
 }
 
 async function admin(request, env, reg) {
@@ -355,7 +362,7 @@ async function receberSugestao(request, env, reg) {
   if (v.erro) return json({ erro: v.erro }, 400);
   const chaveLimite = `sl:${reg.usuario}:${new Date().toISOString().slice(0, 10)}`;
   const enviadas = Number((await env.USUARIOS.get(chaveLimite)) || 0);
-  if (enviadas >= LIMITE_DIA) return json({ erro: 'Limite de sugestões de hoje atingido. Tente amanhã.' }, 429);
+  if (enviadas >= (await lerConfiguracoes(env.USUARIOS)).sugestoesDia) return json({ erro: 'Limite de sugestões de hoje atingido. Tente amanhã.' }, 429);
   const id = `${Date.now().toString(36)}-${crypto.randomUUID().slice(0, 8)}`;
   await env.USUARIOS.put(`s:${id}`, JSON.stringify({ id, usuario: reg.usuario, tipo: v.tipo, texto: v.texto, criado: Date.now() }));
   await env.USUARIOS.put(chaveLimite, String(enviadas + 1), { expirationTtl: 172800 });
@@ -696,6 +703,30 @@ function agendarBackupDiario(context) {
   if (context.waitUntil) context.waitUntil(tarefa);
 }
 
+// ---- Configurações gerais (só o gestor geral) ----
+async function adminConfiguracoes(request, env, reg) {
+  const meu = perfil(env, reg);
+  if (!pode(meu, 'configuracoes.gerenciar')) return proibido('As configurações gerais são exclusivas do gestor geral.');
+  const ctx = { usuario: reg.usuario, perfil: meu };
+  const tela = async (msg = {}) =>
+    html(telaConfiguracoes({ ...ctx, cfg: msg.cfg || (await lerConfiguracoes(env.USUARIOS)), ...msg }), msg.erro || msg.problemas?.length ? 400 : 200);
+  if (request.method !== 'POST') return tela();
+  const form = await request.formData();
+  const revisao = Number(form.get('revisao'));
+  const cfg = configuracoesDoFormulario(form);
+  const problemas = validarConfiguracoes(cfg);
+  if (problemas.length) return tela({ cfg: { ...cfg, revisao }, problemas });
+  if (!(await salvarConfiguracoes(env.USUARIOS, revisao, cfg, reg.usuario)))
+    return tela({ erro: 'Outra pessoa alterou as configurações enquanto você editava. Nada foi salvo: confira e salve de novo.' });
+  await registrar(
+    env.USUARIOS,
+    reg.usuario,
+    `Alterou as configurações gerais (sessão ${cfg.sessaoHoras}h; sugestões ${cfg.sugestoesDia}/dia; aviso ${cfg.avisoTexto ? 'ligado' : 'desligado'})`,
+    'configuracoes',
+  );
+  return tela({ ok: 'Configurações salvas. A duração da sessão vale para os próximos logins.' });
+}
+
 export async function onRequest(context) {
   const { request, env, next } = context;
   const url = new URL(request.url);
@@ -736,6 +767,7 @@ export async function onRequest(context) {
   if (caminho === '/admin') return admin(request, env, reg);
   if (caminho === '/admin/painel') return painel(env, reg);
   if (caminho === '/admin/backups' || caminho.startsWith('/admin/backups/')) return adminBackups(request, env, reg, url);
+  if (caminho === '/admin/configuracoes') return adminConfiguracoes(request, env, reg);
   if (caminho === '/admin/modelos') return adminModelos(request, env, reg, url);
   if (caminho === '/admin/atendimento' || caminho === '/admin/atendimento/comparar') return adminAtendimento(request, env, reg, url);
   if (caminho === '/api/atendimento') {
@@ -776,7 +808,13 @@ export async function onRequest(context) {
   if (caminho.startsWith('/api/formularios/')) return entregarFormulario(env, caminho.slice(17), url.searchParams.has('baixar'));
   if (caminho === '/api/sessao') {
     return new Response(
-      JSON.stringify({ usuario: reg.usuario, perfil: perfil(env, reg), admin: pode(perfil(env, reg), 'painel.ver'), gestor: ehGestor(env, reg.usuario) }),
+      JSON.stringify({
+        usuario: reg.usuario,
+        perfil: perfil(env, reg),
+        admin: pode(perfil(env, reg), 'painel.ver'),
+        gestor: ehGestor(env, reg.usuario),
+        aviso: avisoVigente(await lerConfiguracoes(env.USUARIOS), new Date().toLocaleDateString('sv-SE', { timeZone: 'America/Bahia' })),
+      }),
       {
         headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },
       },

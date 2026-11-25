@@ -902,3 +902,88 @@
     .aviso-mudanca-fechar { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; border: 0; border-radius: 8px; background: transparent; color: inherit; cursor: pointer; }
     .aviso-mudanca-fechar:hover { background: var(--primary-soft); }
     .aviso-mudanca-mini { position: fixed; right: 16px; bottom: 16px; z-index: 1500; padding: 9px 14px; border-radius: 999px; border: 1px solid var(--warning-border); background: var(--card-bg); color: var(--text); font-weight: 600; font-size: 12.5px; cursor: pointer; box-shadow: 0 10px 30px -12px rgba(0,0,0,.5); }
+
+    /* =========================================================
+       INTERFACE DE CELULAR (body.celular, até 760px)
+       ========================================================= */
+    .folha-fundo { position: fixed; inset: 0; z-index: 1600; background: rgba(5, 8, 15, 0.45); display: flex; align-items: flex-end; }
+    .folha { width: 100%; max-height: 88vh; overflow-y: auto; background: var(--card-bg); color: var(--text); border-radius: 20px 20px 0 0; padding: 6px 16px calc(18px + env(safe-area-inset-bottom)); box-shadow: 0 -20px 50px -20px rgba(0,0,0,.45); transform: translateY(100%); transition: transform 220ms cubic-bezier(.16,1,.3,1); -webkit-backdrop-filter: blur(22px); backdrop-filter: blur(22px); }
+    :root[data-theme="dark"] .folha { background: var(--surface-2, #151a24); }
+    .folha-fundo.aberta .folha { transform: none; }
+    .folha-alca { width: 40px; height: 5px; border-radius: 999px; background: var(--border-strong); margin: 4px auto 8px; }
+    .folha-topo { display: flex; align-items: center; justify-content: space-between; padding: 4px 2px 10px; font-size: 17px; }
+    .folha-fechar { width: 40px; height: 40px; border: 0; border-radius: 12px; background: var(--primary-soft); color: var(--text); font-size: 16px; cursor: pointer; }
+    .folha-dica { margin: 0 0 12px; font-size: 13.5px; color: var(--muted); }
+    @media (prefers-reduced-motion: reduce) { .folha { transition: none; } }
+
+    body.celular { display: block; padding: calc(56px + env(safe-area-inset-top)) 0 calc(76px + env(safe-area-inset-bottom)); background-attachment: fixed; }
+    body.celular .lateral { display: none; }
+    body.celular .container { overflow: visible; width: 100%; margin: 0; border: 0; border-radius: 0; box-shadow: none; background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+    body.celular .container > header { display: none; }
+    body.celular .content { padding: 14px 14px 20px; }
+    body.celular input, body.celular select, body.celular textarea { font-size: 16px; max-width: 100%; box-sizing: border-box; }
+    body.celular .form-grid { display: flex; flex-direction: column; gap: 14px; }
+    body.celular .field-group { width: 100%; min-width: 0; }
+    body.celular .field-group input, body.celular .field-group select, body.celular .field-group textarea { width: 100%; min-height: 48px; }
+
+    /* topo */
+    .app-topo { position: fixed; top: 0; left: 0; right: 0; box-sizing: border-box; z-index: 1500; display: flex; flex-direction: row; flex-wrap: nowrap; align-items: center; gap: 10px; min-height: 56px; padding: calc(6px + env(safe-area-inset-top)) 12px 6px; background: var(--glass-strong, var(--card-bg)); border-bottom: 1px solid var(--glass-border, var(--border)); -webkit-backdrop-filter: blur(20px) saturate(140%); backdrop-filter: blur(20px) saturate(140%); }
+    .app-topo .lateral-usuario { flex: none; min-width: 0; }
+    .app-topo .lateral-usuario:empty { display: none; }
+    .app-topo #btn_usuario { padding: 0; border: 0; background: transparent; box-shadow: none; }
+    .app-topo .menu-usuario-info { display: none; }
+    .app-topo .avatar-iniciais { width: 38px; height: 38px; font-size: 13px; }
+    .app-titulo { flex: 1 1 auto; font-size: 17px; font-weight: 600; color: var(--strong, var(--text)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .app-icone { width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 12px; background: var(--primary-soft); color: var(--strong, var(--text)); cursor: pointer; }
+    /* menu da conta e temas viram folhas */
+    body.celular .menu-usuario-lista, body.celular .tema-menu { position: fixed !important; left: 0 !important; right: 0 !important; top: auto !important; bottom: 0 !important; width: auto !important; max-height: 80vh; border-radius: 20px 20px 0 0; padding: 14px 14px calc(18px + env(safe-area-inset-bottom)); z-index: 1700; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 -20px 50px -20px rgba(0,0,0,.5); }
+    body.celular .menu-usuario-lista[style*="none"], body.celular .tema-menu[style*="none"] { display: none !important; }
+    body.celular .menu-usuario-lista .tema-opcao, body.celular .tema-menu .tema-opcao { min-height: 50px; font-size: 16px; }
+
+    /* navegação embaixo */
+    .app-baixo { position: fixed; left: 0; right: 0; bottom: 0; z-index: 1500; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); overflow: hidden; box-sizing: border-box; padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); background: var(--glass-strong, var(--card-bg)); border-top: 1px solid var(--glass-border, var(--border)); -webkit-backdrop-filter: blur(20px) saturate(140%); backdrop-filter: blur(20px) saturate(140%); }
+    body.layout-lateral .app-baixo .nav-tab, .app-baixo .app-baixo-item { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 54px; width: auto; min-width: 0; padding: 4px 2px; border: 0; border-radius: 12px; background: transparent; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: 0; text-transform: none; box-shadow: none; cursor: pointer; }
+    .app-baixo svg { width: 22px; height: 22px; }
+    body.layout-lateral .app-baixo .nav-tab.ativa { color: var(--neon-1, var(--primary)); background: var(--primary-soft); border: 0; }
+    .app-baixo .lateral-nav-nome { flex: none; }
+    .app-baixo .pend-badge, .app-baixo .hist-contador { position: absolute; top: 2px; left: 54%; min-width: 17px; height: 17px; padding: 0 4px; font-size: 10px; line-height: 17px; border-radius: 999px; }
+
+    /* folha "Mais" */
+    #folha_mais .nav-tab { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 54px; padding: 10px 12px; border: 0; border-radius: 12px; background: transparent; color: var(--text); font-size: 16px; font-weight: 500; text-transform: none; letter-spacing: 0; box-shadow: none; text-align: left; }
+    #folha_mais .nav-tab.ativa { background: var(--primary-soft); }
+    #folha_mais .tema-wrap { display: block; margin-top: 8px; }
+    #folha_mais .tema-wrap .theme-toggle { width: 100%; min-height: 50px; justify-content: flex-start; font-size: 15px; }
+    body.tema-no-usuario #folha_mais .tema-wrap { display: none; }
+
+    /* serviços: lista vertical com categorias */
+    body.celular .service-nav { max-height: none; padding: 4px 0; background: transparent; border: 0; }
+    body.celular .svc-grupo-titulo { padding: 14px 4px 8px; margin: 0; }
+    body.celular .service-nav .sub-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 52px; margin: 0 0 6px; padding: 12px 14px; border-radius: 12px; text-align: left; font-size: 15px; white-space: normal; }
+    body.celular .service-nav .sub-btn::after { content: "›"; font-size: 22px; opacity: .45; margin-left: 10px; }
+    body.celular .mais-usados { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -14px 12px; padding: 0 14px; }
+    body.celular .mais-usados::-webkit-scrollbar { display: none; }
+    body.celular .chip-servico { flex: none; min-height: 40px; font-size: 14px; }
+    body.celular .search-row input { min-height: 50px; }
+
+    /* ações sempre à mão (acima da navegação) */
+    body.celular .subform.active > .actions { position: sticky; bottom: calc(70px + env(safe-area-inset-bottom)); z-index: 20; display: grid; grid-template-columns: 1fr auto; gap: 8px; margin: 18px -14px 0; padding: 10px 14px; background: var(--glass-strong, var(--card-bg)); border-top: 1px solid var(--glass-border, var(--border)); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); }
+    body.celular .subform.active > .actions .btn { min-height: 52px; margin: 0; font-size: 16px; }
+    body.celular .subform.active > .actions .btn-clear { padding: 0 16px; }
+
+    /* texto gerado na folha */
+    body.celular #folha_saida .result-section { margin: 0; padding: 0; border: 0; }
+    body.celular #folha_saida .output-box { min-height: 120px !important; font-size: 14px; }
+    body.celular #folha_saida .copy-btn { min-height: 44px; padding: 0 16px; }
+    .app-rever { display: none; }
+    body.celular .app-rever { display: block; width: 100%; min-height: 48px; margin-top: 14px; border: 1px dashed var(--border-strong); border-radius: 12px; background: transparent; color: var(--muted); font-size: 14px; font-weight: 600; cursor: pointer; }
+
+    /* janelas (histórico, sugestão) em tela cheia */
+    body.celular .hist-overlay { padding: 0; align-items: stretch; }
+    body.celular .hist-painel { max-width: none; width: 100%; min-height: 100%; border-radius: 0; margin: 0; }
+    body.celular .balao-dica { display: none; }
+    body.celular .container { overflow-x: clip; }
+    body.celular .ru-check, body.celular label { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+    body.celular .ru-check span { white-space: normal; }
+    body.celular input[type="checkbox"], body.celular input[type="radio"] { width: 20px !important; min-height: 0 !important; flex: none; }
+    /* avisos flutuantes ficam acima da barra de navegação */
+    body.celular .pend-lembrete, body.celular #pend_lembrete, body.celular .toast-aviso, body.celular .aviso-mudanca, body.celular .aviso-mudanca-mini { bottom: calc(84px + env(safe-area-inset-bottom)) !important; z-index: 1550; }

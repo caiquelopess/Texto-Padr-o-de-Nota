@@ -1,10 +1,11 @@
 import { readFile } from 'node:fs/promises';
-import { abrirServico, expect, preencherObrigatorios, test } from '../support/pagina.mjs';
+import { abrirServico, expect, fecharTextoGerado, preencherObrigatorios, test } from '../support/pagina.mjs';
 
 const gerarUmTexto = async (page) => {
   await abrirServico(page, 'sf-reativ-virtual');
   await preencherObrigatorios(page, 'sf-reativ-virtual');
   await page.locator('#sf-reativ-virtual > .actions .btn').first().click();
+  await fecharTextoGerado(page);
 };
 
 test('exportar meus dados gera arquivo com histórico e pendências', async ({ page }) => {

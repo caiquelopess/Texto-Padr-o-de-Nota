@@ -33,3 +33,16 @@ export async function preencherObrigatorios(page, sf) {
     }
   }, sf);
 }
+
+// Abre uma área do sistema. No celular, Tensão, Calculadora e Declaração ficam em "Mais".
+export async function abrirArea(page, aba) {
+  const mais = page.locator('#btn_mais');
+  if (['tensao', 'calc', 'decl'].includes(aba) && (await mais.isVisible())) await mais.click();
+  await page.click(`[data-aba="${aba}"]`);
+}
+
+// No celular o texto gerado abre numa folha por cima da tela; fecha para seguir usando o formulário.
+export async function fecharTextoGerado(page) {
+  const folha = page.locator('#folha_saida');
+  if (await folha.isVisible()) await folha.locator('.folha-fechar').click();
+}

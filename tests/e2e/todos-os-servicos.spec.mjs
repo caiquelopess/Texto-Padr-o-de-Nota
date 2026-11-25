@@ -1,4 +1,4 @@
-import { abrirServico, expect, preencherObrigatorios, test } from '../support/pagina.mjs';
+import { abrirServico, expect, fecharTextoGerado, preencherObrigatorios, test } from '../support/pagina.mjs';
 
 // Cada botão da lista de serviços precisa abrir o formulário e gerar texto sem erro.
 test('todos os serviços da lista geram texto', async ({ page }) => {
@@ -19,6 +19,7 @@ test('todos os serviços da lista geram texto', async ({ page }) => {
     });
     await page.locator(`#${sf} > .actions .btn:not(.btn-clear):not(.btn-edit)`).first().click();
     const texto = await page.evaluate(() => document.getElementById('out-nota').value + document.getElementById('out-agenda').value);
+    await fecharTextoGerado(page);
     if (!texto.trim()) falhas.push(`${s.nome}: ${await page.textContent('#toastAviso')}`);
   }
   expect(falhas).toEqual([]);

@@ -1,4 +1,4 @@
-import { abrirServico, expect, preencherObrigatorios, test } from '../support/pagina.mjs';
+import { abrirServico, expect, fecharTextoGerado, preencherObrigatorios, test } from '../support/pagina.mjs';
 
 test('serviços agrupados por categoria, sem perder nenhum', async ({ page }) => {
   const grupos = await page.$$eval('#service_nav .svc-grupo', (gs) =>
@@ -23,9 +23,36 @@ test('"Mais usados" aparece a partir do histórico e abre o serviço', async ({ 
   await abrirServico(page, 'sf-reativ-virtual');
   await preencherObrigatorios(page, 'sf-reativ-virtual');
   await page.locator('#sf-reativ-virtual > .actions .btn').first().click();
+  await fecharTextoGerado(page);
   const chip = page.locator('#mais_usados .chip-servico');
   await expect(chip).toHaveText(['Reativação Virtual']);
   await abrirServico(page, 'sf-afericao');
   await chip.click();
   await expect(page.locator('#sf-reativ-virtual')).toHaveClass(/active/);
+});
+
+test('celular: barra embaixo, folha "Mais", ações à mão e texto gerado em folha', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'só no celular');
+  await expect(page.locator('.app-baixo')).toBeVisible();
+  await expect(page.locator('.app-baixo [data-aba="agenda"]')).toHaveClass(/ativa/);
+  // Calculadora fica em "Mais"
+  await page.click('#btn_mais');
+  await expect(page.locator('#folha_mais')).toBeVisible();
+  await page.click('#folha_mais [data-aba="calc"]');
+  await expect(page.locator('#folha_mais')).toBeHidden();
+  await expect(page.locator('#app_titulo')).toHaveText('Calculadora de Refaturamento');
+  // volta aos textos e gera: o texto sobe numa folha
+  await page.locator('.app-baixo [data-aba="agenda"]').tap();
+  await abrirServico(page, 'sf-reativ-virtual');
+  await preencherObrigatorios(page, 'sf-reativ-virtual');
+  const gerar = page.locator('#sf-reativ-virtual > .actions .btn').first();
+  await expect(gerar).toBeInViewport();
+  await gerar.click();
+  await expect(page.locator('#folha_saida')).toBeVisible();
+  await expect(page.locator('#folha_saida #out-nota')).not.toHaveValue('');
+  await page.click('#folha_saida .folha-fechar');
+  await page.click('#btn_cel_rever');
+  await expect(page.locator('#folha_saida')).toBeVisible();
+  // telefone abre o teclado numérico
+  await expect(page.locator('#rv_tel, #sf-reativ-virtual input[id*="tel"]').first()).toHaveAttribute('inputmode', 'tel');
 });

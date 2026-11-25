@@ -1,11 +1,14 @@
-import { abrirServico, expect, preencherObrigatorios, test } from '../support/pagina.mjs';
+import { abrirServico, expect, fecharTextoGerado, preencherObrigatorios, test } from '../support/pagina.mjs';
 
 // Textos exatos combinados com o responsável. Se mudarem, foi de propósito: atualize aqui junto.
 const preencher = (page, campos) =>
   page.evaluate((c) => {
     for (const [k, v] of Object.entries(c)) document.getElementById(k).value = v;
   }, campos);
-const gerar = (page, sf) => page.locator(`#${sf} > .actions .btn:not(.btn-clear):not(.btn-edit)`).first().click();
+const gerar = async (page, sf) => {
+  await page.locator(`#${sf} > .actions .btn:not(.btn-clear):not(.btn-edit)`).first().click();
+  await fecharTextoGerado(page);
+};
 const nota = (page) => page.inputValue('#out-nota');
 const agenda = (page) => page.inputValue('#out-agenda');
 

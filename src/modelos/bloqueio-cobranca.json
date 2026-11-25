@@ -1,0 +1,72 @@
+{
+  "id": "bloqueio-cobranca",
+  "sf": "sf-bloq-cobranca",
+  "nome": "Bloqueio de Cobrança",
+  "categoria": "Faturamento e Débitos",
+  "descricao": "Migrado do código (lote 3 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "agenda",
+  "botao": "Gerar Texto de AGENDA e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "⚠️ Bloquear fatura após registro da reclamação",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "tipo",
+      "elementoId": "bloq_tipo",
+      "rotulo": "Tipo de Bloqueio de Cobrança:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "opcoes": ["pagamento", "reclamacao"],
+      "rotulosOpcoes": [
+        "Casos em que apresenta o pagamento (3 dias úteis)",
+        "Casos em que abre reclamação de leitura/faturamento ou defesa administrativa (15 dias corridos)"
+      ],
+      "largo": true
+    },
+    {
+      "id": "ref",
+      "elementoId": "bloq_ref",
+      "rotulo": "Fatura Referência (ref):",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 10/2026 ou R$ 150,00"
+    },
+    {
+      "id": "rec",
+      "elementoId": "bloq_rec",
+      "rotulo": "Número/Tipo da Reclamação pendente:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 9200xxxx",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "reclamacao"
+      }
+    },
+    {
+      "id": "dt_ini",
+      "elementoId": "bloq_dt_ini",
+      "rotulo": "Período de (Início):",
+      "tipo": "data",
+      "obrigatorio": true,
+      "dica": "dd/mm/aaaa"
+    },
+    {
+      "id": "dt_fim",
+      "elementoId": "bloq_dt_fim",
+      "rotulo": "Até (Fim):",
+      "tipo": "data",
+      "obrigatorio": true,
+      "dica": "dd/mm/aaaa"
+    }
+  ],
+  "nota": "{{#se tipo=pagamento}}Bloqueio fatura com ref {{ref}} de 3 dias uteis aguardando baixa no sistema de {{dt_ini}} a {{dt_fim}}{{/se}}{{#se tipo=reclamacao}}Bloqueio da fatura referencia: {{ref}} pelo prazo de 15 dias corridos, devido à reclamação {{rec}} pendente no período de {{dt_ini}} a {{dt_fim}}.{{/se}}",
+  "agenda": "{{#se tipo=pagamento}}Bloqueio fatura com ref {{ref}} de 3 dias uteis aguardando baixa no sistema de {{dt_ini}} a {{dt_fim}}{{/se}}{{#se tipo=reclamacao}}Bloqueio da fatura referencia: {{ref}} pelo prazo de 15 dias corridos, devido à reclamação {{rec}} pendente no período de {{dt_ini}} a {{dt_fim}}.{{/se}}"
+}

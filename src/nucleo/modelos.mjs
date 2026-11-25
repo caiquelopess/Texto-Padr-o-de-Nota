@@ -83,6 +83,44 @@ export function mdValidarValores(modelo, valores = {}) {
   return erros;
 }
 
+// Padroniza o que o atendente digitou, igual ao sistema anterior (padronizarCampos):
+// data aceita d/m/aaaa e vira dd/mm/aaaa; data com dataRegra "passada" não pode ser futura;
+// telefone sai no formato (71) 99350-1519. Só campos visíveis. Retorna { valores, erros }.
+export function mdNormalizarValores(modelo, valores = {}, hoje = new Date()) {
+  const saida = { ...valores };
+  const erros = [];
+  const dois = (n) => String(n).padStart(2, '0');
+  for (const c of mdCamposVisiveis(modelo, valores)) {
+    const v = String(valores[c.id] ?? '').trim();
+    if (!v) continue;
+    if (c.tipo === 'telefone') {
+      const t = formatarTelefones(v);
+      if (t === null) erros.push(`O telefone do campo "${c.rotulo}" deve ter 10 ou 11 dígitos, com DDD.`);
+      else saida[c.id] = t;
+    }
+    if (c.tipo === 'data') {
+      const m = /^(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{4})$/.exec(v);
+      if (!m) {
+        erros.push(`A data do campo "${c.rotulo}" deve estar no formato dd/mm/aaaa.`);
+        continue;
+      }
+      const [dia, mes, ano] = [Number(m[1]), Number(m[2]), Number(m[3])];
+      const dt = new Date(ano, mes - 1, dia);
+      if (mes < 1 || mes > 12 || dia < 1 || dia > 31 || dt.getFullYear() !== ano || dt.getMonth() !== mes - 1 || dt.getDate() !== dia) {
+        erros.push(`A data do campo "${c.rotulo}" não é uma data real. Verifique o dia e o mês.`);
+        continue;
+      }
+      const meiaNoite = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+      if (c.dataRegra === 'passada' && dt.getTime() > meiaNoite.getTime()) {
+        erros.push(`A data do campo "${c.rotulo}" não pode ser uma data futura.`);
+        continue;
+      }
+      saida[c.id] = `${dois(dia)}/${dois(mes)}/${ano}`;
+    }
+  }
+  return { valores: saida, erros };
+}
+
 function valorFormatado(campo, bruto, filtro, argumento) {
   let v = String(bruto ?? '').trim();
   if (!v) return filtro === 'ou' ? argumento : '';

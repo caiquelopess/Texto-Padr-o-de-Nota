@@ -1,0 +1,81 @@
+{
+  "id": "tele-gravacao",
+  "sf": "sf-tele-gravacao",
+  "nome": "Tele gravação",
+  "categoria": "Reclamações e Outros",
+  "descricao": "Migrado do código (lote 3 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "botao": "Gerar Texto de NOTA e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "Texto para Nota de Serviço - Tele Gravação",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "elementoId": "tg_solic",
+      "rotulo": "Solicitante:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo do cliente"
+    },
+    {
+      "id": "tel",
+      "elementoId": "tg_tel",
+      "rotulo": "Tel (XX-9XXXXX):",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84-988887777"
+    },
+    {
+      "id": "ref",
+      "elementoId": "tg_ref",
+      "rotulo": "Refr (Ponto de Referência):",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ponto de referência detalhado",
+      "largo": true
+    },
+    {
+      "id": "email",
+      "elementoId": "tg_email",
+      "rotulo": "E-mail:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com"
+    },
+    {
+      "id": "motivo",
+      "elementoId": "tg_motivo",
+      "rotulo": "Motivo:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Motivo da solicitação da gravação"
+    },
+    {
+      "id": "data",
+      "elementoId": "tg_data",
+      "rotulo": "Data da ligação:",
+      "tipo": "data",
+      "dataRegra": "passada",
+      "obrigatorio": true,
+      "dica": "dd/mm/aaaa"
+    },
+    {
+      "id": "proto",
+      "elementoId": "tg_proto",
+      "rotulo": "Protocolo:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Número do protocolo"
+    }
+  ],
+  "nota": "Solicitante {{solic}} Tel {{tel}} Refr: {{ref}}\nE-mail: {{email}}\nMotivo: {{motivo}}\nData da ligação {{data}}\nProtocolo: {{proto}}\nPrazo de atendimento: 5 dias (úteis).",
+  "agenda": "Solicitante {{solic}} Tel {{tel}} Refr: {{ref}}\nE-mail: {{email}}\nMotivo: {{motivo}}\nData da ligação {{data}}\nProtocolo: {{proto}}\nPrazo de atendimento: 5 dias (úteis)."
+}

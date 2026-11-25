@@ -482,11 +482,6 @@
     document.getElementById('trp_cnpj').required = isPj;
   }
 
-  function toggleBloqCobranca() {
-    var isRec = (document.getElementById('bloq_tipo').value === 'reclamacao');
-    document.getElementById('grp_bloq_rec').style.display = isRec ? 'flex' : 'none';
-    document.getElementById('bloq_rec').required = isRec;
-  }
 
   function toggleMMGD(selId, neoId) {
     var sel = document.getElementById(selId);
@@ -504,15 +499,6 @@
   }
 
 
-  function toggleRefPadrao() {
-    var isDeslig = (document.getElementById('refp_opt').value === 'desliga_religa');
-    document.getElementById('grp_refp_motivo').style.display = isDeslig ? 'flex' : 'none';
-    document.getElementById('grp_refp_deslig').style.display = isDeslig ? 'flex' : 'none';
-    document.getElementById('grp_refp_relig').style.display = isDeslig ? 'flex' : 'none';
-    document.getElementById('refp_motivo').required = isDeslig;
-    document.getElementById('refp_dt_deslig').required = isDeslig;
-    document.getElementById('refp_dt_relig').required = isDeslig;
-  }
 
 
   /* ===== PADRONIZAÇÃO: DATA, CPF/CNPJ E TELEFONE =====
@@ -1090,26 +1076,8 @@
 
 
 
-  function gerarLP() {
-    if (!validarCampos('sf-lp')) return;
-    var txt = 'Solicitante ' + getVal('lp_solic') + ' PRX ' + getVal('lp_prx') + ' Tel ' + getVal('lp_tel') + ' e-mail ' + getVal('lp_email') + ' Carga ' + getVal('lp_carga') + ' PG ' + getVal('lp_pg') + ' Ligar dia ' + getVal('lp_dt_lig') + ' e desligar dia ' + getVal('lp_dt_deslig');
-    finalizarGeracao('sf-lp', txt, txt, 'nota');
-  }
 
 
-  function gerarRefPadrao() {
-    if (!validarCampos('sf-ref-padrao')) return;
-    var isDeslig = (getVal('refp_opt') === 'desliga_religa');
-    var txt = '';
-    if (!isDeslig) {
-      txt = 'Solicitante ' + getVal('refp_solic') + ' PRX ' + getVal('refp_prx') + ' Tel ' + getVal('refp_tel') + ' e-mail ' + getVal('refp_email') + '\nMotivo da solicitação: MUDANÇA DE LOCAL DO MEDIDOR.';
-    } else {
-      var d = 'Solicitante ' + getVal('refp_solic') + ' PRX ' + getVal('refp_prx') + ' Tel ' + getVal('refp_tel') + ' e-mail ' + getVal('refp_email') + ' Motivo da solicitação: ' + getVal('refp_motivo') + ' | DESLIGAR DIA ' + getVal('refp_dt_deslig');
-      var r = 'Solicitante ' + getVal('refp_solic') + ' PRX ' + getVal('refp_prx') + ' Tel ' + getVal('refp_tel') + ' e-mail ' + getVal('refp_email') + ' Motivo da solicitação: ' + getVal('refp_motivo') + ' | RELIGAR DIA ' + getVal('refp_dt_relig');
-      txt = 'NOTA DE DESLIGA:\n' + d + '\n\nNOTA DE RELIGA:\n' + r;
-    }
-    finalizarGeracao('sf-ref-padrao', txt, txt, 'nota');
-  }
 
 
 
@@ -1158,21 +1126,6 @@
   }
 
 
-  function gerarDefesaAdm() {
-    if (!validarCampos('sf-defesa-adm')) return;
-    var nota = 'P-RECURSO ADMINISTRATIVO ENTREGUE DIA ' + getVal('def_dt_ent') + ' E ENVIADO DIA ' + getVal('def_dt_env') + ' POR EMAIL E POSTERIORMENTE MALOTE CONTA CONTRATO: ' + getVal('def_cc') + ' TOI ' + getVal('def_toi');
-    var agenda = 'SOLICITANTE: ' + getVal('def_solic') +
-      '\nCONTA CONTRATO: ' + getVal('def_cc') + ' | TOI: ' + getVal('def_toi') +
-      '\nENTREGA P-RECURSO: ' + getVal('def_dt_ent') + ' | ENVIO: ' + getVal('def_dt_env') +
-      '\nMOTIVO DA RECLAMAÇÃO : ' + getVal('def_motivo') +
-      '\nFATURA VENCIMENTO: ' + getVal('def_fat_venc') + '  VALOR: ' + getVal('def_fat_val') +
-      '\nTEL: ' + getVal('def_tel') +
-      '\nPX : ' + getVal('def_px') +
-      '\nEMAIL: ' + getVal('def_email') +
-      '\nCliente ciente do envio da resposta por carta ou mail ou SMS' +
-      '\nCliente ciente do prazo do tratamento da reclamação de 05 dias UTEIS ou 15 dias corridos se for a campo';
-    finalizarGeracao('sf-defesa-adm', nota, agenda, 'nota');
-  }
 
 
 
@@ -1227,28 +1180,7 @@
     finalizarGeracao('sf-tr-partidas', txt, txt, 'nota');
   }
 
-  function gerarTeleGravacao() {
-    if (!validarCampos('sf-tele-gravacao')) return;
-    var txt = 'Solicitante ' + getVal('tg_solic') + ' Tel ' + getVal('tg_tel') + ' Refr: ' + getVal('tg_ref') +
-      '\nE-mail: ' + getVal('tg_email') +
-      '\nMotivo: ' + getVal('tg_motivo') +
-      '\nData da ligação ' + getVal('tg_data') +
-      '\nProtocolo: ' + getVal('tg_proto') +
-      '\nPrazo de atendimento: 5 dias (úteis).';
-    finalizarGeracao('sf-tele-gravacao', txt, txt, 'nota');
-  }
 
-  function gerarBloqCobranca() {
-    if (!validarCampos('sf-bloq-cobranca')) return;
-    var tipo = getVal('bloq_tipo');
-    var txt = '';
-    if (tipo === 'pagamento') {
-      txt = 'Bloqueio fatura com ref ' + getVal('bloq_ref') + ' de 3 dias uteis aguardando baixa no sistema de ' + getVal('bloq_dt_ini') + ' a ' + getVal('bloq_dt_fim');
-    } else {
-      txt = 'Bloqueio da fatura referencia: ' + getVal('bloq_ref') + ' pelo prazo de 15 dias corridos, devido à reclamação ' + getVal('bloq_rec') + ' pendente no período de ' + getVal('bloq_dt_ini') + ' a ' + getVal('bloq_dt_fim') + '.';
-    }
-    finalizarGeracao('sf-bloq-cobranca', txt, txt, 'agenda');
-  }
 
   function toggleReclamacaoGD() {
     var tipo = document.getElementById('gd_tipo').value;
@@ -1379,9 +1311,7 @@
     if (containerId === 'sf-tt') { document.getElementById('tt_tipo').value = 'sem_debito'; document.getElementById('tt_mmgd').value = 'Não'; toggleTrocaTitularidade(); }
     if (containerId === 'sf-ri') { document.getElementById('ri_tipo').value = 'assuncao'; document.getElementById('ri_mmgd').value = 'Não'; toggleMMGD('ri_mmgd', 'ri_neo'); toggleReativDebitos(); }
     if (containerId === 'sf-res') { document.getElementById('res_forma_pag').value = 'conta'; toggleFormaPagRes(); }
-    if (containerId === 'sf-ref-padrao') { document.getElementById('refp_opt').value = 'mudanca'; toggleRefPadrao(); }
     if (containerId === 'sf-tr-partidas') { document.getElementById('trp_tipo').value = 'pf'; toggleTrPartidas(); }
-    if (containerId === 'sf-bloq-cobranca') { document.getElementById('bloq_tipo').value = 'pagamento'; toggleBloqCobranca(); }
     
     var subA = subtipoAtivo[containerId];
     if (subA) setTimeout(function() { aplicarSubtipo(containerId, subA); }, 0);

@@ -1,0 +1,102 @@
+{
+  "id": "reforma-padrao",
+  "sf": "sf-ref-padrao",
+  "nome": "Reforma Padrão",
+  "categoria": "Medição e Rede",
+  "descricao": "Migrado do código (lote 3 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "botao": "Gerar Texto de NOTA e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "⚠️ AGENDAR EM NUMERO DO PEDIDO",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "opt",
+      "elementoId": "refp_opt",
+      "rotulo": "Opção de Reforma",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "opcoes": ["mudanca", "desliga_religa"],
+      "rotulosOpcoes": ["MUDANÇA DE LOCAL DE MEDIDOR", "DESLIGA/RELIGA"],
+      "largo": true
+    },
+    {
+      "id": "solic",
+      "elementoId": "refp_solic",
+      "rotulo": "Solicitante",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo do solicitante"
+    },
+    {
+      "id": "prx",
+      "elementoId": "refp_prx",
+      "rotulo": "PRX",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ponto de referência detalhado"
+    },
+    {
+      "id": "tel",
+      "elementoId": "refp_tel",
+      "rotulo": "Tel (XX-9XXXXXXXX)",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84-988887777"
+    },
+    {
+      "id": "email",
+      "elementoId": "refp_email",
+      "rotulo": "e-mail",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "motivo",
+      "elementoId": "refp_motivo",
+      "rotulo": "Motivo da solicitação",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Descreva o motivo da reforma...",
+      "largo": true,
+      "mostrarSe": {
+        "campo": "opt",
+        "igual": "desliga_religa"
+      }
+    },
+    {
+      "id": "dt_deslig",
+      "elementoId": "refp_dt_deslig",
+      "rotulo": "DESLIGAR DIA",
+      "tipo": "data",
+      "obrigatorio": true,
+      "dica": "dd/mm/aaaa",
+      "mostrarSe": {
+        "campo": "opt",
+        "igual": "desliga_religa"
+      }
+    },
+    {
+      "id": "dt_relig",
+      "elementoId": "refp_dt_relig",
+      "rotulo": "RELIGAR DIA",
+      "tipo": "data",
+      "obrigatorio": true,
+      "dica": "dd/mm/aaaa",
+      "mostrarSe": {
+        "campo": "opt",
+        "igual": "desliga_religa"
+      }
+    }
+  ],
+  "nota": "{{#se opt=mudanca}}Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}}\nMotivo da solicitação: MUDANÇA DE LOCAL DO MEDIDOR.{{/se}}{{#se opt=desliga_religa}}NOTA DE DESLIGA:\nSolicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Motivo da solicitação: {{motivo}} | DESLIGAR DIA {{dt_deslig}}\n\nNOTA DE RELIGA:\nSolicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Motivo da solicitação: {{motivo}} | RELIGAR DIA {{dt_relig}}{{/se}}",
+  "agenda": "{{#se opt=mudanca}}Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}}\nMotivo da solicitação: MUDANÇA DE LOCAL DO MEDIDOR.{{/se}}{{#se opt=desliga_religa}}NOTA DE DESLIGA:\nSolicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Motivo da solicitação: {{motivo}} | DESLIGAR DIA {{dt_deslig}}\n\nNOTA DE RELIGA:\nSolicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Motivo da solicitação: {{motivo}} | RELIGAR DIA {{dt_relig}}{{/se}}"
+}

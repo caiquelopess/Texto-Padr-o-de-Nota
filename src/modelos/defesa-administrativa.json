@@ -1,0 +1,114 @@
+{
+  "id": "defesa-administrativa",
+  "sf": "sf-defesa-adm",
+  "nome": "Defesa Administrativa P-Recurso",
+  "categoria": "Faturamento e Débitos",
+  "descricao": "Migrado do código (lote 3 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "botao": "Gerar Textos (Agenda e Nota) e Copiar Nota",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "Atenção: Gera dois textos simultaneamente — o texto de <b>P-Recurso (Nota)</b> e o texto de <b>Reclamação (Agenda)</b>.",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "dt_ent",
+      "elementoId": "def_dt_ent",
+      "rotulo": "Entregue dia (P-Recurso):",
+      "tipo": "data",
+      "dataRegra": "passada",
+      "obrigatorio": true,
+      "dica": "dd / mm / aaaa"
+    },
+    {
+      "id": "dt_env",
+      "elementoId": "def_dt_env",
+      "rotulo": "Enviado dia (P-Recurso):",
+      "tipo": "data",
+      "dataRegra": "passada",
+      "obrigatorio": true,
+      "dica": "dd / mm / aaaa"
+    },
+    {
+      "id": "cc",
+      "elementoId": "def_cc",
+      "rotulo": "Conta contrato:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 70xxxxxxx"
+    },
+    {
+      "id": "toi",
+      "elementoId": "def_toi",
+      "rotulo": "TOI:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Número do TOI"
+    },
+    {
+      "id": "solic",
+      "elementoId": "def_solic",
+      "rotulo": "SOLICITANTE:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo do solicitante"
+    },
+    {
+      "id": "tel",
+      "elementoId": "def_tel",
+      "rotulo": "TEL:",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84988887777"
+    },
+    {
+      "id": "motivo",
+      "elementoId": "def_motivo",
+      "rotulo": "MOTIVO DA RECLAMAÇÃO:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Descreva o motivo da reclamação / defesa...",
+      "largo": true
+    },
+    {
+      "id": "fat_venc",
+      "elementoId": "def_fat_venc",
+      "rotulo": "FATURA VENCIMENTO:",
+      "tipo": "data",
+      "obrigatorio": true,
+      "dica": "dd/mm/aaaa"
+    },
+    {
+      "id": "fat_val",
+      "elementoId": "def_fat_val",
+      "rotulo": "VALOR:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: R$ 250,00"
+    },
+    {
+      "id": "px",
+      "elementoId": "def_px",
+      "rotulo": "PX (Ponto de Referência):",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ponto de referência detalhado"
+    },
+    {
+      "id": "email",
+      "elementoId": "def_email",
+      "rotulo": "EMAIL:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    }
+  ],
+  "nota": "P-RECURSO ADMINISTRATIVO ENTREGUE DIA {{dt_ent}} E ENVIADO DIA {{dt_env}} POR EMAIL E POSTERIORMENTE MALOTE CONTA CONTRATO: {{cc}} TOI {{toi}}",
+  "agenda": "SOLICITANTE: {{solic}}\nCONTA CONTRATO: {{cc}} | TOI: {{toi}}\nENTREGA P-RECURSO: {{dt_ent}} | ENVIO: {{dt_env}}\nMOTIVO DA RECLAMAÇÃO : {{motivo}}\nFATURA VENCIMENTO: {{fat_venc}}  VALOR: {{fat_val}}\nTEL: {{tel}}\nPX : {{px}}\nEMAIL: {{email}}\nCliente ciente do envio da resposta por carta ou mail ou SMS\nCliente ciente do prazo do tratamento da reclamação de 05 dias UTEIS ou 15 dias corridos se for a campo"
+}

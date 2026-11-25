@@ -603,3 +603,73 @@ test('categorias e serviços: rascunho, validação, publicação, conflito e re
   ])
     await expect(page.locator('tbody')).toContainText(t);
 });
+
+test('backups: automático, manual, validação, download, restauração e permissões', async ({ page, browser }) => {
+  const URL_BASE = 'http://localhost:8788';
+  await entrar(page, 'admin.teste', 'senha-admin-teste');
+  await page.goto('/admin/backups');
+  // o primeiro acesso do dia já gerou o backup automático
+  await expect(page.locator('tbody')).toContainText('Automático (diário)');
+  page.on('dialog', (d) => d.accept());
+  await page.click('button:has-text("Fazer backup agora")');
+  await expect(page.locator('.okmsg')).toContainText('criado e validado');
+  const numero = (await page.locator('.okmsg').textContent()).match(/#(\d+)/)[1];
+  const linha = page.locator('tbody tr', { hasText: `#${numero}` });
+  await expect(linha).toContainText('Manual');
+
+  // validar e baixar (sem senhas)
+  await linha.getByRole('button', { name: 'Validar' }).click();
+  await expect(page.locator('.okmsg')).toContainText(`Backup #${numero} íntegro`);
+  const baixado = await page.request.get(`/admin/backups/${numero}/baixar`);
+  expect(baixado.headers()['content-disposition']).toContain(`textos-padroes-backup-${numero}.json`);
+  const texto = await baixado.text();
+  expect(texto).not.toMatch(/hash|sal|senha/i);
+  expect(JSON.parse(texto).perfis['admin.teste']).toEqual({ perfil: 'administrador', ativo: true });
+
+  // muda o estado: arquiva o modelo
+  const antes = (await (await page.request.get('/api/modelos')).json()).modelos.length;
+  expect(antes).toBe(1);
+  await page.goto('/admin/modelos/cadastro-irrigante');
+  await page.click('button:has-text("Arquivar")');
+  expect((await (await page.request.get('/api/modelos')).json()).modelos).toHaveLength(0);
+
+  // administrador comum não restaura
+  const ctx = await browser.newContext({ baseURL: URL_BASE });
+  const adm = await ctx.newPage();
+  await entrar(adm, 'chefe.equipe', 'chefe-nova');
+  await adm.goto('/admin/backups');
+  await expect(adm.locator('button:has-text("Restaurar")')).toHaveCount(0);
+  const forcado = await adm.request.post('/admin/backups', { form: { acao: 'restaurar', id: numero }, headers: { origin: URL_BASE } });
+  expect(forcado.status()).toBe(403);
+  await ctx.close();
+
+  // gestor restaura: o modelo volta e o estado anterior fica guardado
+  await page.goto('/admin/backups');
+  await page
+    .locator('tbody tr', { hasText: `#${numero}` })
+    .getByRole('button', { name: 'Restaurar' })
+    .click();
+  await expect(page.locator('.okmsg')).toContainText(`Backup #${numero} restaurado`);
+  await expect(page.locator('.okmsg')).not.toContainText('Perfis ajustados');
+  await expect(page.locator('tbody')).toContainText('Antes de restaurar');
+  expect((await (await page.request.get('/api/modelos')).json()).modelos).toHaveLength(1);
+  await page.goto('/admin/modelos/cadastro-irrigante');
+  await expect(page.locator('.sub')).toContainText('Publicado');
+
+  // supervisor nem vê a área de backups
+  const sup = await browser.newContext({ baseURL: URL_BASE });
+  const s = await sup.newPage();
+  await entrar(s, 'sara.supervisora', 'sara-nova');
+  expect((await s.goto('/admin/backups')).status()).toBe(403);
+  await sup.close();
+
+  await page.goto('/admin/auditoria');
+  for (const t of [
+    `Fez o backup #${numero}`,
+    `Validou o backup #${numero}: íntegro`,
+    `Baixou o backup #${numero}`,
+    `Restaurou o backup #${numero}`,
+    'Backup automático',
+  ])
+    await expect(page.locator('tbody')).toContainText(t);
+});

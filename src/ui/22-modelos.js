@@ -146,6 +146,7 @@
       var b = document.querySelector('#service_nav .sub-btn[data-modelo="' + id + '"]'); if (b) b.remove();
       delete modelosMontados[id];
     });
+    if (typeof aplicarAtendimentoAtual === 'function') aplicarAtendimentoAtual(); // modelos também seguem a organização publicada
     var n = document.querySelectorAll('#service_nav .sub-btn').length;
     var cont = document.getElementById('svc_count');
     if (cont) cont.textContent = n + (n === 1 ? ' serviço' : ' serviços');

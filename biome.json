@@ -6,7 +6,20 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["src/**", "functions/**", "tests/**", "scripts/**", "*.mjs", "*.json", "!index.html", "!teste", "!package-lock.json", "!dist", "!.wrangler"]
+    "includes": [
+      "src/**",
+      "functions/**",
+      "tests/**",
+      "scripts/**",
+      "*.mjs",
+      "*.json",
+      "!index.html",
+      "!teste",
+      "!package-lock.json",
+      "!dist",
+      "!.wrangler",
+      "!functions/_lib/servicos-embutidos.js"
+    ]
   },
   "formatter": {
     "enabled": true,

@@ -1,7 +1,8 @@
 {
-  "versao": "2.15.0",
+  "versao": "2.16.0",
   "data": "25/11/2026",
   "novidades": [
+    "Categorias, serviços ocultos e roteiro de atendimento (falas e checklist) definidos pelo painel",
     "Modelos de texto criados e publicados pelo painel administrativo aparecem como serviços",
     "Celular: menu do perfil e escolha de tema abrem corretamente",
     "Perfis Gestor, Administrador, Supervisor, Atendente e Consulta; Dashboard no painel administrativo",

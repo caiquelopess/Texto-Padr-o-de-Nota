@@ -16,6 +16,12 @@ const ESQUEMA = [
     publicado_em INTEGER, publicado_por TEXT, PRIMARY KEY (modelo_id, versao))`,
   'CREATE TABLE IF NOT EXISTS publicacao (id INTEGER PRIMARY KEY CHECK (id = 1), geral INTEGER NOT NULL, alterado_em INTEGER)',
   'INSERT OR IGNORE INTO publicacao (id, geral, alterado_em) VALUES (1, 0, 0)',
+  `CREATE TABLE IF NOT EXISTS atendimento (
+    id INTEGER PRIMARY KEY CHECK (id = 1), rascunho TEXT, versao_publicada INTEGER NOT NULL DEFAULT 0,
+    revisao INTEGER NOT NULL DEFAULT 1, aguardando INTEGER NOT NULL DEFAULT 0, alterado_em INTEGER, alterado_por TEXT)`,
+  'INSERT OR IGNORE INTO atendimento (id) VALUES (1)',
+  `CREATE TABLE IF NOT EXISTS atendimento_versoes (
+    versao INTEGER PRIMARY KEY, conteudo TEXT NOT NULL, checksum TEXT NOT NULL, publicado_em INTEGER, publicado_por TEXT)`,
 ];
 
 const prontos = new WeakSet();
@@ -134,4 +140,64 @@ export async function modelosPublicados(db) {
   const modelos = [];
   for (const r of results) if ((await checksum(r.conteudo)) === r.checksum) modelos.push(JSON.parse(r.conteudo));
   return { geral: geral || 0, modelos };
+}
+
+// ---- Configuração do atendimento (categorias, serviços e scripts): um documento com rascunho e versões ----
+export async function lerAtendimento(db) {
+  const r = await db.prepare('SELECT * FROM atendimento WHERE id = 1').first();
+  return { ...r, rascunho: r.rascunho ? JSON.parse(r.rascunho) : null };
+}
+
+export async function salvarAtendimento(db, revisao, doc, por, aguardando = false) {
+  const r = await db
+    .prepare('UPDATE atendimento SET rascunho = ?, revisao = revisao + 1, aguardando = ?, alterado_em = ?, alterado_por = ? WHERE id = 1 AND revisao = ?')
+    .bind(JSON.stringify(doc), aguardando ? 1 : 0, Date.now(), por, revisao)
+    .run();
+  return r.meta.changes === 1;
+}
+
+// Publica o documento como nova versão (transação; recusa se alguém salvou antes).
+export async function publicarAtendimento(db, revisao, doc, por) {
+  const atual = await lerAtendimento(db);
+  if (atual.revisao !== revisao) return null;
+  const versao = atual.versao_publicada + 1;
+  const texto = JSON.stringify(doc);
+  const soma = await checksum(texto);
+  const agora = Date.now();
+  const [ins] = await db.batch([
+    db
+      .prepare(
+        'INSERT INTO atendimento_versoes (versao, conteudo, checksum, publicado_em, publicado_por) SELECT ?, ?, ?, ?, ? WHERE EXISTS (SELECT 1 FROM atendimento WHERE id = 1 AND revisao = ?)',
+      )
+      .bind(versao, texto, soma, agora, por, revisao),
+    db
+      .prepare(
+        'UPDATE atendimento SET rascunho = ?, versao_publicada = ?, aguardando = 0, revisao = revisao + 1, alterado_em = ?, alterado_por = ? WHERE id = 1 AND revisao = ?',
+      )
+      .bind(texto, versao, agora, por, revisao),
+    db
+      .prepare(
+        'UPDATE publicacao SET geral = geral + 1, alterado_em = ? WHERE id = 1 AND EXISTS (SELECT 1 FROM atendimento_versoes WHERE versao = ? AND publicado_em = ?)',
+      )
+      .bind(agora, versao, agora),
+  ]);
+  return ins.meta.changes === 1 ? versao : null;
+}
+
+export async function listarVersoesAtendimento(db) {
+  const { results } = await db.prepare('SELECT versao, checksum, publicado_em, publicado_por FROM atendimento_versoes ORDER BY versao DESC').all();
+  return results;
+}
+
+export async function lerVersaoAtendimento(db, versao) {
+  const r = await db.prepare('SELECT * FROM atendimento_versoes WHERE versao = ?').bind(versao).first();
+  if (!r || (await checksum(r.conteudo)) !== r.checksum) return null;
+  return { ...r, conteudo: JSON.parse(r.conteudo) };
+}
+
+// Versão em uso pelos atendentes (íntegra) — null se nada foi publicado.
+export async function atendimentoPublicado(db) {
+  const v = await db.prepare('SELECT versao_publicada FROM atendimento WHERE id = 1').first('versao_publicada');
+  if (!v) return null;
+  return (await lerVersaoAtendimento(db, v))?.conteudo || null;
 }

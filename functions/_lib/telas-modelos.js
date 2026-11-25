@@ -16,6 +16,7 @@ const ESTILO_MODELOS = `
 .editor fieldset{border:1px solid var(--borda);border-radius:14px;padding:14px 16px;margin:0 0 16px}
 .editor legend{padding:0 6px;font-weight:700;font-size:14px}
 .editor textarea{width:100%;min-height:150px;padding:11px 12px;border-radius:10px;border:1px solid var(--borda);background:rgba(127,127,127,.06);color:var(--txt);font:13.5px/1.5 ui-monospace,Menlo,Consolas,monospace}
+.editor td select{min-width:120px}
 .campos-tabela td{padding:4px}.campos-tabela input,.campos-tabela select{padding:8px;font-size:13px;min-width:90px}
 .ajuda{font-size:12.5px;color:var(--muted);line-height:1.6;margin:6px 0 0}.ajuda code{background:var(--realce);padding:1px 5px;border-radius:5px}
 .botoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}.botoes button{width:auto;margin:0;padding:11px 18px}
@@ -38,7 +39,7 @@ export function telaSemBanco({ usuario, perfil }) {
   );
 }
 
-export function telaModelos({ usuario, perfil, modelos = [], filtro = 'todos', erro = '', ok = '' }) {
+export function telaModelos({ usuario, perfil, modelos = [], filtro = 'todos', categorias = CATEGORIAS_PADRAO, erro = '', ok = '' }) {
   const contagem = (s) => modelos.filter((m) => s === 'todos' || m.status === s).length;
   const filtros = ['todos', 'publicado', 'rascunho', 'arquivado']
     .map((f) => `<a href="/admin/modelos?status=${f}" class="${f === filtro ? 'ativo' : ''}">${f === 'todos' ? 'Todos' : STATUS[f]} (${contagem(f)})</a>`)
@@ -56,7 +57,7 @@ export function telaModelos({ usuario, perfil, modelos = [], filtro = 'todos', e
     ? `<form method="post" action="/admin/modelos" data-carrega><input type="hidden" name="acao" value="criar"><div class="grade grade-usuario">
 <div><label for="mi">Identificador</label><input id="mi" name="id" placeholder="ex.: cadastro-irrigante" pattern="[a-z0-9][a-z0-9-]{2,59}" required></div>
 <div><label for="mn">Nome</label><input id="mn" name="nome" placeholder="ex.: Cadastro de Irrigante" required></div>
-<div><label for="mc">Categoria</label><select id="mc" name="categoria">${CATEGORIAS_PADRAO.map((c) => `<option>${esc(c)}</option>`).join('')}</select></div>
+<div><label for="mc">Categoria</label><select id="mc" name="categoria">${categorias.map((c) => `<option>${esc(c)}</option>`).join('')}</select></div>
 <button type="submit">Criar rascunho</button></div></form>`
     : '';
   return pagina(
@@ -80,7 +81,17 @@ function linhaCampo(c = {}) {
 <td><input name="campo_mostrar" value="${esc(mostrar)}" placeholder="campo=Valor" aria-label="Mostrar se"></td></tr>`;
 }
 
-export function telaEditorModelo({ usuario, perfil, registro, versoes = [], erro = '', ok = '', problemas = [], exemplos = [] }) {
+export function telaEditorModelo({
+  usuario,
+  perfil,
+  registro,
+  versoes = [],
+  categorias = CATEGORIAS_PADRAO,
+  erro = '',
+  ok = '',
+  problemas = [],
+  exemplos = [],
+}) {
   const m = registro.rascunho;
   const edita = pode(perfil, 'modelos.editar') && registro.status !== 'arquivado';
   const publica = pode(perfil, 'modelos.publicar');
@@ -112,7 +123,7 @@ ${msgs(erro, ok, problemas)}${resultado}
 <form method="post" class="editor" data-carrega><input type="hidden" name="revisao" value="${registro.revisao}">
 <fieldset${ro}><legend>Identificação</legend><div class="grade grade-usuario">
 <div><label for="en">Nome</label><input id="en" name="nome" value="${esc(m.nome)}" required></div>
-<div><label for="ec">Categoria</label><select id="ec" name="categoria">${CATEGORIAS_PADRAO.map((c) => `<option${c === m.categoria ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select></div>
+<div><label for="ec">Categoria</label><select id="ec" name="categoria">${[...new Set([...categorias, m.categoria])].map((c) => `<option${c === m.categoria ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select></div>
 <div><label for="ecp">Ao gerar, copiar</label><select id="ecp" name="copiar"><option value="nota">NOTA</option><option value="agenda"${m.copiar === 'agenda' ? ' selected' : ''}>AGENDA</option></select></div><span></span></div>
 <label for="ed">Descrição (para os administradores)</label><input id="ed" name="descricao" value="${esc(m.descricao)}">
 <label for="ea">Avisos para o atendente (um por linha)</label><textarea id="ea" name="avisos" style="min-height:70px">${esc((m.avisos || []).join('\n'))}</textarea></fieldset>
@@ -152,5 +163,72 @@ export function telaComparar({ usuario, perfil, id, rotuloA, rotuloB, a, b }) {
     `<p style="margin:0 0 6px"><a href="/admin/modelos/${esc(id)}" style="color:var(--neon);font-size:13px">← Voltar ao modelo</a></p>
 <h1>Comparar: ${esc(rotuloA)} → ${esc(rotuloB)}</h1><p class="sub"><span style="background:rgba(220,38,38,.12);padding:0 6px">− saiu</span> <span style="background:rgba(22,163,74,.14);padding:0 6px">+ entrou</span></p><div class="linha-neon"></div>
 ${bloco('Nome e categoria', `${a.nome}\n${a.categoria}`, `${b.nome}\n${b.categoria}`)}${bloco('Campos', resumoCampos(a), resumoCampos(b))}${bloco('NOTA', a.nota, b.nota)}${bloco('AGENDA', a.agenda, b.agenda)}${bloco('Avisos', (a.avisos || []).join('\n'), (b.avisos || []).join('\n'))}`,
+  );
+}
+
+// ---- Atendimento: categorias, serviços e scripts ----
+export function telaAtendimento({ usuario, perfil, registro, doc, servicos = [], versoes = [], erro = '', ok = '', problemas = [] }) {
+  const edita = pode(perfil, 'modelos.editar');
+  const publica = pode(perfil, 'modelos.publicar');
+  const ro = edita ? '' : ' disabled';
+  const cats = (doc.categorias || []).map((c) => c.nome);
+  const opcoesCat = (atual) => `<option value="">Automática</option>${cats.map((c) => `<option${c === atual ? ' selected' : ''}>${esc(c)}</option>`).join('')}`;
+  const linhasServ = servicos
+    .map((s) => {
+      const conf = doc.servicos?.[s.id] || {};
+      const sc = doc.scripts?.[s.id] || {};
+      const tem = (sc.falas?.length || 0) + (sc.checklist?.length || 0);
+      return `<tr><td><b>${esc(s.nome)}</b></td>
+<td><select name="cat:${esc(s.id)}" aria-label="Categoria de ${esc(s.nome)}">${opcoesCat(conf.categoria)}</select></td>
+<td><select name="vis:${esc(s.id)}" aria-label="Visibilidade de ${esc(s.nome)}"><option value="visivel">Visível</option><option value="oculto"${conf.oculto ? ' selected' : ''}>Oculto</option></select></td>
+<td><details${tem ? ' open' : ''}><summary>${tem ? `Script (${tem})` : 'Adicionar script'}</summary>
+<label>Falas para o atendente (uma por linha)</label><textarea name="falas:${esc(s.id)}" style="min-height:70px">${esc((sc.falas || []).join('\n'))}</textarea>
+<label>Checklist antes de gerar (um item por linha)</label><textarea name="check:${esc(s.id)}" style="min-height:70px">${esc((sc.checklist || []).join('\n'))}</textarea></details></td></tr>`;
+    })
+    .join('');
+  const historico = versoes
+    .map(
+      (
+        v,
+      ) => `<tr><td><b>v${v.versao}</b>${v.versao === registro.versao_publicada ? ' <span class="selo selo-publicado">em uso</span>' : ''}</td><td>${data(v.publicado_em)}</td><td>${esc(v.publicado_por)}</td>
+<td><a href="/admin/atendimento/comparar?a=${v.versao}&b=rascunho" style="color:var(--neon)">comparar com o rascunho</a>
+${publica && v.versao !== registro.versao_publicada ? `<form method="post" style="display:inline" onsubmit="return confirm('Voltar os atendentes para a versão ${v.versao}? Ela será publicada como uma versão nova.')"><input type="hidden" name="acao" value="republicar"><input type="hidden" name="versao" value="${v.versao}"><input type="hidden" name="revisao" value="${registro.revisao}"><button type="submit" class="perigo">Restaurar para os atendentes</button></form>` : ''}</td></tr>`,
+    )
+    .join('');
+  return pagina(
+    'Atendimento',
+    'atendimento',
+    { usuario, perfil },
+    `<h1>Categorias, serviços e scripts</h1><p class="sub">Organize a lista de serviços dos atendentes e escreva o roteiro (falas) e o checklist de cada serviço. Como nos modelos: o rascunho não muda nada até ser publicado.
+${registro.versao_publicada ? ` Em uso: <b>v${registro.versao_publicada}</b>.` : ' Ainda não publicado: os atendentes veem a organização padrão.'}${registro.aguardando ? ' <span class="selo selo-alerta">Aguardando publicação</span>' : ''}</p><div class="linha-neon"></div>
+${msgs(erro, ok, problemas)}
+<form method="post" class="editor" data-carrega><input type="hidden" name="revisao" value="${registro.revisao}">
+<fieldset${ro}><legend>Categorias (na ordem em que aparecem)</legend><textarea name="categorias" style="min-height:150px">${esc(cats.join('\n'))}</textarea>
+<p class="ajuda">Uma por linha. "Automática" nos serviços abaixo usa a categoria padrão do serviço. Modelos de texto continuam na categoria escolhida no próprio modelo.</p></fieldset>
+<fieldset${ro}><legend>Serviços</legend><div class="tabela-rolagem"><table><thead><tr><th>Serviço</th><th>Categoria</th><th>Na lista</th><th>Script de atendimento</th></tr></thead><tbody>${linhasServ}</tbody></table></div>
+<p class="ajuda">Serviço oculto sai da lista e da busca, mas nada é apagado.</p></fieldset>
+${
+  edita
+    ? `<div class="botoes"><button type="submit" name="acao" value="salvar" class="secundario">Salvar rascunho</button>${
+        publica
+          ? '<button type="submit" name="acao" value="publicar" onclick="return confirm(\'Publicar para todos os atendentes?\')">Validar e publicar</button>'
+          : '<button type="submit" name="acao" value="enviar">Salvar e enviar para publicação</button>'
+      }</div>`
+    : ''
+}</form>
+<h2 style="margin-top:26px;font-size:17px">Versões publicadas</h2>
+<div class="tabela-rolagem"><table><thead><tr><th>Versão</th><th>Publicada em</th><th>Por</th><th>Ações</th></tr></thead><tbody>${historico || '<tr><td colspan="4">Ainda não publicado.</td></tr>'}</tbody></table></div>`,
+  );
+}
+
+export function telaCompararTexto({ usuario, perfil, voltar, titulo, rotuloA, rotuloB, a, b }) {
+  return pagina(
+    'Comparar versões',
+    'atendimento',
+    { usuario, perfil },
+    `<p style="margin:0 0 6px"><a href="${esc(voltar)}" style="color:var(--neon);font-size:13px">← Voltar</a></p>
+<h1>${esc(titulo)}: ${esc(rotuloA)} → ${esc(rotuloB)}</h1><div class="linha-neon"></div><div class="diff">${diferencaLinhas(a, b)
+      .map((l) => `<div class="${l.tipo}">${esc(l.texto) || '&nbsp;'}</div>`)
+      .join('')}</div>`,
   );
 }

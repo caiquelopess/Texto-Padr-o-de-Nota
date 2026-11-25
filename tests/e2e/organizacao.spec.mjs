@@ -56,3 +56,17 @@ test('celular: barra embaixo, folha "Mais", ações à mão e texto gerado em fo
   // telefone abre o teclado numérico
   await expect(page.locator('#rv_tel, #sf-reativ-virtual input[id*="tel"]').first()).toHaveAttribute('inputmode', 'tel');
 });
+
+test('celular: menu do perfil e temas abrem como folha com todos os itens visíveis', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'só no celular');
+  await page.route('**/api/sessao', (r) => r.fulfill({ json: { usuario: 'maria.teste', perfil: 'gestor', admin: true, gestor: true } }));
+  await page.reload();
+  await page.click('#btn_usuario');
+  const itens = page.locator('.menu-usuario-lista .tema-opcao');
+  await expect(itens).toHaveCount(5);
+  for (let i = 0; i < 5; i++) await expect(itens.nth(i)).toBeInViewport({ ratio: 1 });
+  await page.click('#btn_usuario_tema');
+  const temas = page.locator('#tema_menu .tema-opcao');
+  await expect(temas).toHaveCount(5);
+  for (let i = 0; i < 5; i++) await expect(temas.nth(i)).toBeInViewport({ ratio: 1 });
+});

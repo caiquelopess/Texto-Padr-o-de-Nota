@@ -987,3 +987,22 @@
     body.celular input[type="checkbox"], body.celular input[type="radio"] { width: 20px !important; min-height: 0 !important; flex: none; }
     /* avisos flutuantes ficam acima da barra de navegação */
     body.celular .pend-lembrete, body.celular #pend_lembrete, body.celular .toast-aviso, body.celular .aviso-mudanca, body.celular .aviso-mudanca-mini { bottom: calc(84px + env(safe-area-inset-bottom)) !important; z-index: 1550; }
+    /* o desfoque (backdrop-filter) prende menus "fixed" dentro da barra: no celular as barras usam fundo sólido */
+    body.celular .app-topo, body.celular .app-baixo { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--card-bg-solido, #ffffff); }
+    :root[data-theme="dark"] body.celular .app-topo, :root[data-theme="dark"] body.celular .app-baixo { background: #11151d; }
+    :root[data-paleta="sepia"] body.celular .app-topo, :root[data-paleta="sepia"] body.celular .app-baixo { background: #f6eedc; }
+    :root[data-paleta="contraste"] body.celular .app-topo, :root[data-paleta="contraste"] body.celular .app-baixo { background: #000; }
+    body.celular .menu-usuario-lista, body.celular .tema-menu { background: var(--card-bg-solido, #ffffff); box-shadow: 0 0 0 100vmax rgba(5, 8, 15, 0.45), 0 -20px 50px -20px rgba(0,0,0,.5) !important; -webkit-backdrop-filter: none; backdrop-filter: none; animation: sobeFolha 220ms cubic-bezier(.16,1,.3,1); }
+    :root[data-theme="dark"] body.celular .menu-usuario-lista, :root[data-theme="dark"] body.celular .tema-menu { background: #151a24; }
+    :root[data-paleta="sepia"] body.celular .menu-usuario-lista, :root[data-paleta="sepia"] body.celular .tema-menu { background: #fbf6ea; }
+    :root[data-paleta="contraste"] body.celular .menu-usuario-lista, :root[data-paleta="contraste"] body.celular .tema-menu { background: #000; }
+    @keyframes sobeFolha { from { transform: translateY(100%); } to { transform: none; } }
+    @media (prefers-reduced-motion: reduce) { body.celular .menu-usuario-lista, body.celular .tema-menu { animation: none; } }
+    body.celular .menu-usuario-lista::before { content: ""; display: block; width: 40px; height: 5px; border-radius: 999px; background: var(--border-strong); margin: 0 auto 10px; }
+    body.celular .app-topo { z-index: 1510; }
+    body.celular .tema-menu { grid-template-columns: 1fr 1fr; display: grid; }
+    @media (max-width: 380px) { .app-baixo .lateral-nav-nome { font-size: 10px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } }
+    body.celular .tema-menu.menu-usuario-lista { display: flex !important; flex-direction: column; grid-template-columns: none; }
+    body.celular .tema-menu.menu-usuario-lista[style*="none"] { display: none !important; }
+    body.celular .menu-usuario-lista .tema-opcao { border-bottom: 1px solid var(--border); border-radius: 0; }
+    body.celular .menu-usuario-lista .tema-opcao:last-child { border-bottom: 0; color: var(--danger, #c2263b); }

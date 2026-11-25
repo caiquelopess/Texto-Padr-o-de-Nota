@@ -68,6 +68,15 @@ export function mdValidarModelo(modelo) {
   for (const c of campos) {
     if (c.mostrarSe && !ids.has(c.mostrarSe.campo)) erros.push(`Campo "${c.rotulo || c.id}": "mostrar se" usa um campo que não existe.`);
     if (c.rotuloSe && (!ids.has(c.rotuloSe.campo) || vazio(c.rotuloSe.rotulo))) erros.push(`Campo "${c.rotulo || c.id}": "rótulo se" incompleto.`);
+    if (c.preencherSe && (!ids.has(c.preencherSe.campo) || vazio(c.preencherSe.valor))) erros.push(`Campo "${c.rotulo || c.id}": "preencher se" incompleto.`);
+  }
+  // Subtipos: um modelo atende vários botões; cada botão escolhe um valor de um campo de opção.
+  if (modelo.subtipos) {
+    const alvo = campos.find((c) => c.id === modelo.subtipos.campo);
+    const botoes = Array.isArray(modelo.subtipos.botoes) ? modelo.subtipos.botoes : [];
+    if (alvo?.tipo !== 'opcao') erros.push('Subtipos: o campo escolhido precisa ser uma opção (lista).');
+    else if (!botoes.length || botoes.some((b) => vazio(b.nome) || !alvo.opcoes.includes(b.valor)))
+      erros.push('Subtipos: cada botão precisa de nome e de uma opção do campo.');
   }
   if (vazio(modelo.nota) && vazio(modelo.agenda)) erros.push('Escreva o texto da NOTA ou da AGENDA.');
   for (const parte of ['nota', 'agenda']) {

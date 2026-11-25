@@ -84,18 +84,8 @@
 
 
 
-  // Aviso do Termo (PADE): só nos tipos com assunção/reconhecimento de débito
-  function atualizarAlertaPade() {
-    var tt = document.getElementById('pade_tt'), ri = document.getElementById('pade_ri');
-    if (tt) tt.style.display = getVal('tt_tipo') === 'com_assuncao' ? '' : 'none';
-    if (ri) ri.style.display = /assuncao/.test(getVal('ri_tipo')) ? '' : 'none';
-  }
-
   // Escolhe o tipo dentro de formulários compartilhados (Troca/Reativação/Isenção)
   function aplicarSubtipo(sf, sub) {
-    setTimeout(atualizarAlertaPade, 0);
-    if (sf === 'sf-tt' && sub) { document.getElementById('tt_tipo').value = sub; toggleTrocaTitularidade(); }
-    if (sf === 'sf-ri' && sub) { document.getElementById('ri_tipo').value = sub; toggleReativDebitos(); }
     if (sf === 'sf-isencao-deb' && sub) { document.getElementById('ise_servico').value = sub; toggleIsencaoDeb(); }
   }
 

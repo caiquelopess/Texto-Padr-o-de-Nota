@@ -1,7 +1,8 @@
 {
-  "versao": "2.19.3",
+  "versao": "2.19.4",
   "data": "25/11/2026",
   "novidades": [
+    "Troca de Titularidade e Reativação com débitos migradas para modelos (sem mudança nos textos)",
     "TR de Partidas migrado para modelo (sem mudança no texto); modelos aceitam CPF/CNPJ e vencimento em mês/ano",
     "Mais 5 serviços (com datas) migrados para modelos, sem mudança nos textos",
     "Mais 11 serviços migrados para modelos (sem mudança nos textos)",

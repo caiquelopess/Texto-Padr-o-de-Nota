@@ -296,3 +296,35 @@ test('documento (CPF/CNPJ), data ou mês e rótulo condicional', async () => {
     true,
   );
 });
+
+test('subtipos e "preencher se" na estrutura do modelo', () => {
+  const base = {
+    id: 'sub',
+    nome: 'Sub',
+    categoria: 'X',
+    campos: [
+      { id: 'tipo', rotulo: 'Tipo', tipo: 'opcao', opcoes: ['a', 'b'], oculto: true },
+      { id: 'mmgd', rotulo: 'MMGD', tipo: 'opcao', opcoes: ['Não', 'Sim'] },
+      { id: 'neo', rotulo: 'Neo', tipo: 'texto', preencherSe: { campo: 'mmgd', igual: 'Não', valor: 'nao' } },
+    ],
+    subtipos: {
+      campo: 'tipo',
+      botoes: [
+        { valor: 'a', nome: 'Botão A' },
+        { valor: 'b', nome: 'Botão B' },
+      ],
+    },
+    nota: '{{#se tipo=a}}A {{neo}}{{/se}}{{#se tipo=b}}B{{/se}}',
+  };
+  assert.deepEqual(mdValidarModelo(base), []);
+  assert.equal(mdTestarModelo(base).ok, true);
+  const sub = (s) => mdValidarModelo({ ...base, subtipos: s });
+  assert.deepEqual(sub({ campo: 'neo', botoes: [{ valor: 'a', nome: 'A' }] }), ['Subtipos: o campo escolhido precisa ser uma opção (lista).']);
+  assert.deepEqual(sub({ campo: 'tipo', botoes: [{ valor: 'z', nome: 'Z' }] }), ['Subtipos: cada botão precisa de nome e de uma opção do campo.']);
+  assert.deepEqual(sub({ campo: 'tipo', botoes: [] }), ['Subtipos: cada botão precisa de nome e de uma opção do campo.']);
+  assert.deepEqual(sub({ campo: 'tipo', botoes: [{ valor: 'a', nome: ' ' }] }), ['Subtipos: cada botão precisa de nome e de uma opção do campo.']);
+  const ruim = { ...base, campos: [...base.campos.slice(0, 2), { ...base.campos[2], preencherSe: { campo: 'x', valor: 'nao' } }] };
+  assert.deepEqual(mdValidarModelo(ruim), ['Campo "Neo": "preencher se" incompleto.']);
+  const semValor = { ...base, campos: [...base.campos.slice(0, 2), { ...base.campos[2], preencherSe: { campo: 'mmgd', valor: '' } }] };
+  assert.deepEqual(mdValidarModelo(semValor), ['Campo "Neo": "preencher se" incompleto.']);
+});

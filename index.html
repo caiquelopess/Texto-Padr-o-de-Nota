@@ -1029,6 +1029,15 @@
     .roteiro-check { display: flex; gap: 8px; align-items: flex-start; padding: 4px 0; font-size: 14px; cursor: pointer; }
     .roteiro-check input { width: 18px; height: 18px; min-height: 0; margin-top: 2px; accent-color: var(--neon-1, var(--primary)); flex: none; }
     .roteiro-check input:checked + * , .roteiro-check:has(input:checked) { color: var(--muted); text-decoration: line-through; }
+
+    /* === AVISO GERAL (Configurações do gestor) === */
+    .aviso-geral { display: flex; align-items: flex-start; gap: 12px; margin: 0; padding: 12px 18px; font-size: 14px; font-weight: 500; line-height: 1.5; border-bottom: 1px solid var(--border); animation: fadeIn 220ms var(--ease); }
+    .aviso-geral span { flex: 1 1 auto; }
+    .aviso-geral-info { background: var(--primary-soft); color: var(--strong, var(--text)); }
+    .aviso-geral-alerta { background: #fff4d6; color: #6b4b00; border-color: #f1d27a; }
+    :root[data-theme="dark"] .aviso-geral-alerta { background: #3a2f10; color: #ffd98a; }
+    .aviso-geral-fechar { flex: none; width: 32px; height: 32px; border: 0; border-radius: 8px; background: transparent; color: inherit; cursor: pointer; font-size: 14px; }
+    .aviso-geral-fechar:hover { background: rgba(0,0,0,.06); }
   </style>
 </head>
 <body>
@@ -1088,7 +1097,6 @@
     <div id="painel_servicos" style="display: none;">
       <div class="service-nav" id="service_nav">
         <button type="button" class="sub-btn" data-click="trocarAba('sf-afericao', this)">Aferição</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-atualizacao-cadastral', this)">Atualização Cadastral</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-bloq-cobranca', this)">Bloqueio de Cobrança</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-icms', this)">Cadastro de Parceiro - Isenção ICMS</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-canc-parc', this)">Cancelamento de Parcelamento</button>
@@ -1496,22 +1504,6 @@
     </div>
 
     <!-- ATUALIZAÇÃO CADASTRAL -->
-    <div class="subform" id="sf-atualizacao-cadastral">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box" id="alerta_ac_nome" style="display: none;"><b>Atenção:</b> se for <b>apenas correção do nome</b>, pode ser feito no <b>OneCode (2º Nível)</b>.</div>
-      <div class="form-grid">
-        <div class="field-group full-width"><label for="ac_motivo">Motivo *</label><select id="ac_motivo" data-change="toggleAtualizacaoCadastral()"><option value="Erro de Endereço">Erro de Endereço</option><option value="Unificar PN">Unificar PN</option><option value="Correção de Nome">Correção de Nome</option></select></div>
-        <div class="field-group full-width" id="grp_ac_pns" style="display: none;"><label for="ac_pns">PNs a unificar *</label><input type="text" id="ac_pns" placeholder="Ex: 1010000001, 1010000002" required></div>
-        <div class="field-group"><label for="ac_nome">Nome *</label><input type="text" id="ac_nome" placeholder="Nome completo" required></div>
-        <div class="field-group"><label for="ac_tel">Telefone *</label><input type="text" id="ac_tel" placeholder="Ex: 71993501519" required></div>
-        <div class="field-group"><label for="ac_email">E-mail *</label><input type="text" id="ac_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label for="ac_rg">RG</label><input type="text" id="ac_rg" placeholder="Em branco = Não informado"></div>
-        <div class="field-group"><label for="ac_cnh">CNH</label><input type="text" id="ac_cnh" placeholder="Em branco = Não informado"></div>
-        <div class="field-group"><label for="ac_id">ID (identificação profissional)</label><input type="text" id="ac_id" placeholder="Em branco = Não informado"></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarAtualizacaoCadastral()">Gerar Texto e Copiar NOTA</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-atualizacao-cadastral')">Limpar Tudo</button></div>
-    </div>
-
     <!-- ISENÇÃO DE DÉBITOS (pedido de análise) -->
     <div class="subform" id="sf-analise-isencao">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
@@ -2823,6 +2815,8 @@
     Object.assign(globalThis, index_exports);
   })();
 
+  // ---- modelos embutidos (src/modelos) ----
+  var MODELOS_EMBUTIDOS = [{"id":"atualizacao-cadastral","sf":"sf-atualizacao-cadastral","nome":"Atualização Cadastral","categoria":"Titularidade e Cadastro","descricao":"Migrado do código (piloto da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"texto":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true},{"id":"alerta_ac_nome","texto":"Atenção: se for apenas correção do nome, pode ser feito no OneCode (2º Nível).","mostrarSe":{"campo":"motivo","igual":"Correção de Nome"}}],"campos":[{"id":"motivo","elementoId":"ac_motivo","rotulo":"Motivo","tipo":"opcao","obrigatorio":true,"opcoes":["Erro de Endereço","Unificar PN","Correção de Nome"]},{"id":"pns","elementoId":"ac_pns","rotulo":"PNs a unificar","tipo":"texto","obrigatorio":true,"dica":"Ex: 1010000001, 1010000002","mostrarSe":{"campo":"motivo","igual":"Unificar PN"}},{"id":"nome","elementoId":"ac_nome","rotulo":"Nome","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"tel","elementoId":"ac_tel","rotulo":"Telefone","tipo":"telefone","obrigatorio":true},{"id":"email","elementoId":"ac_email","rotulo":"E-mail","tipo":"email","obrigatorio":true},{"id":"rg","elementoId":"ac_rg","rotulo":"RG","tipo":"texto","dica":"Em branco = não entra no texto"},{"id":"cnh","elementoId":"ac_cnh","rotulo":"CNH","tipo":"texto","dica":"Em branco = não entra no texto"},{"id":"idp","elementoId":"ac_id","rotulo":"ID (identificação profissional)","tipo":"texto","dica":"Em branco = não entra no texto"}],"nota":"Gentileza Atualizar Cadastro\nMotivo: {{motivo}}\n{{#se motivo=Unificar PN}}\nPNs: {{pns}}\n{{/se}}\n{{#se nome}}\nNome: {{nome}}\n{{/se}}\n{{#se tel}}\nTelefone: {{tel}}\n{{/se}}\n{{#se email}}\nE-mail: {{email}}\n{{/se}}\n{{#se rg}}\nRG: {{rg}}\n{{/se}}\n{{#se cnh}}\nCNH: {{cnh}}\n{{/se}}\n{{#se idp}}\nID (identificação profissional): {{idp}}\n{{/se}}","agenda":""}];
   // Ambiente: false = produção. A cópia em /teste/ é gerada com true:
   // faixa de aviso, histórico separado e atualizações lidas de /teste/.
   var AMBIENTE_TESTE = false;
@@ -4372,7 +4366,6 @@
 
   function limparForm(containerId) {
     desbloquearFormulario(containerId);
-    if (containerId === 'sf-atualizacao-cadastral') { document.getElementById('ac_motivo').value = 'Erro de Endereço'; setTimeout(toggleAtualizacaoCadastral, 0); }
     if (containerId === 'sf-isencao-deb') {
       [['ise_servico', 'troca'], ['ise_fat_solic', 'Não se aplica'], ['ise_rec', 'regular'], ['ise_crit', 'Faturado por média'], ['ise_mmgd', 'Não']].forEach(function(p) { document.getElementById(p[0]).value = p[1]; });
       setTimeout(toggleIsencaoDeb, 0);
@@ -4857,7 +4850,7 @@
     toggleLigacaoNova: toggleLigacaoNova,
     calcularRefat: calcularRefat, gerarCalcRefat: gerarCalcRefat, limparCalcRefat: limparCalcRefat,
     gerarRefatUrgente: gerarRefatUrgente, limparRefatUrgente: limparRefatUrgente, toggleRefatUrgente: toggleRefatUrgente,
-    gerarAnaliseIsencao: gerarAnaliseIsencao, gerarAtualizacaoCadastral: gerarAtualizacaoCadastral, toggleAtualizacaoCadastral: toggleAtualizacaoCadastral, gerarIsencaoDeb: gerarIsencaoDeb, toggleIsencaoDeb: toggleIsencaoDeb,
+    gerarAnaliseIsencao: gerarAnaliseIsencao, gerarIsencaoDeb: gerarIsencaoDeb, toggleIsencaoDeb: toggleIsencaoDeb,
     pendServicoMudou: pendServicoMudou, adicionarPendenciaRefat: adicionarPendenciaRefat, concluirPendenciaRefat: concluirPendenciaRefat,
     iniciarPendenciaServico: iniciarPendenciaServico, salvarPendenciaServico: salvarPendenciaServico, concluirPendenciaServico: concluirPendenciaServico,
     sairModoPendencia: sairModoPendencia, retomarPendencia: retomarPendencia, editarComentario: editarComentario,
@@ -5249,29 +5242,6 @@
       '\nDOCUMENTAÇÃO APRESENTADA: ' + docs;
     finalizarGeracao('sf-analise-isencao', txt, txt, 'nota');
     criarPendenciaAuto('isencao', { origem: 'Isenção de Débitos (pedido de análise)', solicitante: getVal('aid_solic'), cc: getVal('aid_cc'), doc: doc, texto: txt });
-  }
-
-  // === ATUALIZAÇÃO CADASTRAL ===
-  function toggleAtualizacaoCadastral() {
-    var motivo = getVal('ac_motivo');
-    document.getElementById('grp_ac_pns').style.display = motivo === 'Unificar PN' ? 'flex' : 'none';
-    document.getElementById('alerta_ac_nome').style.display = motivo === 'Correção de Nome' ? 'block' : 'none';
-  }
-  function gerarAtualizacaoCadastral() {
-    if (!validarCampos('sf-atualizacao-cadastral')) return;
-    var motivo = getVal('ac_motivo');
-    // campos em branco não entram no texto
-    var linha = function(rotulo, id) { var v = getVal(id); return v ? '\n' + rotulo + ': ' + v : ''; };
-    var txt = 'Gentileza Atualizar Cadastro' +
-      '\nMotivo: ' + motivo +
-      (motivo === 'Unificar PN' ? linha('PNs', 'ac_pns') : '') +
-      linha('Nome', 'ac_nome') +
-      linha('Telefone', 'ac_tel') +
-      linha('E-mail', 'ac_email') +
-      linha('RG', 'ac_rg') +
-      linha('CNH', 'ac_cnh') +
-      linha('ID (identificação profissional)', 'ac_id');
-    finalizarGeracao('sf-atualizacao-cadastral', txt, txt, 'nota');
   }
 
   // === ANÁLISE DE ISENÇÃO DE DÉBITOS (Troca de titularidade ou Reativação) ===
@@ -6159,7 +6129,7 @@
   // ?v=2.6.1) levam direto para a produção.
   // PUBLICAR: troque o código abaixo e o campo "versao" do versao.json pelo mesmo
   // valor (ex.: a data e hora da publicação). Ele é interno e não aparece na tela.
-  var VERSAO_ATUAL = '2.17.0';
+  var VERSAO_ATUAL = '2.18.0';
   var SITE_PRODUCAO = 'https://textos-padroes.pages.dev/';   // endereço oficial (Cloudflare, com login)
   var NA_WEB = /^https?:$/.test(location.protocol);
 
@@ -6237,6 +6207,7 @@
       .then(function(r) { return r.ok ? r.json() : null; })
       .then(function(s) {
         if (!s || !s.usuario) return;
+        if (s.aviso && s.aviso.texto) mostrarAvisoGeral(s.aviso);
         var acoes = document.getElementById('lateral_usuario') || document.querySelector('.header-actions');
         if (!acoes) return;
         // Menu do usuário: o nome no topo abre Administração, Trocar senha e Sair.
@@ -6319,6 +6290,31 @@
       })
       .catch(function() {});
   })();
+
+  // Aviso geral definido pelo gestor (Configurações). Some ao fechar, até o próximo login.
+  function mostrarAvisoGeral(aviso) {
+    var chave = 'tp_aviso_fechado';
+    try { if (sessionStorage.getItem(chave) === aviso.texto) return; } catch (e) {}
+    var faixa = document.createElement('div');
+    faixa.className = 'aviso-geral aviso-geral-' + (aviso.tipo === 'alerta' ? 'alerta' : 'info');
+    faixa.id = 'aviso_geral';
+    faixa.setAttribute('role', aviso.tipo === 'alerta' ? 'alert' : 'status');
+    var txt = document.createElement('span');
+    txt.textContent = aviso.texto;
+    var fechar = document.createElement('button');
+    fechar.type = 'button';
+    fechar.className = 'aviso-geral-fechar';
+    fechar.setAttribute('aria-label', 'Fechar aviso');
+    fechar.textContent = '✕';
+    fechar.addEventListener('click', function() {
+      faixa.remove();
+      try { sessionStorage.setItem(chave, aviso.texto); } catch (e) {}
+    });
+    faixa.appendChild(txt);
+    faixa.appendChild(fechar);
+    var cont = document.querySelector('.container');
+    if (cont) cont.insertBefore(faixa, cont.firstChild);
+  }
   // === MIGRAÇÃO DE ENDEREÇO E CÓPIA DOS DADOS ===
   // O navegador guarda histórico e pendências por endereço do site. Para levar
   // esses dados do endereço antigo (GitHub Pages) para o novo (Cloudflare, com
@@ -7092,11 +7088,15 @@
   var modelosMontados = {};
 
   function mdIdCampo(modeloId, campoId) { return 'md_' + modeloId.replace(/-/g, '_') + '__' + campoId; }
+  // Modelos migrados do código guardam os ids antigos (subformulário e campos), para
+  // não quebrar histórico, pendências e a configuração de categorias.
+  function mdSf(m) { return m.sf || 'sf-md-' + m.id; }
+  function mdElemento(m, c) { return c.elementoId || mdIdCampo(m.id, c.id); }
 
   function mdValores(m) {
     var v = {};
     (m.campos || []).forEach(function(c) {
-      var el = document.getElementById(mdIdCampo(m.id, c.id));
+      var el = document.getElementById(mdElemento(m, c));
       if (el) v[c.id] = el.value;
     });
     return v;
@@ -7106,13 +7106,21 @@
     var visiveis = {};
     mdCamposVisiveis(m, mdValores(m)).forEach(function(c) { visiveis[c.id] = true; });
     (m.campos || []).forEach(function(c) {
-      var el = document.getElementById(mdIdCampo(m.id, c.id));
+      var el = document.getElementById(mdElemento(m, c));
       if (el) el.closest('.field-group').style.display = visiveis[c.id] ? '' : 'none';
+    });
+    // avisos que dependem da escolha (ex.: OneCode só em "Correção de Nome")
+    var valores = mdValores(m);
+    var form = document.getElementById(mdSf(m));
+    (m.avisos || []).forEach(function(a, i) {
+      if (!a || typeof a !== 'object' || !a.mostrarSe) return;
+      var el = form && form.querySelector('[data-aviso="' + i + '"]');
+      if (el) el.style.display = [].concat(a.mostrarSe.igual).indexOf(String(valores[a.mostrarSe.campo] || '')) >= 0 ? '' : 'none';
     });
   }
 
   function mdGerarTexto(m) {
-    var sf = 'sf-md-' + m.id;
+    var sf = mdSf(m);
     var erros = mdValidarValores(m, mdValores(m));
     if (erros.length) { mostrarAviso('ATENÇÃO: ' + erros[0]); return; }
     var t = mdGerar(m, mdValores(m));
@@ -7122,7 +7130,7 @@
   function mdCriarCampo(m, c) {
     var grupo = document.createElement('div');
     grupo.className = 'field-group' + (c.tipo === 'textoLongo' || c.tipo === 'opcao' ? ' full-width' : '');
-    var id = mdIdCampo(m.id, c.id);
+    var id = mdElemento(m, c);
     var rot = document.createElement('label');
     rot.setAttribute('for', id);
     rot.textContent = c.rotulo + (c.obrigatorio ? ' *' : '');
@@ -7142,15 +7150,17 @@
       if (c.tipo === 'email') { el.setAttribute('inputmode', 'email'); el.placeholder = 'cliente@email.com ou Não informado'; }
       if (c.tipo === 'data') { el.placeholder = 'dd/mm/aaaa'; el.setAttribute('data-input', 'mascararData(this)'); }
       if (c.tipo === 'numero') el.setAttribute('inputmode', 'numeric');
+      if (c.dica) el.placeholder = c.dica;
     }
     el.id = id;
+    if (c.obrigatorio && c.tipo !== 'opcao') el.required = true;
     el.addEventListener('input', function() { mdAtualizarVisiveis(m); });
     grupo.appendChild(el);
     return grupo;
   }
 
   function mdMontar(m) {
-    var sf = 'sf-md-' + m.id;
+    var sf = mdSf(m);
     var antigo = document.getElementById(sf);
     if (antigo) antigo.remove();
     var botaoAntigo = document.querySelector('#service_nav .sub-btn[data-modelo="' + m.id + '"]');
@@ -7160,10 +7170,13 @@
     form.className = 'subform';
     form.id = sf;
     form.setAttribute('data-nome', m.nome);
-    (m.avisos || []).forEach(function(a) {
+    (m.avisos || []).forEach(function(a, i) {
       var av = document.createElement('div');
-      av.className = 'alert-box';
-      av.textContent = a;
+      var obj = a && typeof a === 'object';
+      av.className = 'alert-box' + (obj && a.piscar ? ' alert-box-blink' : '');
+      av.textContent = obj ? a.texto : a;
+      av.setAttribute('data-aviso', String(i));
+      if (obj && a.id) av.id = a.id;
       form.appendChild(av);
     });
     var grade = document.createElement('div');
@@ -7218,20 +7231,26 @@
     modelosMontados[m.id] = m;
   }
 
-  function mdAplicar(lista) {
+  function mdAplicar(publicados) {
+    // embutidos primeiro; um modelo publicado com o mesmo id substitui o embutido
+    var porId = {};
+    (typeof MODELOS_EMBUTIDOS !== 'undefined' ? MODELOS_EMBUTIDOS : []).forEach(function(m) { porId[m.id] = m; });
+    (publicados || []).forEach(function(m) { if (m && m.id) porId[m.id] = m; });
+    var lista = Object.keys(porId).map(function(k) { return porId[k]; });
     var novos = {};
-    (lista || []).forEach(function(m) {
+    lista.forEach(function(m) {
       if (!m || !m.id || mdValidarModelo(m).length) return; // ignora modelo com defeito, sem travar os outros
       novos[m.id] = true;
       try { mdMontar(m); } catch (e) { /* um modelo com problema não derruba o atendimento */ }
     });
     Object.keys(modelosMontados).forEach(function(id) {
       if (novos[id]) return;
-      var f = document.getElementById('sf-md-' + id); if (f) f.remove();
+      var f = document.getElementById(mdSf(modelosMontados[id])); if (f) f.remove();
       var b = document.querySelector('#service_nav .sub-btn[data-modelo="' + id + '"]'); if (b) b.remove();
       delete modelosMontados[id];
     });
-    if (typeof aplicarAtendimentoAtual === 'function') aplicarAtendimentoAtual(); // modelos também seguem a organização publicada
+    if (typeof aplicarAtendimentoAtual === 'function') aplicarAtendimentoAtual();
+    if (typeof montarListaServicosPend === 'function') montarListaServicosPend(); // pendências também listam os modelos // modelos também seguem a organização publicada
     var n = document.querySelectorAll('#service_nav .sub-btn').length;
     var cont = document.getElementById('svc_count');
     if (cont) cont.textContent = n + (n === 1 ? ' serviço' : ' serviços');
@@ -7240,7 +7259,7 @@
   function carregarModelos() {
     var guardado = null;
     try { guardado = JSON.parse(localStorage.getItem(MODELOS_CHAVE) || 'null'); } catch (e) { guardado = null; }
-    if (guardado && Array.isArray(guardado.modelos)) mdAplicar(guardado.modelos);
+    mdAplicar(guardado && Array.isArray(guardado.modelos) ? guardado.modelos : []);
     if (!NA_WEB || !window.fetch) return;
     fetch('/api/modelos', { cache: 'no-store', credentials: 'same-origin' })
       .then(function(r) {

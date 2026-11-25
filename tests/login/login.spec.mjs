@@ -91,7 +91,7 @@ test('atendente entra, volta para a página pedida e não acessa a administraç�
   expect((await page.request.get('/versao.json')).status()).toBe(200);
   expect((await page.goto('/admin')).status()).toBe(403);
   const sessao = await (await page.request.get('/api/sessao')).json();
-  expect(sessao).toEqual({ usuario: 'maria.silva', perfil: 'atendente', admin: false, gestor: false });
+  expect(sessao).toEqual({ usuario: 'maria.silva', perfil: 'atendente', admin: false, gestor: false, aviso: null });
 });
 
 test('não redireciona para fora do site depois do login', async ({ page }) => {
@@ -672,4 +672,53 @@ test('backups: automático, manual, validação, download, restauração e permi
     'Backup automático',
   ])
     await expect(page.locator('tbody')).toContainText(t);
+});
+
+test('configurações gerais: aviso, sessão, sugestões, permissão e auditoria', async ({ page, browser }) => {
+  const URL_BASE = 'http://localhost:8788';
+  await entrar(page, 'admin.teste', 'senha-admin-teste');
+  await page.goto('/admin/configuracoes');
+  // o campo já limita no navegador; o servidor confere de novo
+  await expect(page.locator('#cfs')).toHaveAttribute('max', '24');
+  const forcado = await page.request.post('/admin/configuracoes', {
+    form: { revisao: '0', avisoTipo: 'info', sessaoHoras: '30', sugestoesDia: '10' },
+    headers: { origin: URL_BASE },
+  });
+  expect(await forcado.text()).toContain('A sessão deve durar de 1 a 24 horas');
+  await page.fill('#cfa', 'SAP fora do ar até 14h: anote em Pendências.');
+  await page.selectOption('#cft', 'alerta');
+  await page.fill('#cfs', '8');
+  await page.fill('#cfg', '0');
+  await page.click('button:has-text("Salvar configurações")');
+  await expect(page.locator('.okmsg')).toContainText('Configurações salvas');
+
+  // atendente vê o aviso; a sessão nova dura 8 h; sugestões desligadas
+  const ctx = await browser.newContext({ baseURL: URL_BASE });
+  const at = await ctx.newPage();
+  const login = at.waitForResponse((r) => r.url().endsWith('/entrar') && r.request().method() === 'POST');
+  await entrar(at, 'chefe.equipe', 'chefe-nova');
+  expect(await (await login).headerValue('set-cookie')).toContain('Max-Age=28800');
+  await expect(at.locator('#aviso_geral')).toHaveText(/SAP fora do ar até 14h/);
+  await expect(at.locator('#aviso_geral')).toHaveClass(/aviso-geral-alerta/);
+  await at.click('.aviso-geral-fechar');
+  await expect(at.locator('#aviso_geral')).toHaveCount(0);
+  const sug = await at.evaluate(() =>
+    fetch('/api/sugestoes', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ tipo: 'Sugestão', texto: 'teste de limite' }),
+    }).then((r) => r.status),
+  );
+  expect(sug).toBe(429);
+  // administrador comum não acessa as configurações
+  expect((await at.goto('/admin/configuracoes')).status()).toBe(403);
+  await ctx.close();
+
+  // desliga o aviso e volta o limite de sugestões
+  await page.fill('#cfa', '');
+  await page.fill('#cfg', '10');
+  await page.click('button:has-text("Salvar configurações")');
+  await expect(page.locator('.okmsg')).toContainText('Configurações salvas');
+  await page.goto('/admin/auditoria');
+  await expect(page.locator('tbody')).toContainText('Alterou as configurações gerais (sessão 8h; sugestões 0/dia; aviso ligado)');
 });

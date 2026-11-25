@@ -7,6 +7,7 @@
       .then(function(r) { return r.ok ? r.json() : null; })
       .then(function(s) {
         if (!s || !s.usuario) return;
+        if (s.aviso && s.aviso.texto) mostrarAvisoGeral(s.aviso);
         var acoes = document.getElementById('lateral_usuario') || document.querySelector('.header-actions');
         if (!acoes) return;
         // Menu do usuário: o nome no topo abre Administração, Trocar senha e Sair.
@@ -89,3 +90,28 @@
       })
       .catch(function() {});
   })();
+
+  // Aviso geral definido pelo gestor (Configurações). Some ao fechar, até o próximo login.
+  function mostrarAvisoGeral(aviso) {
+    var chave = 'tp_aviso_fechado';
+    try { if (sessionStorage.getItem(chave) === aviso.texto) return; } catch (e) {}
+    var faixa = document.createElement('div');
+    faixa.className = 'aviso-geral aviso-geral-' + (aviso.tipo === 'alerta' ? 'alerta' : 'info');
+    faixa.id = 'aviso_geral';
+    faixa.setAttribute('role', aviso.tipo === 'alerta' ? 'alert' : 'status');
+    var txt = document.createElement('span');
+    txt.textContent = aviso.texto;
+    var fechar = document.createElement('button');
+    fechar.type = 'button';
+    fechar.className = 'aviso-geral-fechar';
+    fechar.setAttribute('aria-label', 'Fechar aviso');
+    fechar.textContent = '✕';
+    fechar.addEventListener('click', function() {
+      faixa.remove();
+      try { sessionStorage.setItem(chave, aviso.texto); } catch (e) {}
+    });
+    faixa.appendChild(txt);
+    faixa.appendChild(fechar);
+    var cont = document.querySelector('.container');
+    if (cont) cont.insertBefore(faixa, cont.firstChild);
+  }

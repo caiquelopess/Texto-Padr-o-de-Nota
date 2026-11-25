@@ -7,11 +7,15 @@
   var modelosMontados = {};
 
   function mdIdCampo(modeloId, campoId) { return 'md_' + modeloId.replace(/-/g, '_') + '__' + campoId; }
+  // Modelos migrados do código guardam os ids antigos (subformulário e campos), para
+  // não quebrar histórico, pendências e a configuração de categorias.
+  function mdSf(m) { return m.sf || 'sf-md-' + m.id; }
+  function mdElemento(m, c) { return c.elementoId || mdIdCampo(m.id, c.id); }
 
   function mdValores(m) {
     var v = {};
     (m.campos || []).forEach(function(c) {
-      var el = document.getElementById(mdIdCampo(m.id, c.id));
+      var el = document.getElementById(mdElemento(m, c));
       if (el) v[c.id] = el.value;
     });
     return v;
@@ -21,13 +25,21 @@
     var visiveis = {};
     mdCamposVisiveis(m, mdValores(m)).forEach(function(c) { visiveis[c.id] = true; });
     (m.campos || []).forEach(function(c) {
-      var el = document.getElementById(mdIdCampo(m.id, c.id));
+      var el = document.getElementById(mdElemento(m, c));
       if (el) el.closest('.field-group').style.display = visiveis[c.id] ? '' : 'none';
+    });
+    // avisos que dependem da escolha (ex.: OneCode só em "Correção de Nome")
+    var valores = mdValores(m);
+    var form = document.getElementById(mdSf(m));
+    (m.avisos || []).forEach(function(a, i) {
+      if (!a || typeof a !== 'object' || !a.mostrarSe) return;
+      var el = form && form.querySelector('[data-aviso="' + i + '"]');
+      if (el) el.style.display = [].concat(a.mostrarSe.igual).indexOf(String(valores[a.mostrarSe.campo] || '')) >= 0 ? '' : 'none';
     });
   }
 
   function mdGerarTexto(m) {
-    var sf = 'sf-md-' + m.id;
+    var sf = mdSf(m);
     var erros = mdValidarValores(m, mdValores(m));
     if (erros.length) { mostrarAviso('ATENÇÃO: ' + erros[0]); return; }
     var t = mdGerar(m, mdValores(m));
@@ -37,7 +49,7 @@
   function mdCriarCampo(m, c) {
     var grupo = document.createElement('div');
     grupo.className = 'field-group' + (c.tipo === 'textoLongo' || c.tipo === 'opcao' ? ' full-width' : '');
-    var id = mdIdCampo(m.id, c.id);
+    var id = mdElemento(m, c);
     var rot = document.createElement('label');
     rot.setAttribute('for', id);
     rot.textContent = c.rotulo + (c.obrigatorio ? ' *' : '');
@@ -57,15 +69,17 @@
       if (c.tipo === 'email') { el.setAttribute('inputmode', 'email'); el.placeholder = 'cliente@email.com ou Não informado'; }
       if (c.tipo === 'data') { el.placeholder = 'dd/mm/aaaa'; el.setAttribute('data-input', 'mascararData(this)'); }
       if (c.tipo === 'numero') el.setAttribute('inputmode', 'numeric');
+      if (c.dica) el.placeholder = c.dica;
     }
     el.id = id;
+    if (c.obrigatorio && c.tipo !== 'opcao') el.required = true;
     el.addEventListener('input', function() { mdAtualizarVisiveis(m); });
     grupo.appendChild(el);
     return grupo;
   }
 
   function mdMontar(m) {
-    var sf = 'sf-md-' + m.id;
+    var sf = mdSf(m);
     var antigo = document.getElementById(sf);
     if (antigo) antigo.remove();
     var botaoAntigo = document.querySelector('#service_nav .sub-btn[data-modelo="' + m.id + '"]');
@@ -75,10 +89,13 @@
     form.className = 'subform';
     form.id = sf;
     form.setAttribute('data-nome', m.nome);
-    (m.avisos || []).forEach(function(a) {
+    (m.avisos || []).forEach(function(a, i) {
       var av = document.createElement('div');
-      av.className = 'alert-box';
-      av.textContent = a;
+      var obj = a && typeof a === 'object';
+      av.className = 'alert-box' + (obj && a.piscar ? ' alert-box-blink' : '');
+      av.textContent = obj ? a.texto : a;
+      av.setAttribute('data-aviso', String(i));
+      if (obj && a.id) av.id = a.id;
       form.appendChild(av);
     });
     var grade = document.createElement('div');
@@ -133,20 +150,26 @@
     modelosMontados[m.id] = m;
   }
 
-  function mdAplicar(lista) {
+  function mdAplicar(publicados) {
+    // embutidos primeiro; um modelo publicado com o mesmo id substitui o embutido
+    var porId = {};
+    (typeof MODELOS_EMBUTIDOS !== 'undefined' ? MODELOS_EMBUTIDOS : []).forEach(function(m) { porId[m.id] = m; });
+    (publicados || []).forEach(function(m) { if (m && m.id) porId[m.id] = m; });
+    var lista = Object.keys(porId).map(function(k) { return porId[k]; });
     var novos = {};
-    (lista || []).forEach(function(m) {
+    lista.forEach(function(m) {
       if (!m || !m.id || mdValidarModelo(m).length) return; // ignora modelo com defeito, sem travar os outros
       novos[m.id] = true;
       try { mdMontar(m); } catch (e) { /* um modelo com problema não derruba o atendimento */ }
     });
     Object.keys(modelosMontados).forEach(function(id) {
       if (novos[id]) return;
-      var f = document.getElementById('sf-md-' + id); if (f) f.remove();
+      var f = document.getElementById(mdSf(modelosMontados[id])); if (f) f.remove();
       var b = document.querySelector('#service_nav .sub-btn[data-modelo="' + id + '"]'); if (b) b.remove();
       delete modelosMontados[id];
     });
-    if (typeof aplicarAtendimentoAtual === 'function') aplicarAtendimentoAtual(); // modelos também seguem a organização publicada
+    if (typeof aplicarAtendimentoAtual === 'function') aplicarAtendimentoAtual();
+    if (typeof montarListaServicosPend === 'function') montarListaServicosPend(); // pendências também listam os modelos // modelos também seguem a organização publicada
     var n = document.querySelectorAll('#service_nav .sub-btn').length;
     var cont = document.getElementById('svc_count');
     if (cont) cont.textContent = n + (n === 1 ? ' serviço' : ' serviços');
@@ -155,7 +178,7 @@
   function carregarModelos() {
     var guardado = null;
     try { guardado = JSON.parse(localStorage.getItem(MODELOS_CHAVE) || 'null'); } catch (e) { guardado = null; }
-    if (guardado && Array.isArray(guardado.modelos)) mdAplicar(guardado.modelos);
+    mdAplicar(guardado && Array.isArray(guardado.modelos) ? guardado.modelos : []);
     if (!NA_WEB || !window.fetch) return;
     fetch('/api/modelos', { cache: 'no-store', credentials: 'same-origin' })
       .then(function(r) {

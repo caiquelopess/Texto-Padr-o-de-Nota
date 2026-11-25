@@ -1547,7 +1547,6 @@
 
   function limparForm(containerId) {
     desbloquearFormulario(containerId);
-    if (containerId === 'sf-atualizacao-cadastral') { document.getElementById('ac_motivo').value = 'Erro de Endereço'; setTimeout(toggleAtualizacaoCadastral, 0); }
     if (containerId === 'sf-isencao-deb') {
       [['ise_servico', 'troca'], ['ise_fat_solic', 'Não se aplica'], ['ise_rec', 'regular'], ['ise_crit', 'Faturado por média'], ['ise_mmgd', 'Não']].forEach(function(p) { document.getElementById(p[0]).value = p[1]; });
       setTimeout(toggleIsencaoDeb, 0);

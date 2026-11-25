@@ -62,8 +62,8 @@ async function hmac(segredo, texto) {
 }
 
 // Sessão: "usuario.versaoSenha.expira.assinatura" (trocar/redefinir a senha derruba sessões antigas)
-export async function criarSessao(segredo, usuario, versaoSenha, agora = Date.now()) {
-  const corpo = `${usuario}~${versaoSenha}~${agora + DURACAO_SESSAO_MS}`;
+export async function criarSessao(segredo, usuario, versaoSenha, agora = Date.now(), duracaoMs = DURACAO_SESSAO_MS) {
+  const corpo = `${usuario}~${versaoSenha}~${agora + duracaoMs}`;
   return `${corpo}~${await hmac(segredo, corpo)}`;
 }
 

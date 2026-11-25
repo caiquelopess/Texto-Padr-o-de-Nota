@@ -1015,3 +1015,12 @@
     .roteiro-check { display: flex; gap: 8px; align-items: flex-start; padding: 4px 0; font-size: 14px; cursor: pointer; }
     .roteiro-check input { width: 18px; height: 18px; min-height: 0; margin-top: 2px; accent-color: var(--neon-1, var(--primary)); flex: none; }
     .roteiro-check input:checked + * , .roteiro-check:has(input:checked) { color: var(--muted); text-decoration: line-through; }
+
+    /* === AVISO GERAL (Configurações do gestor) === */
+    .aviso-geral { display: flex; align-items: flex-start; gap: 12px; margin: 0; padding: 12px 18px; font-size: 14px; font-weight: 500; line-height: 1.5; border-bottom: 1px solid var(--border); animation: fadeIn 220ms var(--ease); }
+    .aviso-geral span { flex: 1 1 auto; }
+    .aviso-geral-info { background: var(--primary-soft); color: var(--strong, var(--text)); }
+    .aviso-geral-alerta { background: #fff4d6; color: #6b4b00; border-color: #f1d27a; }
+    :root[data-theme="dark"] .aviso-geral-alerta { background: #3a2f10; color: #ffd98a; }
+    .aviso-geral-fechar { flex: none; width: 32px; height: 32px; border: 0; border-radius: 8px; background: transparent; color: inherit; cursor: pointer; font-size: 14px; }
+    .aviso-geral-fechar:hover { background: rgba(0,0,0,.06); }

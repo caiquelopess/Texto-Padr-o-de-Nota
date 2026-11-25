@@ -1,7 +1,8 @@
 {
-  "versao": "2.17.0",
+  "versao": "2.18.0",
   "data": "25/11/2026",
   "novidades": [
+    "Configurações gerais (aviso para todos, duração da sessão) e Atualização Cadastral migrada para modelo",
     "Backups automáticos e restauração pelo painel administrativo",
     "Categorias e serviços ocultos definidos pelo painel administrativo",
     "Modelos de texto criados e publicados pelo painel administrativo aparecem como serviços",

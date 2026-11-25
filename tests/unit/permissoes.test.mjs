@@ -16,6 +16,10 @@ test('perfil efetivo: gestor, perfil salvo e cadastros antigos', () => {
 test('matriz de permissões por perfil', () => {
   for (const op of ['auditoria.ver', 'sugestoes.ver', 'configuracoes.gerenciar', 'modelos.publicar']) assert.ok(pode('gestor', op));
   assert.ok(!pode('administrador', 'auditoria.ver'));
+  assert.ok(pode('administrador', 'backups.gerenciar'));
+  assert.ok(!pode('administrador', 'backups.restaurar'));
+  assert.ok(pode('gestor', 'backups.restaurar'));
+  assert.ok(!pode('supervisor', 'backups.gerenciar'));
   assert.ok(pode('administrador', 'modelos.publicar'));
   assert.ok(pode('supervisor', 'modelos.editar'));
   assert.ok(!pode('supervisor', 'modelos.publicar'));

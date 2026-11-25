@@ -31,7 +31,7 @@ export async function garantirEsquema(db) {
   prontos.add(db);
 }
 
-async function checksum(texto) {
+export async function checksum(texto) {
   const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(texto));
   return [...new Uint8Array(hash)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
@@ -129,16 +129,24 @@ export async function lerVersao(db, id, versao) {
   return { ...r, conteudo: JSON.parse(r.conteudo) };
 }
 
-// Modelos em uso pelos atendentes: só a versão publicada e íntegra de cada modelo não arquivado.
+// Modelos em uso pelos atendentes: a versão publicada de cada modelo não arquivado.
+// Recuperação automática: se a versão publicada estiver corrompida (checksum), usa a
+// última versão anterior íntegra — o atendimento nunca recebe conteúdo adulterado.
 export async function modelosPublicados(db) {
   const geral = await db.prepare('SELECT geral FROM publicacao WHERE id = 1').first('geral');
   const { results } = await db
     .prepare(
-      "SELECT v.conteudo, v.checksum FROM modelos m JOIN modelo_versoes v ON v.modelo_id = m.id AND v.versao = m.versao_publicada WHERE m.status = 'publicado' ORDER BY m.categoria, m.nome",
+      "SELECT m.id, m.versao_publicada, v.versao, v.conteudo, v.checksum FROM modelos m JOIN modelo_versoes v ON v.modelo_id = m.id AND v.versao <= m.versao_publicada WHERE m.status = 'publicado' ORDER BY m.categoria, m.nome, v.versao DESC",
     )
     .all();
   const modelos = [];
-  for (const r of results) if ((await checksum(r.conteudo)) === r.checksum) modelos.push(JSON.parse(r.conteudo));
+  const resolvidos = new Set();
+  for (const r of results) {
+    if (resolvidos.has(r.id)) continue;
+    if ((await checksum(r.conteudo)) !== r.checksum) continue; // corrompida: tenta a anterior
+    modelos.push(JSON.parse(r.conteudo));
+    resolvidos.add(r.id);
+  }
   return { geral: geral || 0, modelos };
 }
 
@@ -199,5 +207,10 @@ export async function lerVersaoAtendimento(db, versao) {
 export async function atendimentoPublicado(db) {
   const v = await db.prepare('SELECT versao_publicada FROM atendimento WHERE id = 1').first('versao_publicada');
   if (!v) return null;
-  return (await lerVersaoAtendimento(db, v))?.conteudo || null;
+  // recuperação automática: se a versão em uso estiver corrompida, volta para a última íntegra
+  for (let n = v; n > 0; n--) {
+    const versao = await lerVersaoAtendimento(db, n);
+    if (versao) return versao.conteudo;
+  }
+  return null;
 }

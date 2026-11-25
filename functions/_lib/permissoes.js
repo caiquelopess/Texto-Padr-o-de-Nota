@@ -21,6 +21,7 @@ const MATRIZ = {
   'modelos.editar': ['administrador', 'supervisor'],
   'modelos.publicar': ['administrador'],
   'backups.gerenciar': ['administrador'],
+  'backups.restaurar': [],
   'auditoria.ver': [],
   'sugestoes.ver': [],
   'configuracoes.gerenciar': [],

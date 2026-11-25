@@ -23,6 +23,7 @@ import {
   senhaValida,
   usuarioValido,
 } from './_lib/autenticacao.js';
+import { backupDiarioSeNecessario, criarBackup, lerBackup, listarBackups, restaurarBackup, validarConteudo } from './_lib/backups.js';
 import {
   atendimentoPublicado,
   criarModelo,
@@ -47,7 +48,16 @@ import { PERFIS, perfilDe, perfisQuePodeCriar, pode, podeGerenciar } from './_li
 import { SERVICOS_EMBUTIDOS } from './_lib/servicos-embutidos.js';
 import { LIMITE_DIA, listarSugestoes, validarSugestao } from './_lib/sugestoes.js';
 import { telaAdmin, telaAuditoria, telaFormularios, telaLogin, telaPainel, telaSugestoes, telaTrocarSenha } from './_lib/telas.js';
-import { SCRIPTS_ATIVOS, telaAtendimento, telaComparar, telaCompararTexto, telaEditorModelo, telaModelos, telaSemBanco } from './_lib/telas-modelos.js';
+import {
+  SCRIPTS_ATIVOS,
+  telaAtendimento,
+  telaBackups,
+  telaComparar,
+  telaCompararTexto,
+  telaEditorModelo,
+  telaModelos,
+  telaSemBanco,
+} from './_lib/telas-modelos.js';
 
 const COOKIE = '__Host-tp_sessao';
 const SEGURANCA = {
@@ -617,6 +627,75 @@ async function adminAtendimento(request, env, reg, url) {
   });
 }
 
+// ---- Backups ----
+async function adminBackups(request, env, reg, url) {
+  const meu = perfil(env, reg);
+  if (!pode(meu, 'backups.gerenciar')) return proibido();
+  if (!env.BANCO) return html(telaSemBanco({ usuario: reg.usuario, perfil: meu }));
+  const db = env.BANCO;
+  const ctx = { usuario: reg.usuario, perfil: meu };
+  const m = /^\/admin\/backups\/(\d+)\/baixar$/.exec(url.pathname);
+  if (m) {
+    const b = await lerBackup(db, Number(m[1]));
+    if (!b) return html('<!doctype html><meta charset="utf-8"><p>Backup não encontrado.</p>', 404);
+    await registrar(env.USUARIOS, reg.usuario, `Baixou o backup #${b.id}`, 'backups');
+    return new Response(b.conteudo, {
+      headers: {
+        ...SEGURANCA,
+        'content-type': 'application/json',
+        'content-disposition': `attachment; filename="textos-padroes-backup-${b.id}.json"`,
+        'cache-control': 'no-store',
+      },
+    });
+  }
+  const tela = async (msg = {}) => html(telaBackups({ ...ctx, backups: await listarBackups(db), ...msg }), msg.erro || msg.problemas?.length ? 400 : 200);
+  if (request.method !== 'POST') return tela();
+  const form = await request.formData();
+  const acao = String(form.get('acao') || '');
+  const id = Number(form.get('id'));
+  if (acao === 'criar') {
+    const novo = await criarBackup(db, env.USUARIOS, 'manual', reg.usuario);
+    await registrar(env.USUARIOS, reg.usuario, `Fez o backup #${novo}`, 'backups');
+    return tela({ ok: `Backup #${novo} criado e validado.` });
+  }
+  if (acao === 'validar') {
+    const b = await lerBackup(db, id);
+    if (!b) return tela({ erro: 'Backup não encontrado.' });
+    const problemas = await validarConteudo(b.conteudo, b.checksum);
+    await registrar(env.USUARIOS, reg.usuario, `Validou o backup #${id}: ${problemas.length ? 'com problemas' : 'íntegro'}`, 'backups');
+    return problemas.length ? tela({ problemas }) : tela({ ok: `Backup #${id} íntegro: checksum e todas as versões conferidos.` });
+  }
+  if (acao === 'restaurar') {
+    if (!pode(meu, 'backups.restaurar')) return proibido('Restaurar backups é exclusivo do gestor geral.');
+    const r = await restaurarBackup(db, env.USUARIOS, id, reg.usuario, { perfis: form.get('perfis') === '1' });
+    if (!r.ok) return tela({ problemas: r.problemas });
+    await registrar(
+      env.USUARIOS,
+      reg.usuario,
+      `Restaurou o backup #${id} (backup do estado anterior: #${r.antes}${r.perfisAplicados ? `; ${r.perfisAplicados} perfis` : ''})`,
+      'backups',
+    );
+    return tela({
+      ok: `Backup #${id} restaurado. O estado anterior ficou guardado no backup #${r.antes}.${r.perfisAplicados ? ` Perfis ajustados: ${r.perfisAplicados}.` : ''}`,
+    });
+  }
+  return tela({ erro: 'Ação desconhecida.' });
+}
+
+// Backup diário automático: checado no máximo uma vez por hora por instância, em segundo plano.
+let proximaChecagemBackup = 0;
+function agendarBackupDiario(context) {
+  const { env } = context;
+  if (!env.BANCO || Date.now() < proximaChecagemBackup) return;
+  proximaChecagemBackup = Date.now() + 3600 * 1000;
+  const tarefa = backupDiarioSeNecessario(env.BANCO, env.USUARIOS)
+    .then((id) => (id ? registrar(env.USUARIOS, 'sistema', `Backup automático #${id}`, 'backups') : null))
+    .catch(() => {
+      proximaChecagemBackup = 0; // tenta de novo no próximo acesso
+    });
+  if (context.waitUntil) context.waitUntil(tarefa);
+}
+
 export async function onRequest(context) {
   const { request, env, next } = context;
   const url = new URL(request.url);
@@ -653,8 +732,10 @@ export async function onRequest(context) {
     if (caminho.endsWith('.json') || caminho.startsWith('/api/')) return json({ erro: 'troque a senha provisória' }, 403);
     return redirecionar('/trocar-senha');
   }
+  agendarBackupDiario(context);
   if (caminho === '/admin') return admin(request, env, reg);
   if (caminho === '/admin/painel') return painel(env, reg);
+  if (caminho === '/admin/backups' || caminho.startsWith('/admin/backups/')) return adminBackups(request, env, reg, url);
   if (caminho === '/admin/modelos') return adminModelos(request, env, reg, url);
   if (caminho === '/admin/atendimento' || caminho === '/admin/atendimento/comparar') return adminAtendimento(request, env, reg, url);
   if (caminho === '/api/atendimento') {

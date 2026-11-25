@@ -236,3 +236,31 @@ export function telaCompararTexto({ usuario, perfil, voltar, titulo, rotuloA, ro
       .join('')}</div>`,
   );
 }
+
+// ---- Backups ----
+const MOTIVOS = { automatico: 'Automático (diário)', manual: 'Manual', 'antes-de-restaurar': 'Antes de restaurar' };
+export function telaBackups({ usuario, perfil, backups = [], erro = '', ok = '', problemas = [] }) {
+  const restaura = pode(perfil, 'backups.restaurar');
+  const tam = (n) => (n >= 1048576 ? `${(n / 1048576).toFixed(1).replace('.', ',')} MB` : `${Math.max(1, Math.round(n / 1024))} KB`);
+  const linhas = backups
+    .map(
+      (
+        b,
+      ) => `<tr><td><b>#${b.id}</b></td><td>${data(b.criado_em)}<br><small style="color:var(--muted)">${esc(b.criado_por)}</small></td><td>${esc(MOTIVOS[b.motivo] || b.motivo)}</td>
+<td>${b.resumo.modelos} modelos · ${b.resumo.versoesModelos} versões<br><small style="color:var(--muted)">${b.resumo.versoesAtendimento} versões de categorias · ${b.resumo.usuarios} perfis · ${tam(b.tamanho)}</small></td>
+<td style="white-space:nowrap"><form method="post" style="display:inline"><input type="hidden" name="acao" value="validar"><input type="hidden" name="id" value="${b.id}"><button type="submit" class="secundario">Validar</button></form>
+<a href="/admin/backups/${b.id}/baixar" style="color:var(--neon);margin:0 6px">baixar</a>
+${restaura ? `<form method="post" style="display:inline" onsubmit="if(!confirm('Restaurar o backup #${b.id}? Modelos, versões e categorias voltam ao estado dele. Antes, um backup do estado atual é criado.'))return false;this.perfis.value=confirm('Restaurar também os perfis dos usuários (Administrador, Supervisor...)? Senhas não são alteradas.')?'1':'';"><input type="hidden" name="acao" value="restaurar"><input type="hidden" name="id" value="${b.id}"><input type="hidden" name="perfis"><button type="submit" class="perigo">Restaurar</button></form>` : ''}</td></tr>`,
+    )
+    .join('');
+  return pagina(
+    'Backups',
+    'backups',
+    { usuario, perfil },
+    `<h1>Backups</h1><p class="sub">Cópias de modelos (com todas as versões), categorias e perfis dos usuários. <b>Senhas e dados de clientes nunca entram no backup.</b> Um backup automático é feito por dia; os ${60} mais recentes ficam guardados.</p><div class="linha-neon"></div>
+${msgs(erro, ok, problemas)}
+<form method="post" data-carrega><input type="hidden" name="acao" value="criar"><button type="submit" style="width:auto">Fazer backup agora</button></form>
+<p class="ajuda">"Validar" confere o checksum e a estrutura de cada versão guardada. ${restaura ? 'Restaurar é feito de uma vez (tudo ou nada) e cria antes um backup do estado atual.' : 'Restaurar é exclusivo do gestor geral.'}</p>
+<div class="tabela-rolagem"><table><thead><tr><th>Nº</th><th>Quando</th><th>Tipo</th><th>Conteúdo</th><th>Ações</th></tr></thead><tbody>${linhas || '<tr><td colspan="5">Nenhum backup ainda.</td></tr>'}</tbody></table></div>`,
+  );
+}

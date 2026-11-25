@@ -30,7 +30,14 @@ const montar = async (teste) => {
   return (await ler('src/pagina.html')).replace('/*@ESTILOS@*/\n', () => css).replace('//@SCRIPT@\n', () => js);
 };
 
-const saidas = { 'index.html': await montar(false), 'teste/index.html': await montar(true) };
+// Lista dos serviços embutidos (id + nome), usada pelo painel para categorias e scripts.
+const servicos = [...(await ler('src/pagina.html')).matchAll(/class="sub-btn" data-click="trocarAba\('([^']+)', this\)">([^<]+)</g)].map((m) => ({
+  id: m[1],
+  nome: m[2].trim(),
+}));
+const listaServicos = `// Gerado por scripts/build.mjs a partir de src/pagina.html — não editar à mão.\nexport const SERVICOS_EMBUTIDOS = ${JSON.stringify(servicos, null, 2)};\n`;
+
+const saidas = { 'index.html': await montar(false), 'teste/index.html': await montar(true), 'functions/_lib/servicos-embutidos.js': listaServicos };
 if (process.argv.includes('--check')) {
   const desatualizados = [];
   for (const [arq, conteudo] of Object.entries(saidas)) if ((await ler(arq)) !== conteudo) desatualizados.push(arq);
@@ -38,8 +45,8 @@ if (process.argv.includes('--check')) {
     console.error('Rode "npm run build": desatualizado(s) ->', desatualizados.join(', '));
     process.exit(1);
   }
-  console.log('index.html e teste/index.html em dia com src/');
+  console.log('index.html, teste/index.html e a lista de serviços em dia com src/');
 } else {
   for (const [arq, conteudo] of Object.entries(saidas)) await writeFile(join(raiz, arq), conteudo);
-  console.log('gerado: index.html, teste/index.html');
+  console.log('gerado: index.html, teste/index.html, functions/_lib/servicos-embutidos.js');
 }

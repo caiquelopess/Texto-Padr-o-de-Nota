@@ -6,6 +6,7 @@
 //   ADMIN_SENHA    — senha inicial do administrador (usada só no primeiro acesso)
 
 import { mdTestarModelo, mdValidarModelo } from '../src/nucleo/modelos.mjs';
+import { atendimentoDoFormulario, documentoPadrao, resumoAtendimento, validarAtendimento } from './_lib/atendimento-regras.js';
 import { listarAuditoria, registrar } from './_lib/auditoria.js';
 import {
   BLOQUEIO_SEGUNDOS,
@@ -23,23 +24,30 @@ import {
   usuarioValido,
 } from './_lib/autenticacao.js';
 import {
+  atendimentoPublicado,
   criarModelo,
   garantirEsquema,
+  lerAtendimento,
   lerModelo,
   lerVersao,
+  lerVersaoAtendimento,
   listarModelos,
   listarVersoes,
+  listarVersoesAtendimento,
   modelosPublicados,
   mudarArquivamento,
   publicar,
+  publicarAtendimento,
+  salvarAtendimento,
   salvarRascunho,
 } from './_lib/banco.js';
 import { idValido, listarFormularios, nomeDoArquivo, nomeValido, TAMANHO_MAXIMO, tipoDoArquivo } from './_lib/formularios.js';
 import { modeloDoFormulario } from './_lib/modelos-form.js';
 import { PERFIS, perfilDe, perfisQuePodeCriar, pode, podeGerenciar } from './_lib/permissoes.js';
+import { SERVICOS_EMBUTIDOS } from './_lib/servicos-embutidos.js';
 import { LIMITE_DIA, listarSugestoes, validarSugestao } from './_lib/sugestoes.js';
 import { telaAdmin, telaAuditoria, telaFormularios, telaLogin, telaPainel, telaSugestoes, telaTrocarSenha } from './_lib/telas.js';
-import { telaComparar, telaEditorModelo, telaModelos, telaSemBanco } from './_lib/telas-modelos.js';
+import { SCRIPTS_ATIVOS, telaAtendimento, telaComparar, telaCompararTexto, telaEditorModelo, telaModelos, telaSemBanco } from './_lib/telas-modelos.js';
 
 const COOKIE = '__Host-tp_sessao';
 const SEGURANCA = {
@@ -392,6 +400,11 @@ async function adminSugestoes(request, env, reg) {
 }
 
 // ---- Modelos de texto (D1) ----
+async function categoriasEmUso(db) {
+  const doc = (await atendimentoPublicado(db)) || documentoPadrao();
+  return doc.categorias.map((c) => c.nome);
+}
+
 async function adminModelos(request, env, reg, url) {
   const meu = perfil(env, reg);
   if (!pode(meu, 'modelos.ver')) return proibido();
@@ -400,7 +413,16 @@ async function adminModelos(request, env, reg, url) {
   await garantirEsquema(db);
   const ctx = { usuario: reg.usuario, perfil: meu };
   const lista = async (msg = {}) =>
-    html(telaModelos({ ...ctx, modelos: await listarModelos(db), filtro: url.searchParams.get('status') || 'todos', ...msg }), msg.erro ? 400 : 200);
+    html(
+      telaModelos({
+        ...ctx,
+        categorias: await categoriasEmUso(db),
+        modelos: await listarModelos(db),
+        filtro: url.searchParams.get('status') || 'todos',
+        ...msg,
+      }),
+      msg.erro ? 400 : 200,
+    );
   if (request.method !== 'POST') return lista();
   if (!pode(meu, 'modelos.editar')) return proibido('Seu perfil só pode consultar os modelos.');
   const form = await request.formData();
@@ -434,7 +456,7 @@ async function adminModelo(request, env, reg, id, url) {
   if (!registro) return html('<!doctype html><meta charset="utf-8"><p>Modelo não encontrado.</p><p><a href="/admin/modelos">Voltar</a></p>', 404);
   const tela = async (msg = {}) =>
     html(
-      telaEditorModelo({ ...ctx, registro: msg.registro || registro, versoes: await listarVersoes(db, id), ...msg }),
+      telaEditorModelo({ ...ctx, categorias: await categoriasEmUso(db), registro: msg.registro || registro, versoes: await listarVersoes(db, id), ...msg }),
       msg.erro || msg.problemas?.length ? 400 : 200,
     );
 
@@ -510,6 +532,91 @@ async function adminModelo(request, env, reg, id, url) {
   return tela({ erro: 'Ação desconhecida.' });
 }
 
+// ---- Categorias e serviços do atendimento ----
+async function adminAtendimento(request, env, reg, url) {
+  const meu = perfil(env, reg);
+  if (!pode(meu, 'modelos.ver')) return proibido();
+  if (!env.BANCO) return html(telaSemBanco({ usuario: reg.usuario, perfil: meu }));
+  const db = env.BANCO;
+  await garantirEsquema(db);
+  const ctx = { usuario: reg.usuario, perfil: meu };
+  let registro = await lerAtendimento(db);
+  const nomes = Object.fromEntries(SERVICOS_EMBUTIDOS.map((s) => [s.id, s.nome]));
+  const tela = async (msg = {}) =>
+    html(
+      telaAtendimento({
+        ...ctx,
+        registro,
+        doc: msg.doc || registro.rascunho || documentoPadrao(),
+        servicos: SERVICOS_EMBUTIDOS,
+        versoes: await listarVersoesAtendimento(db),
+        ...msg,
+      }),
+      msg.erro || msg.problemas?.length ? 400 : 200,
+    );
+  if (url.pathname.endsWith('/comparar')) {
+    const lado = async (v) =>
+      v === 'rascunho'
+        ? { rotulo: 'rascunho', d: registro.rascunho || documentoPadrao() }
+        : { rotulo: `v${v}`, d: (await lerVersaoAtendimento(db, Number(v)))?.conteudo };
+    const a = await lado(url.searchParams.get('a'));
+    const b = await lado(url.searchParams.get('b') || 'rascunho');
+    if (!a.d || !b.d) return tela({ erro: 'Versão não encontrada ou com falha de integridade.' });
+    return html(
+      telaCompararTexto({
+        ...ctx,
+        voltar: '/admin/atendimento',
+        titulo: 'Atendimento',
+        rotuloA: a.rotulo,
+        rotuloB: b.rotulo,
+        a: resumoAtendimento(a.d, nomes),
+        b: resumoAtendimento(b.d, nomes),
+      }),
+    );
+  }
+  if (request.method !== 'POST') return tela();
+  if (!pode(meu, 'modelos.editar')) return proibido('Seu perfil só pode consultar esta configuração.');
+  const form = await request.formData();
+  const acao = String(form.get('acao') || '');
+  const revisao = Number(form.get('revisao'));
+  const conflito = 'Outro administrador alterou esta configuração enquanto você editava. Nada foi salvo: recarregue a página e confira.';
+  if ((acao === 'publicar' || acao === 'republicar') && !pode(meu, 'modelos.publicar'))
+    return proibido('Seu perfil pode editar o rascunho, mas a publicação é feita por um administrador.');
+  if (acao === 'republicar') {
+    const v = await lerVersaoAtendimento(db, Number(form.get('versao')));
+    if (!v) return tela({ erro: 'Versão não encontrada ou com falha de integridade.' });
+    const nova = await publicarAtendimento(db, revisao, v.conteudo, reg.usuario);
+    if (!nova) return tela({ erro: conflito });
+    await registrar(env.USUARIOS, reg.usuario, `Restaurou a configuração do atendimento v${v.versao} (publicada como v${nova})`, 'atendimento');
+    registro = await lerAtendimento(db);
+    return tela({ ok: `Versão ${v.versao} restaurada para os atendentes (nova versão ${nova}).` });
+  }
+  const doc = atendimentoDoFormulario(form, SCRIPTS_ATIVOS);
+  // scripts ocultos: preserva o que já estiver salvo
+  if (!SCRIPTS_ATIVOS) doc.scripts = registro.rascunho?.scripts || {};
+  const problemas = validarAtendimento(doc);
+  if (problemas.length) return tela({ doc, problemas });
+  if (acao === 'publicar') {
+    const nova = await publicarAtendimento(db, revisao, doc, reg.usuario);
+    if (!nova) return tela({ doc, erro: conflito });
+    await registrar(env.USUARIOS, reg.usuario, `Publicou categorias e serviços (v${nova})`, 'atendimento');
+    registro = await lerAtendimento(db);
+    return tela({ ok: `Publicado como versão ${nova}. Os atendentes já veem a nova organização.` });
+  }
+  if (acao !== 'salvar' && acao !== 'enviar') return tela({ erro: 'Ação desconhecida.' });
+  if (!(await salvarAtendimento(db, revisao, doc, reg.usuario, acao === 'enviar'))) return tela({ doc, erro: conflito });
+  await registrar(
+    env.USUARIOS,
+    reg.usuario,
+    acao === 'enviar' ? 'Enviou categorias e serviços para publicação' : 'Salvou o rascunho de categorias e serviços',
+    'atendimento',
+  );
+  registro = await lerAtendimento(db);
+  return tela({
+    ok: acao === 'enviar' ? 'Rascunho salvo e enviado para um administrador publicar.' : 'Rascunho salvo. Os atendentes continuam com a versão publicada.',
+  });
+}
+
 export async function onRequest(context) {
   const { request, env, next } = context;
   const url = new URL(request.url);
@@ -549,6 +656,16 @@ export async function onRequest(context) {
   if (caminho === '/admin') return admin(request, env, reg);
   if (caminho === '/admin/painel') return painel(env, reg);
   if (caminho === '/admin/modelos') return adminModelos(request, env, reg, url);
+  if (caminho === '/admin/atendimento' || caminho === '/admin/atendimento/comparar') return adminAtendimento(request, env, reg, url);
+  if (caminho === '/api/atendimento') {
+    if (!env.BANCO) return json({ documento: null });
+    try {
+      await garantirEsquema(env.BANCO);
+      return json({ documento: await atendimentoPublicado(env.BANCO) });
+    } catch {
+      return json({ erro: 'configuração indisponível' }, 503);
+    }
+  }
   if (caminho.startsWith('/admin/modelos/')) {
     const id = caminho.slice('/admin/modelos/'.length).replace(/\/comparar$/, '');
     if (!/^[a-z0-9][a-z0-9-]{2,59}$/.test(id)) return html('<!doctype html><meta charset="utf-8"><p>Modelo não encontrado.</p>', 404);

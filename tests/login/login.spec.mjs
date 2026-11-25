@@ -520,3 +520,86 @@ test('modelos: rascunho, teste, publicação, versões, conflito, restauração 
   ])
     await expect(page.locator('tbody')).toContainText(t);
 });
+
+test('categorias e serviços: rascunho, validação, publicação, conflito e restauração', async ({ page, browser }) => {
+  const URL_BASE = 'http://localhost:8788';
+  await entrar(page, 'admin.teste', 'senha-admin-teste');
+  await page.goto('/admin/atendimento');
+  await expect(page.locator('h1')).toHaveText('Categorias e serviços');
+  // validação: categoria repetida
+  await page.fill('textarea[name=categorias]', 'Mais pedidos\nmais pedidos');
+  await page.click('button[value=salvar]');
+  await expect(page.locator('.erro')).toContainText('Categoria "mais pedidos" repetida');
+  await page.fill(
+    'textarea[name=categorias]',
+    'Mais pedidos\nLigação e Reativação\nTitularidade e Cadastro\nFaturamento e Débitos\nParcelamento\nRessarcimento\nMedição e Rede\nReclamações e Outros',
+  );
+  await page.click('button[value=salvar]');
+  await expect(page.locator('.okmsg')).toContainText('Rascunho salvo');
+  await page.selectOption('select[name="cat:sf-relig"]', 'Mais pedidos');
+  await page.selectOption('select[name="vis:sf-afericao"]', 'oculto');
+  await page.click('button[value=salvar]');
+  // rascunho não chega ao atendente
+  expect((await (await page.request.get('/api/atendimento')).json()).documento).toBeNull();
+  page.once('dialog', (d) => d.accept());
+  await page.click('button[value=publicar]');
+  await expect(page.locator('.okmsg')).toContainText('Publicado como versão 1');
+  const doc = (await (await page.request.get('/api/atendimento')).json()).documento;
+  expect(doc.categorias[0].nome).toBe('Mais pedidos');
+  expect(doc.servicos['sf-afericao']).toEqual({ oculto: true });
+  expect(doc.servicos['sf-relig']).toEqual({ categoria: 'Mais pedidos' });
+
+  // atendente vê a nova organização
+  const ctx = await browser.newContext({ baseURL: URL_BASE });
+  const at = await ctx.newPage();
+  await entrar(at, 'chefe.equipe', 'chefe-nova');
+  await expect(at.locator('#service_nav .svc-grupo-titulo').first()).toHaveText('Mais pedidos');
+  await expect(at.locator('.svc-grupo').first().locator('.sub-btn')).toHaveText(['Religação']);
+  await expect(at.locator('#service_nav .sub-btn', { hasText: 'Aferição' })).toHaveCount(0);
+  // modelo de texto escolhe entre as categorias publicadas
+  await page.goto('/admin/modelos');
+  await expect(page.locator('#mc option').first()).toHaveText('Mais pedidos');
+
+  // conflito entre administradores
+  const outro = await browser.newContext({ baseURL: URL_BASE });
+  const adm2 = await outro.newPage();
+  await entrar(adm2, 'admin.teste', 'senha-admin-teste');
+  await adm2.goto('/admin/atendimento');
+  await page.goto('/admin/atendimento');
+  await page.selectOption('select[name="vis:sf-afericao"]', 'visivel');
+  page.once('dialog', (d) => d.accept());
+  await page.click('button[value=publicar]');
+  await expect(page.locator('.okmsg')).toContainText('versão 2');
+  await adm2.click('button[value=salvar]');
+  await expect(adm2.locator('.erro')).toContainText('Outro administrador alterou esta configuração');
+  await outro.close();
+
+  // comparar e restaurar a v1
+  await page.goto('/admin/atendimento/comparar?a=1&b=2');
+  await expect(page.locator('.diff .removida')).toContainText('Aferição: oculto');
+  await page.goto('/admin/atendimento');
+  page.once('dialog', (d) => d.accept());
+  await page.locator('tr', { hasText: 'v1' }).getByRole('button', { name: 'Restaurar para os atendentes' }).click();
+  await expect(page.locator('.okmsg')).toContainText('Versão 1 restaurada');
+  expect((await (await page.request.get('/api/atendimento')).json()).documento.servicos['sf-afericao']).toEqual({ oculto: true });
+  await ctx.close();
+
+  // supervisor envia, não publica
+  const sup = await browser.newContext({ baseURL: URL_BASE });
+  const s = await sup.newPage();
+  await entrar(s, 'sara.supervisora', 'sara-nova');
+  await s.goto('/admin/atendimento');
+  await expect(s.locator('button[value=publicar]')).toHaveCount(0);
+  await s.click('button[value=enviar]');
+  await expect(s.locator('.okmsg')).toContainText('enviado para um administrador');
+  const forcado = await s.request.post('/admin/atendimento', { form: { acao: 'publicar', revisao: '1', categorias: 'X' }, headers: { origin: URL_BASE } });
+  expect(forcado.status()).toBe(403);
+  await sup.close();
+  await page.goto('/admin/auditoria');
+  for (const t of [
+    'Publicou categorias e serviços (v1)',
+    'Restaurou a configuração do atendimento v1 (publicada como v3)',
+    'Enviou categorias e serviços para publicação',
+  ])
+    await expect(page.locator('tbody')).toContainText(t);
+});

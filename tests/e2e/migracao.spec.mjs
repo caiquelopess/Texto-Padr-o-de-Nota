@@ -33,8 +33,10 @@ test('importar junta os dados sem duplicar e recusa arquivo estranho', async ({ 
   expect(await page.evaluate((t) => window.importarTexto(t), externo)).toEqual({ historico: 1, pendencias: 1 });
   expect(await page.evaluate((t) => window.importarTexto(t), externo)).toEqual({ historico: 0, pendencias: 0 });
   expect(await page.evaluate(() => [window.histLer().length, window.pendLer().length])).toEqual([2, 1]);
-  expect(await page.evaluate(() => window.importarTexto('{"app":"outro"}'))).toBeNull();
-  await expect(page.locator('#toastAviso')).toContainText('não é uma cópia de dados');
+  // lê o aviso no mesmo passo: um lembrete atrasado do serviço gerado pode trocar a mensagem depois
+  const recusa = await page.evaluate(() => [window.importarTexto('{"app":"outro"}'), document.getElementById('toastAviso').textContent]);
+  expect(recusa[0]).toBeNull();
+  expect(recusa[1]).toContain('não é uma cópia de dados');
 });
 
 test('aviso de mudança no endereço antigo', async ({ page }) => {

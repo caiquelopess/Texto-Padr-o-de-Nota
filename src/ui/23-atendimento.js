@@ -3,6 +3,8 @@
   // em que categoria cada serviço aparece, serviços ocultos e o roteiro (falas +
   // checklist) de cada serviço. Sem servidor, usa a cópia guardada; sem cópia, a
   // organização padrão continua valendo.
+  // Scripts (falas + checklist) prontos, mas ocultos por decisão do responsável.
+  var SCRIPTS_ATIVOS = false;
   var ATENDIMENTO_CHAVE = AMBIENTE_TESTE ? 'tp_teste_atendimento_v1' : 'tp_atendimento_v1';
   var atendimentoAtual = null;
 
@@ -61,6 +63,7 @@
   // ---- roteiro (falas) e checklist do serviço aberto ----
   var ultimoServicoEscolhido = '';
   function mostrarRoteiro(id) {
+    if (!SCRIPTS_ATIVOS) return;
     ultimoServicoEscolhido = id;
     var sf = document.getElementById(String(id).split('|')[0]);
     if (!sf) return;

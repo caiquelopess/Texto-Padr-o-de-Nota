@@ -10,7 +10,7 @@ const DOC = {
 const grupo = (page, nome) => page.locator('.svc-grupo').filter({ has: page.locator('.svc-grupo-titulo', { hasText: new RegExp(`^${nome}$`) }) });
 const titulos = (page) => page.$$eval('#service_nav .svc-grupo-titulo', (ts) => ts.map((t) => t.textContent));
 
-test('categorias, ocultos e roteiro publicados; sem servidor, usa a cópia', async ({ page }) => {
+test('categorias e ocultos publicados; sem servidor, usa a cópia', async ({ page }) => {
   await page.route('**/api/atendimento', (r) => r.fulfill({ json: { documento: DOC } }));
   await page.reload();
   const t = await titulos(page);
@@ -24,16 +24,11 @@ test('categorias, ocultos e roteiro publicados; sem servidor, usa a cópia', asy
   await expect(page.locator('#busca_sugestoes')).toContainText('Nenhum serviço encontrado');
   await page.fill('#busca_servico', '');
   await expect(page.locator('#sf-afericao')).toBeAttached();
-  // roteiro e checklist no serviço
+  // scripts estão ocultos: mesmo publicados, o roteiro não aparece
   await page.click('#btn_alternar_servicos');
   await page.click('#service_nav .sub-btn >> text="Religação"');
-  const roteiro = page.locator('#sf-relig > .roteiro');
-  await expect(roteiro.locator('.roteiro-falas li')).toHaveText(['Bom dia! Com quem eu falo?', 'Confirme o endereço completo']);
-  await expect(roteiro.locator('.roteiro-check')).toHaveText([' Comprovante de pagamento', ' Ponto de referência']);
-  await roteiro.locator('.roteiro-check input').first().check();
-  // serviço sem script não mostra a caixa
-  await page.evaluate(() => window.trocarAba('sf-bpc', document.querySelector('[data-click*="sf-bpc"]')));
-  await expect(page.locator('#sf-bpc > .roteiro')).toHaveCount(0);
+  await expect(page.locator('#sf-relig')).toHaveClass(/active/);
+  await expect(page.locator('.roteiro')).toHaveCount(0);
 
   // servidor fora: mantém a organização guardada
   await page.unroute('**/api/atendimento');

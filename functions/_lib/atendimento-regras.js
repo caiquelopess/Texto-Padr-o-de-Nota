@@ -46,14 +46,14 @@ export function validarAtendimento(doc) {
 }
 
 // Lê o formulário da tela "Atendimento" (categorias uma por linha; campos por serviço).
-export function atendimentoDoFormulario(form) {
+export function atendimentoDoFormulario(form, comScripts = true) {
   const doc = { categorias: linhas(form.get('categorias')).map((nome) => ({ nome })), servicos: {}, scripts: {} };
   for (const s of SERVICOS_EMBUTIDOS) {
     const cat = String(form.get(`cat:${s.id}`) ?? '').trim();
     const oculto = form.get(`vis:${s.id}`) === 'oculto';
     if (cat || oculto) doc.servicos[s.id] = { ...(cat ? { categoria: cat } : {}), ...(oculto ? { oculto: true } : {}) };
   }
-  for (const chave of form.keys()) {
+  for (const chave of comScripts ? form.keys() : []) {
     const m = /^(falas|check):(.+)$/.exec(chave);
     if (!m) continue;
     const itens = linhas(form.get(chave));

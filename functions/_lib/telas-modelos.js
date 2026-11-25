@@ -5,6 +5,10 @@ import { CATEGORIAS_PADRAO } from './modelos-form.js';
 import { pode } from './permissoes.js';
 import { data, esc, paginaAdmin } from './telas.js';
 
+// Scripts de atendimento (falas + checklist): prontos, mas ocultos por decisão do responsável.
+// Para ligar: SCRIPTS_ATIVOS = true aqui e em src/ui/23-atendimento.js.
+export const SCRIPTS_ATIVOS = false;
+
 const STATUS = { rascunho: 'Rascunho', publicado: 'Publicado', arquivado: 'Arquivado' };
 const NOMES_TIPO = { texto: 'Texto', textoLongo: 'Texto longo', telefone: 'Telefone', email: 'E-mail', data: 'Data', numero: 'Número', opcao: 'Opção (lista)' };
 
@@ -181,9 +185,9 @@ export function telaAtendimento({ usuario, perfil, registro, doc, servicos = [],
       return `<tr><td><b>${esc(s.nome)}</b></td>
 <td><select name="cat:${esc(s.id)}" aria-label="Categoria de ${esc(s.nome)}">${opcoesCat(conf.categoria)}</select></td>
 <td><select name="vis:${esc(s.id)}" aria-label="Visibilidade de ${esc(s.nome)}"><option value="visivel">Visível</option><option value="oculto"${conf.oculto ? ' selected' : ''}>Oculto</option></select></td>
-<td><details${tem ? ' open' : ''}><summary>${tem ? `Script (${tem})` : 'Adicionar script'}</summary>
+${SCRIPTS_ATIVOS ? '' : '<!--'}<td><details${tem ? ' open' : ''}><summary>${tem ? `Script (${tem})` : 'Adicionar script'}</summary>
 <label>Falas para o atendente (uma por linha)</label><textarea name="falas:${esc(s.id)}" style="min-height:70px">${esc((sc.falas || []).join('\n'))}</textarea>
-<label>Checklist antes de gerar (um item por linha)</label><textarea name="check:${esc(s.id)}" style="min-height:70px">${esc((sc.checklist || []).join('\n'))}</textarea></details></td></tr>`;
+<label>Checklist antes de gerar (um item por linha)</label><textarea name="check:${esc(s.id)}" style="min-height:70px">${esc((sc.checklist || []).join('\n'))}</textarea></details></td>${SCRIPTS_ATIVOS ? '' : '-->'}</tr>`;
     })
     .join('');
   const historico = versoes
@@ -199,13 +203,13 @@ ${publica && v.versao !== registro.versao_publicada ? `<form method="post" style
     'Atendimento',
     'atendimento',
     { usuario, perfil },
-    `<h1>Categorias, serviços e scripts</h1><p class="sub">Organize a lista de serviços dos atendentes e escreva o roteiro (falas) e o checklist de cada serviço. Como nos modelos: o rascunho não muda nada até ser publicado.
+    `<h1>Categorias e serviços</h1><p class="sub">Organize a lista de serviços dos atendentes: ordem e nome das categorias, onde cada serviço aparece e quais ficam ocultos. Como nos modelos: o rascunho não muda nada até ser publicado.
 ${registro.versao_publicada ? ` Em uso: <b>v${registro.versao_publicada}</b>.` : ' Ainda não publicado: os atendentes veem a organização padrão.'}${registro.aguardando ? ' <span class="selo selo-alerta">Aguardando publicação</span>' : ''}</p><div class="linha-neon"></div>
 ${msgs(erro, ok, problemas)}
 <form method="post" class="editor" data-carrega><input type="hidden" name="revisao" value="${registro.revisao}">
 <fieldset${ro}><legend>Categorias (na ordem em que aparecem)</legend><textarea name="categorias" style="min-height:150px">${esc(cats.join('\n'))}</textarea>
 <p class="ajuda">Uma por linha. "Automática" nos serviços abaixo usa a categoria padrão do serviço. Modelos de texto continuam na categoria escolhida no próprio modelo.</p></fieldset>
-<fieldset${ro}><legend>Serviços</legend><div class="tabela-rolagem"><table><thead><tr><th>Serviço</th><th>Categoria</th><th>Na lista</th><th>Script de atendimento</th></tr></thead><tbody>${linhasServ}</tbody></table></div>
+<fieldset${ro}><legend>Serviços</legend><div class="tabela-rolagem"><table><thead><tr><th>Serviço</th><th>Categoria</th><th>Na lista</th>${SCRIPTS_ATIVOS ? '<th>Script de atendimento</th>' : ''}</tr></thead><tbody>${linhasServ}</tbody></table></div>
 <p class="ajuda">Serviço oculto sai da lista e da busca, mas nada é apagado.</p></fieldset>
 ${
   edita

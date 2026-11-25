@@ -68,3 +68,10 @@ test('resumo para comparar versões', () => {
   );
   assert.equal(resumoAtendimento({}), 'Categorias: ');
 });
+
+test('com os scripts ocultos, o formulário não lê scripts', () => {
+  const f = new FormData();
+  f.append('categorias', 'A');
+  f.append('falas:sf-relig', 'Oi');
+  assert.deepEqual(atendimentoDoFormulario(f, false), { categorias: [{ nome: 'A' }], servicos: {}, scripts: {} });
+});

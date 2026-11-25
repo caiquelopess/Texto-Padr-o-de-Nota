@@ -47,7 +47,7 @@ import { PERFIS, perfilDe, perfisQuePodeCriar, pode, podeGerenciar } from './_li
 import { SERVICOS_EMBUTIDOS } from './_lib/servicos-embutidos.js';
 import { LIMITE_DIA, listarSugestoes, validarSugestao } from './_lib/sugestoes.js';
 import { telaAdmin, telaAuditoria, telaFormularios, telaLogin, telaPainel, telaSugestoes, telaTrocarSenha } from './_lib/telas.js';
-import { telaAtendimento, telaComparar, telaCompararTexto, telaEditorModelo, telaModelos, telaSemBanco } from './_lib/telas-modelos.js';
+import { SCRIPTS_ATIVOS, telaAtendimento, telaComparar, telaCompararTexto, telaEditorModelo, telaModelos, telaSemBanco } from './_lib/telas-modelos.js';
 
 const COOKIE = '__Host-tp_sessao';
 const SEGURANCA = {
@@ -532,7 +532,7 @@ async function adminModelo(request, env, reg, id, url) {
   return tela({ erro: 'Ação desconhecida.' });
 }
 
-// ---- Categorias, serviços e scripts de atendimento ----
+// ---- Categorias e serviços do atendimento ----
 async function adminAtendimento(request, env, reg, url) {
   const meu = perfil(env, reg);
   if (!pode(meu, 'modelos.ver')) return proibido();
@@ -591,13 +591,15 @@ async function adminAtendimento(request, env, reg, url) {
     registro = await lerAtendimento(db);
     return tela({ ok: `Versão ${v.versao} restaurada para os atendentes (nova versão ${nova}).` });
   }
-  const doc = atendimentoDoFormulario(form);
+  const doc = atendimentoDoFormulario(form, SCRIPTS_ATIVOS);
+  // scripts ocultos: preserva o que já estiver salvo
+  if (!SCRIPTS_ATIVOS) doc.scripts = registro.rascunho?.scripts || {};
   const problemas = validarAtendimento(doc);
   if (problemas.length) return tela({ doc, problemas });
   if (acao === 'publicar') {
     const nova = await publicarAtendimento(db, revisao, doc, reg.usuario);
     if (!nova) return tela({ doc, erro: conflito });
-    await registrar(env.USUARIOS, reg.usuario, `Publicou categorias e scripts (v${nova})`, 'atendimento');
+    await registrar(env.USUARIOS, reg.usuario, `Publicou categorias e serviços (v${nova})`, 'atendimento');
     registro = await lerAtendimento(db);
     return tela({ ok: `Publicado como versão ${nova}. Os atendentes já veem a nova organização.` });
   }
@@ -606,7 +608,7 @@ async function adminAtendimento(request, env, reg, url) {
   await registrar(
     env.USUARIOS,
     reg.usuario,
-    acao === 'enviar' ? 'Enviou categorias e scripts para publicação' : 'Salvou o rascunho de categorias e scripts',
+    acao === 'enviar' ? 'Enviou categorias e serviços para publicação' : 'Salvou o rascunho de categorias e serviços',
     'atendimento',
   );
   registro = await lerAtendimento(db);

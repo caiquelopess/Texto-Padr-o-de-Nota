@@ -521,11 +521,11 @@ test('modelos: rascunho, teste, publicação, versões, conflito, restauração 
     await expect(page.locator('tbody')).toContainText(t);
 });
 
-test('categorias e scripts: rascunho, validação, publicação, conflito e restauração', async ({ page, browser }) => {
+test('categorias e serviços: rascunho, validação, publicação, conflito e restauração', async ({ page, browser }) => {
   const URL_BASE = 'http://localhost:8788';
   await entrar(page, 'admin.teste', 'senha-admin-teste');
   await page.goto('/admin/atendimento');
-  await expect(page.locator('h1')).toHaveText('Categorias, serviços e scripts');
+  await expect(page.locator('h1')).toHaveText('Categorias e serviços');
   // validação: categoria repetida
   await page.fill('textarea[name=categorias]', 'Mais pedidos\nmais pedidos');
   await page.click('button[value=salvar]');
@@ -538,10 +538,6 @@ test('categorias e scripts: rascunho, validação, publicação, conflito e rest
   await expect(page.locator('.okmsg')).toContainText('Rascunho salvo');
   await page.selectOption('select[name="cat:sf-relig"]', 'Mais pedidos');
   await page.selectOption('select[name="vis:sf-afericao"]', 'oculto');
-  const det = page.locator('tr', { hasText: 'Religação' }).first().locator('details');
-  await det.locator('summary').click();
-  await det.locator('textarea[name="falas:sf-relig"]').fill('Bom dia! Com quem eu falo?');
-  await det.locator('textarea[name="check:sf-relig"]').fill('Comprovante de pagamento');
   await page.click('button[value=salvar]');
   // rascunho não chega ao atendente
   expect((await (await page.request.get('/api/atendimento')).json()).documento).toBeNull();
@@ -551,16 +547,14 @@ test('categorias e scripts: rascunho, validação, publicação, conflito e rest
   const doc = (await (await page.request.get('/api/atendimento')).json()).documento;
   expect(doc.categorias[0].nome).toBe('Mais pedidos');
   expect(doc.servicos['sf-afericao']).toEqual({ oculto: true });
-  expect(doc.scripts['sf-relig']).toEqual({ falas: ['Bom dia! Com quem eu falo?'], checklist: ['Comprovante de pagamento'] });
+  expect(doc.servicos['sf-relig']).toEqual({ categoria: 'Mais pedidos' });
 
-  // atendente vê a nova organização e o roteiro
+  // atendente vê a nova organização
   const ctx = await browser.newContext({ baseURL: URL_BASE });
   const at = await ctx.newPage();
   await entrar(at, 'chefe.equipe', 'chefe-nova');
   await expect(at.locator('#service_nav .svc-grupo-titulo').first()).toHaveText('Mais pedidos');
-  await at.click('#btn_alternar_servicos');
-  await at.click('#service_nav .sub-btn >> text="Religação"');
-  await expect(at.locator('#sf-relig > .roteiro')).toContainText('Bom dia! Com quem eu falo?');
+  await expect(at.locator('.svc-grupo').first().locator('.sub-btn')).toHaveText(['Religação']);
   await expect(at.locator('#service_nav .sub-btn', { hasText: 'Aferição' })).toHaveCount(0);
   // modelo de texto escolhe entre as categorias publicadas
   await page.goto('/admin/modelos');
@@ -603,9 +597,9 @@ test('categorias e scripts: rascunho, validação, publicação, conflito e rest
   await sup.close();
   await page.goto('/admin/auditoria');
   for (const t of [
-    'Publicou categorias e scripts (v1)',
+    'Publicou categorias e serviços (v1)',
     'Restaurou a configuração do atendimento v1 (publicada como v3)',
-    'Enviou categorias e scripts para publicação',
+    'Enviou categorias e serviços para publicação',
   ])
     await expect(page.locator('tbody')).toContainText(t);
 });

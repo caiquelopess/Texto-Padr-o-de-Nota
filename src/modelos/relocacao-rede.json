@@ -1,0 +1,62 @@
+{
+  "id": "relocacao-rede",
+  "sf": "sf-reloc-rede",
+  "nome": "Relocação de poste/deslocamento de rede",
+  "categoria": "Medição e Rede",
+  "descricao": "Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "piscar": true
+    },
+    {
+      "html": "FOP serviço de obra<br>ATENÇÃO: INCLUIR DOCUMENTO DE PROPRIEDADE<br>Para Isolamento De Rede, Usar Code Deslocamento De Rede E Informar Que É Deslocamento De Rede, Não Colocar A Informação Isolamento de rede"
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "elementoId": "ro_solic",
+      "rotulo": "Solicitante",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo do solicitante"
+    },
+    {
+      "id": "prx",
+      "elementoId": "ro_prx",
+      "rotulo": "PRX",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ponto de referência detalhado"
+    },
+    {
+      "id": "tel",
+      "elementoId": "ro_tel",
+      "rotulo": "Tel (XX-9XXXXXXXX)",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84-988887777"
+    },
+    {
+      "id": "email",
+      "elementoId": "ro_email",
+      "rotulo": "e-mail",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "docs",
+      "elementoId": "ro_docs",
+      "rotulo": "DOCs anexado (escritura publica, itr, iptu...)",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: Escritura pública, ITR, IPTU, termo de posse..."
+    }
+  ],
+  "nota": "Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}}. Cliente Orientado quanto aos possíveis custos DOCs anexado: {{docs}}",
+  "agenda": "Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}}. Cliente Orientado quanto aos possíveis custos DOCs anexado: {{docs}}",
+  "botao": "Gerar Texto de NOTA e Copiar"
+}

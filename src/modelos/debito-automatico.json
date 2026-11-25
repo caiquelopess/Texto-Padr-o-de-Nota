@@ -1,0 +1,28 @@
+{
+  "id": "debito-automatico",
+  "sf": "sf-deb-auto",
+  "nome": "Débito automático",
+  "categoria": "Faturamento e Débitos",
+  "descricao": "Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "piscar": true
+    }
+  ],
+  "campos": [
+    {
+      "id": "titular",
+      "elementoId": "da_titular",
+      "rotulo": "TITULAR SR",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo do titular",
+      "largo": true
+    }
+  ],
+  "nota": "DESCADASTRO DÉBITO AUTOMÁTICO A PEDIDO DO TITULAR SR \n{{titular}}",
+  "agenda": "DESCADASTRO DÉBITO AUTOMÁTICO A PEDIDO DO TITULAR SR \n{{titular}}",
+  "botao": "Gerar Texto de NOTA e Copiar"
+}

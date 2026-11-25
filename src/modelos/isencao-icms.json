@@ -1,0 +1,54 @@
+{
+  "id": "isencao-icms",
+  "sf": "sf-isencao-icms",
+  "nome": "Cadastro de Parceiro - Isenção ICMS",
+  "categoria": "Titularidade e Cadastro",
+  "descricao": "Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "piscar": true
+    },
+    {
+      "html": "OBS.: Caso o cliente não esteja com CNAE B2_1 (ou está, mas atividade não é a mesma do sistema) É necessário realizar modificação contratual."
+    }
+  ],
+  "campos": [
+    {
+      "id": "ie",
+      "elementoId": "icms_ie",
+      "rotulo": "NUMERO DA INSCRICAO ESTADUAL",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 20.123.456-7"
+    },
+    {
+      "id": "ref",
+      "elementoId": "icms_ref",
+      "rotulo": "REF",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ponto de referência detalhado"
+    },
+    {
+      "id": "tel",
+      "elementoId": "icms_tel",
+      "rotulo": "TEL",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84988887777"
+    },
+    {
+      "id": "solic",
+      "elementoId": "icms_solic",
+      "rotulo": "SOLICITANTE",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo do solicitante"
+    }
+  ],
+  "nota": "GENTILEZA CADASTRAR PRODUTOR RURAL \nNUMERO DA INSCRICAO ESTADUAL {{ie}} \nREF {{ref}}\nTEL {{tel}} \nSOLICITANTE {{solic}}",
+  "agenda": "GENTILEZA CADASTRAR PRODUTOR RURAL \nNUMERO DA INSCRICAO ESTADUAL {{ie}} \nREF {{ref}}\nTEL {{tel}} \nSOLICITANTE {{solic}}",
+  "botao": "Gerar Texto de NOTA e Copiar"
+}

@@ -1098,20 +1098,14 @@
       <div class="service-nav" id="service_nav">
         <button type="button" class="sub-btn" data-click="trocarAba('sf-afericao', this)">Aferição</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-bloq-cobranca', this)">Bloqueio de Cobrança</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-icms', this)">Cadastro de Parceiro - Isenção ICMS</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-canc-parc', this)">Cancelamento de Parcelamento</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-cpnb', this)">Conta Paga e Não Baixada</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-data-boa', this)">DATA BOA</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-deb-auto', this)">Débito automático</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-defesa-adm', this)">Defesa Administrativa P-Recurso</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-dd', this)">Desligamento Definitivo</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-movein-moveout', this)">Estorno Movein e Moveout</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-insp', this)">Inspeção e ligação 91*</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-analise-isencao', this)">Isenção de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-nova', this)">Ligação Nova</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-muc', this)">Ligação MUC</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-lp', this)">Ligação Provisória</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-med-roub', this)">Medidor Roubado</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-mc', this)">Modificação Contratual</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-parcelamento', this)">Parcelamento</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reativ-comum', this)">Reativação</button>
@@ -1124,13 +1118,10 @@
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reclamacoes', this)">Reclamações</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ref-padrao', this)">Reforma Padrão</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-relig', this)">Religação</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-reloc-rede', this)">Relocação de poste/deslocamento de rede</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-danos-eletricos', this)">Ressarcimento de Danos Elétricos — Abertura de Nota</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-rde-doc', this)">Ressarcimento de Danos Elétricos — Recebimento de Documentação (laudos e orçamentos)</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-outros-danos', this)">Ressarcimento de Danos Não Elétricos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-res', this)">Restituição de valores</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-selagem', this)">Selagem do Medidor</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-ramal', this)">Serviço no Ramal</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-tarefa-neo', this)">Tarefa NEO transferência de Créditos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-tele-gravacao', this)">Tele gravação</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-tr-partidas', this)">TR DE PARTIDAS</button>
@@ -1769,23 +1760,6 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarRelig()">Gerar Texto e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-relig')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 9. INSPEÇÃO E LIGAÇÃO 91* -->
-    <div class="subform" id="sf-insp">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box">Atenção: No caso de pessoa jurídica colocar o nome do representante legal no nome do cliente.</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="insp_solic" placeholder="Nome completo (Representante legal se PJ)" required></div>
-        <div class="field-group"><label>PRX *</label><input type="text" id="insp_prx" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="insp_tel" placeholder="Ex: 84-988887777" required></div>
-        <div class="field-group"><label>e-mail *</label><input type="text" id="insp_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Carga (kW) *</label><input type="text" id="insp_carga" placeholder="Ex: 10kw" required></div>
-        <div class="field-group"><label>PG</label><input type="text" id="insp_pg" placeholder="Opcional — nº do pagamento, se houver"></div>
-        <div class="field-group"><label>Empreendimento: *</label><input type="text" id="insp_emp" placeholder="Nome do condomínio/prédio" required></div>
-        <div class="field-group"><label>Bloco/Torre (quando houver)</label><input type="text" id="insp_bloco" placeholder="Ex: Bloco A ou deixe em branco"></div>
-        <div class="field-group full-width"><label>Referente a MUC 92* *</label><input type="text" id="insp_muc" placeholder="Ex: 92xxxxxxx" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarINSP()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-insp')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 10. LIGAÇÃO PROVISÓRIA -->
     <div class="subform" id="sf-lp">
@@ -1804,19 +1778,6 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarLP()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-lp')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 11. RELOCAÇÃO DE POSTE / DESLOCAMENTO DE REDE -->
-    <div class="subform" id="sf-reloc-rede">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box">FOP serviço de obra<br>ATENÇÃO: INCLUIR DOCUMENTO DE PROPRIEDADE<br>Para Isolamento De Rede, Usar Code Deslocamento De Rede E Informar Que É Deslocamento De Rede, Não Colocar A Informação Isolamento de rede</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="ro_solic" placeholder="Nome completo do solicitante" required></div>
-        <div class="field-group"><label>PRX *</label><input type="text" id="ro_prx" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="ro_tel" placeholder="Ex: 84-988887777" required></div>
-        <div class="field-group"><label>e-mail *</label><input type="text" id="ro_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>DOCs anexado (escritura publica, itr, iptu...) *</label><input type="text" id="ro_docs" placeholder="Ex: Escritura pública, ITR, IPTU, termo de posse..." required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarRelocRede()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-reloc-rede')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 12. REFORMA PADRÃO -->
     <div class="subform" id="sf-ref-padrao">
@@ -1870,31 +1831,7 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarCPNB()">Gerar Texto e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-cpnb')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 15. MEDIDOR ROUBADO -->
-    <div class="subform" id="sf-med-roub">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="mr_solic" placeholder="Nome completo" required></div>
-        <div class="field-group"><label>PRX *</label><input type="text" id="mr_prx" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="mr_tel" placeholder="Ex: 84-988887777" required></div>
-        <div class="field-group"><label>e-mail *</label><input type="text" id="mr_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Nº Medidor Roubado *</label><input type="text" id="mr_num" placeholder="Ex: 12345678" required></div>
-        <div class="field-group full-width"><label>Nº do BO: *</label><input type="text" id="mr_bo" placeholder="Ex: 00123/2026" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarMedRoubado()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-med-roub')">Limpar Tudo</button></div>
-    </div>
 
-    <!-- 16. SELAGEM DO MEDIDOR -->
-    <div class="subform" id="sf-selagem">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="sel_solic" placeholder="Nome completo" required></div>
-        <div class="field-group"><label>PRX *</label><input type="text" id="sel_prx" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="sel_tel" placeholder="Ex: 84-988887777" required></div>
-        <div class="field-group"><label>e-mail *</label><input type="text" id="sel_email" placeholder="cliente@email.com ou Não informado" required></div>
-        </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarSelagem()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-selagem')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 17. VERIFICAÇÃO DE EQUIPAMENTO -->
     <div class="subform" id="sf-verif-equip">
@@ -1911,18 +1848,6 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarVerifEquip()">Gerar Texto de AGENDA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-verif-equip')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 18. SERVIÇO NO RAMAL -->
-    <div class="subform" id="sf-ramal">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="sram_solic" placeholder="Nome completo" required></div>
-        <div class="field-group"><label>PRX *</label><input type="text" id="sram_prx" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="sram_tel" placeholder="Ex: 84-988887777" required></div>
-        <div class="field-group"><label>e-mail *</label><input type="text" id="sram_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Motivo da solicitação: *</label><input type="text" id="sram_motivo" placeholder="Ex: Fiação baixa / cabo partido / ramal solto" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarServRamal()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-ramal')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 19. USO DE APARELHAGEM MÉDICA -->
     <div class="subform" id="sf-aparelhagem">
@@ -1935,36 +1860,8 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarAparelhagemMedica()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-aparelhagem')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 20. CADASTRO DE PARCEIRO - ISENÇÃO ICMS -->
-    <div class="subform" id="sf-isencao-icms">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box">OBS.: Caso o cliente não esteja com CNAE B2_1 (ou está, mas atividade não é a mesma do sistema) É necessário realizar modificação contratual.</div>
-      <div class="form-grid">
-        <div class="field-group"><label>NUMERO DA INSCRICAO ESTADUAL *</label><input type="text" id="icms_ie" placeholder="Ex: 20.123.456-7" required></div>
-        <div class="field-group"><label>REF *</label><input type="text" id="icms_ref" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group"><label>TEL *</label><input type="text" id="icms_tel" placeholder="Ex: 84988887777" required></div>
-        <div class="field-group"><label>SOLICITANTE *</label><input type="text" id="icms_solic" placeholder="Nome completo do solicitante" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarIsencaoICMS()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-isencao-icms')">Limpar Tudo</button></div>
-    </div>
 
-    <!-- 21. DATA BOA -->
-    <div class="subform" id="sf-data-boa">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="form-grid">
-        <div class="field-group full-width"><label>DIA XX *</label><input type="text" id="db_dia" placeholder="Ex: 10" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarDataBoa()">Gerar Texto de AGENDA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-data-boa')">Limpar Tudo</button></div>
-    </div>
 
-    <!-- 22. DÉBITO AUTOMÁTICO -->
-    <div class="subform" id="sf-deb-auto">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="form-grid">
-        <div class="field-group full-width"><label>TITULAR SR *</label><input type="text" id="da_titular" placeholder="Nome completo do titular" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarDebitoAutomatico()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-deb-auto')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 23. RESSARCIMENTO DE DANOS ELÉTRICOS -->
     <div class="subform" id="sf-danos-eletricos">
@@ -2063,15 +1960,6 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarParcelamento()">Gerar Texto e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-parcelamento')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 28. CANCELAMENTO DE PARCELAMENTO -->
-    <div class="subform" id="sf-canc-parc">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Plano de parcelamento nº: *</label><input type="text" id="cparc_plano" placeholder="Ex: 12345" required></div>
-        <div class="field-group"><label>Cancelado devido a: *</label><input type="text" id="cparc_motivo" placeholder="Ex: ao não pagamento do sinal." required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarCancParcelamento()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-canc-parc')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 29. ESTORNO DE MOVEIN E MOVEOUT -->
     <div class="subform" id="sf-movein-moveout">
@@ -2816,7 +2704,7 @@
   })();
 
   // ---- modelos embutidos (src/modelos) ----
-  var MODELOS_EMBUTIDOS = [{"id":"atualizacao-cadastral","sf":"sf-atualizacao-cadastral","nome":"Atualização Cadastral","categoria":"Titularidade e Cadastro","descricao":"Migrado do código (piloto da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"texto":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true},{"id":"alerta_ac_nome","texto":"Atenção: se for apenas correção do nome, pode ser feito no OneCode (2º Nível).","mostrarSe":{"campo":"motivo","igual":"Correção de Nome"}}],"campos":[{"id":"motivo","elementoId":"ac_motivo","rotulo":"Motivo","tipo":"opcao","obrigatorio":true,"opcoes":["Erro de Endereço","Unificar PN","Correção de Nome"]},{"id":"pns","elementoId":"ac_pns","rotulo":"PNs a unificar","tipo":"texto","obrigatorio":true,"dica":"Ex: 1010000001, 1010000002","mostrarSe":{"campo":"motivo","igual":"Unificar PN"}},{"id":"nome","elementoId":"ac_nome","rotulo":"Nome","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"tel","elementoId":"ac_tel","rotulo":"Telefone","tipo":"telefone","obrigatorio":true},{"id":"email","elementoId":"ac_email","rotulo":"E-mail","tipo":"email","obrigatorio":true},{"id":"rg","elementoId":"ac_rg","rotulo":"RG","tipo":"texto","dica":"Em branco = não entra no texto"},{"id":"cnh","elementoId":"ac_cnh","rotulo":"CNH","tipo":"texto","dica":"Em branco = não entra no texto"},{"id":"idp","elementoId":"ac_id","rotulo":"ID (identificação profissional)","tipo":"texto","dica":"Em branco = não entra no texto"}],"nota":"Gentileza Atualizar Cadastro\nMotivo: {{motivo}}\n{{#se motivo=Unificar PN}}\nPNs: {{pns}}\n{{/se}}\n{{#se nome}}\nNome: {{nome}}\n{{/se}}\n{{#se tel}}\nTelefone: {{tel}}\n{{/se}}\n{{#se email}}\nE-mail: {{email}}\n{{/se}}\n{{#se rg}}\nRG: {{rg}}\n{{/se}}\n{{#se cnh}}\nCNH: {{cnh}}\n{{/se}}\n{{#se idp}}\nID (identificação profissional): {{idp}}\n{{/se}}","agenda":""}];
+  var MODELOS_EMBUTIDOS = [{"id":"atualizacao-cadastral","sf":"sf-atualizacao-cadastral","nome":"Atualização Cadastral","categoria":"Titularidade e Cadastro","descricao":"Migrado do código (piloto da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"texto":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true},{"id":"alerta_ac_nome","texto":"Atenção: se for apenas correção do nome, pode ser feito no OneCode (2º Nível).","mostrarSe":{"campo":"motivo","igual":"Correção de Nome"}}],"campos":[{"id":"motivo","elementoId":"ac_motivo","rotulo":"Motivo","tipo":"opcao","obrigatorio":true,"opcoes":["Erro de Endereço","Unificar PN","Correção de Nome"]},{"id":"pns","elementoId":"ac_pns","rotulo":"PNs a unificar","tipo":"texto","obrigatorio":true,"dica":"Ex: 1010000001, 1010000002","mostrarSe":{"campo":"motivo","igual":"Unificar PN"}},{"id":"nome","elementoId":"ac_nome","rotulo":"Nome","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"tel","elementoId":"ac_tel","rotulo":"Telefone","tipo":"telefone","obrigatorio":true},{"id":"email","elementoId":"ac_email","rotulo":"E-mail","tipo":"email","obrigatorio":true},{"id":"rg","elementoId":"ac_rg","rotulo":"RG","tipo":"texto","dica":"Em branco = não entra no texto"},{"id":"cnh","elementoId":"ac_cnh","rotulo":"CNH","tipo":"texto","dica":"Em branco = não entra no texto"},{"id":"idp","elementoId":"ac_id","rotulo":"ID (identificação profissional)","tipo":"texto","dica":"Em branco = não entra no texto"}],"nota":"Gentileza Atualizar Cadastro\nMotivo: {{motivo}}\n{{#se motivo=Unificar PN}}\nPNs: {{pns}}\n{{/se}}\n{{#se nome}}\nNome: {{nome}}\n{{/se}}\n{{#se tel}}\nTelefone: {{tel}}\n{{/se}}\n{{#se email}}\nE-mail: {{email}}\n{{/se}}\n{{#se rg}}\nRG: {{rg}}\n{{/se}}\n{{#se cnh}}\nCNH: {{cnh}}\n{{/se}}\n{{#se idp}}\nID (identificação profissional): {{idp}}\n{{/se}}","agenda":"","botao":"Gerar Texto e Copiar NOTA"},{"id":"cancelamento-parcelamento","sf":"sf-canc-parc","nome":"Cancelamento de Parcelamento","categoria":"Parcelamento","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true}],"campos":[{"id":"plano","elementoId":"cparc_plano","rotulo":"Plano de parcelamento nº:","tipo":"texto","obrigatorio":true,"dica":"Ex: 12345"},{"id":"motivo","elementoId":"cparc_motivo","rotulo":"Cancelado devido a:","tipo":"texto","obrigatorio":true,"dica":"Ex: ao não pagamento do sinal."}],"nota":"Plano de parcelamento {{plano}} cancelado devido {{motivo}}","agenda":"Plano de parcelamento {{plano}} cancelado devido {{motivo}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"data-boa","sf":"sf-data-boa","nome":"DATA BOA","categoria":"Faturamento e Débitos","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"agenda","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true}],"campos":[{"id":"dia","elementoId":"db_dia","rotulo":"DIA XX","tipo":"texto","obrigatorio":true,"dica":"Ex: 10","largo":true}],"nota":"CLIENTE SOLICITA DATA BOA PARA O DIA {{dia}}","agenda":"CLIENTE SOLICITA DATA BOA PARA O DIA {{dia}}","botao":"Gerar Texto de AGENDA e Copiar"},{"id":"debito-automatico","sf":"sf-deb-auto","nome":"Débito automático","categoria":"Faturamento e Débitos","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true}],"campos":[{"id":"titular","elementoId":"da_titular","rotulo":"TITULAR SR","tipo":"texto","obrigatorio":true,"dica":"Nome completo do titular","largo":true}],"nota":"DESCADASTRO DÉBITO AUTOMÁTICO A PEDIDO DO TITULAR SR \n{{titular}}","agenda":"DESCADASTRO DÉBITO AUTOMÁTICO A PEDIDO DO TITULAR SR \n{{titular}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"inspecao-ligacao-91","sf":"sf-insp","nome":"Inspeção e ligação 91*","categoria":"Ligação e Reativação","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true},{"html":"Atenção: No caso de pessoa jurídica colocar o nome do representante legal no nome do cliente."}],"campos":[{"id":"solic","elementoId":"insp_solic","rotulo":"Solicitante","tipo":"texto","obrigatorio":true,"dica":"Nome completo (Representante legal se PJ)"},{"id":"prx","elementoId":"insp_prx","rotulo":"PRX","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"tel","elementoId":"insp_tel","rotulo":"Tel (XX-9XXXXXXXX)","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84-988887777"},{"id":"email","elementoId":"insp_email","rotulo":"e-mail","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"},{"id":"carga","elementoId":"insp_carga","rotulo":"Carga (kW)","tipo":"texto","obrigatorio":true,"dica":"Ex: 10kw"},{"id":"pg","elementoId":"insp_pg","rotulo":"PG","tipo":"texto","dica":"Opcional — nº do pagamento, se houver"},{"id":"emp","elementoId":"insp_emp","rotulo":"Empreendimento:","tipo":"texto","obrigatorio":true,"dica":"Nome do condomínio/prédio"},{"id":"bloco","elementoId":"insp_bloco","rotulo":"Bloco/Torre (quando houver)","tipo":"texto","dica":"Ex: Bloco A ou deixe em branco"},{"id":"muc","elementoId":"insp_muc","rotulo":"Referente a MUC 92*","tipo":"texto","obrigatorio":true,"dica":"Ex: 92xxxxxxx","largo":true}],"nota":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Carga {{carga}}{{#se pg}} PG {{pg}}{{/se}} Empreendimento: {{emp}}{{#se bloco}} Bloco/Torre: {{bloco}} (quando houver){{/se}} referente a MUC {{muc}}","agenda":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Carga {{carga}}{{#se pg}} PG {{pg}}{{/se}} Empreendimento: {{emp}}{{#se bloco}} Bloco/Torre: {{bloco}} (quando houver){{/se}} referente a MUC {{muc}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"isencao-icms","sf":"sf-isencao-icms","nome":"Cadastro de Parceiro - Isenção ICMS","categoria":"Titularidade e Cadastro","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true},{"html":"OBS.: Caso o cliente não esteja com CNAE B2_1 (ou está, mas atividade não é a mesma do sistema) É necessário realizar modificação contratual."}],"campos":[{"id":"ie","elementoId":"icms_ie","rotulo":"NUMERO DA INSCRICAO ESTADUAL","tipo":"texto","obrigatorio":true,"dica":"Ex: 20.123.456-7"},{"id":"ref","elementoId":"icms_ref","rotulo":"REF","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"tel","elementoId":"icms_tel","rotulo":"TEL","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84988887777"},{"id":"solic","elementoId":"icms_solic","rotulo":"SOLICITANTE","tipo":"texto","obrigatorio":true,"dica":"Nome completo do solicitante"}],"nota":"GENTILEZA CADASTRAR PRODUTOR RURAL \nNUMERO DA INSCRICAO ESTADUAL {{ie}} \nREF {{ref}}\nTEL {{tel}} \nSOLICITANTE {{solic}}","agenda":"GENTILEZA CADASTRAR PRODUTOR RURAL \nNUMERO DA INSCRICAO ESTADUAL {{ie}} \nREF {{ref}}\nTEL {{tel}} \nSOLICITANTE {{solic}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"medidor-roubado","sf":"sf-med-roub","nome":"Medidor Roubado","categoria":"Medição e Rede","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true}],"campos":[{"id":"solic","elementoId":"mr_solic","rotulo":"Solicitante","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"prx","elementoId":"mr_prx","rotulo":"PRX","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"tel","elementoId":"mr_tel","rotulo":"Tel (XX-9XXXXXXXX)","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84-988887777"},{"id":"email","elementoId":"mr_email","rotulo":"e-mail","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"},{"id":"num","elementoId":"mr_num","rotulo":"Nº Medidor Roubado","tipo":"texto","obrigatorio":true,"dica":"Ex: 12345678"},{"id":"bo","elementoId":"mr_bo","rotulo":"Nº do BO:","tipo":"texto","obrigatorio":true,"dica":"Ex: 00123/2026","largo":true}],"nota":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Nº Medidor Roubado {{num}} Nº do BO: {{bo}}","agenda":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Nº Medidor Roubado {{num}} Nº do BO: {{bo}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"relocacao-rede","sf":"sf-reloc-rede","nome":"Relocação de poste/deslocamento de rede","categoria":"Medição e Rede","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true},{"html":"FOP serviço de obra<br>ATENÇÃO: INCLUIR DOCUMENTO DE PROPRIEDADE<br>Para Isolamento De Rede, Usar Code Deslocamento De Rede E Informar Que É Deslocamento De Rede, Não Colocar A Informação Isolamento de rede"}],"campos":[{"id":"solic","elementoId":"ro_solic","rotulo":"Solicitante","tipo":"texto","obrigatorio":true,"dica":"Nome completo do solicitante"},{"id":"prx","elementoId":"ro_prx","rotulo":"PRX","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"tel","elementoId":"ro_tel","rotulo":"Tel (XX-9XXXXXXXX)","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84-988887777"},{"id":"email","elementoId":"ro_email","rotulo":"e-mail","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"},{"id":"docs","elementoId":"ro_docs","rotulo":"DOCs anexado (escritura publica, itr, iptu...)","tipo":"texto","obrigatorio":true,"dica":"Ex: Escritura pública, ITR, IPTU, termo de posse..."}],"nota":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}}. Cliente Orientado quanto aos possíveis custos DOCs anexado: {{docs}}","agenda":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}}. Cliente Orientado quanto aos possíveis custos DOCs anexado: {{docs}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"selagem-medidor","sf":"sf-selagem","nome":"Selagem do Medidor","categoria":"Medição e Rede","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true}],"campos":[{"id":"solic","elementoId":"sel_solic","rotulo":"Solicitante","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"prx","elementoId":"sel_prx","rotulo":"PRX","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"tel","elementoId":"sel_tel","rotulo":"Tel (XX-9XXXXXXXX)","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84-988887777"},{"id":"email","elementoId":"sel_email","rotulo":"e-mail","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"}],"nota":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}}","agenda":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}}","botao":"Gerar Texto de NOTA e Copiar"},{"id":"servico-ramal","sf":"sf-ramal","nome":"Serviço no Ramal","categoria":"Medição e Rede","descricao":"Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.","copiar":"nota","avisos":[{"html":"⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️","piscar":true}],"campos":[{"id":"solic","elementoId":"sram_solic","rotulo":"Solicitante","tipo":"texto","obrigatorio":true,"dica":"Nome completo"},{"id":"prx","elementoId":"sram_prx","rotulo":"PRX","tipo":"texto","obrigatorio":true,"dica":"Ponto de referência detalhado"},{"id":"tel","elementoId":"sram_tel","rotulo":"Tel (XX-9XXXXXXXX)","tipo":"telefone","obrigatorio":true,"dica":"Ex: 84-988887777"},{"id":"email","elementoId":"sram_email","rotulo":"e-mail","tipo":"texto","obrigatorio":true,"dica":"cliente@email.com ou Não informado"},{"id":"motivo","elementoId":"sram_motivo","rotulo":"Motivo da solicitação:","tipo":"texto","obrigatorio":true,"dica":"Ex: Fiação baixa / cabo partido / ramal solto"}],"nota":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Motivo da solicitação: {{motivo}}","agenda":"Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Motivo da solicitação: {{motivo}}","botao":"Gerar Texto de NOTA e Copiar"}];
   // Ambiente: false = produção. A cópia em /teste/ é gerada com true:
   // faixa de aviso, histórico separado e atualizações lidas de /teste/.
   var AMBIENTE_TESTE = true;
@@ -3945,12 +3833,6 @@
     finalizarGeracao('sf-relig', txt, txt, 'nota');
   }
 
-  function gerarINSP() {
-    if (!validarCampos('sf-insp')) return;
-    var bloco = getVal('insp_bloco') ? ' Bloco/Torre: ' + getVal('insp_bloco') + ' (quando houver)' : '';
-    var txt = 'Solicitante ' + getVal('insp_solic') + ' PRX ' + getVal('insp_prx') + ' Tel ' + getVal('insp_tel') + ' e-mail ' + getVal('insp_email') + ' Carga ' + getVal('insp_carga') + (getVal('insp_pg') ? ' PG ' + getVal('insp_pg') : '') + ' Empreendimento: ' + getVal('insp_emp') + bloco + ' referente a MUC ' + getVal('insp_muc');
-    finalizarGeracao('sf-insp', txt, txt, 'nota');
-  }
 
   function gerarLP() {
     if (!validarCampos('sf-lp')) return;
@@ -3958,11 +3840,6 @@
     finalizarGeracao('sf-lp', txt, txt, 'nota');
   }
 
-  function gerarRelocRede() {
-    if (!validarCampos('sf-reloc-rede')) return;
-    var txt = 'Solicitante ' + getVal('ro_solic') + ' PRX ' + getVal('ro_prx') + ' Tel ' + getVal('ro_tel') + ' e-mail ' + getVal('ro_email') + '. Cliente Orientado quanto aos possíveis custos DOCs anexado: ' + getVal('ro_docs');
-    finalizarGeracao('sf-reloc-rede', txt, txt, 'nota');
-  }
 
   function gerarRefPadrao() {
     if (!validarCampos('sf-ref-padrao')) return;
@@ -4025,17 +3902,7 @@
     finalizarGeracao('sf-cpnb', txt, txt, 'nota');
   }
 
-  function gerarMedRoubado() {
-    if (!validarCampos('sf-med-roub')) return;
-    var txt = 'Solicitante ' + getVal('mr_solic') + ' PRX ' + getVal('mr_prx') + ' Tel ' + getVal('mr_tel') + ' e-mail ' + getVal('mr_email') + ' Nº Medidor Roubado ' + getVal('mr_num') + ' Nº do BO: ' + getVal('mr_bo');
-    finalizarGeracao('sf-med-roub', txt, txt, 'nota');
-  }
 
-  function gerarSelagem() {
-    if (!validarCampos('sf-selagem')) return;
-    var txt = 'Solicitante ' + getVal('sel_solic') + ' PRX ' + getVal('sel_prx') + ' Tel ' + getVal('sel_tel') + ' e-mail ' + getVal('sel_email');
-    finalizarGeracao('sf-selagem', txt, txt, 'nota');
-  }
 
   function gerarVerifEquip() {
     if (!validarCampos('sf-verif-equip')) return;
@@ -4050,11 +3917,6 @@
   }
 
 
-  function gerarServRamal() {
-    if (!validarCampos('sf-ramal')) return;
-    var txt = 'Solicitante ' + getVal('sram_solic') + ' PRX ' + getVal('sram_prx') + ' Tel ' + getVal('sram_tel') + ' e-mail ' + getVal('sram_email') + ' Motivo da solicitação: ' + getVal('sram_motivo');
-    finalizarGeracao('sf-ramal', txt, txt, 'nota');
-  }
 
   function gerarAparelhagemMedica() {
     if (!validarCampos('sf-aparelhagem')) return;
@@ -4065,23 +3927,8 @@
     finalizarGeracao('sf-aparelhagem', txt, txt, 'nota');
   }
 
-  function gerarIsencaoICMS() {
-    if (!validarCampos('sf-isencao-icms')) return;
-    var txt = 'GENTILEZA CADASTRAR PRODUTOR RURAL \nNUMERO DA INSCRICAO ESTADUAL ' + getVal('icms_ie') + ' \nREF ' + getVal('icms_ref') + '\nTEL ' + getVal('icms_tel') + ' \nSOLICITANTE ' + getVal('icms_solic');
-    finalizarGeracao('sf-isencao-icms', txt, txt, 'nota');
-  }
 
-  function gerarDataBoa() {
-    if (!validarCampos('sf-data-boa')) return;
-    var txt = 'CLIENTE SOLICITA DATA BOA PARA O DIA ' + getVal('db_dia');
-    finalizarGeracao('sf-data-boa', txt, txt, 'agenda');
-  }
 
-  function gerarDebitoAutomatico() {
-    if (!validarCampos('sf-deb-auto')) return;
-    var txt = 'DESCADASTRO DÉBITO AUTOMÁTICO A PEDIDO DO TITULAR SR \n' + getVal('da_titular');
-    finalizarGeracao('sf-deb-auto', txt, txt, 'nota');
-  }
 
   function gerarDanosEletricos() {
     if (!validarCampos('sf-danos-eletricos')) return;
@@ -4156,11 +4003,6 @@
     finalizarGeracao('sf-parcelamento', txt, txt, 'nota');
   }
 
-  function gerarCancParcelamento() {
-    if (!validarCampos('sf-canc-parc')) return;
-    var txt = 'Plano de parcelamento ' + getVal('cparc_plano') + ' cancelado devido ' + getVal('cparc_motivo');
-    finalizarGeracao('sf-canc-parc', txt, txt, 'nota');
-  }
 
   function gerarMoveInMoveOut() {
     if (!validarCampos('sf-movein-moveout')) return;
@@ -4833,16 +4675,13 @@
     toggleTrPartidas: toggleTrPartidas, toggleBloqCobranca: toggleBloqCobranca, toggleBPC: toggleBPC,
     gerarReclamacaoUnificada: gerarReclamacaoUnificada, gerarReclamacaoGD: gerarReclamacaoGD,
     gerarLigacaoNova: gerarLigacaoNova, gerarLigacaoMUC: gerarLigacaoMUC, gerarReativComum: gerarReativComum, gerarReativVirtual: gerarReativVirtual, gerarDD: gerarDD, gerarTT: gerarTT,
-    gerarRI: gerarRI, gerarMC: gerarMC, gerarRES: gerarRES, gerarRelig: gerarRelig,
-    gerarINSP: gerarINSP, gerarLP: gerarLP, gerarRelocRede: gerarRelocRede,
+    gerarRI: gerarRI, gerarMC: gerarMC, gerarRES: gerarRES, gerarRelig: gerarRelig, gerarLP: gerarLP,
     gerarRefPadrao: gerarRefPadrao, gerarAfericao: gerarAfericao, gerarCPNB: gerarCPNB,
-    gerarMedRoubado: gerarMedRoubado, gerarSelagem: gerarSelagem,
-    gerarVerifEquip: gerarVerifEquip, gerarServRamal: gerarServRamal,
-    gerarAparelhagemMedica: gerarAparelhagemMedica, gerarIsencaoICMS: gerarIsencaoICMS,
-    gerarDataBoa: gerarDataBoa, gerarDebitoAutomatico: gerarDebitoAutomatico,
+    gerarVerifEquip: gerarVerifEquip,
+    gerarAparelhagemMedica: gerarAparelhagemMedica,
     gerarDanosEletricos: gerarDanosEletricos, gerarOutrosDanos: gerarOutrosDanos,
     gerarTarefaNEO: gerarTarefaNEO, gerarDefesaAdm: gerarDefesaAdm,
-    gerarParcelamento: gerarParcelamento, gerarCancParcelamento: gerarCancParcelamento,
+    gerarParcelamento: gerarParcelamento,
     gerarMoveInMoveOut: gerarMoveInMoveOut, gerarRDEDocumentacao: gerarRDEDocumentacao,
     gerarParcTT: gerarParcTT, gerarTrPartidas: gerarTrPartidas,
     gerarTeleGravacao: gerarTeleGravacao, gerarBloqCobranca: gerarBloqCobranca,
@@ -6129,7 +5968,7 @@
   // ?v=2.6.1) levam direto para a produção.
   // PUBLICAR: troque o código abaixo e o campo "versao" do versao.json pelo mesmo
   // valor (ex.: a data e hora da publicação). Ele é interno e não aparece na tela.
-  var VERSAO_ATUAL = '2.18.3';
+  var VERSAO_ATUAL = '2.19.0';
   var SITE_PRODUCAO = 'https://textos-padroes.pages.dev/';   // endereço oficial (Cloudflare, com login)
   var NA_WEB = /^https?:$/.test(location.protocol);
 
@@ -7146,7 +6985,7 @@
 
   function mdCriarCampo(m, c) {
     var grupo = document.createElement('div');
-    grupo.className = 'field-group' + (c.tipo === 'textoLongo' || c.tipo === 'opcao' ? ' full-width' : '');
+    grupo.className = 'field-group' + (c.largo || c.tipo === 'textoLongo' || c.tipo === 'opcao' ? ' full-width' : '');
     var id = mdElemento(m, c);
     var rot = document.createElement('label');
     rot.setAttribute('for', id);
@@ -7190,8 +7029,11 @@
     (m.avisos || []).forEach(function(a, i) {
       var av = document.createElement('div');
       var obj = a && typeof a === 'object';
-      av.className = 'alert-box' + (obj && a.piscar ? ' alert-box-blink' : '');
-      av.textContent = obj ? a.texto : a;
+      av.className = 'alert-box' + (obj && a.piscar ? ' alert-box-blink' : '') + (obj && a.classe ? ' ' + a.classe : '');
+      // HTML só para modelos embutidos (vêm do repositório); os do painel são sempre texto puro
+      if (obj && a.html && m._embutido) av.innerHTML = a.html;
+      else av.textContent = obj ? a.texto || '' : a;
+      if (obj && a.estilo && m._embutido) av.setAttribute('style', a.estilo);
       av.setAttribute('data-aviso', String(i));
       if (obj && a.id) av.id = a.id;
       form.appendChild(av);
@@ -7205,7 +7047,7 @@
     var gerar = document.createElement('button');
     gerar.type = 'button';
     gerar.className = 'btn';
-    gerar.textContent = 'Gerar Texto e Copiar ' + (m.copiar === 'agenda' ? 'AGENDA' : 'NOTA');
+    gerar.textContent = m.botao || 'Gerar Texto e Copiar ' + (m.copiar === 'agenda' ? 'AGENDA' : 'NOTA');
     gerar.addEventListener('click', function() { mdGerarTexto(m); });
     var limpar = document.createElement('button');
     limpar.type = 'button';
@@ -7251,7 +7093,7 @@
   function mdAplicar(publicados) {
     // embutidos primeiro; um modelo publicado com o mesmo id substitui o embutido
     var porId = {};
-    (typeof MODELOS_EMBUTIDOS !== 'undefined' ? MODELOS_EMBUTIDOS : []).forEach(function(m) { porId[m.id] = m; });
+    (typeof MODELOS_EMBUTIDOS !== 'undefined' ? MODELOS_EMBUTIDOS : []).forEach(function(m) { m._embutido = true; porId[m.id] = m; });
     (publicados || []).forEach(function(m) { if (m && m.id) porId[m.id] = m; });
     var lista = Object.keys(porId).map(function(k) { return porId[k]; });
     var novos = {};

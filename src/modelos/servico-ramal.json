@@ -1,0 +1,59 @@
+{
+  "id": "servico-ramal",
+  "sf": "sf-ramal",
+  "nome": "Serviço no Ramal",
+  "categoria": "Medição e Rede",
+  "descricao": "Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "piscar": true
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "elementoId": "sram_solic",
+      "rotulo": "Solicitante",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo"
+    },
+    {
+      "id": "prx",
+      "elementoId": "sram_prx",
+      "rotulo": "PRX",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ponto de referência detalhado"
+    },
+    {
+      "id": "tel",
+      "elementoId": "sram_tel",
+      "rotulo": "Tel (XX-9XXXXXXXX)",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84-988887777"
+    },
+    {
+      "id": "email",
+      "elementoId": "sram_email",
+      "rotulo": "e-mail",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "motivo",
+      "elementoId": "sram_motivo",
+      "rotulo": "Motivo da solicitação:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: Fiação baixa / cabo partido / ramal solto"
+    }
+  ],
+  "nota": "Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Motivo da solicitação: {{motivo}}",
+  "agenda": "Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Motivo da solicitação: {{motivo}}",
+  "botao": "Gerar Texto de NOTA e Copiar"
+}

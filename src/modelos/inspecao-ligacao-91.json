@@ -1,0 +1,93 @@
+{
+  "id": "inspecao-ligacao-91",
+  "sf": "sf-insp",
+  "nome": "Inspeção e ligação 91*",
+  "categoria": "Ligação e Reativação",
+  "descricao": "Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "piscar": true
+    },
+    {
+      "html": "Atenção: No caso de pessoa jurídica colocar o nome do representante legal no nome do cliente."
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "elementoId": "insp_solic",
+      "rotulo": "Solicitante",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo (Representante legal se PJ)"
+    },
+    {
+      "id": "prx",
+      "elementoId": "insp_prx",
+      "rotulo": "PRX",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ponto de referência detalhado"
+    },
+    {
+      "id": "tel",
+      "elementoId": "insp_tel",
+      "rotulo": "Tel (XX-9XXXXXXXX)",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84-988887777"
+    },
+    {
+      "id": "email",
+      "elementoId": "insp_email",
+      "rotulo": "e-mail",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "carga",
+      "elementoId": "insp_carga",
+      "rotulo": "Carga (kW)",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 10kw"
+    },
+    {
+      "id": "pg",
+      "elementoId": "insp_pg",
+      "rotulo": "PG",
+      "tipo": "texto",
+      "dica": "Opcional — nº do pagamento, se houver"
+    },
+    {
+      "id": "emp",
+      "elementoId": "insp_emp",
+      "rotulo": "Empreendimento:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome do condomínio/prédio"
+    },
+    {
+      "id": "bloco",
+      "elementoId": "insp_bloco",
+      "rotulo": "Bloco/Torre (quando houver)",
+      "tipo": "texto",
+      "dica": "Ex: Bloco A ou deixe em branco"
+    },
+    {
+      "id": "muc",
+      "elementoId": "insp_muc",
+      "rotulo": "Referente a MUC 92*",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 92xxxxxxx",
+      "largo": true
+    }
+  ],
+  "nota": "Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Carga {{carga}}{{#se pg}} PG {{pg}}{{/se}} Empreendimento: {{emp}}{{#se bloco}} Bloco/Torre: {{bloco}} (quando houver){{/se}} referente a MUC {{muc}}",
+  "agenda": "Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Carga {{carga}}{{#se pg}} PG {{pg}}{{/se}} Empreendimento: {{emp}}{{#se bloco}} Bloco/Torre: {{bloco}} (quando houver){{/se}} referente a MUC {{muc}}",
+  "botao": "Gerar Texto de NOTA e Copiar"
+}

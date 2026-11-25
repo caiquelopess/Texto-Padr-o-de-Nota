@@ -1,0 +1,35 @@
+{
+  "id": "cancelamento-parcelamento",
+  "sf": "sf-canc-parc",
+  "nome": "Cancelamento de Parcelamento",
+  "categoria": "Parcelamento",
+  "descricao": "Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "piscar": true
+    }
+  ],
+  "campos": [
+    {
+      "id": "plano",
+      "elementoId": "cparc_plano",
+      "rotulo": "Plano de parcelamento nº:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 12345"
+    },
+    {
+      "id": "motivo",
+      "elementoId": "cparc_motivo",
+      "rotulo": "Cancelado devido a:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: ao não pagamento do sinal."
+    }
+  ],
+  "nota": "Plano de parcelamento {{plano}} cancelado devido {{motivo}}",
+  "agenda": "Plano de parcelamento {{plano}} cancelado devido {{motivo}}",
+  "botao": "Gerar Texto de NOTA e Copiar"
+}

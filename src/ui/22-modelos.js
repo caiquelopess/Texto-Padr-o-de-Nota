@@ -48,7 +48,7 @@
 
   function mdCriarCampo(m, c) {
     var grupo = document.createElement('div');
-    grupo.className = 'field-group' + (c.tipo === 'textoLongo' || c.tipo === 'opcao' ? ' full-width' : '');
+    grupo.className = 'field-group' + (c.largo || c.tipo === 'textoLongo' || c.tipo === 'opcao' ? ' full-width' : '');
     var id = mdElemento(m, c);
     var rot = document.createElement('label');
     rot.setAttribute('for', id);
@@ -92,8 +92,11 @@
     (m.avisos || []).forEach(function(a, i) {
       var av = document.createElement('div');
       var obj = a && typeof a === 'object';
-      av.className = 'alert-box' + (obj && a.piscar ? ' alert-box-blink' : '');
-      av.textContent = obj ? a.texto : a;
+      av.className = 'alert-box' + (obj && a.piscar ? ' alert-box-blink' : '') + (obj && a.classe ? ' ' + a.classe : '');
+      // HTML só para modelos embutidos (vêm do repositório); os do painel são sempre texto puro
+      if (obj && a.html && m._embutido) av.innerHTML = a.html;
+      else av.textContent = obj ? a.texto || '' : a;
+      if (obj && a.estilo && m._embutido) av.setAttribute('style', a.estilo);
       av.setAttribute('data-aviso', String(i));
       if (obj && a.id) av.id = a.id;
       form.appendChild(av);
@@ -107,7 +110,7 @@
     var gerar = document.createElement('button');
     gerar.type = 'button';
     gerar.className = 'btn';
-    gerar.textContent = 'Gerar Texto e Copiar ' + (m.copiar === 'agenda' ? 'AGENDA' : 'NOTA');
+    gerar.textContent = m.botao || 'Gerar Texto e Copiar ' + (m.copiar === 'agenda' ? 'AGENDA' : 'NOTA');
     gerar.addEventListener('click', function() { mdGerarTexto(m); });
     var limpar = document.createElement('button');
     limpar.type = 'button';
@@ -153,7 +156,7 @@
   function mdAplicar(publicados) {
     // embutidos primeiro; um modelo publicado com o mesmo id substitui o embutido
     var porId = {};
-    (typeof MODELOS_EMBUTIDOS !== 'undefined' ? MODELOS_EMBUTIDOS : []).forEach(function(m) { porId[m.id] = m; });
+    (typeof MODELOS_EMBUTIDOS !== 'undefined' ? MODELOS_EMBUTIDOS : []).forEach(function(m) { m._embutido = true; porId[m.id] = m; });
     (publicados || []).forEach(function(m) { if (m && m.id) porId[m.id] = m; });
     var lista = Object.keys(porId).map(function(k) { return porId[k]; });
     var novos = {};

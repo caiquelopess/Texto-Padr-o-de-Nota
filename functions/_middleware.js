@@ -22,8 +22,9 @@ import {
   usuarioValido,
 } from './_lib/autenticacao.js';
 import { idValido, listarFormularios, nomeDoArquivo, nomeValido, TAMANHO_MAXIMO, tipoDoArquivo } from './_lib/formularios.js';
+import { PERFIS, perfilDe, perfisQuePodeCriar, pode, podeGerenciar } from './_lib/permissoes.js';
 import { LIMITE_DIA, listarSugestoes, validarSugestao } from './_lib/sugestoes.js';
-import { telaAdmin, telaAuditoria, telaFormularios, telaLogin, telaSugestoes, telaTrocarSenha } from './_lib/telas.js';
+import { telaAdmin, telaAuditoria, telaFormularios, telaLogin, telaPainel, telaSugestoes, telaTrocarSenha } from './_lib/telas.js';
 
 const COOKIE = '__Host-tp_sessao';
 const SEGURANCA = {
@@ -58,6 +59,10 @@ async function listarUsuarios(env) {
 // Gestor geral: o usuário configurado em ADMIN_USUARIO. Só ele lê as sugestões
 // e nenhum outro administrador pode removê-lo, desativá-lo ou trocar a senha dele.
 const ehGestor = (env, usuario) => usuario === normalizarUsuario(env.ADMIN_USUARIO);
+
+const perfil = (env, reg) => perfilDe(reg, normalizarUsuario(env.ADMIN_USUARIO));
+const proibido = (texto = 'Seu perfil não tem acesso a esta área.') =>
+  html(`<!doctype html><meta charset="utf-8"><p>${texto}</p><p><a href="/">Voltar ao sistema</a></p>`, 403);
 
 function configurado(env) {
   return env.USUARIOS && env.SEGREDO_SESSAO && env.SEGREDO_SESSAO.length >= 32 && env.ADMIN_USUARIO && env.ADMIN_SENHA;
@@ -96,9 +101,11 @@ async function entrar(request, env) {
     await gravarUsuario(env, reg);
   } else if (!reg?.ativo || !(await conferirSenha(senha, reg))) {
     await env.USUARIOS.put(chaveT, String(tentativas + 1), { expirationTtl: BLOQUEIO_SEGUNDOS });
+    if (reg && tentativas + 1 === MAX_TENTATIVAS) await registrar(env.USUARIOS, usuario, 'Acesso bloqueado por 15 min (senhas erradas)', usuario);
     return falha(reg && !reg.ativo ? 'Usuário desativado. Fale com o responsável.' : 'Usuário ou senha incorretos.');
   }
   await env.USUARIOS.delete(chaveT);
+  await registrar(env.USUARIOS, usuario, 'Entrou no sistema', usuario);
   reg.ultimoAcesso = Date.now();
   await gravarUsuario(env, reg);
   const token = await criarSessao(env.SEGREDO_SESSAO, usuario, reg.versaoSenha);
@@ -117,6 +124,7 @@ async function trocarSenha(request, env, reg) {
   if (nova === atual) return erro('A nova senha precisa ser diferente da senha atual.');
   Object.assign(reg, await gerarHash(nova), { versaoSenha: reg.versaoSenha + 1 });
   delete reg.trocarSenha;
+  await registrar(env.USUARIOS, reg.usuario, obrigatoria ? 'Criou a própria senha (primeiro acesso)' : 'Trocou a própria senha', reg.usuario);
   await gravarUsuario(env, reg);
   const token = await criarSessao(env.SEGREDO_SESSAO, reg.usuario, reg.versaoSenha);
   if (obrigatoria) return redirecionar('/', { 'set-cookie': cookieSessao(token, DURACAO_SESSAO_MS / 1000) });
@@ -124,10 +132,27 @@ async function trocarSenha(request, env, reg) {
 }
 
 async function admin(request, env, reg) {
-  if (!reg.admin) return html('<!doctype html><meta charset="utf-8"><p>Acesso restrito ao responsável.</p>', 403);
+  const meu = perfil(env, reg);
+  if (!pode(meu, 'usuarios.ver')) return proibido();
+  const gestor = normalizarUsuario(env.ADMIN_USUARIO);
   const tela = async (msg = {}) =>
-    html(telaAdmin({ usuario: reg.usuario, gestor: normalizarUsuario(env.ADMIN_USUARIO), usuarios: await listarUsuarios(env), ...msg }), msg.erro ? 400 : 200);
+    html(
+      telaAdmin({
+        usuario: reg.usuario,
+        gestor,
+        perfil: meu,
+        criaveis: pode(meu, 'usuarios.gerenciar') ? perfisQuePodeCriar(meu) : [],
+        usuarios: (await listarUsuarios(env)).map((u) => ({
+          ...u,
+          perfil: perfilDe(u, gestor),
+          gerenciavel: u.usuario !== reg.usuario && pode(meu, 'usuarios.gerenciar') && podeGerenciar(meu, perfilDe(u, gestor)),
+        })),
+        ...msg,
+      }),
+      msg.erro ? 400 : 200,
+    );
   if (request.method !== 'POST') return tela();
+  if (!pode(meu, 'usuarios.gerenciar')) return proibido('Seu perfil só pode consultar os usuários.');
   const form = await request.formData();
   const acao = String(form.get('acao') || '');
   const alvo = normalizarUsuario(form.get('usuario'));
@@ -136,24 +161,39 @@ async function admin(request, env, reg) {
   const existente = await lerUsuario(env, alvo);
 
   if (acao === 'criar') {
+    // compatível com o formulário antigo (caixa "admin")
+    const novoPerfil = String(form.get('perfil') || (form.get('admin') === '1' ? 'administrador' : 'atendente'));
     if (existente) return tela({ erro: `O usuário ${alvo} já existe.` });
+    if (!perfisQuePodeCriar(meu).includes(novoPerfil)) return tela({ erro: 'Seu perfil não pode criar usuários com esse perfil.' });
     if (!senhaValida(senha)) return tela({ erro: 'A senha provisória precisa ter no mínimo 4 caracteres.' });
     await gravarUsuario(env, {
       usuario: alvo,
       ...(await gerarHash(senha)),
-      admin: form.get('admin') === '1',
+      perfil: novoPerfil,
+      admin: novoPerfil === 'administrador',
       ativo: true,
       versaoSenha: 1,
       criado: Date.now(),
       criadoPor: reg.usuario,
       trocarSenha: true,
     });
-    await registrar(env.USUARIOS, reg.usuario, form.get('admin') === '1' ? 'Criou acesso de administrador' : 'Criou acesso de atendente', alvo);
+    await registrar(env.USUARIOS, reg.usuario, `Criou acesso de ${PERFIS[novoPerfil].toLowerCase()}`, alvo);
     return tela({ ok: `Usuário ${alvo} criado.` });
   }
   if (!existente) return tela({ erro: `O usuário ${alvo} não existe.` });
   if (alvo === reg.usuario) return tela({ erro: 'Para a sua própria conta, use "Trocar senha".' });
   if (ehGestor(env, alvo)) return tela({ erro: 'O gestor geral do sistema não pode ser alterado por outros administradores.' });
+  const perfilAlvo = perfilDe(existente, gestor);
+  if (!podeGerenciar(meu, perfilAlvo)) return tela({ erro: `Seu perfil não pode alterar usuários com perfil ${PERFIS[perfilAlvo]}.` });
+  if (acao === 'perfil') {
+    const novoPerfil = String(form.get('perfil') || '');
+    if (!perfisQuePodeCriar(meu).includes(novoPerfil)) return tela({ erro: 'Seu perfil não pode atribuir esse perfil.' });
+    if (novoPerfil === perfilAlvo) return tela({ ok: `O perfil de ${alvo} já é ${PERFIS[novoPerfil]}.` });
+    Object.assign(existente, { perfil: novoPerfil, admin: novoPerfil === 'administrador' });
+    await gravarUsuario(env, existente);
+    await registrar(env.USUARIOS, reg.usuario, `Mudou o perfil: ${PERFIS[perfilAlvo]} → ${PERFIS[novoPerfil]}`, alvo);
+    return tela({ ok: `Perfil de ${alvo} alterado para ${PERFIS[novoPerfil]}.` });
+  }
   if (acao === 'redefinir') {
     if (!senhaValida(senha)) return tela({ erro: 'A senha provisória precisa ter no mínimo 4 caracteres.' });
     Object.assign(existente, await gerarHash(senha), { versaoSenha: existente.versaoSenha + 1, trocarSenha: true });
@@ -177,17 +217,55 @@ async function admin(request, env, reg) {
   return tela({ erro: 'Ação desconhecida.' });
 }
 
+async function painel(env, reg) {
+  const meu = perfil(env, reg);
+  if (!pode(meu, 'painel.ver')) return proibido();
+  const gestor = normalizarUsuario(env.ADMIN_USUARIO);
+  const usuarios = await listarUsuarios(env);
+  const semana = Date.now() - 7 * 86400000;
+  const porPerfil = {};
+  for (const u of usuarios) {
+    const p = perfilDe(u, gestor);
+    porPerfil[p] = (porPerfil[p] || 0) + 1;
+  }
+  const sugestoes = pode(meu, 'sugestoes.ver') ? (await listarSugestoes(env.USUARIOS)).filter((x) => x.status !== 'concluida').length : null;
+  return html(
+    telaPainel({
+      usuario: reg.usuario,
+      perfil: meu,
+      numeros: {
+        usuarios: usuarios.length,
+        ativos: usuarios.filter((u) => u.ativo).length,
+        acessaramSemana: usuarios.filter((u) => (u.ultimoAcesso || 0) >= semana).length,
+        primeiroAcesso: usuarios.filter((u) => u.trocarSenha).length,
+        formularios: (await listarFormularios(env.USUARIOS)).length,
+        sugestoes,
+      },
+      porPerfil,
+      recentes: pode(meu, 'auditoria.ver') ? await listarAuditoria(env.USUARIOS, 8) : [],
+    }),
+  );
+}
+
 const json = (dados, status = 200) =>
   new Response(JSON.stringify(dados), { status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store', ...SEGURANCA } });
 
 async function adminFormularios(request, env, reg) {
-  if (!reg.admin) return html('<!doctype html><meta charset="utf-8"><p>Acesso restrito ao responsável.</p>', 403);
+  const meu = perfil(env, reg);
+  if (!pode(meu, 'formularios.ver')) return proibido();
   const tela = async (msg = {}) =>
     html(
-      telaFormularios({ usuario: reg.usuario, gestor: normalizarUsuario(env.ADMIN_USUARIO), formularios: await listarFormularios(env.USUARIOS), ...msg }),
+      telaFormularios({
+        usuario: reg.usuario,
+        perfil: meu,
+        podeEnviar: pode(meu, 'formularios.gerenciar'),
+        formularios: await listarFormularios(env.USUARIOS),
+        ...msg,
+      }),
       msg.erro ? 400 : 200,
     );
   if (request.method !== 'POST') return tela();
+  if (!pode(meu, 'formularios.gerenciar')) return proibido('Seu perfil só pode consultar os formulários.');
   const form = await request.formData();
   const acao = String(form.get('acao') || '');
   if (acao === 'remover') {
@@ -252,7 +330,7 @@ async function receberSugestao(request, env, reg) {
 }
 
 async function adminSugestoes(request, env, reg) {
-  if (!ehGestor(env, reg.usuario)) return html('<!doctype html><meta charset="utf-8"><p>Acesso restrito ao gestor geral do sistema.</p>', 403);
+  if (!pode(perfil(env, reg), 'sugestoes.ver')) return proibido('Acesso restrito ao gestor geral do sistema.');
   const url = new URL(request.url);
   let ver = url.searchParams.get('ver') === 'concluidas' ? 'concluidas' : 'pendentes';
   let ok = '';
@@ -315,7 +393,11 @@ export async function onRequest(context) {
     if (request.method === 'POST') return entrar(request, env);
     return html(telaLogin({ destino: destinoSeguro(url.searchParams.get('destino')) }));
   }
-  if (caminho === '/sair') return redirecionar('/entrar', { 'set-cookie': cookieSessao('', 0) });
+  if (caminho === '/sair') {
+    const quem = await sessaoAtual(request, env);
+    if (quem) await registrar(env.USUARIOS, quem.usuario, 'Saiu do sistema', quem.usuario);
+    return redirecionar('/entrar', { 'set-cookie': cookieSessao('', 0) });
+  }
 
   const reg = await sessaoAtual(request, env);
   if (!reg) {
@@ -331,8 +413,9 @@ export async function onRequest(context) {
     return redirecionar('/trocar-senha');
   }
   if (caminho === '/admin') return admin(request, env, reg);
+  if (caminho === '/admin/painel') return painel(env, reg);
   if (caminho === '/admin/auditoria') {
-    if (!ehGestor(env, reg.usuario)) return html('<!doctype html><meta charset="utf-8"><p>Acesso restrito ao gestor geral do sistema.</p>', 403);
+    if (!pode(perfil(env, reg), 'auditoria.ver')) return proibido('Acesso restrito ao gestor geral do sistema.');
     return html(telaAuditoria({ usuario: reg.usuario, registros: await listarAuditoria(env.USUARIOS) }));
   }
   if (caminho === '/admin/sugestoes') return adminSugestoes(request, env, reg);
@@ -344,9 +427,12 @@ export async function onRequest(context) {
   }
   if (caminho.startsWith('/api/formularios/')) return entregarFormulario(env, caminho.slice(17), url.searchParams.has('baixar'));
   if (caminho === '/api/sessao') {
-    return new Response(JSON.stringify({ usuario: reg.usuario, admin: !!reg.admin, gestor: ehGestor(env, reg.usuario) }), {
-      headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },
-    });
+    return new Response(
+      JSON.stringify({ usuario: reg.usuario, perfil: perfil(env, reg), admin: pode(perfil(env, reg), 'painel.ver'), gestor: ehGestor(env, reg.usuario) }),
+      {
+        headers: { 'content-type': 'application/json', 'cache-control': 'no-store' },
+      },
+    );
   }
 
   const resposta = await next();

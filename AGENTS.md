@@ -25,6 +25,7 @@ Objetivo permanente: **reduzir o tempo de atendimento**. Toda mudança deve deix
 - Ao mudar o site, aumente `VERSAO_ATUAL` (em `src/ui/13-site-sempre-atualizado.js`) e o `versao.json`/`teste/versao.json` (a página recarrega sozinha só com a tela limpa).
 - **Login (Cloudflare Pages Functions):** `functions/_middleware.js` (portaria), `functions/_lib/autenticacao.js` (regras puras, com teste unitário) e `functions/_lib/telas.js` (login, troca de senha, administração). Nunca guardar senha em texto; nada de credenciais no código. Configuração em `docs/CONFIGURACAO.md`.
 - **Gestor geral:** o usuário de `ADMIN_USUARIO` é o gestor do sistema. Nenhum outro administrador pode removê-lo, desativá-lo ou redefinir a senha dele, e só ele lê as sugestões (`/admin/sugestoes`) e a auditoria (`/admin/auditoria`).
+- **Perfis e permissões:** gestor geral, administrador, supervisor, atendente e consulta. A matriz fica em `functions/_lib/permissoes.js` (com teste unitário); toda rota administrativa checa `pode(perfil, 'operacao')` no servidor, nunca só na tela.
 - **Senha provisória:** usuário criado ou com senha redefinida pelo administrador fica com `trocarSenha: true` e só acessa "Trocar senha" e "Sair" até criar a própria senha.
 - **Auditoria:** toda ação da administração (acessos e formulários) chama `registrar()` em `functions/_lib/auditoria.js`. Nunca registrar senhas nem dados de clientes.
 - Produção = `main`, publicada pelo Cloudflare Pages (com login) e, até a migração terminar, pelo GitHub Pages. Mesclar o PR = publicar; por isso só com aprovação.

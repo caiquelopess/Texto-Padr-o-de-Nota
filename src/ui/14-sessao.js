@@ -30,7 +30,7 @@
         info.className = 'menu-usuario-info';
         info.appendChild(nome);
         var papel = document.createElement('small');
-        papel.textContent = s.gestor ? 'Gestor geral' : s.admin ? 'Administrador' : 'Atendente';
+        papel.textContent = { gestor: 'Gestor geral', administrador: 'Administrador', supervisor: 'Supervisor', atendente: 'Atendente', consulta: 'Consulta' }[s.perfil] || 'Atendente';
         info.appendChild(papel);
         botao.appendChild(info);
         var menu = document.createElement('div');
@@ -38,8 +38,7 @@
         menu.setAttribute('role', 'menu');
         menu.style.display = 'none';
         var links = [['/trocar-senha', 'Trocar senha']];
-        if (s.admin) links.unshift(['/admin', 'Administração'], ['/admin/formularios', 'Formulários (enviar)']);
-        if (s.gestor) links.splice(2, 0, ['/admin/sugestoes', 'Sugestões recebidas']);
+        if (s.admin) links.unshift(['/admin/painel', 'Painel administrativo']);
         links.push(['/sair', 'Sair']);
         // Tema: abre a lista de temas dentro do próprio card do usuário
         var temaMenu = document.getElementById('tema_menu');

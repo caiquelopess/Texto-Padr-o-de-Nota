@@ -91,7 +91,7 @@ test('atendente entra, volta para a página pedida e não acessa a administraç�
   expect((await page.request.get('/versao.json')).status()).toBe(200);
   expect((await page.goto('/admin')).status()).toBe(403);
   const sessao = await (await page.request.get('/api/sessao')).json();
-  expect(sessao).toEqual({ usuario: 'maria.silva', admin: false, gestor: false });
+  expect(sessao).toEqual({ usuario: 'maria.silva', perfil: 'atendente', admin: false, gestor: false });
 });
 
 test('não redireciona para fora do site depois do login', async ({ page }) => {
@@ -199,7 +199,7 @@ test('menu do usuário no topo reúne as opções da conta', async ({ page }) =>
   await expect(page.locator('#btn_usuario')).toContainText('admin.teste');
   await expect(page.locator('.menu-usuario-lista')).toBeHidden();
   await page.click('#btn_usuario');
-  await expect(page.locator('.menu-usuario-lista a')).toHaveText(['Administração', 'Formulários (enviar)', 'Sugestões recebidas', 'Trocar senha', 'Sair']);
+  await expect(page.locator('.menu-usuario-lista a')).toHaveText(['Painel administrativo', 'Trocar senha', 'Sair']);
   await expect(page.locator('#btn_usuario_tema')).toContainText('Tema');
   await page.click('#btn_usuario_tema');
   await expect(page.locator('#tema_menu')).toBeVisible();
@@ -261,7 +261,7 @@ test('gestor geral é protegido e só ele vê as sugestões', async ({ page, bro
   await page.goto('/admin');
   await page.fill('#nu', 'chefe.equipe');
   await page.fill('#ns', 'senha-chefe');
-  await page.check('input[name=admin]');
+  await page.selectOption('#np', 'administrador');
   await page.click('form[data-carrega] button[type=submit]');
   await expect(page.locator('tbody')).toContainText('(gestor geral)');
 
@@ -306,4 +306,83 @@ test('auditoria: mostra quem criou cada acesso e quem enviou cada formulário', 
   await expect(linhas.nth(1)).toContainText('Criou acesso de atendente');
   await expect(linhas.nth(1)).toContainText('ana.lima');
   await expect(page.locator('tbody')).toContainText('Redefiniu a senha');
+});
+
+test('perfis: supervisor, consulta e atendente respeitam as permissões', async ({ page, browser }) => {
+  // o gestor cria um supervisor
+  await entrar(page, 'admin.teste', 'senha-admin-teste');
+  await page.goto('/admin');
+  await page.fill('#nu', 'sara.supervisora');
+  await page.fill('#ns', 'prov1');
+  await page.selectOption('#np', 'supervisor');
+  await page.click('form[data-carrega] button[type=submit]');
+  await expect(page.locator('tr', { has: page.locator('td:first-child', { hasText: 'sara.supervisora' }) })).toContainText('Supervisor');
+
+  const nova = async (usuario, prov, nova) => {
+    const ctx = await browser.newContext({ baseURL: 'http://localhost:8788' });
+    const p = await ctx.newPage();
+    await primeiroAcesso(p, usuario, prov, nova);
+    return { ctx, p };
+  };
+
+  // supervisor: cria só atendente/consulta, não mexe em administradores
+  const sup = await nova('sara.supervisora', 'prov1', 'sara-nova');
+  await sup.p.goto('/admin');
+  await expect(sup.p.locator('#np option')).toHaveText(['Atendente', 'Consulta']);
+  await sup.p.fill('#nu', 'caio.consulta');
+  await sup.p.fill('#ns', 'prov2');
+  await sup.p.selectOption('#np', 'consulta');
+  await sup.p.click('form[data-carrega] button[type=submit]');
+  await expect(sup.p.locator('.okmsg')).toContainText('caio.consulta criado');
+  const linhaChefe = sup.p.locator('tr', { has: sup.p.locator('td:first-child', { hasText: 'chefe.equipe' }) });
+  await expect(linhaChefe.locator('button')).toHaveCount(0);
+  const forcado = await sup.p.request.post('/admin', {
+    form: { acao: 'criar', usuario: 'x.admin', senha: '1234', perfil: 'administrador' },
+    headers: { origin: 'http://localhost:8788' },
+  });
+  expect(await forcado.text()).toContain('não pode criar usuários com esse perfil');
+  const forcado2 = await sup.p.request.post('/admin', { form: { acao: 'desativar', usuario: 'chefe.equipe' }, headers: { origin: 'http://localhost:8788' } });
+  expect(await forcado2.text()).toContain('não pode alterar usuários com perfil Administrador');
+  expect((await sup.p.request.get('/admin/auditoria')).status()).toBe(403);
+  await sup.p.goto('/admin/formularios');
+  await expect(sup.p.locator('#fn')).toHaveCount(0);
+
+  // consulta: gera textos, vê o painel, não altera nada
+  const con = await nova('caio.consulta', 'prov2', 'caio-nova');
+  await con.p.goto('/');
+  await expect(con.p.locator('#service_nav')).toBeAttached();
+  await con.p.goto('/admin/painel');
+  await expect(con.p.locator('h1')).toHaveText('Dashboard');
+  await con.p.goto('/admin');
+  await expect(con.p.locator('#nu')).toHaveCount(0);
+  await expect(con.p.locator('.aviso')).toContainText('consultar os usuários');
+  const forcado3 = await con.p.request.post('/admin', { form: { acao: 'remover', usuario: 'ana.lima' }, headers: { origin: 'http://localhost:8788' } });
+  expect(forcado3.status()).toBe(403);
+
+  // atendente: sem painel
+  const ate = await nova('ana.lima', '4321', 'ana-nova');
+  expect((await ate.p.goto('/admin/painel')).status()).toBe(403);
+  expect((await ate.p.goto('/admin')).status()).toBe(403);
+  await ate.p.goto('/sair');
+
+  // supervisor muda o perfil de um atendente para consulta
+  await sup.p.goto('/admin');
+  await sup.p
+    .locator('tr', { has: sup.p.locator('td:first-child', { hasText: 'ana.lima' }) })
+    .locator('select[name=perfil]')
+    .selectOption('consulta');
+  await expect(sup.p.locator('.okmsg')).toContainText('Perfil de ana.lima alterado para Consulta');
+  for (const x of [sup, con, ate]) await x.ctx.close();
+
+  // gestor vê o dashboard completo e a auditoria registra entradas, saídas e mudanças de perfil
+  await page.goto('/admin/painel');
+  await expect(page.locator('.kpi')).toHaveCount(5);
+  await expect(page.locator('.lista-perfis')).toContainText('Supervisor');
+  await page.goto('/admin/auditoria');
+  const aud = page.locator('tbody');
+  await expect(aud).toContainText('Entrou no sistema');
+  await expect(aud).toContainText('Saiu do sistema');
+  await expect(aud).toContainText('Criou a própria senha (primeiro acesso)');
+  await expect(aud).toContainText('Criou acesso de consulta');
+  await expect(aud).toContainText('Mudou o perfil: Atendente → Consulta');
 });

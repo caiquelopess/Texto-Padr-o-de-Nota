@@ -1,0 +1,28 @@
+{
+  "id": "data-boa",
+  "sf": "sf-data-boa",
+  "nome": "DATA BOA",
+  "categoria": "Faturamento e Débitos",
+  "descricao": "Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "agenda",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "piscar": true
+    }
+  ],
+  "campos": [
+    {
+      "id": "dia",
+      "elementoId": "db_dia",
+      "rotulo": "DIA XX",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 10",
+      "largo": true
+    }
+  ],
+  "nota": "CLIENTE SOLICITA DATA BOA PARA O DIA {{dia}}",
+  "agenda": "CLIENTE SOLICITA DATA BOA PARA O DIA {{dia}}",
+  "botao": "Gerar Texto de AGENDA e Copiar"
+}

@@ -73,20 +73,14 @@
       <div class="service-nav" id="service_nav">
         <button type="button" class="sub-btn" data-click="trocarAba('sf-afericao', this)">Aferição</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-bloq-cobranca', this)">Bloqueio de Cobrança</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-icms', this)">Cadastro de Parceiro - Isenção ICMS</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-canc-parc', this)">Cancelamento de Parcelamento</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-cpnb', this)">Conta Paga e Não Baixada</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-data-boa', this)">DATA BOA</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-deb-auto', this)">Débito automático</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-defesa-adm', this)">Defesa Administrativa P-Recurso</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-dd', this)">Desligamento Definitivo</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-movein-moveout', this)">Estorno Movein e Moveout</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-insp', this)">Inspeção e ligação 91*</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-analise-isencao', this)">Isenção de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-nova', this)">Ligação Nova</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-muc', this)">Ligação MUC</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-lp', this)">Ligação Provisória</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-med-roub', this)">Medidor Roubado</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-mc', this)">Modificação Contratual</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-parcelamento', this)">Parcelamento</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reativ-comum', this)">Reativação</button>
@@ -99,13 +93,10 @@
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reclamacoes', this)">Reclamações</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ref-padrao', this)">Reforma Padrão</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-relig', this)">Religação</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-reloc-rede', this)">Relocação de poste/deslocamento de rede</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-danos-eletricos', this)">Ressarcimento de Danos Elétricos — Abertura de Nota</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-rde-doc', this)">Ressarcimento de Danos Elétricos — Recebimento de Documentação (laudos e orçamentos)</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-outros-danos', this)">Ressarcimento de Danos Não Elétricos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-res', this)">Restituição de valores</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-selagem', this)">Selagem do Medidor</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-ramal', this)">Serviço no Ramal</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-tarefa-neo', this)">Tarefa NEO transferência de Créditos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-tele-gravacao', this)">Tele gravação</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-tr-partidas', this)">TR DE PARTIDAS</button>
@@ -744,23 +735,6 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarRelig()">Gerar Texto e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-relig')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 9. INSPEÇÃO E LIGAÇÃO 91* -->
-    <div class="subform" id="sf-insp">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box">Atenção: No caso de pessoa jurídica colocar o nome do representante legal no nome do cliente.</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="insp_solic" placeholder="Nome completo (Representante legal se PJ)" required></div>
-        <div class="field-group"><label>PRX *</label><input type="text" id="insp_prx" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="insp_tel" placeholder="Ex: 84-988887777" required></div>
-        <div class="field-group"><label>e-mail *</label><input type="text" id="insp_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Carga (kW) *</label><input type="text" id="insp_carga" placeholder="Ex: 10kw" required></div>
-        <div class="field-group"><label>PG</label><input type="text" id="insp_pg" placeholder="Opcional — nº do pagamento, se houver"></div>
-        <div class="field-group"><label>Empreendimento: *</label><input type="text" id="insp_emp" placeholder="Nome do condomínio/prédio" required></div>
-        <div class="field-group"><label>Bloco/Torre (quando houver)</label><input type="text" id="insp_bloco" placeholder="Ex: Bloco A ou deixe em branco"></div>
-        <div class="field-group full-width"><label>Referente a MUC 92* *</label><input type="text" id="insp_muc" placeholder="Ex: 92xxxxxxx" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarINSP()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-insp')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 10. LIGAÇÃO PROVISÓRIA -->
     <div class="subform" id="sf-lp">
@@ -779,19 +753,6 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarLP()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-lp')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 11. RELOCAÇÃO DE POSTE / DESLOCAMENTO DE REDE -->
-    <div class="subform" id="sf-reloc-rede">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box">FOP serviço de obra<br>ATENÇÃO: INCLUIR DOCUMENTO DE PROPRIEDADE<br>Para Isolamento De Rede, Usar Code Deslocamento De Rede E Informar Que É Deslocamento De Rede, Não Colocar A Informação Isolamento de rede</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="ro_solic" placeholder="Nome completo do solicitante" required></div>
-        <div class="field-group"><label>PRX *</label><input type="text" id="ro_prx" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="ro_tel" placeholder="Ex: 84-988887777" required></div>
-        <div class="field-group"><label>e-mail *</label><input type="text" id="ro_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>DOCs anexado (escritura publica, itr, iptu...) *</label><input type="text" id="ro_docs" placeholder="Ex: Escritura pública, ITR, IPTU, termo de posse..." required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarRelocRede()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-reloc-rede')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 12. REFORMA PADRÃO -->
     <div class="subform" id="sf-ref-padrao">
@@ -845,31 +806,7 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarCPNB()">Gerar Texto e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-cpnb')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 15. MEDIDOR ROUBADO -->
-    <div class="subform" id="sf-med-roub">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="mr_solic" placeholder="Nome completo" required></div>
-        <div class="field-group"><label>PRX *</label><input type="text" id="mr_prx" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="mr_tel" placeholder="Ex: 84-988887777" required></div>
-        <div class="field-group"><label>e-mail *</label><input type="text" id="mr_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Nº Medidor Roubado *</label><input type="text" id="mr_num" placeholder="Ex: 12345678" required></div>
-        <div class="field-group full-width"><label>Nº do BO: *</label><input type="text" id="mr_bo" placeholder="Ex: 00123/2026" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarMedRoubado()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-med-roub')">Limpar Tudo</button></div>
-    </div>
 
-    <!-- 16. SELAGEM DO MEDIDOR -->
-    <div class="subform" id="sf-selagem">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="sel_solic" placeholder="Nome completo" required></div>
-        <div class="field-group"><label>PRX *</label><input type="text" id="sel_prx" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="sel_tel" placeholder="Ex: 84-988887777" required></div>
-        <div class="field-group"><label>e-mail *</label><input type="text" id="sel_email" placeholder="cliente@email.com ou Não informado" required></div>
-        </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarSelagem()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-selagem')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 17. VERIFICAÇÃO DE EQUIPAMENTO -->
     <div class="subform" id="sf-verif-equip">
@@ -886,18 +823,6 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarVerifEquip()">Gerar Texto de AGENDA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-verif-equip')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 18. SERVIÇO NO RAMAL -->
-    <div class="subform" id="sf-ramal">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="sram_solic" placeholder="Nome completo" required></div>
-        <div class="field-group"><label>PRX *</label><input type="text" id="sram_prx" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group"><label>Tel (XX-9XXXXXXXX) *</label><input type="text" id="sram_tel" placeholder="Ex: 84-988887777" required></div>
-        <div class="field-group"><label>e-mail *</label><input type="text" id="sram_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Motivo da solicitação: *</label><input type="text" id="sram_motivo" placeholder="Ex: Fiação baixa / cabo partido / ramal solto" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarServRamal()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-ramal')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 19. USO DE APARELHAGEM MÉDICA -->
     <div class="subform" id="sf-aparelhagem">
@@ -910,36 +835,8 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarAparelhagemMedica()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-aparelhagem')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 20. CADASTRO DE PARCEIRO - ISENÇÃO ICMS -->
-    <div class="subform" id="sf-isencao-icms">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box">OBS.: Caso o cliente não esteja com CNAE B2_1 (ou está, mas atividade não é a mesma do sistema) É necessário realizar modificação contratual.</div>
-      <div class="form-grid">
-        <div class="field-group"><label>NUMERO DA INSCRICAO ESTADUAL *</label><input type="text" id="icms_ie" placeholder="Ex: 20.123.456-7" required></div>
-        <div class="field-group"><label>REF *</label><input type="text" id="icms_ref" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group"><label>TEL *</label><input type="text" id="icms_tel" placeholder="Ex: 84988887777" required></div>
-        <div class="field-group"><label>SOLICITANTE *</label><input type="text" id="icms_solic" placeholder="Nome completo do solicitante" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarIsencaoICMS()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-isencao-icms')">Limpar Tudo</button></div>
-    </div>
 
-    <!-- 21. DATA BOA -->
-    <div class="subform" id="sf-data-boa">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="form-grid">
-        <div class="field-group full-width"><label>DIA XX *</label><input type="text" id="db_dia" placeholder="Ex: 10" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarDataBoa()">Gerar Texto de AGENDA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-data-boa')">Limpar Tudo</button></div>
-    </div>
 
-    <!-- 22. DÉBITO AUTOMÁTICO -->
-    <div class="subform" id="sf-deb-auto">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="form-grid">
-        <div class="field-group full-width"><label>TITULAR SR *</label><input type="text" id="da_titular" placeholder="Nome completo do titular" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarDebitoAutomatico()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-deb-auto')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 23. RESSARCIMENTO DE DANOS ELÉTRICOS -->
     <div class="subform" id="sf-danos-eletricos">
@@ -1038,15 +935,6 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarParcelamento()">Gerar Texto e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-parcelamento')">Limpar Tudo</button></div>
     </div>
 
-    <!-- 28. CANCELAMENTO DE PARCELAMENTO -->
-    <div class="subform" id="sf-canc-parc">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Plano de parcelamento nº: *</label><input type="text" id="cparc_plano" placeholder="Ex: 12345" required></div>
-        <div class="field-group"><label>Cancelado devido a: *</label><input type="text" id="cparc_motivo" placeholder="Ex: ao não pagamento do sinal." required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarCancParcelamento()">Gerar Texto de NOTA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-canc-parc')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 29. ESTORNO DE MOVEIN E MOVEOUT -->
     <div class="subform" id="sf-movein-moveout">

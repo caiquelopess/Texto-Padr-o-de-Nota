@@ -1,0 +1,51 @@
+{
+  "id": "selagem-medidor",
+  "sf": "sf-selagem",
+  "nome": "Selagem do Medidor",
+  "categoria": "Medição e Rede",
+  "descricao": "Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "piscar": true
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "elementoId": "sel_solic",
+      "rotulo": "Solicitante",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo"
+    },
+    {
+      "id": "prx",
+      "elementoId": "sel_prx",
+      "rotulo": "PRX",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ponto de referência detalhado"
+    },
+    {
+      "id": "tel",
+      "elementoId": "sel_tel",
+      "rotulo": "Tel (XX-9XXXXXXXX)",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84-988887777"
+    },
+    {
+      "id": "email",
+      "elementoId": "sel_email",
+      "rotulo": "e-mail",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    }
+  ],
+  "nota": "Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}}",
+  "agenda": "Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}}",
+  "botao": "Gerar Texto de NOTA e Copiar"
+}

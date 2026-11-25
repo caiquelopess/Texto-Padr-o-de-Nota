@@ -6,11 +6,17 @@
   "descricao": "Migrado do código (piloto da etapa 6). Texto idêntico ao serviço anterior.",
   "copiar": "nota",
   "avisos": [
-    { "texto": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️", "piscar": true },
+    {
+      "texto": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "piscar": true
+    },
     {
       "id": "alerta_ac_nome",
       "texto": "Atenção: se for apenas correção do nome, pode ser feito no OneCode (2º Nível).",
-      "mostrarSe": { "campo": "motivo", "igual": "Correção de Nome" }
+      "mostrarSe": {
+        "campo": "motivo",
+        "igual": "Correção de Nome"
+      }
     }
   ],
   "campos": [
@@ -29,15 +35,56 @@
       "tipo": "texto",
       "obrigatorio": true,
       "dica": "Ex: 1010000001, 1010000002",
-      "mostrarSe": { "campo": "motivo", "igual": "Unificar PN" }
+      "mostrarSe": {
+        "campo": "motivo",
+        "igual": "Unificar PN"
+      }
     },
-    { "id": "nome", "elementoId": "ac_nome", "rotulo": "Nome", "tipo": "texto", "obrigatorio": true, "dica": "Nome completo" },
-    { "id": "tel", "elementoId": "ac_tel", "rotulo": "Telefone", "tipo": "telefone", "obrigatorio": true },
-    { "id": "email", "elementoId": "ac_email", "rotulo": "E-mail", "tipo": "email", "obrigatorio": true },
-    { "id": "rg", "elementoId": "ac_rg", "rotulo": "RG", "tipo": "texto", "dica": "Em branco = não entra no texto" },
-    { "id": "cnh", "elementoId": "ac_cnh", "rotulo": "CNH", "tipo": "texto", "dica": "Em branco = não entra no texto" },
-    { "id": "idp", "elementoId": "ac_id", "rotulo": "ID (identificação profissional)", "tipo": "texto", "dica": "Em branco = não entra no texto" }
+    {
+      "id": "nome",
+      "elementoId": "ac_nome",
+      "rotulo": "Nome",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo"
+    },
+    {
+      "id": "tel",
+      "elementoId": "ac_tel",
+      "rotulo": "Telefone",
+      "tipo": "telefone",
+      "obrigatorio": true
+    },
+    {
+      "id": "email",
+      "elementoId": "ac_email",
+      "rotulo": "E-mail",
+      "tipo": "email",
+      "obrigatorio": true
+    },
+    {
+      "id": "rg",
+      "elementoId": "ac_rg",
+      "rotulo": "RG",
+      "tipo": "texto",
+      "dica": "Em branco = não entra no texto"
+    },
+    {
+      "id": "cnh",
+      "elementoId": "ac_cnh",
+      "rotulo": "CNH",
+      "tipo": "texto",
+      "dica": "Em branco = não entra no texto"
+    },
+    {
+      "id": "idp",
+      "elementoId": "ac_id",
+      "rotulo": "ID (identificação profissional)",
+      "tipo": "texto",
+      "dica": "Em branco = não entra no texto"
+    }
   ],
   "nota": "Gentileza Atualizar Cadastro\nMotivo: {{motivo}}\n{{#se motivo=Unificar PN}}\nPNs: {{pns}}\n{{/se}}\n{{#se nome}}\nNome: {{nome}}\n{{/se}}\n{{#se tel}}\nTelefone: {{tel}}\n{{/se}}\n{{#se email}}\nE-mail: {{email}}\n{{/se}}\n{{#se rg}}\nRG: {{rg}}\n{{/se}}\n{{#se cnh}}\nCNH: {{cnh}}\n{{/se}}\n{{#se idp}}\nID (identificação profissional): {{idp}}\n{{/se}}",
-  "agenda": ""
+  "agenda": "",
+  "botao": "Gerar Texto e Copiar NOTA"
 }

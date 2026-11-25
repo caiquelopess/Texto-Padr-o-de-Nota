@@ -1,0 +1,68 @@
+{
+  "id": "medidor-roubado",
+  "sf": "sf-med-roub",
+  "nome": "Medidor Roubado",
+  "categoria": "Medição e Rede",
+  "descricao": "Migrado do código (lote 1 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "piscar": true
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "elementoId": "mr_solic",
+      "rotulo": "Solicitante",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo"
+    },
+    {
+      "id": "prx",
+      "elementoId": "mr_prx",
+      "rotulo": "PRX",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ponto de referência detalhado"
+    },
+    {
+      "id": "tel",
+      "elementoId": "mr_tel",
+      "rotulo": "Tel (XX-9XXXXXXXX)",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84-988887777"
+    },
+    {
+      "id": "email",
+      "elementoId": "mr_email",
+      "rotulo": "e-mail",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "num",
+      "elementoId": "mr_num",
+      "rotulo": "Nº Medidor Roubado",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 12345678"
+    },
+    {
+      "id": "bo",
+      "elementoId": "mr_bo",
+      "rotulo": "Nº do BO:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 00123/2026",
+      "largo": true
+    }
+  ],
+  "nota": "Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Nº Medidor Roubado {{num}} Nº do BO: {{bo}}",
+  "agenda": "Solicitante {{solic}} PRX {{prx}} Tel {{tel}} e-mail {{email}} Nº Medidor Roubado {{num}} Nº do BO: {{bo}}",
+  "botao": "Gerar Texto de NOTA e Copiar"
+}

@@ -1126,12 +1126,6 @@
     finalizarGeracao('sf-relig', txt, txt, 'nota');
   }
 
-  function gerarINSP() {
-    if (!validarCampos('sf-insp')) return;
-    var bloco = getVal('insp_bloco') ? ' Bloco/Torre: ' + getVal('insp_bloco') + ' (quando houver)' : '';
-    var txt = 'Solicitante ' + getVal('insp_solic') + ' PRX ' + getVal('insp_prx') + ' Tel ' + getVal('insp_tel') + ' e-mail ' + getVal('insp_email') + ' Carga ' + getVal('insp_carga') + (getVal('insp_pg') ? ' PG ' + getVal('insp_pg') : '') + ' Empreendimento: ' + getVal('insp_emp') + bloco + ' referente a MUC ' + getVal('insp_muc');
-    finalizarGeracao('sf-insp', txt, txt, 'nota');
-  }
 
   function gerarLP() {
     if (!validarCampos('sf-lp')) return;
@@ -1139,11 +1133,6 @@
     finalizarGeracao('sf-lp', txt, txt, 'nota');
   }
 
-  function gerarRelocRede() {
-    if (!validarCampos('sf-reloc-rede')) return;
-    var txt = 'Solicitante ' + getVal('ro_solic') + ' PRX ' + getVal('ro_prx') + ' Tel ' + getVal('ro_tel') + ' e-mail ' + getVal('ro_email') + '. Cliente Orientado quanto aos possíveis custos DOCs anexado: ' + getVal('ro_docs');
-    finalizarGeracao('sf-reloc-rede', txt, txt, 'nota');
-  }
 
   function gerarRefPadrao() {
     if (!validarCampos('sf-ref-padrao')) return;
@@ -1206,17 +1195,7 @@
     finalizarGeracao('sf-cpnb', txt, txt, 'nota');
   }
 
-  function gerarMedRoubado() {
-    if (!validarCampos('sf-med-roub')) return;
-    var txt = 'Solicitante ' + getVal('mr_solic') + ' PRX ' + getVal('mr_prx') + ' Tel ' + getVal('mr_tel') + ' e-mail ' + getVal('mr_email') + ' Nº Medidor Roubado ' + getVal('mr_num') + ' Nº do BO: ' + getVal('mr_bo');
-    finalizarGeracao('sf-med-roub', txt, txt, 'nota');
-  }
 
-  function gerarSelagem() {
-    if (!validarCampos('sf-selagem')) return;
-    var txt = 'Solicitante ' + getVal('sel_solic') + ' PRX ' + getVal('sel_prx') + ' Tel ' + getVal('sel_tel') + ' e-mail ' + getVal('sel_email');
-    finalizarGeracao('sf-selagem', txt, txt, 'nota');
-  }
 
   function gerarVerifEquip() {
     if (!validarCampos('sf-verif-equip')) return;
@@ -1231,11 +1210,6 @@
   }
 
 
-  function gerarServRamal() {
-    if (!validarCampos('sf-ramal')) return;
-    var txt = 'Solicitante ' + getVal('sram_solic') + ' PRX ' + getVal('sram_prx') + ' Tel ' + getVal('sram_tel') + ' e-mail ' + getVal('sram_email') + ' Motivo da solicitação: ' + getVal('sram_motivo');
-    finalizarGeracao('sf-ramal', txt, txt, 'nota');
-  }
 
   function gerarAparelhagemMedica() {
     if (!validarCampos('sf-aparelhagem')) return;
@@ -1246,23 +1220,8 @@
     finalizarGeracao('sf-aparelhagem', txt, txt, 'nota');
   }
 
-  function gerarIsencaoICMS() {
-    if (!validarCampos('sf-isencao-icms')) return;
-    var txt = 'GENTILEZA CADASTRAR PRODUTOR RURAL \nNUMERO DA INSCRICAO ESTADUAL ' + getVal('icms_ie') + ' \nREF ' + getVal('icms_ref') + '\nTEL ' + getVal('icms_tel') + ' \nSOLICITANTE ' + getVal('icms_solic');
-    finalizarGeracao('sf-isencao-icms', txt, txt, 'nota');
-  }
 
-  function gerarDataBoa() {
-    if (!validarCampos('sf-data-boa')) return;
-    var txt = 'CLIENTE SOLICITA DATA BOA PARA O DIA ' + getVal('db_dia');
-    finalizarGeracao('sf-data-boa', txt, txt, 'agenda');
-  }
 
-  function gerarDebitoAutomatico() {
-    if (!validarCampos('sf-deb-auto')) return;
-    var txt = 'DESCADASTRO DÉBITO AUTOMÁTICO A PEDIDO DO TITULAR SR \n' + getVal('da_titular');
-    finalizarGeracao('sf-deb-auto', txt, txt, 'nota');
-  }
 
   function gerarDanosEletricos() {
     if (!validarCampos('sf-danos-eletricos')) return;
@@ -1337,11 +1296,6 @@
     finalizarGeracao('sf-parcelamento', txt, txt, 'nota');
   }
 
-  function gerarCancParcelamento() {
-    if (!validarCampos('sf-canc-parc')) return;
-    var txt = 'Plano de parcelamento ' + getVal('cparc_plano') + ' cancelado devido ' + getVal('cparc_motivo');
-    finalizarGeracao('sf-canc-parc', txt, txt, 'nota');
-  }
 
   function gerarMoveInMoveOut() {
     if (!validarCampos('sf-movein-moveout')) return;

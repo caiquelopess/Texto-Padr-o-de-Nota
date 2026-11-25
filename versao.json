@@ -1,7 +1,8 @@
 {
-  "versao": "2.18.0",
+  "versao": "2.18.1",
   "data": "25/11/2026",
   "novidades": [
+    "Mais 9 serviços migrados para modelos (sem mudança nos textos)",
     "Configurações gerais (aviso para todos, duração da sessão) e Atualização Cadastral migrada para modelo",
     "Backups automáticos e restauração pelo painel administrativo",
     "Categorias e serviços ocultos definidos pelo painel administrativo",

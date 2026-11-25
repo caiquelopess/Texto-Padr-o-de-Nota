@@ -71,12 +71,9 @@
     </div>
     <div id="painel_servicos" style="display: none;">
       <div class="service-nav" id="service_nav">
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-dd', this)">Desligamento Definitivo</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-analise-isencao', this)">Isenção de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-nova', this)">Ligação Nova</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-muc', this)">Ligação MUC</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-reativ-comum', this)">Reativação</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-reativ-virtual', this)">Reativação Virtual</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-deb|reativacao', this)">Reativação com Análise de Isenção de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reclamacao-gd', this)">Reclamação GD</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reclamacoes', this)">Reclamações</button>
@@ -507,57 +504,10 @@
     </div>
 
     <!-- 2. REATIVAÇÃO -->
-    <div class="subform" id="sf-reativ-comum">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="rtc_solic" placeholder="Nome completo do solicitante" required></div>
-        <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="rtc_tel" placeholder="Ex: 71993501519" required></div>
-        <div class="field-group"><label>Fase *</label><select id="rtc_tipo_lig"><option value="MONO">MONO</option><option value="BI">BI</option><option value="TRI">TRI</option></select></div>
-        <div class="field-group"><label>Número *</label><input type="text" id="rtc_numero" placeholder="Ex: 77 ou S/N" required></div>
-        <div class="field-group full-width"><label>Complemento</label><input type="text" id="rtc_compl" placeholder="Opcional — ex: AP 101, CASA B"></div>
-        <div class="field-group full-width"><label>Pontos de referências *</label><input type="text" id="rtc_ref" placeholder="O máximo de informações possíveis — ex: PX AO BECO DO SIRILO" required></div>
-        <div class="field-group"><label>Coordenadas geográficas *</label><input type="text" id="rtc_coords" placeholder="Ex: -12.9585, -38.4955 ou Não informado" required></div>
-        <div class="field-group"><label>E-mail *</label><input type="text" id="rtc_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Dados da receita *</label><select id="rtc_rec"><option value="regular">REGULAR</option><option value="pendente de regularização">PENDENTE DE REGULARIZAÇÃO</option></select></div>
-        <div class="field-group"><label>Procurar por (pessoa de contato) *</label><input type="text" id="rtc_proc" placeholder="Ex: STEPHANIE, PORTARIA" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarReativComum()">Gerar Texto e Copiar NOTA</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-reativ-comum')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 2B. REATIVAÇÃO VIRTUAL -->
-    <div class="subform" id="sf-reativ-virtual">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box alert-setor">🔁 <strong>Altere o setor responsável na nota para o código 8GE427</strong></div>
-      <div class="form-grid">
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="rtv_solic" placeholder="Nome completo do solicitante" required></div>
-        <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="rtv_tel" placeholder="Ex: 71993501519" required></div>
-        <div class="field-group"><label>Fase *</label><select id="rtv_fase"><option value="MONO">MONO</option><option value="BI">BI</option><option value="TRI">TRI</option></select></div>
-        <div class="field-group"><label>Número do medidor em campo *</label><input type="text" id="rtv_medidor" placeholder="Ex: 12345678" required></div>
-        <div class="field-group"><label>Leitura</label><input type="text" id="rtv_leitura" inputmode="numeric" placeholder="Em branco = não informou"></div>
-        <div class="field-group full-width"><label>Pontos de referências *</label><input type="text" id="rtv_ref" placeholder="O máximo de informações possíveis — ex: PX AO BECO DO SIRILO" required></div>
-        <div class="field-group"><label>Coordenadas geográficas *</label><input type="text" id="rtv_coords" placeholder="Ex: -12.9585, -38.4955 ou Não informado" required></div>
-        <div class="field-group"><label>E-mail *</label><input type="text" id="rtv_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Dados da receita *</label><select id="rtv_rec"><option value="regular">REGULAR</option><option value="pendente de regularização">PENDENTE DE REGULARIZAÇÃO</option></select></div>
-        <div class="field-group"><label>Procurar por (pessoa de contato) *</label><input type="text" id="rtv_proc" placeholder="Ex: STEPHANIE, PORTARIA" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarReativVirtual()">Gerar Texto e Copiar NOTA</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-reativ-virtual')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 3. DESLIGAMENTO DEFINITIVO -->
-    <div class="subform" id="sf-dd">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box">O mesmo texto da nota é igual para a agenda</div>
-      <div class="form-grid">
-        <div class="field-group full-width"><label>Ponto de Referência: *</label><input type="text" id="dd_ref" placeholder="Ponto de referência detalhado" required></div>
-        <div class="field-group"><label>Solicitante: *</label><input type="text" id="dd_solic" placeholder="Nome completo do solicitante" required></div>
-        <div class="field-group"><label>Titular ou representante legal? *</label><select id="dd_vinculo"><option value="Titular">Titular</option><option value="Representante legal">Representante legal</option></select></div>
-        <div class="field-group"><label>Telefone: *</label><input type="text" id="dd_tel" placeholder="Ex: 84988887777" required></div>
-        <div class="field-group"><label>E-mail: *</label><input type="text" id="dd_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Critério da fatura final: *</label><select id="dd_crit"><option value="media">Faturado por média</option><option value="cliente">Leitura fornecida pelo cliente</option></select></div>
-        <div class="field-group"><label>Fatura Entregue: *</label><select id="dd_entregue"><option value="Sim">Sim</option><option value="Não">Não</option></select></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarDD()">Gerar Texto e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-dd')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 4. TROCA DE TITULARIDADE -->
 

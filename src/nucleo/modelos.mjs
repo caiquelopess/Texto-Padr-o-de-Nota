@@ -7,7 +7,7 @@
 //   {{#se campo}}...{{/se}}       só entra se o campo estiver preenchido
 //   {{#se campo=Valor}}...{{/se}} só entra se o campo for igual a Valor
 // Os dados preenchidos nunca saem do navegador: o motor só monta o texto localmente.
-import { formatarTelefones, telefonesPadraoNota } from './formatos.mjs';
+import { formatarTelefones, notaCaps, telefonesPadraoNota } from './formatos.mjs';
 
 export const MD_TIPOS = ['texto', 'textoLongo', 'telefone', 'email', 'data', 'numero', 'opcao', 'documento', 'dataOuMes'];
 // Campo "documento": aceita CPF (11 números) e/ou CNPJ (14), conforme c.documento ('doc' = os dois, 'cpf', 'cnpj').
@@ -203,8 +203,10 @@ function preencher(texto, modelo, valores) {
 }
 
 // Monta os textos de NOTA e AGENDA.
+// notaMaiusculas: a NOTA sai toda em maiúsculas e sem espaços repetidos (padrão das notas de campo).
 export function mdGerar(modelo, valores = {}) {
-  return { nota: preencher(modelo.nota, modelo, valores), agenda: preencher(modelo.agenda, modelo, valores) };
+  const nota = preencher(modelo.nota, modelo, valores);
+  return { nota: modelo.notaMaiusculas ? notaCaps(nota) : nota, agenda: preencher(modelo.agenda, modelo, valores) };
 }
 
 function exemplo(campo) {

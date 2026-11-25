@@ -1,0 +1,84 @@
+{
+  "id": "desligamento-definitivo",
+  "sf": "sf-dd",
+  "nome": "Desligamento Definitivo",
+  "categoria": "Ligação e Reativação",
+  "descricao": "Migrado do código (lote 6 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "botao": "Gerar Texto e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "O mesmo texto da nota é igual para a agenda",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "ref",
+      "elementoId": "dd_ref",
+      "rotulo": "Ponto de Referência:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ponto de referência detalhado"
+    },
+    {
+      "id": "solic",
+      "elementoId": "dd_solic",
+      "rotulo": "Solicitante:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo do solicitante"
+    },
+    {
+      "id": "vinculo",
+      "elementoId": "dd_vinculo",
+      "rotulo": "Titular ou representante legal?",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["Titular", "Representante legal"]
+    },
+    {
+      "id": "tel",
+      "elementoId": "dd_tel",
+      "rotulo": "Telefone:",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84988887777"
+    },
+    {
+      "id": "email",
+      "elementoId": "dd_email",
+      "rotulo": "E-mail:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "crit",
+      "elementoId": "dd_crit",
+      "rotulo": "Critério da fatura final:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["media", "cliente"],
+      "rotulosOpcoes": ["Faturado por média", "Leitura fornecida pelo cliente"]
+    },
+    {
+      "id": "entregue",
+      "elementoId": "dd_entregue",
+      "rotulo": "Fatura Entregue:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["Sim", "Não"]
+    }
+  ],
+  "nota": "Cliente ciente do faturamento da fatura de período final, para desligamento definitivo.\nPonto de Referência: {{ref}}\nSolicitante: {{solic}}\nTitular ou representante legal? {{vinculo}}\nEm caso de representante legal, informar se apresentou procuração ou certidão de óbito\nTelefone: {{tel}}\nE-mail: {{email}}\nCritério da fatura final: {{#se crit=media}}(X) Faturado por média ou ( ) Leitura fornecida pelo cliente\n{{/se}}{{#se crit=cliente}}( ) Faturado por média ou (X) Leitura fornecida pelo cliente\n{{/se}}Fatura Entregue: {{#se entregue=Sim}}(X)Sim ( )Não\n{{/se}}{{#se entregue=Não}}( )Sim (X)Não\n{{/se}}Cliente ciente que o medidor não será retirado",
+  "agenda": "Cliente ciente do faturamento da fatura de período final, para desligamento definitivo.\nPonto de Referência: {{ref}}\nSolicitante: {{solic}}\nTitular ou representante legal? {{vinculo}}\nEm caso de representante legal, informar se apresentou procuração ou certidão de óbito\nTelefone: {{tel}}\nE-mail: {{email}}\nCritério da fatura final: {{#se crit=media}}(X) Faturado por média ou ( ) Leitura fornecida pelo cliente\n{{/se}}{{#se crit=cliente}}( ) Faturado por média ou (X) Leitura fornecida pelo cliente\n{{/se}}Fatura Entregue: {{#se entregue=Sim}}(X)Sim ( )Não\n{{/se}}{{#se entregue=Não}}( )Sim (X)Não\n{{/se}}Cliente ciente que o medidor não será retirado"
+}

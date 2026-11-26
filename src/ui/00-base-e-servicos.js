@@ -442,9 +442,6 @@
   }
 
 
-
-
-
   /* ===== PADRONIZAÇÃO: DATA, CPF/CNPJ E TELEFONE =====
      Roda dentro de validarCampos (chamado por todos os geradores, antes
      de montar o texto). Valida os valores e regrava o campo já formatado,
@@ -495,7 +492,6 @@
     if (naoFutura && ehFutura(dt)) return { erro: 'futura' };
     return { ok: true, texto: doisDig(dia) + '/' + doisDig(mes) + '/' + ano };
   }
-
 
 
   function padronizarCampos(containerId) {
@@ -699,114 +695,6 @@
   }
 
   // GERADORES DOS DEMAIS SERVIÇOS
-  // Ligação Nova: "Normal" ou "Por expediente" (só muda os campos e a NOTA).
-  function toggleLigacaoNova() {
-    var exp = getVal('ln_modo') === 'expediente';
-    document.querySelectorAll('#sf-ligacao-nova .grp-ln-normal').forEach(function(g) { g.style.display = exp ? 'none' : 'flex'; });
-    document.querySelectorAll('#sf-ligacao-nova .grp-ln-exp').forEach(function(g) { g.style.display = exp ? 'flex' : 'none'; });
-  }
-
-
-
-  // NOTA no padrão "LN/RT {FASE} N° {NÚMERO} {COMPLEMENTO} REF: ... CG: ... TEL: ... PC: ... PZ 5D UTEIS"
-  function notaPadraoEndereco(sigla, p) {
-    return notaCaps(sigla + ' ' + getVal(p + '_tipo_lig') + ' N° ' + getVal(p + '_numero') + ' ' + getVal(p + '_compl') +
-      ' REF: ' + getVal(p + '_ref') + ' CG: ' + getVal(p + '_coords') + ' TEL: ' + telefonesPadraoNota(getVal(p + '_tel')) +
-      ' PC: ' + getVal(p + '_proc') + ' PZ 5D UTEIS');
-  }
-
-  // AGENDA no padrão da Reativação (também usado na Ligação Nova normal)
-  function agendaPadraoEndereco(tipoSolic, p) {
-    return 'Tipo de solicitação: ' + tipoSolic +
-      '\nSolicitante: ' + getVal(p + '_solic') +
-      '\nPontos de referências: ' + getVal(p + '_ref') +
-      '\nCoordenadas geográficas: ' + getVal(p + '_coords') +
-      '\nTipo de ligação: ' + (getVal(p + '_tipo_lig') || getVal(p + '_fase')) +
-      '\nTelefones para contato: ' + getVal(p + '_tel') +
-      '\nE-mail para contato: ' + getVal(p + '_email') +
-      '\nDados da receita: (regular/pendente de regularização): ' + getVal(p + '_rec').toUpperCase() +
-      '\nQuem deverá ser procurado no local: ' + getVal(p + '_proc') +
-      '\nCiente do prazo de 5 dias úteis para execução do serviço';
-  }
-
-  function gerarLigacaoNova() {
-    if (!validarCampos('sf-ligacao-nova')) return;
-    var nota, agenda;
-    if (getVal('ln_modo') === 'expediente') {
-      nota = notaCaps('LN ' + getVal('ln_tipo_lig') + ' LIB P/AE ' + getVal('ln_num_nota') + ' AP ' + getVal('ln_ap') + ' BL ' + getVal('ln_bloco') +
-        ' REF: ' + getVal('ln_ref') + ' TEL: ' + telefonesPadraoNota(getVal('ln_tel')) + ' PC: ' + getVal('ln_proc')) +
-        '/' + getVal('ln_email') + ' PZ 5D UTEIS';
-      agenda = 'Tipo de solicitação: Ligação Nova' +
-        '\nSolicitante: ' + getVal('ln_solic') +
-        '\nPontos de referências: ' + getVal('ln_ref') +
-        '\nNome do Empreendimento: ' + getVal('ln_emp') +
-        '\nCoordenadas geográficas: ' + getVal('ln_coords') +
-        '\nTipo de ligação: ' + getVal('ln_tipo_lig') +
-        '\nTelefones para contato: ' + getVal('ln_tel') +
-        '\nE-mail para contato: ' + getVal('ln_email') +
-        '\nDados da receita: ' + getVal('ln_rec').toUpperCase() +
-        '\nQuem deverá ser procurado no local: ' + getVal('ln_proc') +
-        '\nCiente do prazo de 5 dias úteis para execução do serviço';
-    } else {
-      nota = notaPadraoEndereco('LN', 'ln');
-      agenda = agendaPadraoEndereco('Ligação Nova', 'ln');
-    }
-    finalizarGeracao('sf-ligacao-nova', nota, agenda, 'nota');
-  }
-
-  function gerarLigacaoMUC() {
-    if (!validarCampos('sf-ligacao-muc')) return;
-    var nota = 'Lig nov Solic ' + getVal('muc_solic') + ' Ref ' + getVal('muc_ref') + ' Tel ' + getVal('muc_tel') + ' Lig ' + getVal('muc_tipo_lig') + ' Prazo 5 dias úteis Proc ' + getVal('muc_proc') + ' MUC ' + getVal('muc_cod') + ' Nome do empreendimento ' + getVal('muc_emp') + ' TORRE/BL/AP ' + getVal('muc_unid');
-    var agendaMUC = 'MUC: ' + getVal('muc_cod') + ' | Nome do empreendimento: ' + getVal('muc_emp') + ' | TORRE/BL/AP: ' + getVal('muc_unid');
-    var agenda = 'Tipo de solicitação: MUC' +
-      '\nSolicitante: ' + getVal('muc_solic') +
-      '\nPontos de referências: ' + getVal('muc_ref') +
-      '\nCoordenadas geográficas: ' + getVal('muc_coords') +
-      '\nTipo de ligação: ' + getVal('muc_tipo_lig') +
-      '\nTelefones para contato: ' + getVal('muc_tel') +
-      '\n' + agendaMUC +
-      '\nE-mail para contato: ' + getVal('muc_email') +
-      '\nDados da receita: ' + getVal('muc_rec') +
-      '\nQuem deverá ser procurado no local: ' + getVal('muc_proc') +
-      '\nCiente do prazo de 5 dias úteis para execução do serviço';
-    finalizarGeracao('sf-ligacao-muc', nota, agenda, 'nota');
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   function rodapComumCorrigido(ant, mod) {
@@ -822,7 +710,6 @@
       [['ise_servico', 'troca'], ['ise_fat_solic', 'Não se aplica'], ['ise_rec', 'regular'], ['ise_crit', 'Faturado por média'], ['ise_mmgd', 'Não']].forEach(function(p) { document.getElementById(p[0]).value = p[1]; });
       setTimeout(toggleIsencaoDeb, 0);
     }
-    if (containerId === 'sf-ligacao-nova') { document.getElementById('ln_modo').value = 'normal'; setTimeout(toggleLigacaoNova, 0); }
     document.querySelectorAll('#' + containerId + ' input[type="text"], #' + containerId + ' textarea').forEach(function(i) { i.value = ''; });
     if (containerId === 'sf-reclamacoes') {
       document.getElementById('rec_tipo').value = 'leitura_fat';

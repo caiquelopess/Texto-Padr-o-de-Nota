@@ -413,3 +413,21 @@ test('faturas: linhas de vencimento e valor', async () => {
   assert.deepEqual(mdValidarValores(m, { fat: [{ vencimento: '1/2/26', valor: '1' }] }), ['Faturas:: vencimento em dd/mm/aaaa.']);
   assert.deepEqual(mdValidarValores(m, { fat: [{ vencimento: '01/02/2026', valor: '1' }] }), []);
 });
+
+test('|original: com notaMaiusculas, o valor fica como foi digitado', () => {
+  const m = {
+    id: 'filtro-original',
+    nome: 'O',
+    categoria: 'X',
+    notaMaiusculas: true,
+    campos: [
+      { id: 'a', rotulo: 'A', tipo: 'texto' },
+      { id: 'e', rotulo: 'E', tipo: 'texto' },
+    ],
+    nota: 'PC: {{a}}  /{{e|original}} PZ {{a}}',
+    agenda: '{{e|original}}',
+  };
+  assert.deepEqual(mdValidarModelo(m), []);
+  assert.deepEqual(mdGerar(m, { a: 'ana', e: 'Ana@Email.com' }), { nota: 'PC: ANA /Ana@Email.com PZ ANA', agenda: 'Ana@Email.com' });
+  assert.equal(mdGerar({ ...m, notaMaiusculas: false }, { a: 'ana', e: 'X' }).nota, 'PC: ana  /X PZ ana');
+});

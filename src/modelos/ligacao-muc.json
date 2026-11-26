@@ -1,0 +1,111 @@
+{
+  "id": "ligacao-muc",
+  "sf": "sf-ligacao-muc",
+  "nome": "Ligação MUC",
+  "categoria": "Ligação e Reativação",
+  "descricao": "Migrado do código (lote 9 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "elementoId": "muc_solic",
+      "rotulo": "Solicitante",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo do solicitante"
+    },
+    {
+      "id": "tel",
+      "elementoId": "muc_tel",
+      "rotulo": "Telefones (DDD + telefone)",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84988887777"
+    },
+    {
+      "id": "ref",
+      "elementoId": "muc_ref",
+      "rotulo": "Pontos de referências",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ponto de referência detalhado (próximo a...)"
+    },
+    {
+      "id": "coords",
+      "elementoId": "muc_coords",
+      "rotulo": "Coordenadas geográficas",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: -5.1872, -37.3441 ou Não informado"
+    },
+    {
+      "id": "tipo_lig",
+      "elementoId": "muc_tipo_lig",
+      "rotulo": "Tipo de ligação",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["MONO", "BI", "TRI"]
+    },
+    {
+      "id": "cod",
+      "elementoId": "muc_cod",
+      "rotulo": "MUC",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 9200xxxx"
+    },
+    {
+      "id": "emp",
+      "elementoId": "muc_emp",
+      "rotulo": "Empreendimento",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome do condomínio/prédio"
+    },
+    {
+      "id": "unid",
+      "elementoId": "muc_unid",
+      "rotulo": "TORRE / BL / AP",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ex: Torre A Bloco 2 Ap 301"
+    },
+    {
+      "id": "email",
+      "elementoId": "muc_email",
+      "rotulo": "E-mail",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "rec",
+      "elementoId": "muc_rec",
+      "rotulo": "Dados da receita",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["regular", "pendente de regularização"]
+    },
+    {
+      "id": "proc",
+      "elementoId": "muc_proc",
+      "rotulo": "Quem deverá ser procurado no local",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Nome de quem atenderá a equipe técnica"
+    }
+  ],
+  "nota": "Lig nov Solic {{solic}} Ref {{ref}} Tel {{tel}} Lig {{tipo_lig}} Prazo 5 dias úteis Proc {{proc}} MUC {{cod}} Nome do empreendimento {{emp}} TORRE/BL/AP {{unid}}",
+  "agenda": "Tipo de solicitação: MUC\nSolicitante: {{solic}}\nPontos de referências: {{ref}}\nCoordenadas geográficas: {{coords}}\nTipo de ligação: {{tipo_lig}}\nTelefones para contato: {{tel}}\nMUC: {{cod}} | Nome do empreendimento: {{emp}} | TORRE/BL/AP: {{unid}}\nE-mail para contato: {{email}}\nDados da receita: {{rec}}\nQuem deverá ser procurado no local: {{proc}}\nCiente do prazo de 5 dias úteis para execução do serviço"
+}

@@ -73,8 +73,6 @@
       <div class="service-nav" id="service_nav">
         <button type="button" class="sub-btn" data-click="trocarAba('sf-analise-isencao', this)">Isenção de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-resposta-isencao', this)">Resposta da Análise de Isenção</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-nova', this)">Ligação Nova</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-muc', this)">Ligação MUC</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-deb|reativacao', this)">Reativação com Análise de Isenção de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reclamacoes', this)">Reclamações</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-deb|troca', this)">Troca de Titularidade com Análise de Isenção de Débitos</button>
@@ -350,46 +348,8 @@
     </div>
 
     <!-- 1. LIGAÇÃO NOVA (Normal / Por expediente) -->
-    <div class="subform" id="sf-ligacao-nova">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="form-grid">
-        <div class="field-group full-width"><label>Tipo *</label><select id="ln_modo" data-change="toggleLigacaoNova()"><option value="normal">Normal</option><option value="expediente">Por expediente</option></select></div>
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="ln_solic" placeholder="Nome completo do solicitante" required></div>
-        <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="ln_tel" placeholder="Ex: 71993501519" required></div>
-        <div class="field-group"><label>Fase *</label><select id="ln_tipo_lig"><option value="MONO">MONO</option><option value="BI">BI</option><option value="TRI">TRI</option></select></div>
-        <div class="field-group grp-ln-normal"><label>Número *</label><input type="text" id="ln_numero" placeholder="Ex: 77 ou S/N" required></div>
-        <div class="field-group grp-ln-normal full-width"><label>Complemento</label><input type="text" id="ln_compl" placeholder="Opcional — ex: AP 101, CASA B"></div>
-        <div class="field-group grp-ln-exp" style="display: none;"><label>Número da nota *</label><input type="text" id="ln_num_nota" placeholder="Ex: 300123456" required></div>
-        <div class="field-group grp-ln-exp full-width" style="display: none;"><label>Nome do empreendimento *</label><input type="text" id="ln_emp" placeholder="Nome do condomínio/prédio" required></div>
-        <div class="field-group grp-ln-exp" style="display: none;"><label>AP *</label><input type="text" id="ln_ap" placeholder="Ex: 101" required></div>
-        <div class="field-group grp-ln-exp" style="display: none;"><label>Bloco *</label><input type="text" id="ln_bloco" placeholder="Ex: B" required></div>
-        <div class="field-group full-width"><label>Pontos de referências *</label><input type="text" id="ln_ref" placeholder="Ex: PX AO BECO DO SIRILO" required></div>
-        <div class="field-group"><label>Coordenadas geográficas *</label><input type="text" id="ln_coords" placeholder="Ex: -12.9585, -38.4955 ou Não informado" required></div>
-        <div class="field-group"><label>E-mail *</label><input type="text" id="ln_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Dados da receita *</label><select id="ln_rec"><option value="regular">REGULAR</option><option value="pendente de regularização">PENDENTE DE REGULARIZAÇÃO</option></select></div>
-        <div class="field-group"><label>Procurar por (pessoa de contato) *</label><input type="text" id="ln_proc" placeholder="Ex: STEPHANIE, PORTARIA" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarLigacaoNova()">Gerar Texto e Copiar NOTA</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-ligacao-nova')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 1B. LIGAÇÃO MUC -->
-    <div class="subform" id="sf-ligacao-muc">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="muc_solic" placeholder="Nome completo do solicitante" required></div>
-        <div class="field-group"><label>Telefones (DDD + telefone) *</label><input type="text" id="muc_tel" placeholder="Ex: 84988887777" required></div>
-        <div class="field-group full-width"><label>Pontos de referências *</label><input type="text" id="muc_ref" placeholder="Ponto de referência detalhado (próximo a...)" required></div>
-        <div class="field-group"><label>Coordenadas geográficas *</label><input type="text" id="muc_coords" placeholder="Ex: -5.1872, -37.3441 ou Não informado" required></div>
-        <div class="field-group"><label>Tipo de ligação *</label><select id="muc_tipo_lig"><option value="MONO">MONO</option><option value="BI">BI</option><option value="TRI">TRI</option></select></div>
-        <div class="field-group" id="grp_muc_cod"><label>MUC *</label><input type="text" id="muc_cod" placeholder="Ex: 9200xxxx" required></div>
-        <div class="field-group" id="grp_muc_emp"><label>Empreendimento *</label><input type="text" id="muc_emp" placeholder="Nome do condomínio/prédio" required></div>
-        <div class="field-group full-width" id="grp_muc_unid"><label>TORRE / BL / AP *</label><input type="text" id="muc_unid" placeholder="Ex: Torre A Bloco 2 Ap 301" required></div>
-        <div class="field-group"><label>E-mail *</label><input type="text" id="muc_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Dados da receita *</label><select id="muc_rec"><option value="regular">regular</option><option value="pendente de regularização">pendente de regularização</option></select></div>
-        <div class="field-group full-width"><label>Quem deverá ser procurado no local *</label><input type="text" id="muc_proc" placeholder="Nome de quem atenderá a equipe técnica" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarLigacaoMUC()">Gerar Texto e Copiar NOTA</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-ligacao-muc')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 2. REATIVAÇÃO -->
 

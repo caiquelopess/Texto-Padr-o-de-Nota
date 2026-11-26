@@ -1,0 +1,170 @@
+{
+  "id": "ligacao-nova",
+  "sf": "sf-ligacao-nova",
+  "nome": "Ligação Nova",
+  "categoria": "Ligação e Reativação",
+  "descricao": "Migrado do código (lote 9 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "notaMaiusculas": true,
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    }
+  ],
+  "campos": [
+    {
+      "id": "modo",
+      "elementoId": "ln_modo",
+      "rotulo": "Tipo",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": true,
+      "opcoes": ["normal", "expediente"],
+      "rotulosOpcoes": ["Normal", "Por expediente"]
+    },
+    {
+      "id": "solic",
+      "elementoId": "ln_solic",
+      "rotulo": "Solicitante",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo do solicitante"
+    },
+    {
+      "id": "tel",
+      "elementoId": "ln_tel",
+      "rotulo": "Telefones (DDD + telefone)",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 71993501519"
+    },
+    {
+      "id": "tipo_lig",
+      "elementoId": "ln_tipo_lig",
+      "rotulo": "Fase",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["MONO", "BI", "TRI"]
+    },
+    {
+      "id": "numero",
+      "elementoId": "ln_numero",
+      "rotulo": "Número",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 77 ou S/N",
+      "mostrarSe": {
+        "campo": "modo",
+        "igual": "normal"
+      }
+    },
+    {
+      "id": "compl",
+      "elementoId": "ln_compl",
+      "rotulo": "Complemento",
+      "tipo": "texto",
+      "largo": true,
+      "dica": "Opcional — ex: AP 101, CASA B",
+      "mostrarSe": {
+        "campo": "modo",
+        "igual": "normal"
+      }
+    },
+    {
+      "id": "num_nota",
+      "elementoId": "ln_num_nota",
+      "rotulo": "Número da nota",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 300123456",
+      "mostrarSe": {
+        "campo": "modo",
+        "igual": "expediente"
+      }
+    },
+    {
+      "id": "emp",
+      "elementoId": "ln_emp",
+      "rotulo": "Nome do empreendimento",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Nome do condomínio/prédio",
+      "mostrarSe": {
+        "campo": "modo",
+        "igual": "expediente"
+      }
+    },
+    {
+      "id": "ap",
+      "elementoId": "ln_ap",
+      "rotulo": "AP",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 101",
+      "mostrarSe": {
+        "campo": "modo",
+        "igual": "expediente"
+      }
+    },
+    {
+      "id": "bloco",
+      "elementoId": "ln_bloco",
+      "rotulo": "Bloco",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: B",
+      "mostrarSe": {
+        "campo": "modo",
+        "igual": "expediente"
+      }
+    },
+    {
+      "id": "ref",
+      "elementoId": "ln_ref",
+      "rotulo": "Pontos de referências",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ex: PX AO BECO DO SIRILO"
+    },
+    {
+      "id": "coords",
+      "elementoId": "ln_coords",
+      "rotulo": "Coordenadas geográficas",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: -12.9585, -38.4955 ou Não informado"
+    },
+    {
+      "id": "email",
+      "elementoId": "ln_email",
+      "rotulo": "E-mail",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "rec",
+      "elementoId": "ln_rec",
+      "rotulo": "Dados da receita",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["regular", "pendente de regularização"],
+      "rotulosOpcoes": ["REGULAR", "PENDENTE DE REGULARIZAÇÃO"]
+    },
+    {
+      "id": "proc",
+      "elementoId": "ln_proc",
+      "rotulo": "Procurar por (pessoa de contato)",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: STEPHANIE, PORTARIA"
+    }
+  ],
+  "nota": "{{#se modo=normal}}LN {{tipo_lig}} N° {{numero}} {{compl}} REF: {{ref}} CG: {{coords}} TEL: {{tel|telefoneNota}} PC: {{proc}} PZ 5D UTEIS{{/se}}{{#se modo=expediente}}LN {{tipo_lig}} LIB P/AE {{num_nota}} AP {{ap}} BL {{bloco}} REF: {{ref}} TEL: {{tel|telefoneNota}} PC: {{proc}}/{{email|original}} PZ 5D UTEIS{{/se}}",
+  "agenda": "Tipo de solicitação: Ligação Nova\nSolicitante: {{solic}}\nPontos de referências: {{ref}}\n{{#se modo=expediente}}Nome do Empreendimento: {{emp}}\n{{/se}}Coordenadas geográficas: {{coords}}\nTipo de ligação: {{tipo_lig}}\nTelefones para contato: {{tel}}\nE-mail para contato: {{email}}\nDados da receita: {{#se modo=normal}}(regular/pendente de regularização): {{/se}}{{rec|maiusculas}}\nQuem deverá ser procurado no local: {{proc}}\nCiente do prazo de 5 dias úteis para execução do serviço"
+}

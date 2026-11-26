@@ -7,7 +7,7 @@
 //   {{#se campo}}...{{/se}}       só entra se o campo estiver preenchido
 //   {{#se campo=Valor}}...{{/se}} só entra se o campo for igual a Valor
 // Os dados preenchidos nunca saem do navegador: o motor só monta o texto localmente.
-import { formatarTelefones, notaCaps, telefonesPadraoNota } from './formatos.mjs';
+import { formatarTelefones, telefonesPadraoNota } from './formatos.mjs';
 
 export const MD_TIPOS = ['texto', 'textoLongo', 'telefone', 'email', 'data', 'numero', 'opcao', 'documento', 'dataOuMes', 'dataHora', 'faturas'];
 // Campo "faturas": lista de { vencimento, valor } (linhas que o atendente adiciona).
@@ -18,7 +18,10 @@ const ID_CAMPO = /^[a-z][a-z0-9_]{0,39}$/;
 const ID_MODELO = /^[a-z0-9][a-z0-9-]{2,59}$/;
 const MARCADOR = /\{\{\s*([a-z][a-z0-9_]*)\s*(?:\|\s*([a-zA-Z]+)(?::([^}]*))?)?\s*\}\}/g;
 const BLOCO = /\{\{#se\s+([a-z][a-z0-9_]*)\s*(?:=\s*([^}]*?))?\s*\}\}\n?((?:(?!\{\{#se\s)[\s\S])*?)\{\{\/se\}\}\n?/;
-const FILTROS = ['maiusculas', 'telefoneNota', 'ou'];
+const FILTROS = ['maiusculas', 'telefoneNota', 'ou', 'original'];
+// {{campo|original}}: com notaMaiusculas, o valor fica como foi digitado (ex.: e-mail).
+const ORIG_INI = '\uE000';
+const ORIG_FIM = '\uE001';
 
 const vazio = (v) => (Array.isArray(v) ? !faturasPreenchidas(v).length : String(v ?? '').trim() === '');
 
@@ -237,7 +240,7 @@ function valorFormatado(campo, bruto, filtro, argumento) {
   return v;
 }
 
-function preencher(texto, modelo, valores) {
+function preencher(texto, modelo, valores, marcarOriginal = false) {
   const porId = Object.fromEntries((modelo.campos || []).map((c) => [c.id, c]));
   const visiveis = new Set(mdCamposVisiveis(modelo, valores).map((c) => c.id));
   const val = (id) => (visiveis.has(id) ? valores[id] : '');
@@ -250,14 +253,30 @@ function preencher(texto, modelo, valores) {
     const entra = igual === undefined ? atual !== '' : atual === igual.trim();
     t = t.slice(0, m.index) + (entra ? corpo : '') + t.slice(m.index + inteiro.length);
   }
-  return t.replace(MARCADOR, (_, id, filtro, argumento) => valorFormatado(porId[id], val(id), filtro, argumento)).replace(/\n+$/, '');
+  return t
+    .replace(MARCADOR, (_, id, filtro, argumento) => {
+      const v = valorFormatado(porId[id], val(id), filtro, argumento);
+      return marcarOriginal && filtro === 'original' ? ORIG_INI + v + ORIG_FIM : v;
+    })
+    .replace(/\n+$/, '');
 }
 
 // Monta os textos de NOTA e AGENDA.
 // notaMaiusculas: a NOTA sai toda em maiúsculas e sem espaços repetidos (padrão das notas de campo).
+// Como notaCaps (maiúsculas, sem espaços repetidos), mas os trechos marcados com |original ficam como foram digitados.
+function maiusculasExceto(t) {
+  let saida = '';
+  let ultimo = 0;
+  for (const m of t.matchAll(/\uE000([\s\S]*?)\uE001/g)) {
+    saida += t.slice(ultimo, m.index).toUpperCase() + m[1];
+    ultimo = m.index + m[0].length;
+  }
+  return (saida + t.slice(ultimo).toUpperCase()).replace(/\s+/g, ' ').trim();
+}
 export function mdGerar(modelo, valores = {}) {
-  const nota = preencher(modelo.nota, modelo, valores);
-  return { nota: modelo.notaMaiusculas ? notaCaps(nota) : nota, agenda: preencher(modelo.agenda, modelo, valores) };
+  const agenda = preencher(modelo.agenda, modelo, valores);
+  if (!modelo.notaMaiusculas) return { nota: preencher(modelo.nota, modelo, valores), agenda };
+  return { nota: maiusculasExceto(preencher(modelo.nota, modelo, valores, true)), agenda };
 }
 
 function exemplo(campo) {

@@ -84,8 +84,6 @@
 
 
 
-  // Escolhe o tipo dentro de formulários compartilhados (Troca/Reativação/Isenção)
-  function aplicarSubtipo(sf, sub) {
-    if (sf === 'sf-isencao-deb' && sub) { document.getElementById('ise_servico').value = sub; toggleIsencaoDeb(); }
-  }
+  // (os subtipos agora são dos modelos: veja 22-modelos.js)
+  function aplicarSubtipo() {}
 

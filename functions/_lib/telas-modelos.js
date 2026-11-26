@@ -22,6 +22,7 @@ const NOMES_TIPO = {
   dataOuMes: 'Data ou mês/ano',
   dataHora: 'Data e horário',
   faturas: 'Faturas (vencimento e valor)',
+  valor: 'Valor em reais',
 };
 
 const ESTILO_MODELOS = `

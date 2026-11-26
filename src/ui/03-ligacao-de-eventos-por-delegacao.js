@@ -16,7 +16,6 @@
     gerarReclamacaoUnificada: gerarReclamacaoUnificada,
     calcularRefat: calcularRefat, gerarCalcRefat: gerarCalcRefat, limparCalcRefat: limparCalcRefat,
     gerarRefatUrgente: gerarRefatUrgente, limparRefatUrgente: limparRefatUrgente, toggleRefatUrgente: toggleRefatUrgente,
-    gerarAnaliseIsencao: gerarAnaliseIsencao, gerarIsencaoDeb: gerarIsencaoDeb, toggleIsencaoDeb: toggleIsencaoDeb,
     pendServicoMudou: pendServicoMudou, adicionarPendenciaRefat: adicionarPendenciaRefat, concluirPendenciaRefat: concluirPendenciaRefat,
     iniciarPendenciaServico: iniciarPendenciaServico, salvarPendenciaServico: salvarPendenciaServico, concluirPendenciaServico: concluirPendenciaServico,
     sairModoPendencia: sairModoPendencia, retomarPendencia: retomarPendencia, editarComentario: editarComentario,

@@ -1,0 +1,92 @@
+{
+  "id": "isencao-debitos",
+  "sf": "sf-analise-isencao",
+  "nome": "Isenção de Débitos",
+  "categoria": "Faturamento e Débitos",
+  "descricao": "Migrado do código (lote 10 da etapa 6). Texto idêntico ao serviço anterior; cria a pendência de 5 dias úteis.",
+  "copiar": "nota",
+  "pendencia": {
+    "tipo": "isencao",
+    "origem": "Isenção de Débitos (pedido de análise)",
+    "solicitante": "{{solic}}",
+    "cc": "{{cc}}",
+    "doc": "{{doc}}"
+  },
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "<b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.",
+      "classeOriginal": "alert-box alerta-cnpj"
+    }
+  ],
+  "campos": [
+    {
+      "id": "cc",
+      "elementoId": "aid_cc",
+      "rotulo": "Conta contrato",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "teclado": "numerico",
+      "dica": "Ex: 7001234567"
+    },
+    {
+      "id": "pn",
+      "elementoId": "aid_pn",
+      "rotulo": "PN",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "teclado": "numerico",
+      "dica": "Parceiro de negócio — ex: 1010000000"
+    },
+    {
+      "id": "solic",
+      "elementoId": "aid_solic",
+      "rotulo": "Solicitante",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo"
+    },
+    {
+      "id": "doc",
+      "elementoId": "aid_doc",
+      "rotulo": "CPF/CNPJ",
+      "tipo": "documento",
+      "documento": "doc",
+      "obrigatorio": true,
+      "teclado": "numerico",
+      "dica": "Somente números",
+      "mensagem": "o CPF/CNPJ deve ter 11 (CPF) ou 14 (CNPJ) números."
+    },
+    {
+      "id": "tel",
+      "elementoId": "aid_tel",
+      "rotulo": "Telefone (DDD + telefone)",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 71993501519"
+    },
+    {
+      "id": "email",
+      "elementoId": "aid_email",
+      "rotulo": "E-mail",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "docs",
+      "elementoId": "aid_docs",
+      "rotulo": "Documentação apresentada",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ex: Escritura e CNH"
+    }
+  ],
+  "nota": "Análise de isenção de debitos\nConta contrato: {{cc}}\nSolicitante: {{solic|maiusculas}}\nCPF/CNPJ: {{doc}}\nPN: {{pn}}\nTEL: {{tel|telefoneNota}}\nEMAIL: {{email}}\nDOCUMENTAÇÃO APRESENTADA: {{docs|maiusculas|ponto}}",
+  "agenda": "Análise de isenção de debitos\nConta contrato: {{cc}}\nSolicitante: {{solic|maiusculas}}\nCPF/CNPJ: {{doc}}\nPN: {{pn}}\nTEL: {{tel|telefoneNota}}\nEMAIL: {{email}}\nDOCUMENTAÇÃO APRESENTADA: {{docs|maiusculas|ponto}}"
+}

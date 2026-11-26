@@ -7,18 +7,24 @@
 //   {{#se campo}}...{{/se}}       só entra se o campo estiver preenchido
 //   {{#se campo=Valor}}...{{/se}} só entra se o campo for igual a Valor
 // Os dados preenchidos nunca saem do navegador: o motor só monta o texto localmente.
-import { formatarTelefones, telefonesPadraoNota } from './formatos.mjs';
+import { formatarTelefones, telefonesPadraoNota, valorReais } from './formatos.mjs';
 
-export const MD_TIPOS = ['texto', 'textoLongo', 'telefone', 'email', 'data', 'numero', 'opcao', 'documento', 'dataOuMes', 'dataHora', 'faturas'];
+export const MD_TIPOS = ['texto', 'textoLongo', 'telefone', 'email', 'data', 'numero', 'opcao', 'documento', 'dataOuMes', 'dataHora', 'faturas', 'valor'];
+// Campo "valor": valor em reais (ex.: 3.250,80 ou R$ 3.250,80).
 // Campo "faturas": lista de { vencimento, valor } (linhas que o atendente adiciona).
 // No texto sai como na Reclamação: "vencimento 10/10/2026 R$ 150,00; vencimento ...".
 // Campo "documento": aceita CPF (11 números) e/ou CNPJ (14), conforme c.documento ('doc' = os dois, 'cpf', 'cnpj').
 const DOC_TIPOS = ['doc', 'cpf', 'cnpj'];
 const ID_CAMPO = /^[a-z][a-z0-9_]{0,39}$/;
 const ID_MODELO = /^[a-z0-9][a-z0-9-]{2,59}$/;
-const MARCADOR = /\{\{\s*([a-z][a-z0-9_]*)\s*(?:\|\s*([a-zA-Z]+)(?::([^}]*))?)?\s*\}\}/g;
+// {{campo}} ou {{campo|filtro|filtro:argumento}} (filtros em sequência, da esquerda para a direita)
+const MARCADOR = /\{\{\s*([a-z][a-z0-9_]*)\s*((?:\|\s*[a-zA-Z]+(?::[^}|]*)?\s*)*)\}\}/g;
 const BLOCO = /\{\{#se\s+([a-z][a-z0-9_]*)\s*(?:=\s*([^}]*?))?\s*\}\}\n?((?:(?!\{\{#se\s)[\s\S])*?)\{\{\/se\}\}\n?/;
-const FILTROS = ['maiusculas', 'telefoneNota', 'ou', 'original'];
+const FILTROS = ['maiusculas', 'telefoneNota', 'ou', 'original', 'ponto', 'semRS'];
+//   ponto: garante um ponto final (tira pontos repetidos do fim); semRS: tira o "R$" do começo.
+function lerFiltros(t) {
+  return [...String(t || '').matchAll(/\|\s*([a-zA-Z]+)(?::([^}|]*))?/g)].map((m) => ({ nome: m[1], arg: m[2] }));
+}
 // {{campo|original}}: com notaMaiusculas, o valor fica como foi digitado (ex.: e-mail).
 const ORIG_INI = '\uE000';
 const ORIG_FIM = '\uE001';
@@ -54,6 +60,11 @@ export function mdRotulo(campo, valores = {}) {
 export function mdCamposVisiveis(modelo, valores = {}) {
   return (modelo.campos || []).filter((c) => {
     if (!c.mostrarSe) return true;
+    // "maiorQue": aparece quando o valor em reais do outro campo passa do limite (ex.: débito > R$ 12.000)
+    if (c.mostrarSe.maiorQue !== undefined) {
+      const n = valorReais(valores[c.mostrarSe.campo]);
+      return n !== null && n > Number(c.mostrarSe.maiorQue);
+    }
     const atual = String(valores[c.mostrarSe.campo] ?? '');
     const aceitos = [].concat(c.mostrarSe.igual);
     return aceitos.includes(atual);
@@ -85,6 +96,8 @@ export function mdValidarModelo(modelo) {
     if (c.rotuloSe && (!ids.has(c.rotuloSe.campo) || vazio(c.rotuloSe.rotulo))) erros.push(`Campo "${c.rotulo || c.id}": "rótulo se" incompleto.`);
     if (c.preencherSe && (!ids.has(c.preencherSe.campo) || vazio(c.preencherSe.valor))) erros.push(`Campo "${c.rotulo || c.id}": "preencher se" incompleto.`);
   }
+  for (const per of Array.isArray(modelo.periodos) ? modelo.periodos : [])
+    if (!ids.has(per.de) || !ids.has(per.ate)) erros.push('Período: os campos "de" e "até" precisam existir.');
   // Subtipos: um modelo atende vários botões; cada botão escolhe um valor de um campo de opção.
   if (modelo.subtipos) {
     const alvo = campos.find((c) => c.id === modelo.subtipos.campo);
@@ -103,7 +116,7 @@ export function mdValidarModelo(modelo) {
       if (!ids.has(m[1])) erros.push(`Texto da ${parte.toUpperCase()}: {{#se ${m[1]}}} usa um campo que não existe.`);
     for (const m of t.matchAll(MARCADOR)) {
       if (!ids.has(m[1])) erros.push(`Texto da ${parte.toUpperCase()}: {{${m[1]}}} não é um campo do modelo.`);
-      if (m[2] && !FILTROS.includes(m[2])) erros.push(`Texto da ${parte.toUpperCase()}: filtro "${m[2]}" desconhecido.`);
+      for (const f of lerFiltros(m[2])) if (!FILTROS.includes(f.nome)) erros.push(`Texto da ${parte.toUpperCase()}: filtro "${f.nome}" desconhecido.`);
     }
   }
   return erros;
@@ -131,6 +144,7 @@ export function mdValidarValores(modelo, valores = {}) {
     if (c.tipo === 'opcao' && !c.opcoes.includes(v)) erros.push(`${c.rotulo}: escolha uma das opções.`);
     if (c.tipo === 'documento' && formatarDocumento(v, c.documento) === null) erros.push(`${c.rotulo}: documento inválido.`);
     if (c.tipo === 'dataOuMes' && !/^\d{2}\/(\d{2}\/)?\d{4}$/.test(v)) erros.push(`${c.rotulo}: use dd/mm/aaaa ou mm/aaaa.`);
+    if (c.tipo === 'valor' && valorReais(v) === null) erros.push(c.mensagem || `${c.rotulo}: informe um valor em reais.`);
     if (c.tipo === 'dataHora' && !/\d{1,2}\s*\/\s*\d{1,2}\s*\/\s*\d{4}/.test(v)) erros.push(`${c.rotulo}: comece com a data (dd/mm/aaaa).`);
   }
   return erros;
@@ -176,9 +190,10 @@ export function mdNormalizarValores(modelo, valores = {}, hoje = new Date()) {
             : c.documento === 'cpf'
               ? 'um CPF com 11 números'
               : 'um CPF com 11 números ou um CNPJ com 14 números';
-        erros.push(`O campo "${mdRotulo(c, valores)}" deve conter ${esperado}. Verifique e tente novamente.`);
+        erros.push(c.mensagem || `O campo "${mdRotulo(c, valores)}" deve conter ${esperado}. Verifique e tente novamente.`);
       } else saida[c.id] = d;
     }
+    if (c.tipo === 'valor' && valorReais(v) === null) erros.push(c.mensagem || `O campo "${mdRotulo(c, valores)}" deve ter um valor em reais (ex: 3.250,80).`);
     // "data e horário" (ex.: 10/10/2026 às 14:00): o texto fica como foi digitado; só confere a data
     if (c.tipo === 'dataHora') {
       const m = /(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{4})/.exec(v);
@@ -229,14 +244,33 @@ export function mdNormalizarValores(modelo, valores = {}, hoje = new Date()) {
       saida[c.id] = `${dois(dia)}/${dois(mes)}/${ano}`;
     }
   }
+  // períodos (de/até): os dois preenchidos ou os dois em branco; o fim não pode ser antes do início
+  for (const per of Array.isArray(modelo.periodos) ? modelo.periodos : []) {
+    const de = String(saida[per.de] ?? '').trim();
+    const ate = String(saida[per.ate] ?? '').trim();
+    if (!de && !ate) continue;
+    if (!de || !ate) {
+      erros.push('preencha as duas datas do período (de e até) ou deixe as duas em branco.');
+      continue;
+    }
+    const n = (t) => t.split('/').reverse().join('');
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(de) && /^\d{2}\/\d{2}\/\d{4}$/.test(ate) && n(ate) < n(de))
+      erros.push('a data final do período não pode ser anterior à inicial.');
+  }
   return { valores: saida, erros };
 }
 
-function valorFormatado(campo, bruto, filtro, argumento) {
+function valorFormatado(campo, bruto, filtros) {
   let v = Array.isArray(bruto) ? textoFaturas(bruto) : String(bruto ?? '').trim();
-  if (!v) return filtro === 'ou' ? argumento : '';
-  if (campo && campo.tipo === 'telefone') v = filtro === 'telefoneNota' ? telefonesPadraoNota(v) : formatarTelefones(v) || v;
-  if (filtro === 'maiusculas') v = v.toUpperCase();
+  const ou = filtros.find((f) => f.nome === 'ou');
+  if (!v) return ou ? (ou.arg ?? '') : '';
+  const nomes = filtros.map((f) => f.nome);
+  if (campo && campo.tipo === 'telefone') v = nomes.includes('telefoneNota') ? telefonesPadraoNota(v) : formatarTelefones(v) || v;
+  for (const n of nomes) {
+    if (n === 'maiusculas') v = v.toUpperCase();
+    if (n === 'ponto') v = `${v.replace(/\.+$/, '')}.`;
+    if (n === 'semRS') v = v.replace(/^R\$\s*/i, '');
+  }
   return v;
 }
 
@@ -254,11 +288,17 @@ function preencher(texto, modelo, valores, marcarOriginal = false) {
     t = t.slice(0, m.index) + (entra ? corpo : '') + t.slice(m.index + inteiro.length);
   }
   return t
-    .replace(MARCADOR, (_, id, filtro, argumento) => {
-      const v = valorFormatado(porId[id], val(id), filtro, argumento);
-      return marcarOriginal && filtro === 'original' ? ORIG_INI + v + ORIG_FIM : v;
+    .replace(MARCADOR, (_, id, lista) => {
+      const filtros = lerFiltros(lista);
+      const v = valorFormatado(porId[id], val(id), filtros);
+      return marcarOriginal && filtros.some((f) => f.nome === 'original') ? ORIG_INI + v + ORIG_FIM : v;
     })
     .replace(/\n+$/, '');
+}
+
+// Preenche um texto qualquer com os marcadores do modelo (ex.: dados da pendência criada ao gerar).
+export function mdPreencher(modelo, valores, texto) {
+  return preencher(texto, modelo, valores);
 }
 
 // Monta os textos de NOTA e AGENDA.
@@ -289,6 +329,7 @@ function exemplo(campo) {
   if (campo.tipo === 'dataOuMes') return '10/2026';
   if (campo.tipo === 'dataHora') return '10/11/2025 às 14:00';
   if (campo.tipo === 'faturas') return [{ vencimento: '10/11/2026', valor: '150,00' }];
+  if (campo.tipo === 'valor') return '1.500,00';
   return `Teste ${campo.rotulo}`;
 }
 

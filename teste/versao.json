@@ -1,7 +1,8 @@
 {
-  "versao": "2.20.4",
+  "versao": "2.20.5",
   "data": "25/11/2026",
   "novidades": [
+    "Isenção de Débitos (pedido de análise e Troca/Reativação com análise) migrada para modelos, sem mudança nos textos e com a mesma pendência de 5 dias úteis",
     "Ligação Nova (normal e por expediente) e Ligação MUC migradas para modelos, sem mudança nos textos",
     "Conta Paga e Não Baixada: faturas em linhas (vencimento e valor), como na Reclamação; modelos ganham o campo Faturas",
     "Reclamação GD e Restituição de valores migradas para modelos, sem mudança nos textos",

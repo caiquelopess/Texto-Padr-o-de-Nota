@@ -1,0 +1,241 @@
+{
+  "id": "analise-isencao-debitos",
+  "sf": "sf-isencao-deb",
+  "nome": "Troca de Titularidade ou Reativação com Análise de Isenção de Débitos",
+  "categoria": "Titularidade e Cadastro",
+  "descricao": "Migrado do código (lote 10 da etapa 6). Texto idêntico ao serviço anterior; cria a pendência de 5 dias úteis.",
+  "copiar": "nota",
+  "subtipos": {
+    "campo": "servico",
+    "botoes": [
+      {
+        "valor": "reativacao",
+        "nome": "Reativação com Análise de Isenção de Débitos",
+        "categoria": "Ligação e Reativação"
+      },
+      {
+        "valor": "troca",
+        "nome": "Troca de Titularidade com Análise de Isenção de Débitos"
+      }
+    ]
+  },
+  "pendencia": {
+    "tipo": "isencao",
+    "origem": "{{#se servico=troca}}Troca de Titularidade{{/se}}{{#se servico=reativacao}}Reativação{{/se}} com Análise de Isenção de Débitos",
+    "solicitante": "{{solic}}",
+    "cc": "{{#se ccn}}{{ccn}}{{/se}}{{#se ccn=}}{{cca}}{{/se}}",
+    "doc": "{{doc}}"
+  },
+  "periodos": [
+    {
+      "de": "de",
+      "ate": "ate"
+    }
+  ],
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "<b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.",
+      "classeOriginal": "alert-box alerta-cnpj"
+    },
+    {
+      "html": "OBS.: Nos casos de representante legal ou solicitante, deverá criar relações no PN em Outros Campos.",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "servico",
+      "elementoId": "ise_servico",
+      "rotulo": "Serviço",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "oculto": true,
+      "largo": true,
+      "opcoes": ["troca", "reativacao"],
+      "rotulosOpcoes": ["Troca de titularidade", "Reativação"]
+    },
+    {
+      "id": "solic",
+      "elementoId": "ise_solic",
+      "rotulo": "Solicitante",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo"
+    },
+    {
+      "id": "doc",
+      "elementoId": "ise_doc",
+      "rotulo": "CPF/CNPJ",
+      "tipo": "documento",
+      "documento": "doc",
+      "obrigatorio": true,
+      "teclado": "numerico",
+      "dica": "Somente números",
+      "mensagem": "o CPF/CNPJ deve ter 11 (CPF) ou 14 (CNPJ) números."
+    },
+    {
+      "id": "tel",
+      "elementoId": "ise_tel",
+      "rotulo": "Telefone com DDD",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 71993501519"
+    },
+    {
+      "id": "email",
+      "elementoId": "ise_email",
+      "rotulo": "E-mail",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "cca",
+      "elementoId": "ise_cca",
+      "rotulo": "CC Antiga",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Conta contrato antiga"
+    },
+    {
+      "id": "ccn",
+      "elementoId": "ise_ccn",
+      "rotulo": "CC Nova",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Conta contrato nova"
+    },
+    {
+      "id": "leitura",
+      "elementoId": "ise_leitura",
+      "rotulo": "Leitura",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "teclado": "numerico",
+      "dica": "Ex: 15420"
+    },
+    {
+      "id": "deb_total",
+      "elementoId": "ise_deb_total",
+      "rotulo": "Valor do débito total (R$)",
+      "tipo": "valor",
+      "obrigatorio": true,
+      "dica": "Ex: 3.250,80",
+      "mensagem": "informe o valor do débito total em reais (ex: 3.250,80)."
+    },
+    {
+      "id": "ni",
+      "elementoId": "ise_ni",
+      "rotulo": "Débito acima de R$ 12.000 — número da nota interna",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Nº da nota interna",
+      "mostrarSe": {
+        "campo": "deb_total",
+        "maiorQue": 12000
+      }
+    },
+    {
+      "id": "deb_solic",
+      "elementoId": "ise_deb_solic",
+      "rotulo": "Valor do débito de responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade)",
+      "tipo": "texto",
+      "largo": true,
+      "teclado": "decimal",
+      "dica": "Em branco = Não se aplica"
+    },
+    {
+      "id": "fat_solic",
+      "elementoId": "ise_fat_solic",
+      "rotulo": "Fatura de responsabilidade do Solicitante foi entregue?",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["Não se aplica", "Sim", "Não"]
+    },
+    {
+      "id": "de",
+      "elementoId": "ise_de",
+      "rotulo": "Período (de)",
+      "tipo": "data",
+      "teclado": "numerico",
+      "dica": "dd/mm/aaaa — em branco = Não se aplica"
+    },
+    {
+      "id": "ate",
+      "elementoId": "ise_ate",
+      "rotulo": "Período (até)",
+      "tipo": "data",
+      "teclado": "numerico",
+      "dica": "dd/mm/aaaa — em branco = Não se aplica"
+    },
+    {
+      "id": "doc_posse",
+      "elementoId": "ise_doc_posse",
+      "rotulo": "Documentação apresentada com comprovação de posse (inserir cópia no SAP KM)",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ex: Contrato de locação, Contrato de Compra e Venda, Matrícula do imóvel",
+      "sugestoes": ["Contrato de locação", "Contrato de Compra e Venda", "Matrícula do imóvel"]
+    },
+    {
+      "id": "rec",
+      "elementoId": "ise_rec",
+      "rotulo": "Dados da Receita Federal (inserir cópia no SAP KM)",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["regular", "pendente de regularização", "indisponível"]
+    },
+    {
+      "id": "periodo_final",
+      "elementoId": "ise_periodo_final",
+      "rotulo": "Cliente ciente do faturamento da fatura de período final de",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 10/10/2026 a 14/11/2026 ou Não se aplica"
+    },
+    {
+      "id": "crit",
+      "elementoId": "ise_crit",
+      "rotulo": "Critério de fatura final",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["Faturado por média", "Leitura fornecida pelo cliente", "Não se aplica"]
+    },
+    {
+      "id": "forma",
+      "elementoId": "ise_forma",
+      "rotulo": "Fatura final entregue de que forma",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: Impressa na loja, E-mail ou Não se aplica",
+      "sugestoes": ["Impressa na loja", "Por e-mail", "Não se aplica"]
+    },
+    {
+      "id": "mmgd",
+      "elementoId": "ise_mmgd",
+      "rotulo": "Unidade consumidora MMGD Geradora?",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["Não", "Sim"]
+    },
+    {
+      "id": "neo",
+      "elementoId": "ise_neo",
+      "rotulo": "Número da Tarefa Neo aberta",
+      "tipo": "texto",
+      "dica": "Em branco = Não se aplica"
+    }
+  ],
+  "nota": "Título: {{#se servico=troca}}TROCA DE TITULARIDADE{{/se}}{{#se servico=reativacao}}REATIVAÇÃO{{/se}} COM ANÁLISE DE ISENÇÃO DE DÉBITOS\nSolicitante: {{solic}}\nCPF/CNPJ: {{doc}}\nTelefone com DDD: {{tel}}\nE-mail: {{email}}\nServiço (troca ou reativação): {{#se servico=troca}}Troca de titularidade\n{{/se}}{{#se servico=reativacao}}Reativação\n{{/se}}CC Antiga: {{cca}}\nCC Nova: {{ccn}}\nLeitura: {{leitura}}\nValor do débito total R$: {{deb_total|semRS}}\nCaso débito >R$12.000, número da nota interna: {{ni|ou:Não se aplica}}\nValor do débito responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade): {{#se deb_solic}}R$ {{deb_solic|semRS}}\n{{/se}}{{#se deb_solic=}}Não se aplica\n{{/se}}Fatura de responsabilidade do Solicitante foi entregue: {{fat_solic}}\nPeríodo (de/até): {{#se de}}{{de}} até {{ate}}\n{{/se}}{{#se de=}}Não se aplica\n{{/se}}Documentação apresentada com comprovação de posse (inserir cópia no SAP KM): {{doc_posse}}\nDados da Receita Federal (inserir cópia no SAP KM): {{rec}}\nCliente ciente do faturamento da fatura de período final de: {{periodo_final}}\nCritério de fatura final: {{crit}}\nFatura final entregue de que forma: {{forma}}\nSe trata de unidade consumidora MMGD Geradora? {{mmgd}}\nNúmero da Tarefa Neo aberta: {{neo|ou:Não se aplica}}",
+  "agenda": "Título: {{#se servico=troca}}TROCA DE TITULARIDADE{{/se}}{{#se servico=reativacao}}REATIVAÇÃO{{/se}} COM ANÁLISE DE ISENÇÃO DE DÉBITOS\nSolicitante: {{solic}}\nCPF/CNPJ: {{doc}}\nTelefone com DDD: {{tel}}\nE-mail: {{email}}\nServiço (troca ou reativação): {{#se servico=troca}}Troca de titularidade\n{{/se}}{{#se servico=reativacao}}Reativação\n{{/se}}CC Antiga: {{cca}}\nCC Nova: {{ccn}}\nLeitura: {{leitura}}\nValor do débito total R$: {{deb_total|semRS}}\nCaso débito >R$12.000, número da nota interna: {{ni|ou:Não se aplica}}\nValor do débito responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade): {{#se deb_solic}}R$ {{deb_solic|semRS}}\n{{/se}}{{#se deb_solic=}}Não se aplica\n{{/se}}Fatura de responsabilidade do Solicitante foi entregue: {{fat_solic}}\nPeríodo (de/até): {{#se de}}{{de}} até {{ate}}\n{{/se}}{{#se de=}}Não se aplica\n{{/se}}Documentação apresentada com comprovação de posse (inserir cópia no SAP KM): {{doc_posse}}\nDados da Receita Federal (inserir cópia no SAP KM): {{rec}}\nCliente ciente do faturamento da fatura de período final de: {{periodo_final}}\nCritério de fatura final: {{crit}}\nFatura final entregue de que forma: {{forma}}\nSe trata de unidade consumidora MMGD Geradora? {{mmgd}}\nNúmero da Tarefa Neo aberta: {{neo|ou:Não se aplica}}"
+}

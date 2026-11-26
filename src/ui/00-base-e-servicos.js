@@ -706,10 +706,6 @@
 
   function limparForm(containerId) {
     desbloquearFormulario(containerId);
-    if (containerId === 'sf-isencao-deb') {
-      [['ise_servico', 'troca'], ['ise_fat_solic', 'Não se aplica'], ['ise_rec', 'regular'], ['ise_crit', 'Faturado por média'], ['ise_mmgd', 'Não']].forEach(function(p) { document.getElementById(p[0]).value = p[1]; });
-      setTimeout(toggleIsencaoDeb, 0);
-    }
     document.querySelectorAll('#' + containerId + ' input[type="text"], #' + containerId + ' textarea').forEach(function(i) { i.value = ''; });
     if (containerId === 'sf-reclamacoes') {
       document.getElementById('rec_tipo').value = 'leitura_fat';

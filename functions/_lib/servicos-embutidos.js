@@ -85,10 +85,6 @@ export const SERVICOS_EMBUTIDOS = [
     "nome": "Reativação"
   },
   {
-    "id": "sf-isencao-deb|reativacao",
-    "nome": "Reativação com Análise de Isenção de Débitos"
-  },
-  {
     "id": "sf-ri",
     "nome": "Reativação com débitos"
   },
@@ -161,12 +157,12 @@ export const SERVICOS_EMBUTIDOS = [
     "nome": "Troca de Titularidade"
   },
   {
-    "id": "sf-isencao-deb|troca",
-    "nome": "Troca de Titularidade com Análise de Isenção de Débitos"
-  },
-  {
     "id": "sf-parc-tt",
     "nome": "Troca de Titularidade com Parcelamento de Débitos"
+  },
+  {
+    "id": "sf-isencao-deb",
+    "nome": "Troca de Titularidade ou Reativação com Análise de Isenção de Débitos"
   },
   {
     "id": "sf-aparelhagem",

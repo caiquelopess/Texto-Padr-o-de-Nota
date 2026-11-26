@@ -122,7 +122,7 @@ test('validação do modelo aponta cada problema', () => {
   ])
     assert.ok(erros.includes(esperado), esperado);
   assert.ok(mdValidarModelo({ id: 'abc', nome: 'N', categoria: 'C', campos: [] }).includes('Escreva o texto da NOTA ou da AGENDA.'));
-  assert.deepEqual(MD_TIPOS.length, 11);
+  assert.deepEqual(MD_TIPOS.length, 12);
 });
 
 test('teste automático antes de publicar', () => {
@@ -151,7 +151,7 @@ test('teste automático antes de publicar', () => {
   assert.equal(todos.ok, true, todos.erros.join('; '));
   assert.equal(
     todos.exemplos[0].agenda,
-    'Teste texto Teste textoLongo (71) 99350-1519 teste@email.com 10/11/2026 123456 Um 12345678901 10/2026 10/11/2025 às 14:00 vencimento 10/11/2026 R$ 150,00',
+    'Teste texto Teste textoLongo (71) 99350-1519 teste@email.com 10/11/2026 123456 Um 12345678901 10/2026 10/11/2025 às 14:00 vencimento 10/11/2026 R$ 150,00 1.500,00',
   );
 });
 
@@ -430,4 +430,38 @@ test('|original: com notaMaiusculas, o valor fica como foi digitado', () => {
   assert.deepEqual(mdValidarModelo(m), []);
   assert.deepEqual(mdGerar(m, { a: 'ana', e: 'Ana@Email.com' }), { nota: 'PC: ANA /Ana@Email.com PZ ANA', agenda: 'Ana@Email.com' });
   assert.equal(mdGerar({ ...m, notaMaiusculas: false }, { a: 'ana', e: 'X' }).nota, 'PC: ana  /X PZ ana');
+});
+
+test('filtros em sequência, valor em reais, "maior que" e períodos', async () => {
+  const { mdNormalizarValores, mdPreencher } = await import('../../src/nucleo/modelos.mjs');
+  const m = {
+    id: 'isencao-teste',
+    nome: 'I',
+    categoria: 'X',
+    periodos: [{ de: 'de', ate: 'ate' }],
+    campos: [
+      { id: 'docs', rotulo: 'Docs', tipo: 'texto' },
+      { id: 'total', rotulo: 'Total', tipo: 'valor', mensagem: 'valor inválido.' },
+      { id: 'ni', rotulo: 'NI', tipo: 'texto', obrigatorio: true, mostrarSe: { campo: 'total', maiorQue: 12000 } },
+      { id: 'de', rotulo: 'De', tipo: 'data' },
+      { id: 'ate', rotulo: 'Até', tipo: 'data' },
+    ],
+    nota: '{{docs|maiusculas|ponto}} {{total|semRS}} {{ni|ou:Não se aplica}}',
+  };
+  assert.deepEqual(mdValidarModelo(m), []);
+  assert.equal(mdTestarModelo(m).ok, true);
+  assert.equal(mdGerar(m, { docs: 'cnh...', total: 'R$ 13.000,00', ni: 'NI-1' }).nota, 'CNH. 13.000,00 NI-1');
+  assert.equal(mdGerar(m, { docs: 'cnh', total: '12000', ni: 'NI-1' }).nota, 'CNH. 12000 Não se aplica');
+  assert.deepEqual(mdValidarValores(m, { total: '12000,01' }), ['Preencha o campo: NI']);
+  assert.deepEqual(mdValidarValores(m, { total: 'muito' }), ['valor inválido.']);
+  assert.deepEqual(mdNormalizarValores(m, { total: 'muito' }).erros, ['valor inválido.']);
+  assert.deepEqual(mdNormalizarValores({ ...m, campos: [{ id: 'total', rotulo: 'Total', tipo: 'valor' }], periodos: [] }, { total: 'x' }).erros, [
+    'O campo "Total" deve ter um valor em reais (ex: 3.250,80).',
+  ]);
+  assert.deepEqual(mdNormalizarValores(m, { de: '01/03/2025' }).erros, ['preencha as duas datas do período (de e até) ou deixe as duas em branco.']);
+  assert.deepEqual(mdNormalizarValores(m, { de: '1/3/2025', ate: '01/01/2025' }).erros, ['a data final do período não pode ser anterior à inicial.']);
+  assert.deepEqual(mdNormalizarValores(m, { de: '1/3/2025', ate: '1/3/2025' }).erros, []);
+  assert.equal(mdPreencher(m, { docs: 'x' }, 'Origem {{docs|maiusculas}}'), 'Origem X');
+  assert.deepEqual(mdValidarModelo({ ...m, periodos: [{ de: 'de', ate: 'zz' }] }), ['Período: os campos "de" e "até" precisam existir.']);
+  assert.deepEqual(mdValidarModelo({ ...m, nota: '{{docs|maiusculas|inventado}}' }), ['Texto da NOTA: filtro "inventado" desconhecido.']);
 });

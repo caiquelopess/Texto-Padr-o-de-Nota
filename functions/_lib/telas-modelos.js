@@ -3,7 +3,7 @@ import { MD_TIPOS } from '../../src/nucleo/modelos.mjs';
 import { diferencaLinhas, resumoCampos } from './diferenca.js';
 import { CATEGORIAS_PADRAO, MOSTRAR_AVANCADO, mostrarSeSimples, textoDoAviso } from './modelos-form.js';
 import { pode } from './permissoes.js';
-import { MODELOS_SISTEMA } from './servicos-embutidos.js';
+import { MODELOS_SISTEMA, RASCUNHOS_PRONTOS } from './servicos-embutidos.js';
 import { data, esc, paginaAdmin } from './telas.js';
 
 // Scripts de atendimento (falas + checklist): prontos, mas ocultos por decisão do responsável.
@@ -100,6 +100,22 @@ export function telaModelos({ usuario, perfil, modelos = [], filtro = 'todos', c
       return `<tr><td><b>${esc(s.nome)}</b><br><small style="color:var(--muted)">${esc(s.id)}${s.subtipos ? ` · botões: ${esc(botoes)}` : ''}</small></td><td>${esc(s.categoria)}</td><td>${situacao}</td><td>${acao}</td></tr>`;
     })
     .join('');
+  // rascunhos prontos: modelos novos preparados no repositório, que só entram no atendimento depois de publicados
+  const prontos = RASCUNHOS_PRONTOS.map((r) => {
+    const p = porId[r.id];
+    const acao = p
+      ? `<a href="/admin/modelos/${esc(r.id)}" style="color:var(--neon)">Abrir</a>`
+      : pode(perfil, 'modelos.editar')
+        ? `<form method="post" action="/admin/modelos" style="display:inline"><input type="hidden" name="acao" value="rascunho_pronto"><input type="hidden" name="id" value="${esc(r.id)}"><button type="submit" class="secundario">Criar rascunho</button></form>`
+        : '';
+    const situacao = p ? `<span class="selo selo-${p.status}">${STATUS[p.status]}</span>` : '<span class="selo selo-alerta">Aguardando revisão</span>';
+    return `<tr><td><b>${esc(r.nome)}</b><br><small style="color:var(--muted)">${esc(r.id)}</small></td><td>${esc(r.categoria)}</td><td>${situacao}</td><td>${acao}</td></tr>`;
+  }).join('');
+  const blocoProntos = prontos
+    ? `<h2 style="margin-top:28px">Modelos prontos para revisar (${RASCUNHOS_PRONTOS.length})</h2>
+<p class="sub">Modelos novos preparados para você revisar. <b>Criar rascunho</b> salva o modelo como rascunho: os atendentes só passam a vê-lo depois que ele for publicado.</p>
+<div class="tabela-rolagem"><table><thead><tr><th>Modelo</th><th>Categoria</th><th>Situação</th><th></th></tr></thead><tbody>${prontos}</tbody></table></div>`
+    : '';
   const blocoSistema = `<h2 style="margin-top:28px">Modelos do sistema (${MODELOS_SISTEMA.length})</h2>
 <p class="sub">Os serviços que já vêm no site. <b>Personalizar</b> cria uma cópia em rascunho, com todas as configurações do original; os atendentes só passam a usá-la quando for publicada. Para voltar ao original, arquive a personalização.</p>
 <div class="tabela-rolagem"><table><thead><tr><th>Modelo</th><th>Categoria</th><th>Situação</th><th></th></tr></thead><tbody>${sistema}</tbody></table></div>`;
@@ -110,7 +126,7 @@ export function telaModelos({ usuario, perfil, modelos = [], filtro = 'todos', c
     `<h1>Modelos de texto</h1><p class="sub">Rascunhos não aparecem para os atendentes: só a versão publicada. Cada publicação guarda uma versão que pode ser comparada e restaurada.</p><div class="linha-neon"></div>
 ${msgs(erro, ok)}${criar}<nav class="filtros">${filtros}</nav>
 <div class="tabela-rolagem"><table><thead><tr><th>Modelo</th><th>Categoria</th><th>Situação</th><th>Versão em uso</th><th>Última alteração</th></tr></thead><tbody>${linhas || '<tr><td colspan="5">Nenhum modelo nesta lista.</td></tr>'}</tbody></table></div>
-${blocoSistema}`,
+${blocoProntos}${blocoSistema}`,
   );
 }
 

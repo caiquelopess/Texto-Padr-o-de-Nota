@@ -722,3 +722,76 @@ test('configurações gerais: aviso, sessão, sugestões, permissão e auditoria
   await page.goto('/admin/auditoria');
   await expect(page.locator('tbody')).toContainText('Alterou as configurações gerais (sessão 8h; sugestões 0/dia; aviso ligado)');
 });
+
+test('modelos do sistema: personalizar, publicar com as configurações avançadas e voltar ao original', async ({ page, browser }) => {
+  const URL_BASE = 'http://localhost:8788';
+  await entrar(page, 'admin.teste', 'senha-admin-teste');
+  await page.goto('/admin/modelos');
+  const linhaDe = (id) =>
+    page
+      .locator('tr')
+      .filter({ has: page.locator('small', { hasText: new RegExp(`^${id}`) }) })
+      .last();
+  const linha = linhaDe('troca-titularidade');
+  await expect(linha).toContainText('Original');
+  await expect(linha).toContainText('botões: Troca de Titularidade sem Débitos · Troca de Titularidade com Assunção de Débitos');
+  // não dá para criar um modelo novo com o id de um modelo do sistema
+  await page.fill('#mi', 'troca-titularidade');
+  await page.fill('#mn', 'Outro');
+  await page.click('form[data-carrega] button[type=submit]');
+  await expect(page.locator('.erro')).toContainText('é um modelo do sistema');
+
+  await linha.locator('button', { hasText: 'Personalizar' }).click();
+  await expect(page).toHaveURL(/\/admin\/modelos\/troca-titularidade$/);
+  await expect(page.locator('.sub')).toContainText('Modelo do sistema personalizado');
+  // a regra combinada não é editável no formulário; o aviso formatado aparece como texto
+  await expect(page.locator('#ea')).toContainText('Atenção: Em caso de reconhecimento de débito');
+  const nota = await page.locator('#etn').inputValue();
+  await page.fill('#etn', nota.replace('Solicitante (titular).: {{solic}}', 'Titular (personalizado): {{solic}}'));
+  page.once('dialog', (d) => d.accept());
+  await page.click('button[value=publicar]');
+  await expect(page.locator('.okmsg')).toContainText('Publicado como versão 1');
+  await page.goto('/admin/modelos');
+  await expect(linhaDe('troca-titularidade')).toContainText('Personalizado (em uso)');
+
+  // atendente: os 2 botões continuam, o texto personalizado sai e o aviso mantém o negrito
+  const ctx = await browser.newContext({ baseURL: URL_BASE });
+  const at = await ctx.newPage();
+  await entrar(at, 'chefe.equipe', 'chefe-nova');
+  await at.reload();
+  const preencher = () =>
+    at.evaluate(() => {
+      window.trocarAba('sf-tt|sem_debito', document.querySelector(`#service_nav .sub-btn[data-click*="'sf-tt|sem_debito'"]`));
+      const v = {
+        tt_solic: 'Maria Teste',
+        tt_rep: 'Não informado',
+        tt_cpf: '12345678901',
+        tt_tel: '71993501519',
+        tt_email: 'm@e.com',
+        tt_leitura: '1',
+        tt_cca: '1',
+        tt_ccn: '2',
+        tt_ciente_fim: 'Sim',
+        tt_neo: '9',
+      };
+      for (const [k, x] of Object.entries(v)) document.getElementById(k).value = x;
+    });
+  await expect(at.locator('#service_nav .sub-btn[data-modelo="troca-titularidade"]')).toHaveCount(2);
+  await preencher();
+  await at.click('#sf-tt .actions .btn:not(.btn-clear)');
+  await expect(at.locator('#out-nota')).toHaveValue(/^Titular \(personalizado\): Maria Teste\n/);
+  await at.evaluate(() => window.trocarAba('sf-tt|com_assuncao', document.querySelector(`#service_nav .sub-btn[data-click*="'sf-tt|com_assuncao'"]`)));
+  await expect(at.locator('#pade_tt')).toBeVisible();
+  await expect(at.locator('#pade_tt b')).toHaveText('Atenção:');
+
+  // arquivar a personalização: os atendentes voltam ao original
+  await page.goto('/admin/modelos/troca-titularidade');
+  page.once('dialog', (d) => d.accept());
+  await page.click('button:has-text("Arquivar")');
+  await expect(page.locator('.okmsg')).toContainText('Modelo arquivado');
+  await at.reload();
+  await preencher();
+  await at.click('#sf-tt .actions .btn:not(.btn-clear)');
+  await expect(at.locator('#out-nota')).toHaveValue(/^Solicitante \(titular\)\.: Maria Teste\n/);
+  await ctx.close();
+});

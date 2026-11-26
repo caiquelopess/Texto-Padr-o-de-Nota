@@ -12,6 +12,25 @@
   function mdSf(m) { return m.sf || 'sf-md-' + m.id; }
   function mdElemento(m, c) { return c.elementoId || mdIdCampo(m.id, c.id); }
 
+  // Classes de aviso conhecidas (as demais são descartadas).
+  var MD_CLASSES = ['alert-box', 'alert-box-blink', 'alerta-cnpj', 'alerta-pade', 'alert-setor'];
+  function mdClassesSeguras(t) {
+    return String(t || '').split(/\s+/).filter(function(c) { return MD_CLASSES.indexOf(c) >= 0; }).join(' ') || 'alert-box';
+  }
+  // Monta o aviso com uma lista fechada de marcações, sem atributos (nada de script, link ou estilo).
+  var MD_TAGS = { B: 1, STRONG: 1, I: 1, EM: 1, BR: 1, UL: 1, OL: 1, LI: 1 };
+  function mdHtmlSeguro(destino, html) {
+    var t = document.createElement('template');
+    t.innerHTML = String(html || '');
+    (function copiar(origem, para) {
+      origem.childNodes.forEach(function(n) {
+        if (n.nodeType === 3) para.appendChild(document.createTextNode(n.nodeValue));
+        else if (n.nodeType === 1 && MD_TAGS[n.tagName]) copiar(n, para.appendChild(document.createElement(n.tagName)));
+        else if (n.nodeType === 1 && n.tagName !== 'SCRIPT' && n.tagName !== 'STYLE') copiar(n, para);
+      });
+    })(t.content, destino);
+  }
+
   function mdValores(m) {
     var v = {};
     (m.campos || []).forEach(function(c) {
@@ -195,9 +214,11 @@
     (m.avisos || []).forEach(function(a, i) {
       var av = document.createElement('div');
       var obj = a && typeof a === 'object';
-      av.className = obj && a.classeOriginal && m._embutido ? a.classeOriginal : 'alert-box' + (obj && a.piscar ? ' alert-box-blink' : '') + (obj && a.classe ? ' ' + a.classe : '');
-      // HTML só para modelos embutidos (vêm do repositório); os do painel são sempre texto puro
+      av.className = obj && a.classeOriginal ? mdClassesSeguras(a.classeOriginal) : 'alert-box' + (obj && a.piscar ? ' alert-box-blink' : '') + (obj && a.classe ? ' ' + mdClassesSeguras(a.classe) : '');
+      // Modelos embutidos (vêm do repositório) usam o HTML como está; os publicados pelo painel
+      // (ex.: um modelo do sistema personalizado) só mantêm negrito, itálico, quebras e listas.
       if (obj && a.html && m._embutido) av.innerHTML = a.html;
+      else if (obj && a.html) mdHtmlSeguro(av, a.html);
       else av.textContent = obj ? a.texto || '' : a;
       if (obj && a.estilo && m._embutido) av.setAttribute('style', a.estilo);
       av.setAttribute('data-aviso', String(i));

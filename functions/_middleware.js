@@ -45,7 +45,7 @@ import { avisoVigente, configuracoesDoFormulario, lerConfiguracoes, salvarConfig
 import { idValido, listarFormularios, nomeDoArquivo, nomeValido, TAMANHO_MAXIMO, tipoDoArquivo } from './_lib/formularios.js';
 import { modeloDoFormulario } from './_lib/modelos-form.js';
 import { PERFIS, perfilDe, perfisQuePodeCriar, pode, podeGerenciar } from './_lib/permissoes.js';
-import { SERVICOS_EMBUTIDOS } from './_lib/servicos-embutidos.js';
+import { MODELOS_SISTEMA, SERVICOS_EMBUTIDOS } from './_lib/servicos-embutidos.js';
 import { listarSugestoes, validarSugestao } from './_lib/sugestoes.js';
 import { telaAdmin, telaAuditoria, telaFormularios, telaLogin, telaPainel, telaSugestoes, telaTrocarSenha } from './_lib/telas.js';
 import {
@@ -444,6 +444,16 @@ async function adminModelos(request, env, reg, url) {
   if (!pode(meu, 'modelos.editar')) return proibido('Seu perfil só pode consultar os modelos.');
   const form = await request.formData();
   const id = String(form.get('id') || '').trim();
+  if (form.get('acao') === 'personalizar') {
+    // cópia em rascunho do modelo do sistema, com todas as configurações; os atendentes
+    // continuam no original até a cópia ser publicada (arquivar a cópia volta ao original)
+    const original = MODELOS_SISTEMA.find((m) => m.id === id);
+    if (!original) return lista({ erro: 'Modelo do sistema não encontrado.' });
+    if (!(await criarModelo(db, structuredClone(original), reg.usuario)))
+      return lista({ erro: `Este modelo já foi personalizado: abra ${original.nome} na lista acima.` });
+    await registrar(env.USUARIOS, reg.usuario, 'Personalizou o modelo do sistema (rascunho)', id);
+    return redirecionar(`/admin/modelos/${id}`);
+  }
   const novo = {
     id,
     nome: String(form.get('nome') || '').trim(),
@@ -457,6 +467,7 @@ async function adminModelos(request, env, reg, url) {
   };
   const erros = mdValidarModelo({ ...novo, nota: '-' });
   if (erros.length) return lista({ erro: erros[0] });
+  if (MODELOS_SISTEMA.some((m) => m.id === id)) return lista({ erro: `${id} é um modelo do sistema: use "Personalizar" na lista de modelos do sistema.` });
   if (!(await criarModelo(db, novo, reg.usuario))) return lista({ erro: `Já existe um modelo com o identificador ${id}.` });
   await registrar(env.USUARIOS, reg.usuario, 'Criou o modelo (rascunho)', id);
   return redirecionar(`/admin/modelos/${id}`);
@@ -496,7 +507,7 @@ async function adminModelo(request, env, reg, id, url) {
 
   if (acao === 'salvar' || acao === 'testar' || acao === 'enviar' || acao === 'publicar') {
     if (registro.status === 'arquivado') return tela({ erro: 'Desarquive o modelo para editar.' });
-    const modelo = modeloDoFormulario(form, id);
+    const modelo = modeloDoFormulario(form, id, registro.rascunho);
     if (acao === 'testar') {
       const t = mdTestarModelo(modelo);
       return tela({ registro: { ...registro, rascunho: modelo }, problemas: t.erros, exemplos: t.ok ? t.exemplos : [] });
@@ -524,7 +535,15 @@ async function adminModelo(request, env, reg, id, url) {
   }
   if (acao === 'duplicar') {
     const novoId = String(form.get('novo_id') || '').trim();
-    const copia = { ...registro.rascunho, id: novoId, nome: `${registro.rascunho.nome} (cópia)` };
+    // a cópia é um serviço novo: não leva os ids originais do formulário (sf, elementoId, id dos avisos)
+    const { sf: _sf, ...base } = structuredClone(registro.rascunho);
+    const copia = {
+      ...base,
+      id: novoId,
+      nome: `${registro.rascunho.nome} (cópia)`,
+      campos: (base.campos || []).map(({ elementoId: _e, ...c }) => c),
+      avisos: (base.avisos || []).map((a) => (a && typeof a === 'object' ? (({ id: _i, ...r }) => r)(a) : a)),
+    };
     const erros = mdValidarModelo({ ...copia, nota: copia.nota || '-' });
     if (erros.length) return tela({ erro: erros[0] });
     if (!(await criarModelo(db, copia, reg.usuario))) return tela({ erro: `Já existe um modelo com o identificador ${novoId}.` });

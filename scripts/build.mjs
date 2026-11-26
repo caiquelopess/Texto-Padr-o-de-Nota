@@ -48,7 +48,9 @@ const servicosHtml = [...(await ler('src/pagina.html')).matchAll(/class="sub-btn
 const servicos = [...servicosHtml, ...embutidos.map((m) => ({ id: m.sf || `sf-md-${m.id}`, nome: m.nome }))].sort((a, b) =>
   a.nome.localeCompare(b.nome, 'pt-BR'),
 );
-const listaServicos = `// Gerado por scripts/build.mjs a partir de src/pagina.html — não editar à mão.\nexport const SERVICOS_EMBUTIDOS = ${JSON.stringify(servicos, null, 2)};\n`;
+const listaServicos =
+  `// Gerado por scripts/build.mjs a partir de src/pagina.html e src/modelos — não editar à mão.\nexport const SERVICOS_EMBUTIDOS = ${JSON.stringify(servicos, null, 2)};\n` +
+  `\n// Modelos do sistema (src/modelos/*.json), completos: o painel mostra e permite personalizar.\nexport const MODELOS_SISTEMA = ${JSON.stringify(embutidos)};\n`;
 
 const saidas = { 'index.html': await montar(false), 'teste/index.html': await montar(true), 'functions/_lib/servicos-embutidos.js': listaServicos };
 if (process.argv.includes('--check')) {

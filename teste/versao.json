@@ -1,7 +1,8 @@
 {
-  "versao": "2.20.6",
+  "versao": "2.21.0",
   "data": "25/11/2026",
   "novidades": [
+    "Painel: os modelos do sistema aparecem em Modelos de texto e podem ser personalizados com segurança (volta ao original arquivando a personalização)",
     "Reclamações (11 tipos) migradas para modelos, sem mudança nos textos: todos os serviços agora são modelos",
     "Isenção de Débitos (pedido de análise e Troca/Reativação com análise) migrada para modelos, sem mudança nos textos e com a mesma pendência de 5 dias úteis",
     "Ligação Nova (normal e por expediente) e Ligação MUC migradas para modelos, sem mudança nos textos",

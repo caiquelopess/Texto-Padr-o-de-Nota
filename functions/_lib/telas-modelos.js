@@ -1,8 +1,9 @@
 // Telas do gerenciamento de modelos de texto (painel administrativo).
 import { MD_TIPOS } from '../../src/nucleo/modelos.mjs';
 import { diferencaLinhas, resumoCampos } from './diferenca.js';
-import { CATEGORIAS_PADRAO } from './modelos-form.js';
+import { CATEGORIAS_PADRAO, MOSTRAR_AVANCADO, mostrarSeSimples, textoDoAviso } from './modelos-form.js';
 import { pode } from './permissoes.js';
+import { MODELOS_SISTEMA } from './servicos-embutidos.js';
 import { data, esc, paginaAdmin } from './telas.js';
 
 // Scripts de atendimento (falas + checklist): prontos, mas ocultos por decisão do responsável.
@@ -28,7 +29,7 @@ const NOMES_TIPO = {
 const ESTILO_MODELOS = `
 .filtros{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}.filtros a{padding:6px 12px;border:1px solid var(--borda);border-radius:999px;color:var(--muted);text-decoration:none;font-size:13px}
 .filtros a.ativo{color:var(--txt);border-color:var(--neon);background:var(--realce)}
-.selo-publicado{color:var(--ok)}.selo-arquivado{color:var(--muted)}.selo-rascunho{color:var(--aviso)}
+.selo-publicado{color:var(--ok)}.selo-sistema{color:var(--neon)}.selo-arquivado{color:var(--muted)}.selo-rascunho{color:var(--aviso)}
 .selo-alerta{color:var(--aviso);border-color:var(--aviso)}
 .editor fieldset{border:1px solid var(--borda);border-radius:14px;padding:14px 16px;margin:0 0 16px}
 .editor legend{padding:0 6px;font-weight:700;font-size:14px}
@@ -77,25 +78,52 @@ export function telaModelos({ usuario, perfil, modelos = [], filtro = 'todos', c
 <div><label for="mc">Categoria</label><select id="mc" name="categoria">${categorias.map((c) => `<option>${esc(c)}</option>`).join('')}</select></div>
 <button type="submit">Criar rascunho</button></div></form>`
     : '';
+  // modelos do sistema: originais (vêm no site) e, se houver, a personalização feita no painel
+  const porId = Object.fromEntries(modelos.map((m) => [m.id, m]));
+  const sistema = MODELOS_SISTEMA.slice()
+    .sort((a, b) => a.categoria.localeCompare(b.categoria, 'pt-BR') || a.nome.localeCompare(b.nome, 'pt-BR'))
+    .map((s) => {
+      const p = porId[s.id];
+      const situacao = !p
+        ? '<span class="selo selo-sistema">Original</span>'
+        : p.status === 'publicado'
+          ? '<span class="selo selo-publicado">Personalizado (em uso)</span>'
+          : p.status === 'arquivado'
+            ? '<span class="selo selo-arquivado">Personalização arquivada · original em uso</span>'
+            : '<span class="selo selo-rascunho">Personalização em rascunho · original em uso</span>';
+      const acao = p
+        ? `<a href="/admin/modelos/${esc(s.id)}" style="color:var(--neon)">Abrir</a>`
+        : pode(perfil, 'modelos.editar')
+          ? `<form method="post" action="/admin/modelos" style="display:inline"><input type="hidden" name="acao" value="personalizar"><input type="hidden" name="id" value="${esc(s.id)}"><button type="submit" class="secundario">Personalizar</button></form>`
+          : '';
+      const botoes = s.subtipos ? s.subtipos.botoes.map((b) => b.nome).join(' · ') : s.nome;
+      return `<tr><td><b>${esc(s.nome)}</b><br><small style="color:var(--muted)">${esc(s.id)}${s.subtipos ? ` · botões: ${esc(botoes)}` : ''}</small></td><td>${esc(s.categoria)}</td><td>${situacao}</td><td>${acao}</td></tr>`;
+    })
+    .join('');
+  const blocoSistema = `<h2 style="margin-top:28px">Modelos do sistema (${MODELOS_SISTEMA.length})</h2>
+<p class="sub">Os serviços que já vêm no site. <b>Personalizar</b> cria uma cópia em rascunho, com todas as configurações do original; os atendentes só passam a usá-la quando for publicada. Para voltar ao original, arquive a personalização.</p>
+<div class="tabela-rolagem"><table><thead><tr><th>Modelo</th><th>Categoria</th><th>Situação</th><th></th></tr></thead><tbody>${sistema}</tbody></table></div>`;
   return pagina(
     'Modelos de texto',
     'modelos',
     { usuario, perfil },
     `<h1>Modelos de texto</h1><p class="sub">Rascunhos não aparecem para os atendentes: só a versão publicada. Cada publicação guarda uma versão que pode ser comparada e restaurada.</p><div class="linha-neon"></div>
 ${msgs(erro, ok)}${criar}<nav class="filtros">${filtros}</nav>
-<div class="tabela-rolagem"><table><thead><tr><th>Modelo</th><th>Categoria</th><th>Situação</th><th>Versão em uso</th><th>Última alteração</th></tr></thead><tbody>${linhas || '<tr><td colspan="5">Nenhum modelo nesta lista.</td></tr>'}</tbody></table></div>`,
+<div class="tabela-rolagem"><table><thead><tr><th>Modelo</th><th>Categoria</th><th>Situação</th><th>Versão em uso</th><th>Última alteração</th></tr></thead><tbody>${linhas || '<tr><td colspan="5">Nenhum modelo nesta lista.</td></tr>'}</tbody></table></div>
+${blocoSistema}`,
   );
 }
 
 function linhaCampo(c = {}) {
   const tipos = MD_TIPOS.map((t) => `<option value="${t}"${t === (c.tipo || 'texto') ? ' selected' : ''}>${NOMES_TIPO[t]}</option>`).join('');
-  const mostrar = c.mostrarSe ? `${c.mostrarSe.campo}=${[].concat(c.mostrarSe.igual).join('|')}` : '';
+  const avancado = c.mostrarSe && !mostrarSeSimples(c.mostrarSe);
+  const mostrar = avancado ? MOSTRAR_AVANCADO : c.mostrarSe ? `${c.mostrarSe.campo}=${[].concat(c.mostrarSe.igual).join('|')}` : '';
   return `<tr><td><input name="campo_id" value="${esc(c.id)}" placeholder="nome_do_campo" aria-label="Identificador do campo"></td>
 <td><input name="campo_rotulo" value="${esc(c.rotulo)}" placeholder="Rótulo" aria-label="Rótulo"></td>
 <td><select name="campo_tipo" aria-label="Tipo">${tipos}</select></td>
 <td><select name="campo_obrigatorio" aria-label="Obrigatório"><option value="nao">Opcional</option><option value="sim"${c.obrigatorio ? ' selected' : ''}>Obrigatório</option></select></td>
 <td><input name="campo_opcoes" value="${esc((c.opcoes || []).join(' | '))}" placeholder="A | B | C" aria-label="Opções"></td>
-<td><input name="campo_mostrar" value="${esc(mostrar)}" placeholder="campo=Valor" aria-label="Mostrar se"></td></tr>`;
+<td><input name="campo_mostrar" value="${esc(mostrar)}" placeholder="campo=Valor" aria-label="Mostrar se"${avancado ? ' readonly title="Regra combinada do modelo do sistema: é mantida ao salvar. Para trocar, apague e escreva campo=Valor."' : ''}></td></tr>`;
 }
 
 export function telaEditorModelo({
@@ -110,6 +138,7 @@ export function telaEditorModelo({
   exemplos = [],
 }) {
   const m = registro.rascunho;
+  const sistema = MODELOS_SISTEMA.some((x) => x.id === registro.id);
   const edita = pode(perfil, 'modelos.editar') && registro.status !== 'arquivado';
   const publica = pode(perfil, 'modelos.publicar');
   const ro = edita ? '' : ' disabled';
@@ -135,7 +164,7 @@ ${publica && v.versao !== registro.versao_publicada ? `<form method="post" style
     'modelos',
     { usuario, perfil },
     `<p style="margin:0 0 6px"><a href="/admin/modelos" style="color:var(--neon);font-size:13px">← Modelos</a></p>
-<h1>${esc(m.nome)}</h1><p class="sub"><code>${esc(registro.id)}</code> · <span class="selo selo-${registro.status}">${STATUS[registro.status]}</span> ${registro.versao_publicada ? `· em uso pelos atendentes: <b>v${registro.versao_publicada}</b>` : '· ainda não publicado'}${registro.aguardando ? ' · <span class="selo selo-alerta">Aguardando publicação</span>' : ''}</p><div class="linha-neon"></div>
+<h1>${esc(m.nome)}</h1><p class="sub">${sistema ? '<span class="selo selo-sistema">Modelo do sistema personalizado</span> · ' : ''}<code>${esc(registro.id)}</code> · <span class="selo selo-${registro.status}">${STATUS[registro.status]}</span> ${registro.versao_publicada ? `· em uso pelos atendentes: <b>v${registro.versao_publicada}</b>` : '· ainda não publicado'}${registro.aguardando ? ' · <span class="selo selo-alerta">Aguardando publicação</span>' : ''}</p><div class="linha-neon"></div>
 ${msgs(erro, ok, problemas)}${resultado}
 <form method="post" class="editor" data-carrega><input type="hidden" name="revisao" value="${registro.revisao}">
 <fieldset${ro}><legend>Identificação</legend><div class="grade grade-usuario">
@@ -143,13 +172,14 @@ ${msgs(erro, ok, problemas)}${resultado}
 <div><label for="ec">Categoria</label><select id="ec" name="categoria">${[...new Set([...categorias, m.categoria])].map((c) => `<option${c === m.categoria ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select></div>
 <div><label for="ecp">Ao gerar, copiar</label><select id="ecp" name="copiar"><option value="nota">NOTA</option><option value="agenda"${m.copiar === 'agenda' ? ' selected' : ''}>AGENDA</option></select></div><span></span></div>
 <label for="ed">Descrição (para os administradores)</label><input id="ed" name="descricao" value="${esc(m.descricao)}">
-<label for="ea">Avisos para o atendente (um por linha)</label><textarea id="ea" name="avisos" style="min-height:70px">${esc((m.avisos || []).join('\n'))}</textarea></fieldset>
+<label for="ea">Avisos para o atendente (um por linha)</label><textarea id="ea" name="avisos" style="min-height:70px">${esc((m.avisos || []).map(textoDoAviso).join('\n'))}</textarea>
+${sistema ? '<p class="ajuda">Modelo do sistema: avisos que você não alterar mantêm a formatação original (negrito, listas, cores e "mostrar se"). Configurações avançadas que não aparecem aqui (subtipos, pendência, rótulos que mudam, ids originais) são mantidas ao salvar.</p>' : ''}</fieldset>
 <fieldset${ro}><legend>Campos do formulário</legend><div class="tabela-rolagem"><table class="campos-tabela"><thead><tr><th>Identificador</th><th>Rótulo</th><th>Tipo</th><th>Obrigatório</th><th>Opções (se lista)</th><th>Mostrar se</th></tr></thead><tbody id="campos">${campos}</tbody></table></div>
 ${edita ? '<button type="button" class="secundario" style="width:auto" onclick="var t=document.getElementById(\'campos\');var l=t.rows[t.rows.length-1].cloneNode(true);l.querySelectorAll(\'input\').forEach(function(i){i.value=\'\'});l.querySelectorAll(\'select\').forEach(function(s){s.selectedIndex=0});t.appendChild(l)">+ Campo</button>' : ''}
 <p class="ajuda">Linhas em branco são ignoradas. "Mostrar se": <code>motivo=Unificar PN</code> (várias opções: <code>motivo=A|B</code>).</p></fieldset>
 <fieldset${ro}><legend>Texto</legend><label for="etn">NOTA</label><textarea id="etn" name="nota">${esc(m.nota)}</textarea>
 <label for="eta">AGENDA</label><textarea id="eta" name="agenda">${esc(m.agenda)}</textarea>
-<p class="ajuda">Use <code>{{campo}}</code> para o valor · <code>{{campo|maiusculas}}</code> · <code>{{campo|telefoneNota}}</code> (71-912341234) · <code>{{campo|ou:Não informado}}</code> ·
+<p class="ajuda">Use <code>{{campo}}</code> para o valor · <code>{{campo|maiusculas}}</code> · <code>{{campo|telefoneNota}}</code> (71-912341234) · <code>{{campo|ou:Não informado}}</code> · <code>{{campo|ponto}}</code> (ponto final) · <code>{{campo|semRS}}</code> · <code>{{campo|original}}</code> (fica como digitado na nota em maiúsculas) · filtros em sequência: <code>{{campo|maiusculas|ponto}}</code> ·
 <code>{{#se campo}}</code>…<code>{{/se}}</code> (só se preenchido) · <code>{{#se campo=Valor}}</code>…<code>{{/se}}</code>. Linhas vazias são removidas no fim do texto.</p></fieldset>
 ${
   edita
@@ -160,7 +190,7 @@ ${publica ? '<button type="submit" name="acao" value="publicar" onclick="return 
 ${
   pode(perfil, 'modelos.editar')
     ? `<div class="botoes" style="margin-top:12px"><form method="post" onsubmit="var n=prompt('Identificador da cópia (letras minúsculas, números e hífen):','${esc(registro.id)}-copia');if(!n)return false;this.novo_id.value=n;"><input type="hidden" name="acao" value="duplicar"><input type="hidden" name="novo_id"><button type="submit" class="secundario">Duplicar</button></form>
-${publica ? `<form method="post" onsubmit="return confirm('${registro.status === 'arquivado' ? 'Desarquivar este modelo?' : 'Arquivar? O modelo sai do atendimento, mas nada é apagado e dá para desarquivar.'}')"><input type="hidden" name="acao" value="${registro.status === 'arquivado' ? 'desarquivar' : 'arquivar'}"><input type="hidden" name="revisao" value="${registro.revisao}"><button type="submit" class="${registro.status === 'arquivado' ? 'secundario' : 'perigo'}">${registro.status === 'arquivado' ? 'Desarquivar' : 'Arquivar'}</button></form>` : ''}</div>`
+${publica ? `<form method="post" onsubmit="return confirm('${registro.status === 'arquivado' ? 'Desarquivar este modelo?' : sistema ? 'Arquivar a personalização? Os atendentes voltam a usar o modelo original do sistema. Nada é apagado e dá para desarquivar.' : 'Arquivar? O modelo sai do atendimento, mas nada é apagado e dá para desarquivar.'}')"><input type="hidden" name="acao" value="${registro.status === 'arquivado' ? 'desarquivar' : 'arquivar'}"><input type="hidden" name="revisao" value="${registro.revisao}"><button type="submit" class="${registro.status === 'arquivado' ? 'secundario' : 'perigo'}">${registro.status === 'arquivado' ? 'Desarquivar' : 'Arquivar'}</button></form>` : ''}</div>`
     : ''
 }
 <h2 style="margin-top:26px;font-size:17px">Versões publicadas</h2>

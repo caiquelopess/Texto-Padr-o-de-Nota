@@ -1,0 +1,115 @@
+{
+  "id": "danos-eletricos-abertura",
+  "sf": "sf-danos-eletricos",
+  "nome": "Ressarcimento de Danos Elétricos — Abertura de Nota",
+  "categoria": "Ressarcimento",
+  "descricao": "Migrado do código (lote 7 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "agenda",
+  "botao": "Gerar Texto de AGENDA e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "<b>Antes de abrir a nota:</b> todas as análises e documentos necessários para abertura da nota foram verificados?",
+      "classeOriginal": "alert-box"
+    },
+    {
+      "html": "O e-mail para recebimento da comunicação informado na abertura da nota, deve ser o mesmo e-mail do cadastro.",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "elementoId": "rde_solic",
+      "rotulo": "Solicitante:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo"
+    },
+    {
+      "id": "dt_ini",
+      "elementoId": "rde_dt_ini",
+      "rotulo": "Início do ocorrido (Data e horário):",
+      "tipo": "dataHora",
+      "obrigatorio": true,
+      "dataRegra": "passada",
+      "dica": "Ex: 10/10/2026 às 14:00"
+    },
+    {
+      "id": "dt_fim",
+      "elementoId": "rde_dt_fim",
+      "rotulo": "Fim do ocorrido (Data e horário):",
+      "tipo": "dataHora",
+      "obrigatorio": true,
+      "dataRegra": "passada",
+      "dica": "Ex: 10/10/2026 às 15:30"
+    },
+    {
+      "id": "tel",
+      "elementoId": "rde_tel",
+      "rotulo": "Telefone para contato:",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84988887777"
+    },
+    {
+      "id": "ref",
+      "elementoId": "rde_ref",
+      "rotulo": "Referência: (dois pontos de referência)",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ex: Perto do colégio X e em frente ao mercadinho Y"
+    },
+    {
+      "id": "email",
+      "elementoId": "rde_email",
+      "rotulo": "E-mail para contato:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com (mesmo do cadastro)"
+    },
+    {
+      "id": "meio",
+      "elementoId": "rde_meio",
+      "rotulo": "Meio de comunicação:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["carta", "e-mail"]
+    },
+    {
+      "id": "relato",
+      "elementoId": "rde_relato",
+      "rotulo": "Relato da ocorrência:",
+      "tipo": "textoLongo",
+      "obrigatorio": true,
+      "dica": "Relato detalhado da ocorrência (chuva, oscilação de tensão, estalo, etc.)...",
+      "linhas": 2
+    },
+    {
+      "id": "lista",
+      "elementoId": "rde_lista",
+      "rotulo": "Lista de equipamentos danificados: (Quantidade, marca, modelo e tempo de uso).",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ex: 1x TV Samsung 50 pol (2 anos de uso); 1x Geladeira Brastemp (4 anos)"
+    },
+    {
+      "id": "conserto",
+      "elementoId": "rde_conserto",
+      "rotulo": "Ocorreu o conserto:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": true,
+      "opcoes": ["nao", "sim"],
+      "rotulosOpcoes": ["Não", "Sim"]
+    }
+  ],
+  "nota": "Título: RESSARCIMENTO DE DANOS ELÉTRICOS - ABERTURA DE NOTA\nSolicitante: {{solic}}\nRelato da ocorrência: {{relato}}\nData e horário do início do ocorrido: {{dt_ini}}\nData e horário do fim do ocorrido: {{dt_fim}}\nReferência: {{ref}}\nTelefone para contato: {{tel}}\nE-mail para contato: {{email}}\nMeio de comunicação escolhido: {{meio}}\nLista de equipamentos danificados: {{lista}}\nOcorreu o conserto: {{#se conserto=sim}}Sim (X) Não ( ){{/se}}{{#se conserto=nao}}Sim ( ) Não (X){{/se}}",
+  "agenda": "Título: RESSARCIMENTO DE DANOS ELÉTRICOS - ABERTURA DE NOTA\nSolicitante: {{solic}}\nRelato da ocorrência: {{relato}}\nData e horário do início do ocorrido: {{dt_ini}}\nData e horário do fim do ocorrido: {{dt_fim}}\nReferência: {{ref}}\nTelefone para contato: {{tel}}\nE-mail para contato: {{email}}\nMeio de comunicação escolhido: {{meio}}\nLista de equipamentos danificados: {{lista}}\nOcorreu o conserto: {{#se conserto=sim}}Sim (X) Não ( ){{/se}}{{#se conserto=nao}}Sim ( ) Não (X){{/se}}"
+}

@@ -90,13 +90,15 @@
       el.addEventListener('change', function() { mdPreencherAuto(m, c.id); mdAtualizarVisiveis(m); });
     } else if (c.tipo === 'textoLongo') {
       el = document.createElement('textarea');
-      el.rows = 3;
+      el.rows = c.linhas || 3;
+      if (c.dica) el.placeholder = c.dica;
     } else {
       el = document.createElement('input');
       el.type = 'text';
       if (c.tipo === 'telefone') { el.setAttribute('inputmode', 'tel'); el.placeholder = 'Ex: 71993501519'; }
       if (c.tipo === 'email') { el.setAttribute('inputmode', 'email'); el.placeholder = 'cliente@email.com ou Não informado'; }
       if (c.tipo === 'data') { el.placeholder = 'dd/mm/aaaa'; el.setAttribute('data-input', 'mascararData(this)'); }
+      if (c.tipo === 'dataHora') { el.placeholder = 'Ex: 10/10/2026 às 14:00'; el.setAttribute('data-input', 'mascararDataHoraRod(this)'); }
       if (c.tipo === 'dataOuMes') { el.placeholder = 'dd/mm/aaaa ou mm/aaaa'; el.setAttribute('data-input', 'mascararDataOuMes(this)'); }
       if (c.tipo === 'documento') el.placeholder = c.documento === 'cnpj' ? '00.000.000/0000-00' : 'CPF ou CNPJ — somente números';
       if (c.tipo === 'numero') el.setAttribute('inputmode', 'numeric');

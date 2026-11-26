@@ -1,0 +1,78 @@
+{
+  "id": "danos-eletricos-documentacao",
+  "sf": "sf-rde-doc",
+  "nome": "Ressarcimento de Danos Elétricos — Recebimento de Documentação (laudos e orçamentos)",
+  "categoria": "Ressarcimento",
+  "descricao": "Migrado do código (lote 7 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "agenda",
+  "botao": "Gerar Texto de AGENDA e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "O e-mail para recebimento da comunicação informado na abertura da nota, deve ser o mesmo e-mail do cadastro.",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "elementoId": "rdedoc_solic",
+      "rotulo": "Solicitante:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo"
+    },
+    {
+      "id": "cred",
+      "elementoId": "rdedoc_cred",
+      "rotulo": "Apresentou laudo(s) e orçamento(s) de oficina(s) Credenciada(s)?",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["sim", "nao"],
+      "rotulosOpcoes": ["Sim", "Não"]
+    },
+    {
+      "id": "qtd_orc",
+      "elementoId": "rdedoc_qtd_orc",
+      "rotulo": "Quantidade Orçamento(s):",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["1", "2"]
+    },
+    {
+      "id": "qtd_desist",
+      "elementoId": "rdedoc_qtd_desist",
+      "rotulo": "Quantidade Laudo(s) Desistência?",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["nenhum", "1", "2"],
+      "rotulosOpcoes": ["Nenhum ( )", "1", "2"]
+    },
+    {
+      "id": "equip",
+      "elementoId": "rdedoc_equip",
+      "rotulo": "Detalhar de quais equipamentos (colocar os equipamentos reclamados):",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ex: 1x TV Samsung 50, 1x Geladeira Consul"
+    },
+    {
+      "id": "local",
+      "elementoId": "rdedoc_local",
+      "rotulo": "Local de entrega:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ex: Loja de Atendimento Centro Mossoró"
+    }
+  ],
+  "nota": "Título: RESSARCIMENTO DE DANOS ELÉTRICOS - RECEBIMENTO DE DOCUMENTAÇÃO\nSolicitante {{solic}} compareceu à loja/credenciado para análise a documentação de ressarcimento de danos elétricos.\nCliente apresentou laudo (s) e orçamento (s) de oficina (s) Credenciada(s)? {{#se cred=sim}}S (X) N ( )\n{{/se}}{{#se cred=nao}}S ( ) N (X)\n{{/se}}Quantidade Orçamento (s) {{#se qtd_orc=1}}1 (X) 2 ( )\n{{/se}}{{#se qtd_orc=2}}1 ( ) 2 (X)\n{{/se}}Detalhar de quais equipamentos : {{equip}}\nQuantidade Laudo (s) Desistência? {{#se qtd_desist=nenhum}}Nenhum (X) ( ) 1 ( ) 2\n{{/se}}{{#se qtd_desist=1}}Nenhum ( ) (X) 1 ( ) 2\n{{/se}}{{#se qtd_desist=2}}Nenhum ( ) ( ) 1 (X) 2\n{{/se}}Local de entrega : {{local}}",
+  "agenda": "Título: RESSARCIMENTO DE DANOS ELÉTRICOS - RECEBIMENTO DE DOCUMENTAÇÃO\nSolicitante {{solic}} compareceu à loja/credenciado para análise a documentação de ressarcimento de danos elétricos.\nCliente apresentou laudo (s) e orçamento (s) de oficina (s) Credenciada(s)? {{#se cred=sim}}S (X) N ( )\n{{/se}}{{#se cred=nao}}S ( ) N (X)\n{{/se}}Quantidade Orçamento (s) {{#se qtd_orc=1}}1 (X) 2 ( )\n{{/se}}{{#se qtd_orc=2}}1 ( ) 2 (X)\n{{/se}}Detalhar de quais equipamentos : {{equip}}\nQuantidade Laudo (s) Desistência? {{#se qtd_desist=nenhum}}Nenhum (X) ( ) 1 ( ) 2\n{{/se}}{{#se qtd_desist=1}}Nenhum ( ) (X) 1 ( ) 2\n{{/se}}{{#se qtd_desist=2}}Nenhum ( ) ( ) 1 (X) 2\n{{/se}}Local de entrega : {{local}}"
+}

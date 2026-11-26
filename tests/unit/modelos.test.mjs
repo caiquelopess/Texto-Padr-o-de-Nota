@@ -122,7 +122,7 @@ test('validação do modelo aponta cada problema', () => {
   ])
     assert.ok(erros.includes(esperado), esperado);
   assert.ok(mdValidarModelo({ id: 'abc', nome: 'N', categoria: 'C', campos: [] }).includes('Escreva o texto da NOTA ou da AGENDA.'));
-  assert.deepEqual(MD_TIPOS.length, 9);
+  assert.deepEqual(MD_TIPOS.length, 10);
 });
 
 test('teste automático antes de publicar', () => {
@@ -149,7 +149,10 @@ test('teste automático antes de publicar', () => {
     agenda: MD_TIPOS.map((t) => `{{c_${t.toLowerCase()}}}`).join(' '),
   });
   assert.equal(todos.ok, true, todos.erros.join('; '));
-  assert.equal(todos.exemplos[0].agenda, 'Teste texto Teste textoLongo (71) 99350-1519 teste@email.com 10/11/2026 123456 Um 12345678901 10/2026');
+  assert.equal(
+    todos.exemplos[0].agenda,
+    'Teste texto Teste textoLongo (71) 99350-1519 teste@email.com 10/11/2026 123456 Um 12345678901 10/2026 10/11/2025 às 14:00',
+  );
 });
 
 test('limites das validações (início e fim do texto)', () => {
@@ -346,4 +349,28 @@ test('notaMaiusculas: nota em maiúsculas e sem espaços repetidos; agenda intac
   assert.deepEqual(mdGerar(m, { a: 'ap 101', b: '', leit: '' }), { nota: 'RT AP 101 FIM NAO INFORMOU LEITURA', agenda: 'Agenda ap 101  ' });
   assert.equal(mdGerar(m, { a: 'x', b: 'y', leit: '12' }).nota, 'RT X Y FIM LEITURA 12');
   assert.equal(mdGerar({ ...m, notaMaiusculas: false }, { a: 'x', leit: '1' }).nota, 'RT x  fim LEITURA 1');
+});
+
+test('dataHora: confere a data do início do texto, sem reescrever', async () => {
+  const { mdNormalizarValores } = await import('../../src/nucleo/modelos.mjs');
+  const hoje = new Date(2026, 10, 26);
+  const m = {
+    id: 'data-hora',
+    nome: 'DH',
+    categoria: 'X',
+    campos: [
+      { id: 'ini', rotulo: 'Início:', tipo: 'dataHora', dataRegra: 'passada' },
+      { id: 'livre', rotulo: 'Livre:', tipo: 'dataHora' },
+    ],
+    nota: '{{ini}} {{livre}}',
+  };
+  assert.deepEqual(mdValidarModelo(m), []);
+  assert.equal(mdTestarModelo(m).ok, true);
+  const n = (v) => mdNormalizarValores(m, v, hoje);
+  assert.deepEqual(n({ ini: '1/2/2025 14h', livre: '10/10/2030 às 9h' }), { valores: { ini: '1/2/2025 14h', livre: '10/10/2030 às 9h' }, erros: [] });
+  assert.deepEqual(n({ ini: 'ontem' }).erros, ['O campo "Início:" deve começar com uma data no formato dd/mm/aaaa.']);
+  assert.deepEqual(n({ ini: '31/02/2025 10h' }).erros, ['A data do campo "Início:" não é uma data real. Verifique o dia e o mês.']);
+  assert.deepEqual(n({ ini: '27/11/2026 10h' }).erros, ['A data do campo "Início:" não pode ser uma data futura.']);
+  assert.deepEqual(n({ ini: '26/11/2026 10h' }).erros, []);
+  assert.deepEqual(mdValidarValores(m, { ini: 'sem data' }), ['Início:: comece com a data (dd/mm/aaaa).']);
 });

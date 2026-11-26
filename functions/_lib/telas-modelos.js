@@ -21,6 +21,7 @@ const NOMES_TIPO = {
   documento: 'CPF/CNPJ',
   dataOuMes: 'Data ou mês/ano',
   dataHora: 'Data e horário',
+  faturas: 'Faturas (vencimento e valor)',
 };
 
 const ESTILO_MODELOS = `

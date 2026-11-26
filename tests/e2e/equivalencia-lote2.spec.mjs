@@ -2,6 +2,7 @@ import { abrirServico, expect, fecharTextoGerado, test } from '../support/pagina
 
 // Equivalência da migração (lote 2): textos gravados com o código ANTIGO, antes da migração.
 // Cobre os ramos de cada serviço (PF/PJ, com/sem comprovante, titular ou não, etc.).
+// Conta Paga e Não Baixada saiu daqui: as faturas viraram linhas (tests/e2e/conta-paga-faturas.spec.mjs).
 const CASOS = [
   {
     sf: 'sf-mc',
@@ -223,40 +224,6 @@ const CASOS = [
     nota: 'Solicitante Maria, dados da Receita Federal regular (Inserir cópia no SAP KM), telefone (71) 99350-1519, E-mail m@e.com representante da Empresa Empresa Y esteve na loja de atendimento para negociar a divida no valor R$500,00, plano numero 77 com sinal R$50,00 e o restante do valor divido em 5 parcelas de R$90,00.\nOs débitos são oriundos da troca de titularidade Ref 123 e foram reconhecidas através do termo de assunção assinado (Inserir cópia no SAP KM).\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado',
     agenda:
       'Solicitante Maria, dados da Receita Federal regular (Inserir cópia no SAP KM), telefone (71) 99350-1519, E-mail m@e.com representante da Empresa Empresa Y esteve na loja de atendimento para negociar a divida no valor R$500,00, plano numero 77 com sinal R$50,00 e o restante do valor divido em 5 parcelas de R$90,00.\nOs débitos são oriundos da troca de titularidade Ref 123 e foram reconhecidas através do termo de assunção assinado (Inserir cópia no SAP KM).\nCliente ciente que caso o sinal não seja pago na data de hoje, o plano de parcelamento será cancelado',
-  },
-  {
-    sf: 'sf-cpnb',
-    valores: {
-      cpnb_solic: 'Maria',
-      cpnb_motivo: 'Paga e não baixada',
-      cpnb_fatura: '10/10/2026 R$ 100',
-      cpnb_ref: 'Mercado',
-      cpnb_tel: '71993501519',
-      cpnb_email: 'm@e.com',
-      cpnb_neg: 'Não',
-      cpnb_ant: '',
-      cpnb_resp: 'SMS',
-    },
-    nota: 'Solicitante: Maria\nMotivo : Paga e não baixada\nFatura (vencimento e valor) : 10/10/2026 R$ 100\nPontos de Referência : Mercado\nTelefone : (71) 99350-1519\nE-mail: : m@e.com\nInforme se o cliente está negativado: Não\nSe houver reclamação anterior, informe o n° da reclamação anterior : N/A\nModalidade de resposta: SMS\nPrazo que deverá informado e verbalizado ao cliente é de 5 dias úteis para uma primeira análise.',
-    agenda:
-      'Solicitante: Maria\nMotivo : Paga e não baixada\nFatura (vencimento e valor) : 10/10/2026 R$ 100\nPontos de Referência : Mercado\nTelefone : (71) 99350-1519\nE-mail: : m@e.com\nInforme se o cliente está negativado: Não\nSe houver reclamação anterior, informe o n° da reclamação anterior : N/A\nModalidade de resposta: SMS\nPrazo que deverá informado e verbalizado ao cliente é de 5 dias úteis para uma primeira análise.',
-  },
-  {
-    sf: 'sf-cpnb',
-    valores: {
-      cpnb_solic: 'Maria',
-      cpnb_motivo: 'Paga e não baixada',
-      cpnb_fatura: '10/10/2026 R$ 100',
-      cpnb_ref: 'Mercado',
-      cpnb_tel: '71993501519',
-      cpnb_email: 'm@e.com',
-      cpnb_neg: 'Sim',
-      cpnb_ant: '300123',
-      cpnb_resp: 'carta',
-    },
-    nota: 'Solicitante: Maria\nMotivo : Paga e não baixada\nFatura (vencimento e valor) : 10/10/2026 R$ 100\nPontos de Referência : Mercado\nTelefone : (71) 99350-1519\nE-mail: : m@e.com\nInforme se o cliente está negativado: Sim\nSe houver reclamação anterior, informe o n° da reclamação anterior : 300123\nModalidade de resposta: carta\nPrazo que deverá informado e verbalizado ao cliente é de 5 dias úteis para uma primeira análise.',
-    agenda:
-      'Solicitante: Maria\nMotivo : Paga e não baixada\nFatura (vencimento e valor) : 10/10/2026 R$ 100\nPontos de Referência : Mercado\nTelefone : (71) 99350-1519\nE-mail: : m@e.com\nInforme se o cliente está negativado: Sim\nSe houver reclamação anterior, informe o n° da reclamação anterior : 300123\nModalidade de resposta: carta\nPrazo que deverá informado e verbalizado ao cliente é de 5 dias úteis para uma primeira análise.',
   },
 ];
 

@@ -16,9 +16,34 @@
     var v = {};
     (m.campos || []).forEach(function(c) {
       var el = document.getElementById(mdElemento(m, c));
-      if (el) v[c.id] = el.value;
+      if (!el) return;
+      if (c.tipo === 'faturas') {
+        v[c.id] = [].slice.call(el.querySelectorAll('.fatura-row')).map(function(r) {
+          return { vencimento: r.querySelector('.md-fat-venc').value, valor: r.querySelector('.md-fat-valor').value };
+        });
+      } else v[c.id] = el.value;
     });
     return v;
+  }
+
+  // ---- campo "faturas": linhas de vencimento + valor, como na Reclamação ----
+  function mdLinhaFatura(m, lista) {
+    var row = document.createElement('div');
+    row.className = 'fatura-row';
+    row.innerHTML = '<input type="text" class="md-fat-venc" placeholder="Vencimento: dd/mm/aaaa" inputmode="numeric" data-input="mascararData(this)" required>' +
+      '<input type="text" class="md-fat-valor" placeholder="Valor R$: 0,00" inputmode="decimal" required>' +
+      '<button type="button" class="btn-del" aria-label="Remover fatura">✕</button>';
+    row.querySelector('.btn-del').addEventListener('click', function() {
+      if (lista.querySelectorAll('.fatura-row').length > 1) row.remove();
+      else row.querySelectorAll('input').forEach(function(i) { i.value = ''; });
+      mdAtualizarVisiveis(m);
+    });
+    lista.appendChild(row);
+    return row;
+  }
+  function mdLimparFaturas(m, lista) {
+    lista.innerHTML = '';
+    mdLinhaFatura(m, lista);
   }
 
   function mdAtualizarVisiveis(m) {
@@ -64,6 +89,13 @@
     if (p.erros.length) { mostrarAviso('ATENÇÃO: ' + p.erros[0]); return; }
     (m.campos || []).forEach(function(c) {
       var el = document.getElementById(mdElemento(m, c));
+      if (el && c.tipo === 'faturas') {
+        // vencimentos corrigidos (1/2/2026 → 01/02/2026), linha a linha
+        var linhas = p.valores[c.id] || [];
+        var preenchidas = [].slice.call(el.querySelectorAll('.fatura-row')).filter(function(r) { return r.querySelector('.md-fat-venc').value.trim() || r.querySelector('.md-fat-valor').value.trim(); });
+        preenchidas.forEach(function(r, i) { if (linhas[i]) r.querySelector('.md-fat-venc').value = linhas[i].vencimento; });
+        return;
+      }
       if (el && el.tagName !== 'SELECT' && p.valores[c.id] !== undefined && el.value !== p.valores[c.id]) el.value = p.valores[c.id];
     });
     // 2) confere obrigatórios e formatos; 3) monta o texto
@@ -84,6 +116,24 @@
     rot.textContent = c.rotulo + (c.obrigatorio ? ' *' : '');
     grupo.appendChild(rot);
     var el;
+    if (c.tipo === 'faturas') {
+      grupo.className = 'field-group full-width';
+      el = document.createElement('div');
+      el.className = 'md-faturas';
+      el.id = id;
+      mdLinhaFatura(m, el);
+      var add = document.createElement('button');
+      add.type = 'button';
+      add.className = 'btn-add';
+      add.style.marginTop = '6px';
+      add.textContent = '+ Adicionar Fatura';
+      add.addEventListener('click', function() { mdLinhaFatura(m, el).querySelector('input').focus(); });
+      el.addEventListener('input', function() { mdAtualizarVisiveis(m); });
+      grupo.appendChild(el);
+      grupo.appendChild(add);
+      rot.removeAttribute('for');
+      return grupo;
+    }
     if (c.tipo === 'opcao') {
       el = document.createElement('select');
       c.opcoes.forEach(function(o, i) { var op = document.createElement('option'); op.value = o; op.textContent = (c.rotulosOpcoes && c.rotulosOpcoes[i]) || o; el.appendChild(op); });
@@ -152,6 +202,7 @@
     limpar.addEventListener('click', function() {
       limparForm(sf);
       form.querySelectorAll('select').forEach(function(s) { s.selectedIndex = 0; });
+      form.querySelectorAll('.md-faturas').forEach(function(l) { mdLimparFaturas(m, l); });
       mdAtualizarVisiveis(m);
     });
     acoes.appendChild(gerar);
@@ -246,6 +297,7 @@
       var m = modelosMontados[id];
       if (mdSf(m) !== containerId) return;
       document.querySelectorAll('#' + containerId + ' select').forEach(function(sel) { sel.selectedIndex = 0; });
+      document.querySelectorAll('#' + containerId + ' .md-faturas').forEach(function(l) { mdLimparFaturas(m, l); });
       (m.campos || []).forEach(function(c) {
         if (c.preencherSe && c.preencherSe.aoLimpar) mdPreencherAuto(m, c.preencherSe.campo);
       });

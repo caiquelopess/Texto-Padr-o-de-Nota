@@ -621,6 +621,13 @@
     .pend-texto { margin: 10px 0 0; white-space: pre-wrap; word-break: break-word; font: 12px/1.55 var(--font-mono); background: var(--input-bg-soft); border-radius: var(--r-control); padding: 8px 10px; color: var(--text); }
     .pend-responder { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--glass-border); display: grid; grid-template-columns: 1fr 2fr; gap: 10px; }
     .pend-responder .full { grid-column: 1 / -1; }
+    .resp-form { grid-template-columns: 1fr 1fr; border-top: 0; margin-top: 0; padding-top: 0; }
+    .resp-motivos { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 6px 14px; }
+    .pend-responder .resp-motivo { display: flex; align-items: flex-start; gap: 8px; margin: 0; font-size: 13px; font-weight: 400; cursor: pointer; }
+    .pend-responder .resp-motivo input[type="checkbox"] { width: 16px; height: 16px; min-height: 0; flex: none; margin: 2px 0 0; padding: 0; appearance: auto; -webkit-appearance: checkbox; box-shadow: none; accent-color: var(--accent, #0f8a5f); }
+    .resp-aviso { margin: 0; font-size: 13px; }
+    .pend-responder .resp-confirma { font-weight: 600; }
+    .resp-dica { font-weight: 400; color: var(--muted); }
     .pend-responder label { display: block; font-size: 12px; margin-bottom: 4px; }
     .pend-responder select, .pend-responder input { width: 100%; }
     @media (max-width: 640px) { .pend-responder { grid-template-columns: 1fr; } }
@@ -748,7 +755,7 @@
       --glass: rgba(40, 49, 61, 0.62); --glass-strong: rgba(36, 44, 56, 0.9); --glass-soft: rgba(255, 255, 255, 0.04); --glass-border: rgba(203, 213, 225, 0.12); --glass-line: rgba(203, 213, 225, 0.08);
       --text: #E2E8F0; --strong: #F8FAFC; --label: #CBD5E1; --muted: #94A3B8; --placeholder: #7C8BA0;
       --primary-soft: rgba(147, 180, 214, 0.10); --accent: #9FD3B8; --btn-text: #111821; }
-    /* ---- Logos Executive (grafite + vermelho Logos + dourado discreto) ---- */
+    /* ---- Escuro, antigo Logos Executive (grafite + vermelho Logos + dourado discreto) ---- */
     :root[data-paleta="logos"] { --neon-1: #E8174E; --neon-2: #C9A86A; --neon-1-glow: rgba(232, 23, 78, 0.28); --neon-2-glow: rgba(201, 168, 106, 0.2);
       --bg: #0D0E12; --bg-orb-1: rgba(232, 23, 78, 0.10); --bg-orb-2: rgba(201, 168, 106, 0.08);
       --glass: rgba(22, 23, 29, 0.72); --glass-strong: rgba(24, 25, 32, 0.92); --glass-soft: rgba(255, 255, 255, 0.03); --glass-border: rgba(201, 168, 106, 0.16); --glass-line: rgba(201, 168, 106, 0.10);
@@ -757,7 +764,7 @@
     :root[data-paleta="logos"] header::after { background: linear-gradient(90deg, transparent, #E8174E, #C9A86A, transparent); box-shadow: none; }
     :root[data-paleta="logos"] .btn { background: #E8174E; box-shadow: 0 8px 22px -12px rgba(232, 23, 78, 0.6); }
     :root[data-paleta="logos"] .btn:hover { background: #F02A5E; }
-    /* ---- Alto Contraste (acessibilidade e rapidez: sem desfoque, sombras ou animações) ---- */
+    /* ---- Alto contraste (acessibilidade e rapidez: sem desfoque, sombras ou animações) ---- */
     :root[data-paleta="contraste"] { --neon-1: #FFE600; --neon-2: #00E5FF; --neon-1-glow: transparent; --neon-2-glow: transparent;
       --bg: #000000; --bg-orb-1: transparent; --bg-orb-2: transparent;
       --glass: #000000; --glass-strong: #000000; --glass-soft: #000000; --glass-border: #FFFFFF; --glass-line: #FFFFFF;
@@ -825,6 +832,8 @@
     @media (max-width: 640px) { .menu-usuario-nome { display: none; } .menu-usuario-lista { right: 0; left: auto; } }
 
     /* === LAYOUT CORPORATIVO: BARRA LATERAL === */
+    /* ambiente de teste: a faixa ocupa a linha de cima inteira, sem tomar a coluna da barra lateral */
+    body.layout-lateral > .faixa-teste { grid-column: 1 / -1; margin-bottom: 0; }
     body.layout-lateral { display: grid; grid-template-columns: 264px minmax(0, 1fr); gap: 0; padding: 0; align-items: start; min-height: 100vh; }
     body.layout-lateral .container { max-width: 1180px; width: calc(100% - 48px); margin: 24px auto 48px; }
     body.layout-lateral header { padding: 18px 28px; align-items: center; }
@@ -858,6 +867,10 @@
     .lateral-nav-nome { flex: 1 1 auto; }
     .lateral-rodape { margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding-top: 12px; border-top: 1px solid var(--glass-line, var(--border)); }
     .lateral-rodape .tema-wrap .theme-toggle { width: 100%; justify-content: flex-start; }
+    /* a barra lateral e os menus dela ficam sempre por cima da tela principal (não são cortados) */
+    body.layout-lateral .lateral { overflow: visible; z-index: 1600; }
+    body.layout-lateral .lateral .tema-menu { background: var(--bg, #fff); -webkit-backdrop-filter: none; backdrop-filter: none; }
+    body.layout-lateral .container { position: relative; z-index: 1; }
     .lateral-rodape .tema-menu { top: auto; bottom: calc(100% + 8px); left: 0; right: auto; }
     .lateral-rodape .badge { text-align: center; }
     @media (max-width: 900px) {

@@ -40,6 +40,8 @@ test('importar junta os dados sem duplicar e recusa arquivo estranho', async ({ 
 });
 
 test('aviso de mudança no endereço antigo', async ({ page }) => {
+  // data fixa antes do redirecionamento (a partir de 26/11/2026 o endereço antigo leva ao novo)
+  await page.clock.setFixedTime(new Date('2026-11-20T10:00:00'));
   await page.evaluate(() => window.mostrarAvisoMudanca(true));
   const aviso = page.locator('.aviso-mudanca');
   await expect(aviso).toContainText('mudou de endereço');

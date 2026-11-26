@@ -1,7 +1,9 @@
 {
-  "versao": "2.19.5",
+  "versao": "2.20.0",
   "data": "25/11/2026",
   "novidades": [
+    "Resposta de indeferimento da Análise de Isenção (Texto Padrão Lojas), com vários motivos combinados num texto só; pendência deferida só registra (serviço segue com o texto padrão)",
+    "Barra lateral e menus sempre por cima da tela; temas com nomes simples: Claro, Escuro, Sépia, Ardósia e Alto contraste",
     "Reativação, Reativação Virtual e Desligamento Definitivo migrados para modelos (sem mudança nos textos)",
     "Troca de Titularidade e Reativação com débitos migradas para modelos (sem mudança nos textos)",
     "TR de Partidas migrado para modelo (sem mudança no texto); modelos aceitam CPF/CNPJ e vencimento em mês/ano",

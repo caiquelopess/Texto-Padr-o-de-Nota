@@ -117,6 +117,10 @@ export const SERVICOS_EMBUTIDOS = [
     "nome": "Relocação de poste/deslocamento de rede"
   },
   {
+    "id": "sf-resposta-isencao",
+    "nome": "Resposta da Análise de Isenção"
+  },
+  {
     "id": "sf-danos-eletricos",
     "nome": "Ressarcimento de Danos Elétricos — Abertura de Nota"
   },

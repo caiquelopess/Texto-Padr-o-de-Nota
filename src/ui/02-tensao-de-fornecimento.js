@@ -212,11 +212,11 @@
   // Seleção corporativa (#26). Os ids antigos continuam valendo para a paleta (CSS);
   // quem usava um tema retirado passa automaticamente para o mais parecido.
   var TEMAS = [
-    { id: 'branco-verde', nome: 'Claro Corporativo',  base: 'light', paleta: 'branco-verde', fundo: '#F5FAF6', cor: '#15803D' },
-    { id: 'ardosia',      nome: 'Escuro Corporativo', base: 'dark',  paleta: 'ardosia',      fundo: '#1B222C', cor: '#93B4D6' },
-    { id: 'logos',        nome: 'Logos Executive',    base: 'dark',  paleta: 'logos',        fundo: '#0D0E12', cor: '#E8174E' },
-    { id: 'sepia',        nome: 'Conforto Visual',    base: 'light', paleta: 'sepia',        fundo: '#F3EAD7', cor: '#8A5A2B' },
-    { id: 'contraste',    nome: 'Alto Contraste',     base: 'dark',  paleta: 'contraste',    fundo: '#000000', cor: '#FFE600' }
+    { id: 'branco-verde', nome: 'Claro',              base: 'light', paleta: 'branco-verde', fundo: '#F5FAF6', cor: '#15803D' },
+    { id: 'logos',        nome: 'Escuro',             base: 'dark',  paleta: 'logos',        fundo: '#0D0E12', cor: '#E8174E' },
+    { id: 'sepia',        nome: 'Sépia',              base: 'light', paleta: 'sepia',        fundo: '#F3EAD7', cor: '#8A5A2B' },
+    { id: 'ardosia',      nome: 'Ardósia',            base: 'dark',  paleta: 'ardosia',      fundo: '#1B222C', cor: '#93B4D6' },
+    { id: 'contraste',    nome: 'Alto contraste',     base: 'dark',  paleta: 'contraste',    fundo: '#000000', cor: '#FFE600' }
   ];
   var TEMAS_RETIRADOS = {
     'neon-escuro': 'ardosia', 'preto-vermelho': 'ardosia', 'preto-azul': 'ardosia', 'preto-verde': 'ardosia', dark: 'ardosia',

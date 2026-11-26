@@ -72,6 +72,7 @@
     <div id="painel_servicos" style="display: none;">
       <div class="service-nav" id="service_nav">
         <button type="button" class="sub-btn" data-click="trocarAba('sf-analise-isencao', this)">Isenção de Débitos</button>
+        <button type="button" class="sub-btn" data-click="trocarAba('sf-resposta-isencao', this)">Resposta da Análise de Isenção</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-nova', this)">Ligação Nova</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-muc', this)">Ligação MUC</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-deb|reativacao', this)">Reativação com Análise de Isenção de Débitos</button>
@@ -446,6 +447,12 @@
 
     <!-- ATUALIZAÇÃO CADASTRAL -->
     <!-- ISENÇÃO DE DÉBITOS (pedido de análise) -->
+    <div class="subform" id="sf-resposta-isencao">
+      <div class="alert-box">Resposta de <b>indeferimento</b> da Análise de Isenção de Débitos (Texto Padrão Lojas). Marque todos os motivos: o texto sai combinado numa resposta só. Se foi deferida, execute o serviço com o texto padrão dele.</div>
+      <div class="form-grid pend-responder resp-form" id="rsp_campos"></div>
+      <div class="actions"><button type="button" class="btn" data-click="gerarRespostaIsencao()">Gerar Texto de AGENDA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-resposta-isencao')">Limpar Tudo</button></div>
+    </div>
+
     <div class="subform" id="sf-analise-isencao">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>

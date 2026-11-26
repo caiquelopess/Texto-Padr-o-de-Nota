@@ -5,13 +5,9 @@
   //    serviço preenchido e gerar o texto (vai para o Histórico).
   //  - 'prazo': Análise de Isenção de Débitos, criada ao gerar o texto, com
   //    prazo de 5 dias úteis e resposta Deferido/Indeferido.
-  // TIPOS DE RESPOSTA da isenção: lista inicial, ajustar conforme o procedimento oficial.
+  // Os textos de resposta (deferido/indeferido) ficam no núcleo: respostas.mjs.
   var TIPOS_PENDENCIA = {
-    isencao: { nome: 'Análise de Isenção de Débitos', prazo: 5,
-      deferido: ['Deferido — isenção total do débito', 'Deferido parcialmente — isenção de parte do débito/período'],
-      indeferido: ['Documentação não comprova a posse no período do débito', 'Solicitante era responsável pelo imóvel no período do débito',
-                   'Documentação ilegível, incompleta ou fora da validade', 'Dados da Receita Federal pendentes ou irregulares',
-                   'Outro motivo (descrever na observação)'] }
+    isencao: { nome: 'Análise de Isenção de Débitos', prazo: 5 }
   };
   var PEND_CHAVE = AMBIENTE_TESTE ? 'tp_teste_pendencias_v1' : 'tp_pendencias_v1';
   var PEND_DIAS_CONCLUIDAS = 90;
@@ -276,7 +272,8 @@
     if (aberta && !servico) botoes += '<button type="button" class="pend-resp" data-click="abrirResposta(\'' + pd.id + '\')">Responder</button>' +
       '<button type="button" data-click="informarNota(\'' + pd.id + '\')">' + (pd.nota ? 'Alterar nº da nota' : 'Informar nº da nota') + '</button>' +
       '<button type="button" data-click="editarComentario(\'' + pd.id + '\')">' + (pd.comentario ? 'Alterar comentário' : 'Comentário') + '</button>';
-    if (!aberta && !servico) botoes += '<button type="button" data-click="reabrirPendencia(\'' + pd.id + '\')">Reabrir</button>';
+    if (!aberta && !servico) botoes += '<button type="button" data-click="reabrirPendencia(\'' + pd.id + '\')">Reabrir</button>' +
+      (pd.respostaTexto ? '<button type="button" data-click="copiarRespostaPend(\'' + pd.id + '\')">Copiar resposta</button>' : '');
     if (pd.texto) botoes += '<button type="button" data-click="alternarTextoPend(\'' + pd.id + '\')">Ver texto</button><button type="button" data-click="copiarTextoPend(\'' + pd.id + '\')">Copiar texto</button>';
     botoes += '<button type="button" class="pend-del" data-click="excluirPendencia(\'' + pd.id + '\')">Excluir</button>';
     return '<div class="pend-item ' + sit.classe + '" id="pitem_' + pd.id + '">' +
@@ -305,41 +302,107 @@
   }
   function reabrirPendencia(id) {
     var r = pAchar(id); if (!r) return;
-    r.pd.status = 'aberta'; delete r.pd.resultado; delete r.pd.motivo; delete r.pd.respostaObs; delete r.pd.respostaData; delete r.pd.respostaTs;
+    r.pd.status = 'aberta'; delete r.pd.resultado; delete r.pd.motivo; delete r.pd.respostaObs; delete r.pd.respostaTexto; delete r.pd.respostaData; delete r.pd.respostaTs;
     r.pd.ultimoLembrete = 0; pendGravar(r.lista); renderPendencias(); atualizarBadgePendencias();
   }
   // ---- resposta da Análise de Isenção (deferido / indeferido) ----
+  // Formulário compartilhado (pendência e serviço "Resposta da Análise de Isenção"):
+  // os textos vêm do núcleo (respostas.mjs). No indeferimento dá para marcar mais de um
+  // motivo: a resposta sai combinada num texto só.
+  var RESP_DIST_CHAVE = 'tp_resp_distribuidora';
+  function respOpcoes(lista, atual) {
+    return lista.map(function(v) { return '<option value="' + pEsc(v) + '"' + (v === atual ? ' selected' : '') + '>' + pEsc(v) + '</option>'; }).join('');
+  }
+  // soIndeferido: no serviço avulso só existe o indeferimento (deferido = serviço executado com o texto padrão)
+  function respCamposHtml(px, ini, soIndeferido) {
+    ini = ini || {};
+    var dist = ini.distribuidora; try { dist = dist || localStorage.getItem(RESP_DIST_CHAVE); } catch (e) {}
+    var ind = ' ' + px + 'ind';
+    var motivos = RESP_INDEFERIMENTOS.map(function(m) {
+      return '<label class="resp-motivo"><input type="checkbox" class="' + px + 'mot" value="' + m.id + '" data-change="respAtualizar(\'' + px + '\')"> ' + pEsc(m.nome) + '</label>';
+    }).join('');
+    return (soIndeferido
+        ? '<input type="hidden" id="' + px + 'res" value="Indeferido">'
+        : '<div class="full"><label>Resultado *</label><select id="' + px + 'res" data-change="respAtualizar(\'' + px + '\')"><option value="Deferido">Deferido</option><option value="Indeferido">Indeferido</option></select></div>' +
+          '<div class="full alert-box resp-aviso" id="' + px + 'def_info">✅ <b>Deferido:</b> a solicitação é atendida, sem texto de resposta. Execute o serviço (' +
+          'Troca de Titularidade ou Reativação) com o texto padrão dele e registre aqui a data da resposta.</div>') +
+      '<div class="' + ind + '"><label>Serviço *</label><select id="' + px + 'serv">' + respOpcoes(RESP_SERVICOS, ini.servico) + '</select></div>' +
+      '<div class="' + ind + '"><label>Distribuidora *</label><select id="' + px + 'dist">' + respOpcoes(RESP_DISTRIBUIDORAS, dist || 'Coelba') + '</select></div>' +
+      '<div class="full' + ind + '"><label>Protocolo de atendimento *</label><input type="text" id="' + px + 'prot" value="' + pEsc(ini.protocolo || '') + '" placeholder="Nº do protocolo" required></div>' +
+      '<div class="full' + ind + '"><label>Motivos do indeferimento * <span class="resp-dica">(marque um ou mais: os textos são combinados)</span></label><div class="resp-motivos" data-um-obrigatorio>' + motivos + '</div></div>' +
+      '<div class="full" id="' + px + 'doc_box"><label>Documento não identificado ou ilegível *</label><input type="text" id="' + px + 'doc" placeholder="Ex: RG, contrato de locação"></div>' +
+      // orientações de cada motivo: aparecem quando ele é marcado
+      RESP_INDEFERIMENTOS.filter(function(m) { return m.aviso; }).map(function(m) {
+        return '<div class="full alert-box resp-aviso" id="' + px + 'aviso_' + m.id + '"><b>⚠️ ' + pEsc(m.nome) + ':</b> ' + pEsc(m.aviso) + '</div>';
+      }).join('') +
+      '<div class="full" id="' + px + 'conf_box"><label class="resp-motivo resp-confirma"><input type="checkbox" id="' + px + 'conf"> ' +
+        pEsc((RESP_INDEFERIMENTOS.filter(function(m) { return m.confirmacao; })[0] || {}).confirmacao || '') + '</label></div>';
+  }
+  function respLer(px) {
+    var g = function(s) { var e = document.getElementById(px + s); return e ? e.value : ''; };
+    var motivos = [].slice.call(document.querySelectorAll('.' + px + 'mot:checked')).map(function(c) { return c.value; });
+    var conf = document.getElementById(px + 'conf');
+    return { resultado: g('res'), servico: g('serv'), distribuidora: g('dist'), protocolo: g('prot').trim(), motivos: motivos, documento: g('doc').trim(), confirmado: !!(conf && conf.checked) };
+  }
+  function respAtualizar(px) {
+    var d = respLer(px), def = d.resultado === 'Deferido';
+    var mostra = function(s, v) { var e = document.getElementById(px + s); if (e) e.style.display = v ? '' : 'none'; };
+    mostra('def_info', def);
+    document.querySelectorAll('.' + px + 'ind').forEach(function(e) { e.style.display = def ? 'none' : ''; });
+    var marcados = def ? [] : RESP_INDEFERIMENTOS.filter(function(m) { return d.motivos.indexOf(m.id) >= 0; });
+    var tem = function(campo) { return marcados.some(function(m) { return m[campo]; }); };
+    mostra('doc_box', tem('precisaDocumento')); mostra('conf_box', tem('confirmacao'));
+    RESP_INDEFERIMENTOS.forEach(function(m) { if (m.aviso) mostra('aviso_' + m.id, marcados.indexOf(m) >= 0); });
+  }
+  function respNomes(d) {
+    if (d.resultado === 'Deferido') return 'Solicitação atendida (serviço executado com o texto padrão)';
+    return RESP_INDEFERIMENTOS.filter(function(m) { return d.motivos.indexOf(m.id) >= 0; }).map(function(m) { return m.nome; }).join(' + ');
+  }
+  function respGuardarDistribuidora(d) { try { localStorage.setItem(RESP_DIST_CHAVE, d.distribuidora); } catch (e) {} }
+
   function abrirResposta(id) {
     var r = pAchar(id); if (!r) return;
     var box = document.getElementById('presp_' + id);
     if (box.innerHTML) { box.innerHTML = ''; return; }
+    var px = 'pres_' + id + '_';
     box.innerHTML = '<div class="pend-responder">' +
-      '<div><label>Resultado *</label><select id="pres_res_' + id + '" data-change="atualizarMotivosPend(\'' + id + '\')"><option value="Deferido">Deferido</option><option value="Indeferido">Indeferido</option></select></div>' +
-      '<div><label>Tipo *</label><select id="pres_mot_' + id + '"></select></div>' +
+      respCamposHtml(px, { servico: /^Reativa/.test(r.pd.origem || '') ? 'Reativação' : 'Troca de Titularidade', protocolo: r.pd.nota }) +
       '<div><label>Data da resposta *</label><input type="text" id="pres_data_' + id + '" inputmode="numeric" value="' + pBR(pHoje()) + '" data-input="mascararData(this)"></div>' +
-      '<div><label>Observação</label><input type="text" id="pres_obs_' + id + '" placeholder="Opcional (obrigatória em Outro motivo)"></div>' +
+      '<div><label>Observação</label><input type="text" id="pres_obs_' + id + '" placeholder="Opcional"></div>' +
       '<div class="full pend-botoes"><button type="button" class="pend-resp" data-click="concluirPendencia(\'' + id + '\')">Confirmar resposta</button><button type="button" data-click="abrirResposta(\'' + id + '\')">Cancelar</button></div></div>';
-    atualizarMotivosPend(id);
-  }
-  function atualizarMotivosPend(id) {
-    var r = pAchar(id); if (!r) return;
-    var t = TIPOS_PENDENCIA[r.pd.tipo] || TIPOS_PENDENCIA.isencao;
-    var res = document.getElementById('pres_res_' + id).value, sel = document.getElementById('pres_mot_' + id);
-    sel.innerHTML = '';
-    (res === 'Deferido' ? t.deferido : t.indeferido).forEach(function(m) { var o = document.createElement('option'); o.value = m; o.textContent = m; sel.appendChild(o); });
+    respAtualizar(px);
   }
   function concluirPendencia(id) {
     var r = pAchar(id); if (!r) return;
     var data = pDeBR(document.getElementById('pres_data_' + id).value);
     if (!data) { mostrarAviso('ATENÇÃO: a data da resposta deve ser uma data real (dd/mm/aaaa).'); return; }
     if (data < r.pd.abertura) { mostrarAviso('ATENÇÃO: a resposta não pode ser anterior à abertura (' + pBR(r.pd.abertura) + ').'); return; }
-    var motivo = document.getElementById('pres_mot_' + id).value, obs = document.getElementById('pres_obs_' + id).value.trim();
-    if (/^Outro motivo|descrever/i.test(motivo) && !obs) { mostrarAviso('ATENÇÃO: descreva o motivo na observação.'); document.getElementById('pres_obs_' + id).focus(); return; }
-    r.pd.status = 'concluida'; r.pd.resultado = document.getElementById('pres_res_' + id).value; r.pd.motivo = motivo; r.pd.respostaObs = obs;
-    r.pd.respostaData = data; r.pd.respostaTs = Date.now();
+    var d = respLer('pres_' + id + '_'), erros = respValidar(d);
+    if (erros.length) { mostrarAviso('ATENÇÃO: ' + erros[0]); return; }
+    var texto = respGerar(d); // deferido: '' (o serviço segue com o texto padrão)
+    r.pd.status = 'concluida'; r.pd.resultado = d.resultado; r.pd.motivo = respNomes(d); r.pd.respostaObs = document.getElementById('pres_obs_' + id).value.trim();
+    r.pd.respostaTexto = texto; r.pd.respostaData = data; r.pd.respostaTs = Date.now();
+    var prazo = data <= r.pd.prazo ? ' (no prazo)' : ' (fora do prazo)';
     pendGravar(r.lista); renderPendencias(); atualizarBadgePendencias();
-    mostrarAviso('Pendência respondida: ' + r.pd.resultado + (data <= r.pd.prazo ? ' (no prazo).' : ' (fora do prazo).'), 'ok');
+    if (!texto) { mostrarAviso('Pendência respondida: Deferido' + prazo + '. Execute o serviço com o texto padrão.', 'ok'); return; }
+    respGuardarDistribuidora(d);
+    histCopiarTexto(texto);
+    setTimeout(function() { mostrarAviso('Pendência respondida: Indeferido' + prazo + '. Resposta copiada para colar na Agenda.', 'ok'); }, 50);
   }
+  // Serviço "Resposta da Análise de Isenção" (aba Agenda e Nota)
+  function montarRespostaIsencao() {
+    var box = document.getElementById('rsp_campos'); if (!box) return;
+    box.innerHTML = respCamposHtml('rsp_', null, true);
+    respAtualizar('rsp_');
+  }
+  function gerarRespostaIsencao() {
+    var d = respLer('rsp_'), erros = respValidar(d);
+    if (erros.length) { mostrarAviso('ATENÇÃO: ' + erros[0]); return; }
+    respGuardarDistribuidora(d);
+    var texto = respGerar(d);
+    finalizarGeracao('sf-resposta-isencao', '', texto, 'agenda');
+  }
+  function copiarRespostaPend(id) { var r = pAchar(id); if (r && r.pd.respostaTexto) histCopiarTexto(r.pd.respostaTexto); }
 
   // ---- contador e lembretes ----
   function atualizarBadgePendencias() {
@@ -410,6 +473,7 @@
     var limite = Date.now() - PEND_DIAS_CONCLUIDAS * 86400000, l = pendLer();
     var l2 = l.filter(function(pd) { return pd.status === 'aberta' || (pd.respostaTs || 0) >= limite; });
     if (l2.length !== l.length) pendGravar(l2);
+    montarRespostaIsencao();
     montarListaServicosPend();
     pendServicoMudou();
     atualizarBadgePendencias();

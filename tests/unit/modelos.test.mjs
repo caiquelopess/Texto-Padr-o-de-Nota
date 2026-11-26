@@ -328,3 +328,22 @@ test('subtipos e "preencher se" na estrutura do modelo', () => {
   const semValor = { ...base, campos: [...base.campos.slice(0, 2), { ...base.campos[2], preencherSe: { campo: 'mmgd', valor: '' } }] };
   assert.deepEqual(mdValidarModelo(semValor), ['Campo "Neo": "preencher se" incompleto.']);
 });
+
+test('notaMaiusculas: nota em maiúsculas e sem espaços repetidos; agenda intacta', () => {
+  const m = {
+    id: 'caps',
+    nome: 'Caps',
+    categoria: 'X',
+    notaMaiusculas: true,
+    campos: [
+      { id: 'a', rotulo: 'A', tipo: 'texto' },
+      { id: 'b', rotulo: 'B', tipo: 'texto' },
+      { id: 'leit', rotulo: 'Leitura', tipo: 'texto' },
+    ],
+    nota: 'RT {{a}} {{b}} fim {{#se leit}}LEITURA {{leit}}{{/se}}{{#se leit=}}NAO INFORMOU LEITURA{{/se}}',
+    agenda: 'Agenda {{a}}  {{b}}',
+  };
+  assert.deepEqual(mdGerar(m, { a: 'ap 101', b: '', leit: '' }), { nota: 'RT AP 101 FIM NAO INFORMOU LEITURA', agenda: 'Agenda ap 101  ' });
+  assert.equal(mdGerar(m, { a: 'x', b: 'y', leit: '12' }).nota, 'RT X Y FIM LEITURA 12');
+  assert.equal(mdGerar({ ...m, notaMaiusculas: false }, { a: 'x', leit: '1' }).nota, 'RT x  fim LEITURA 1');
+});

@@ -16,7 +16,7 @@
     toggleReclamacaoGD: toggleReclamacaoGD,
     toggleFormaPagRes: toggleFormaPagRes,
     gerarReclamacaoUnificada: gerarReclamacaoUnificada, gerarReclamacaoGD: gerarReclamacaoGD,
-    gerarLigacaoNova: gerarLigacaoNova, gerarLigacaoMUC: gerarLigacaoMUC, gerarReativComum: gerarReativComum, gerarReativVirtual: gerarReativVirtual, gerarDD: gerarDD,
+    gerarLigacaoNova: gerarLigacaoNova, gerarLigacaoMUC: gerarLigacaoMUC,
     gerarRES: gerarRES,
     gerarDanosEletricos: gerarDanosEletricos, gerarOutrosDanos: gerarOutrosDanos, gerarRDEDocumentacao: gerarRDEDocumentacao,
     toggleLigacaoNova: toggleLigacaoNova,

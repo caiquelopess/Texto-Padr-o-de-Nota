@@ -1,0 +1,107 @@
+{
+  "id": "reativacao-virtual",
+  "sf": "sf-reativ-virtual",
+  "nome": "Reativação Virtual",
+  "categoria": "Ligação e Reativação",
+  "descricao": "Migrado do código (lote 6 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "lembrete": "Lembrete: altere o setor responsável na nota para o código 8GE427.",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "🔁 <strong>Altere o setor responsável na nota para o código 8GE427</strong>",
+      "classeOriginal": "alert-box alert-setor"
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "elementoId": "rtv_solic",
+      "rotulo": "Solicitante",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo do solicitante"
+    },
+    {
+      "id": "tel",
+      "elementoId": "rtv_tel",
+      "rotulo": "Telefones (DDD + telefone)",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 71993501519"
+    },
+    {
+      "id": "fase",
+      "elementoId": "rtv_fase",
+      "rotulo": "Fase",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["MONO", "BI", "TRI"]
+    },
+    {
+      "id": "medidor",
+      "elementoId": "rtv_medidor",
+      "rotulo": "Número do medidor em campo",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 12345678"
+    },
+    {
+      "id": "leitura",
+      "elementoId": "rtv_leitura",
+      "rotulo": "Leitura",
+      "tipo": "texto",
+      "teclado": "numerico",
+      "dica": "Em branco = não informou"
+    },
+    {
+      "id": "ref",
+      "elementoId": "rtv_ref",
+      "rotulo": "Pontos de referências",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "O máximo de informações possíveis — ex: PX AO BECO DO SIRILO"
+    },
+    {
+      "id": "coords",
+      "elementoId": "rtv_coords",
+      "rotulo": "Coordenadas geográficas",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: -12.9585, -38.4955 ou Não informado"
+    },
+    {
+      "id": "email",
+      "elementoId": "rtv_email",
+      "rotulo": "E-mail",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "rec",
+      "elementoId": "rtv_rec",
+      "rotulo": "Dados da receita",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["regular", "pendente de regularização"],
+      "rotulosOpcoes": ["REGULAR", "PENDENTE DE REGULARIZAÇÃO"]
+    },
+    {
+      "id": "proc",
+      "elementoId": "rtv_proc",
+      "rotulo": "Procurar por (pessoa de contato)",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: STEPHANIE, PORTARIA"
+    }
+  ],
+  "nota": "TRATA-SE DE REATIVAÇÃO VIRTUAL MEDIDOR EM CAMPO N° {{medidor}} / {{#se leitura}}LEITURA {{leitura}}{{/se}}{{#se leitura=}}NAO INFORMOU LEITURA{{/se}}",
+  "agenda": "Tipo de solicitação: Reativação Virtual\nSolicitante: {{solic}}\nPontos de referências: {{ref}}\nCoordenadas geográficas: {{coords}}\nTipo de ligação: {{fase}}\nTelefones para contato: {{tel}}\nE-mail para contato: {{email}}\nDados da receita: (regular/pendente de regularização): {{rec|maiusculas}}\nQuem deverá ser procurado no local: {{proc}}\nCiente do prazo de 5 dias úteis para execução do serviço"
+}

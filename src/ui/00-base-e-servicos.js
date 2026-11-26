@@ -790,39 +790,6 @@
     finalizarGeracao('sf-ligacao-muc', nota, agenda, 'nota');
   }
 
-  function gerarReativComum() {
-    if (!validarCampos('sf-reativ-comum')) return;
-    finalizarGeracao('sf-reativ-comum', notaPadraoEndereco('RT', 'rtc'), agendaPadraoEndereco('Reativação', 'rtc'), 'nota');
-  }
-
-
-  function gerarReativVirtual() {
-    if (!validarCampos('sf-reativ-virtual')) return;
-    var nota = notaReativVirtual(getVal('rtv_medidor'), getVal('rtv_leitura'));
-    finalizarGeracao('sf-reativ-virtual', nota, agendaPadraoEndereco('Reativação Virtual', 'rtv'), 'nota');
-    // Lembrete na hora de criar a nota (depois do "Copiado!")
-    setTimeout(function() { mostrarAviso('Lembrete: altere o setor responsável na nota para o código 8GE427.', 'longo'); }, 300);
-  }
-
-  function gerarDD() {
-    if (!validarCampos('sf-dd')) return;
-    var crit = '( ) Faturado por média ou ( ) Leitura fornecida pelo cliente';
-    if (getVal('dd_crit') === 'media') crit = '(X) Faturado por média ou ( ) Leitura fornecida pelo cliente';
-    else if (getVal('dd_crit') === 'cliente') crit = '( ) Faturado por média ou (X) Leitura fornecida pelo cliente';
-
-    var entregue = (getVal('dd_entregue') === 'Sim') ? '(X)Sim ( )Não' : '( )Sim (X)Não';
-    var txt = 'Cliente ciente do faturamento da fatura de período final, para desligamento definitivo.' +
-      '\nPonto de Referência: ' + getVal('dd_ref') +
-      '\nSolicitante: ' + getVal('dd_solic') +
-      '\nTitular ou representante legal? ' + getVal('dd_vinculo') +
-      '\nEm caso de representante legal, informar se apresentou procuração ou certidão de óbito' +
-      '\nTelefone: ' + getVal('dd_tel') +
-      '\nE-mail: ' + getVal('dd_email') +
-      '\nCritério da fatura final: ' + crit +
-      '\nFatura Entregue: ' + entregue +
-      '\nCliente ciente que o medidor não será retirado';
-    finalizarGeracao('sf-dd', txt, txt, 'nota');
-  }
 
 
 
@@ -1048,9 +1015,6 @@
       c.innerHTML = '<div class="fatura-row"><input type="text" class="rec_fat_venc" placeholder="Vencimento: dd/mm/aaaa" data-input="mascararData(this)" required><input type="text" class="rec_fat_valor" placeholder="Valor R$: 0,00" required><button type="button" class="btn-del" data-click="removerFaturaRow(this)">✕</button></div>';
       toggleReclamacoes();
     }
-    if (containerId === 'sf-reativ-comum') { document.getElementById('rtc_tipo_lig').value = 'MONO'; document.getElementById('rtc_rec').value = 'regular'; }
-    if (containerId === 'sf-reativ-virtual') { document.getElementById('rtv_fase').value = 'MONO'; document.getElementById('rtv_rec').value = 'regular'; }
-    if (containerId === 'sf-dd') { document.getElementById('dd_vinculo').value = 'Titular'; document.getElementById('dd_crit').value = 'media'; document.getElementById('dd_entregue').value = 'Sim'; }
     if (containerId === 'sf-res') { document.getElementById('res_forma_pag').value = 'conta'; toggleFormaPagRes(); }
     
     var subA = subtipoAtivo[containerId];

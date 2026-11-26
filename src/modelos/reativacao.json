@@ -1,0 +1,103 @@
+{
+  "id": "reativacao",
+  "sf": "sf-reativ-comum",
+  "nome": "Reativação",
+  "categoria": "Ligação e Reativação",
+  "descricao": "Migrado do código (lote 6 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "notaMaiusculas": true,
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "elementoId": "rtc_solic",
+      "rotulo": "Solicitante",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo do solicitante"
+    },
+    {
+      "id": "tel",
+      "elementoId": "rtc_tel",
+      "rotulo": "Telefones (DDD + telefone)",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 71993501519"
+    },
+    {
+      "id": "tipo_lig",
+      "elementoId": "rtc_tipo_lig",
+      "rotulo": "Fase",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["MONO", "BI", "TRI"]
+    },
+    {
+      "id": "numero",
+      "elementoId": "rtc_numero",
+      "rotulo": "Número",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 77 ou S/N"
+    },
+    {
+      "id": "compl",
+      "elementoId": "rtc_compl",
+      "rotulo": "Complemento",
+      "tipo": "texto",
+      "largo": true,
+      "dica": "Opcional — ex: AP 101, CASA B"
+    },
+    {
+      "id": "ref",
+      "elementoId": "rtc_ref",
+      "rotulo": "Pontos de referências",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "O máximo de informações possíveis — ex: PX AO BECO DO SIRILO"
+    },
+    {
+      "id": "coords",
+      "elementoId": "rtc_coords",
+      "rotulo": "Coordenadas geográficas",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: -12.9585, -38.4955 ou Não informado"
+    },
+    {
+      "id": "email",
+      "elementoId": "rtc_email",
+      "rotulo": "E-mail",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "rec",
+      "elementoId": "rtc_rec",
+      "rotulo": "Dados da receita",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["regular", "pendente de regularização"],
+      "rotulosOpcoes": ["REGULAR", "PENDENTE DE REGULARIZAÇÃO"]
+    },
+    {
+      "id": "proc",
+      "elementoId": "rtc_proc",
+      "rotulo": "Procurar por (pessoa de contato)",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: STEPHANIE, PORTARIA"
+    }
+  ],
+  "nota": "RT {{tipo_lig}} N° {{numero}} {{compl}} REF: {{ref}} CG: {{coords}} TEL: {{tel|telefoneNota}} PC: {{proc}} PZ 5D UTEIS",
+  "agenda": "Tipo de solicitação: Reativação\nSolicitante: {{solic}}\nPontos de referências: {{ref}}\nCoordenadas geográficas: {{coords}}\nTipo de ligação: {{tipo_lig}}\nTelefones para contato: {{tel}}\nE-mail para contato: {{email}}\nDados da receita: (regular/pendente de regularização): {{rec|maiusculas}}\nQuem deverá ser procurado no local: {{proc}}\nCiente do prazo de 5 dias úteis para execução do serviço"
+}

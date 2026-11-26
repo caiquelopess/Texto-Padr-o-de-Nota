@@ -71,6 +71,8 @@
     if (erros.length) { mostrarAviso('ATENÇÃO: ' + erros[0]); return; }
     var t = mdGerar(m, p.valores);
     finalizarGeracao(sf, t.nota, t.agenda, m.copiar === 'agenda' ? 'agenda' : 'nota');
+    // lembrete na hora de criar a nota (depois do "Copiado!")
+    if (m.lembrete) setTimeout(function() { mostrarAviso(String(m.lembrete), 'longo'); }, 300);
   }
 
   function mdCriarCampo(m, c) {
@@ -98,6 +100,7 @@
       if (c.tipo === 'dataOuMes') { el.placeholder = 'dd/mm/aaaa ou mm/aaaa'; el.setAttribute('data-input', 'mascararDataOuMes(this)'); }
       if (c.tipo === 'documento') el.placeholder = c.documento === 'cnpj' ? '00.000.000/0000-00' : 'CPF ou CNPJ — somente números';
       if (c.tipo === 'numero') el.setAttribute('inputmode', 'numeric');
+      if (c.teclado === 'numerico') el.setAttribute('inputmode', 'numeric');
       if (c.dica) el.placeholder = c.dica;
     }
     el.id = id;

@@ -31,6 +31,9 @@ const ORIG_FIM = '\uE001';
 
 const vazio = (v) => (Array.isArray(v) ? !faturasPreenchidas(v).length : String(v ?? '').trim() === '');
 
+// campo de data que também aceita um texto fixo (ex.: aceita: ["N/A"]), sem diferenciar maiúsculas
+const aceitaTexto = (c, v) => [].concat(c.aceita || []).some((a) => String(a).toUpperCase() === String(v).trim().toUpperCase());
+
 // linhas de fatura com algum dado
 function faturasPreenchidas(lista) {
   return (Array.isArray(lista) ? lista : []).filter((f) => f && (String(f.vencimento ?? '').trim() || String(f.valor ?? '').trim()));
@@ -51,24 +54,28 @@ function formatarDocumento(valor, tipo = 'doc') {
 
 // Rótulo do campo com os valores atuais (regra "rotuloSe": o rótulo muda conforme outro campo).
 export function mdRotulo(campo, valores = {}) {
-  const r = campo.rotuloSe;
-  if (r && [].concat(r.igual).includes(String(valores[r.campo] ?? ''))) return r.rotulo;
+  // "rotuloSe" pode ser uma regra só ou uma lista (vale a primeira que bater)
+  for (const r of [].concat(campo.rotuloSe || [])) if (r && mdCondicao(r, valores)) return r.rotulo;
   return campo.rotulo;
 }
 
 // Campos que aparecem com os valores atuais (regra "mostrar se").
+// Confere uma regra "mostrar se". Aceita uma regra { campo, igual | maiorQue } ou uma lista
+// de regras (todas precisam valer: ex.: tipo = Atendimento E canal = Presencial).
+export function mdCondicao(regra, valores = {}) {
+  if (Array.isArray(regra)) return regra.every((r) => mdCondicao(r, valores));
+  if (!regra) return true;
+  // "maiorQue": vale quando o valor em reais do outro campo passa do limite (ex.: débito > R$ 12.000)
+  if (regra.maiorQue !== undefined) {
+    const n = valorReais(valores[regra.campo]);
+    return n !== null && n > Number(regra.maiorQue);
+  }
+  return [].concat(regra.igual).includes(String(valores[regra.campo] ?? ''));
+}
+
+// Campos que aparecem com os valores atuais (regra "mostrar se").
 export function mdCamposVisiveis(modelo, valores = {}) {
-  return (modelo.campos || []).filter((c) => {
-    if (!c.mostrarSe) return true;
-    // "maiorQue": aparece quando o valor em reais do outro campo passa do limite (ex.: débito > R$ 12.000)
-    if (c.mostrarSe.maiorQue !== undefined) {
-      const n = valorReais(valores[c.mostrarSe.campo]);
-      return n !== null && n > Number(c.mostrarSe.maiorQue);
-    }
-    const atual = String(valores[c.mostrarSe.campo] ?? '');
-    const aceitos = [].concat(c.mostrarSe.igual);
-    return aceitos.includes(atual);
-  });
+  return (modelo.campos || []).filter((c) => mdCondicao(c.mostrarSe, valores));
 }
 
 // Confere a estrutura do modelo antes de salvar/publicar. Retorna a lista de erros (vazia = válido).
@@ -92,8 +99,8 @@ export function mdValidarModelo(modelo) {
       erros.push(`Campo "${rot}": documento deve ser doc, cpf ou cnpj.`);
   }
   for (const c of campos) {
-    if (c.mostrarSe && !ids.has(c.mostrarSe.campo)) erros.push(`Campo "${c.rotulo || c.id}": "mostrar se" usa um campo que não existe.`);
-    if (c.rotuloSe && (!ids.has(c.rotuloSe.campo) || vazio(c.rotuloSe.rotulo))) erros.push(`Campo "${c.rotulo || c.id}": "rótulo se" incompleto.`);
+    if ([].concat(c.mostrarSe || []).some((r) => !ids.has(r.campo))) erros.push(`Campo "${c.rotulo || c.id}": "mostrar se" usa um campo que não existe.`);
+    if ([].concat(c.rotuloSe || []).some((r) => !ids.has(r.campo) || vazio(r.rotulo))) erros.push(`Campo "${c.rotulo || c.id}": "rótulo se" incompleto.`);
     if (c.preencherSe && (!ids.has(c.preencherSe.campo) || vazio(c.preencherSe.valor))) erros.push(`Campo "${c.rotulo || c.id}": "preencher se" incompleto.`);
   }
   for (const per of Array.isArray(modelo.periodos) ? modelo.periodos : [])
@@ -139,7 +146,7 @@ export function mdValidarValores(modelo, valores = {}) {
     }
     if (c.tipo === 'telefone' && formatarTelefones(v) === null) erros.push(`${c.rotulo}: telefone com DDD (10 ou 11 dígitos).`);
     if (c.tipo === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) && v.toLowerCase() !== 'não informado') erros.push(`${c.rotulo}: e-mail inválido.`);
-    if (c.tipo === 'data' && !/^\d{2}\/\d{2}\/\d{4}$/.test(v)) erros.push(`${c.rotulo}: use dd/mm/aaaa.`);
+    if (c.tipo === 'data' && !aceitaTexto(c, v) && !/^\d{2}\/\d{2}\/\d{4}$/.test(v)) erros.push(`${c.rotulo}: use dd/mm/aaaa.`);
     if (c.tipo === 'numero' && !/^\d+$/.test(v)) erros.push(`${c.rotulo}: só números.`);
     if (c.tipo === 'opcao' && !c.opcoes.includes(v)) erros.push(`${c.rotulo}: escolha uma das opções.`);
     if (c.tipo === 'documento' && formatarDocumento(v, c.documento) === null) erros.push(`${c.rotulo}: documento inválido.`);
@@ -224,6 +231,7 @@ export function mdNormalizarValores(modelo, valores = {}, hoje = new Date()) {
         erros.push(`O campo "${mdRotulo(c, valores)}" deve ter uma data real (dd/mm/aaaa) ou um mês/ano (mm/aaaa) válido.`);
       else saida[c.id] = `${dois(dia)}/${dois(mes)}/${ano}`;
     }
+    if (c.tipo === 'data' && aceitaTexto(c, v)) continue; // ex.: "N/A" na data da leitura
     if (c.tipo === 'data') {
       const m = /^(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{4})$/.exec(v);
       if (!m) {

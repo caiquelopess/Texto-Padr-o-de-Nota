@@ -57,13 +57,18 @@
       grupo.style.display = visiveis[c.id] && !c.oculto ? '' : 'none';
       // rótulo que muda conforme outro campo (ex.: PJ pede o representante legal)
       if (c.rotuloSe) grupo.querySelector('label').textContent = mdRotulo(c, valores) + (c.obrigatorio ? ' *' : '');
+      // exemplo (placeholder) que muda conforme outro campo: lista de { campo, igual, dica }
+      if (c.dicaSe) {
+        var d = [].concat(c.dicaSe).filter(function(r) { return mdCondicao(r, valores); })[0];
+        el.placeholder = d ? d.dica : c.dica || '';
+      }
     });
     // avisos que dependem da escolha (ex.: OneCode só em "Correção de Nome")
     var form = document.getElementById(mdSf(m));
     (m.avisos || []).forEach(function(a, i) {
       if (!a || typeof a !== 'object' || !a.mostrarSe) return;
       var el = form && form.querySelector('[data-aviso="' + i + '"]');
-      if (el) el.style.display = [].concat(a.mostrarSe.igual).indexOf(String(valores[a.mostrarSe.campo] || '')) >= 0 ? 'block' : 'none';
+      if (el) el.style.display = mdCondicao(a.mostrarSe, valores) ? 'block' : 'none';
     });
   }
 
@@ -125,7 +130,7 @@
     if (c.tipo === 'faturas') {
       grupo.className = 'field-group full-width';
       el = document.createElement('div');
-      el.className = 'md-faturas';
+      el.className = 'md-faturas dynamic-box';
       el.id = id;
       mdLinhaFatura(m, el);
       var add = document.createElement('button');

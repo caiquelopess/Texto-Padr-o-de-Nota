@@ -1,0 +1,454 @@
+{
+  "id": "reclamacoes",
+  "sf": "sf-reclamacoes",
+  "nome": "Reclamações",
+  "categoria": "Reclamações e Outros",
+  "descricao": "Migrado do código (lote 11 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "botao": "Gerar Texto de Reclamação e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "⚠️ Atenção: Ao realizar a abertura da reclamação, é muito importante que seja inserido bloqueio de 15 dias nas faturas reclamadas. Incluir o texto da nota na agenda da conta contrato.",
+      "classeOriginal": "alert-box",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": ["arrecadacao", "negativa"]
+      }
+    },
+    {
+      "html": "⚠️ Atenção: Incluir o texto da nota na agenda da conta contrato. Sempre informar \"Realizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.\". Sempre ofertar parcelamento caso tenha fatura em aberto.",
+      "classeOriginal": "alert-box",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": ["leitura_fat", "atendimento", "atraso", "cadastro", "toi", "cobranca", "obra", "entrega", "outros"]
+      }
+    }
+  ],
+  "campos": [
+    {
+      "id": "tipo",
+      "elementoId": "rec_tipo",
+      "rotulo": "Selecione o Tipo de Reclamação:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": true,
+      "opcoes": ["leitura_fat", "atendimento", "atraso", "cadastro", "arrecadacao", "toi", "negativa", "cobranca", "obra", "entrega", "outros"],
+      "rotulosOpcoes": [
+        "Leitura e faturamento",
+        "Atendimento",
+        "Atraso",
+        "Cadastro",
+        "Arrecadação",
+        "Irregularidade / TOI",
+        "Negativa Indevida",
+        "Cobrança Indevida",
+        "Obra",
+        "Entrega de contas",
+        "Outras Reclamações"
+      ]
+    },
+    {
+      "id": "nome",
+      "elementoId": "rec_nome",
+      "rotulo": "Nome e sobrenome do cliente (titular ou terceiros):",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Nome completo",
+      "rotuloSe": [
+        {
+          "campo": "tipo",
+          "igual": ["cadastro", "toi", "cobranca"],
+          "rotulo": "Solicitante (informar caso seja procurador):"
+        },
+        {
+          "campo": "tipo",
+          "igual": "leitura_fat",
+          "rotulo": "Solicitante - Nome e sobrenome do cliente (Titular ou terceiros):"
+        }
+      ]
+    },
+    {
+      "id": "subcanal",
+      "elementoId": "rec_subcanal",
+      "rotulo": "Canal do Atendimento Reclamado:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": true,
+      "opcoes": ["presencial", "teleatendimento", "campo"],
+      "rotulosOpcoes": ["Presencial (Loja)", "Teleatendimento", "Serviço de Campo"],
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "atendimento"
+      }
+    },
+    {
+      "id": "proto",
+      "elementoId": "rec_proto",
+      "rotulo": "Protocolo do Atendimento (*apenas teleatendimento/presencial):",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Número do protocolo",
+      "mostrarSe": [
+        {
+          "campo": "tipo",
+          "igual": "atendimento"
+        },
+        {
+          "campo": "subcanal",
+          "igual": ["presencial", "teleatendimento"]
+        }
+      ]
+    },
+    {
+      "id": "loja",
+      "elementoId": "rec_loja",
+      "rotulo": "Loja de Atendimento Reclamada (*apenas presencial):",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: Loja Centro Mossoró",
+      "mostrarSe": [
+        {
+          "campo": "tipo",
+          "igual": "atendimento"
+        },
+        {
+          "campo": "subcanal",
+          "igual": "presencial"
+        }
+      ]
+    },
+    {
+      "id": "equipe",
+      "elementoId": "rec_equipe",
+      "rotulo": "Equipe Reclamada (*placa do veículo):",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: Placa NNN-0000 / Viatura 12",
+      "mostrarSe": [
+        {
+          "campo": "tipo",
+          "igual": "atendimento"
+        },
+        {
+          "campo": "subcanal",
+          "igual": "campo"
+        }
+      ]
+    },
+    {
+      "id": "nota_exec",
+      "elementoId": "rec_nota_exec",
+      "rotulo": "Nº da Nota de Serviço Executada (*apenas campo):",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 9200xxxx",
+      "mostrarSe": [
+        {
+          "campo": "tipo",
+          "igual": "atendimento"
+        },
+        {
+          "campo": "subcanal",
+          "igual": "campo"
+        }
+      ]
+    },
+    {
+      "id": "data",
+      "elementoId": "rec_data",
+      "rotulo": "Data:",
+      "tipo": "data",
+      "obrigatorio": true,
+      "dataRegra": "passada",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "atendimento"
+      }
+    },
+    {
+      "id": "hora",
+      "elementoId": "rec_hora",
+      "rotulo": "Horário:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 14:30",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "atendimento"
+      }
+    },
+    {
+      "id": "func",
+      "elementoId": "rec_func",
+      "rotulo": "Nome do Funcionário Reclamado:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Nome do atendente ou Não soube informar",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "atendimento"
+      }
+    },
+    {
+      "id": "motivo",
+      "elementoId": "rec_motivo",
+      "rotulo": "Motivo da Reclamação:",
+      "tipo": "textoLongo",
+      "obrigatorio": true,
+      "linhas": 3,
+      "dica": "Descreva o motivo da reclamação...",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": ["leitura_fat", "atendimento", "atraso", "cadastro", "arrecadacao", "toi", "negativa", "cobranca", "entrega", "outros"]
+      },
+      "rotuloSe": [
+        {
+          "campo": "tipo",
+          "igual": "leitura_fat",
+          "rotulo": "Descrição da Reclamação:"
+        },
+        {
+          "campo": "tipo",
+          "igual": ["toi", "cobranca"],
+          "rotulo": "Motivo da reclamação:"
+        }
+      ],
+      "dicaSe": [
+        {
+          "campo": "tipo",
+          "igual": "leitura_fat",
+          "dica": "Descreva a reclamação com bastantes detalhes..."
+        },
+        {
+          "campo": "tipo",
+          "igual": "toi",
+          "dica": "Evidencie o pedido do cliente (Ex: responsabilidade sobre a irregularidade, discordância do período cobrado e/ou recálculo baseado na carga informada)..."
+        },
+        {
+          "campo": "tipo",
+          "igual": "cobranca",
+          "dica": "Evidencie qual a cobrança que foi indevida e em qual fatura esta ocorreu..."
+        }
+      ]
+    },
+    {
+      "id": "motivo_obra",
+      "elementoId": "rec_motivo_obra",
+      "rotulo": "Motivo da Reclamação (Obra):",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": true,
+      "opcoes": ["Discordância dos termos contratuais", "Discordância com critérios econômicos", "Discordância com critérios técnicos"],
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "obra"
+      }
+    },
+    {
+      "id": "parte_interna",
+      "elementoId": "rec_parte_interna",
+      "rotulo": "Informe se a parte interna já foi verificada:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["Sim", "Não"],
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "leitura_fat"
+      }
+    },
+    {
+      "id": "prob_medidor",
+      "elementoId": "rec_prob_medidor",
+      "rotulo": "Apontamento de problema no medidor:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: avaria, display apagado, desligado no físico, medidor travado...",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "leitura_fat"
+      }
+    },
+    {
+      "id": "analises",
+      "elementoId": "rec_analises",
+      "rotulo": "Informe as análises realizadas:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ex: consumo atípico, análise de histórico de consumo, troca de medidor...",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "leitura_fat"
+      }
+    },
+    {
+      "id": "faturas",
+      "elementoId": "container_faturas_rec",
+      "rotulo": "Valor e vencimento da Fatura (Adicione quantas forem necessárias):",
+      "tipo": "faturas",
+      "obrigatorio": true,
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "leitura_fat"
+      }
+    },
+    {
+      "id": "leit_cliente",
+      "elementoId": "rec_leit_cliente",
+      "rotulo": "Leitura apresentada pelo cliente:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 15420 ou Sem leitura",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "leitura_fat"
+      }
+    },
+    {
+      "id": "dt_leit",
+      "elementoId": "rec_dt_leit",
+      "rotulo": "Data da coleta da Leitura:",
+      "tipo": "data",
+      "obrigatorio": true,
+      "dataRegra": "passada",
+      "aceita": ["N/A"],
+      "dica": "dd/mm/aaaa ou N/A",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "leitura_fat"
+      }
+    },
+    {
+      "id": "num_nota",
+      "elementoId": "rec_num_nota",
+      "rotulo": "Número da nota de serviço:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 9200xxxx",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": ["atraso", "obra"]
+      },
+      "rotuloSe": {
+        "campo": "tipo",
+        "igual": "atraso",
+        "rotulo": "Número da nota de serviço em atraso:"
+      }
+    },
+    {
+      "id": "fatura_simples",
+      "elementoId": "rec_fatura_simples",
+      "rotulo": "Fatura: (vencimento e valor)",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ex: Venc 10/10/2026 - R$ 150,00",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": ["arrecadacao", "negativa", "entrega"]
+      },
+      "rotuloSe": {
+        "campo": "tipo",
+        "igual": "arrecadacao",
+        "rotulo": "Fatura(s): (vencimento e valor):"
+      }
+    },
+    {
+      "id": "end_atual",
+      "elementoId": "rec_end_atual",
+      "rotulo": "Cliente informa que hoje reside no endereço:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Endereço completo atual do cliente",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "cadastro"
+      }
+    },
+    {
+      "id": "cc_atual",
+      "elementoId": "rec_cc_atual",
+      "rotulo": "Conta contrato atual do solicitante:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 70xxxxxxx",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "cadastro"
+      }
+    },
+    {
+      "id": "ref",
+      "elementoId": "rec_ref",
+      "rotulo": "Ponto de Referência:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ponto de referência detalhado",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": ["leitura_fat", "atraso", "arrecadacao", "obra"]
+      }
+    },
+    {
+      "id": "tel",
+      "elementoId": "rec_tel",
+      "rotulo": "Telefone / Celular:",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84988887777"
+    },
+    {
+      "id": "email",
+      "elementoId": "rec_email",
+      "rotulo": "E-mail:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "outras",
+      "elementoId": "rec_outras",
+      "rotulo": "Outras informações:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ex: Comprovante pago em lotérica / Não possui",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "arrecadacao"
+      }
+    },
+    {
+      "id": "ant",
+      "elementoId": "rec_ant",
+      "rotulo": "Caso a reclamação seja reincidente, informe o número da reclamação anterior:",
+      "tipo": "texto",
+      "largo": true,
+      "dica": "Ex: 9200xxxx ou N/A",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": ["leitura_fat", "atendimento", "atraso", "cadastro", "arrecadacao", "toi", "negativa", "cobranca", "entrega", "outros"]
+      }
+    },
+    {
+      "id": "modalidade",
+      "elementoId": "rec_modalidade",
+      "rotulo": "Modalidade de comunicação:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": true,
+      "opcoes": ["e-mail", "SMS", "carta"]
+    }
+  ],
+  "nota": "{{#se tipo=leitura_fat}}Solicitante - Nome e sobrenome do cliente (Titular ou terceiros): {{nome}}\nDescrição da Reclamação: {{motivo}}\nInforme se a parte interna já foi verificada: {{parte_interna}}\nApontamento de problema no medidor: {{prob_medidor}}\nInforme as análises realizadas: {{analises}}\nValor e vencimento da Fatura: {{faturas|ou:Não informado}}\nLeitura apresentada pelo cliente: {{leit_cliente}} | Data da coleta da Leitura: {{dt_leit}}\nPonto de Referência: {{ref}}\nE-mail: {{email}}\nTel. Celular: {{tel}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=atendimento}}Nome e sobrenome do cliente (titular ou terceiros): {{nome}}\nCanal do Atendimento Reclamado: {{subcanal}}\nMotivo da Reclamação: {{motivo}}\n{{#se subcanal=presencial}}Protocolo do Atendimento (*apenas reclamação de teleatendimento/presencial): {{proto}}\nLoja de Atendimento Reclamada (*apenas quando reclamação de atendimento presencial): {{loja}}\n{{/se}}{{#se subcanal=teleatendimento}}Protocolo do Atendimento (*apenas reclamação de teleatendimento/presencial): {{proto}}\n{{/se}}{{#se subcanal=campo}}Equipe Reclamada (*apenas quando reclamação do serviço de campo - placa do veículo): {{equipe}}\nNº da Nota de Serviço que foi Executada (*apenas quando reclamação do serviço de campo): {{nota_exec}}\n{{/se}}Data: {{data}}\nHorário: {{hora}}\nNome do Funcionário Reclamado: {{func}}\nTelefone: {{tel}}\nE-mail: {{email}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=atraso}}Nome e sobrenome do cliente (titular ou terceiros): {{nome}}\nMotivo da Reclamação: {{motivo}}\nNúmero da nota de serviço em atraso: {{num_nota}}\nPontos de referência: {{ref}}\nTelefone: {{tel}}\nE-mail: {{email}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=cadastro}}Solicitante (informar caso seja procurador): {{nome}}\nMotivo da Reclamação: {{motivo}}\nTelefone: {{tel}}\nE-mail: {{email}}\nCliente informa que hoje reside no endereço: {{end_atual}}\nConta contrato atual do solicitante: {{cc_atual}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=arrecadacao}}Nome e sobrenome do cliente (titular ou terceiros): {{nome}}\nMotivo da Reclamação: {{motivo}}\nFatura(s): (vencimento e valor): {{fatura_simples}}\nPonto de Referência: {{ref}}\nE-mail: {{email}}\nTelefone: {{tel}}\nOutras informações: {{outras}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=toi}}Solicitante (informar caso seja procurador): {{nome}}\nTelefones: {{tel}} | E-mail para contato: {{email}}\nMotivo da reclamação: {{motivo}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nPrazo para análise até 15 (quinze) dias corridos, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=negativa}}Nome e sobrenome do cliente (titular ou terceiros): {{nome}}\nMotivo da Reclamação: {{motivo}}\nFatura: (vencimento e valor): {{fatura_simples}}\nTelefone: {{tel}}\nE-mail: {{email}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=cobranca}}Solicitante (informar caso seja procurador): {{nome}}\nTelefones e e-mail para contato: {{tel}} - {{email}}\nMotivo da reclamação: {{motivo}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=obra}}Nome e sobrenome do cliente (titular ou terceiros): {{nome}}\nMotivo da Reclamação: {{motivo_obra}}\nNúmero da nota de serviço: {{num_nota}}\nPontos de referência: {{ref}}\nTelefone: {{tel}}\nE-mail: {{email}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=entrega}}Nome e sobrenome do cliente (titular ou terceiros): {{nome}}\nMotivo da Reclamação: {{motivo}}\nFatura: (vencimento e valor): {{fatura_simples}}\nTelefone: {{tel}}\nE-mail: {{email}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=outros}}Nome e sobrenome do cliente (titular ou terceiros): {{nome}}\nMotivo da Reclamação: {{motivo}}\nTelefone: {{tel}}\nE-mail: {{email}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}",
+  "agenda": "{{#se tipo=leitura_fat}}Solicitante - Nome e sobrenome do cliente (Titular ou terceiros): {{nome}}\nDescrição da Reclamação: {{motivo}}\nInforme se a parte interna já foi verificada: {{parte_interna}}\nApontamento de problema no medidor: {{prob_medidor}}\nInforme as análises realizadas: {{analises}}\nValor e vencimento da Fatura: {{faturas|ou:Não informado}}\nLeitura apresentada pelo cliente: {{leit_cliente}} | Data da coleta da Leitura: {{dt_leit}}\nPonto de Referência: {{ref}}\nE-mail: {{email}}\nTel. Celular: {{tel}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=atendimento}}Nome e sobrenome do cliente (titular ou terceiros): {{nome}}\nCanal do Atendimento Reclamado: {{subcanal}}\nMotivo da Reclamação: {{motivo}}\n{{#se subcanal=presencial}}Protocolo do Atendimento (*apenas reclamação de teleatendimento/presencial): {{proto}}\nLoja de Atendimento Reclamada (*apenas quando reclamação de atendimento presencial): {{loja}}\n{{/se}}{{#se subcanal=teleatendimento}}Protocolo do Atendimento (*apenas reclamação de teleatendimento/presencial): {{proto}}\n{{/se}}{{#se subcanal=campo}}Equipe Reclamada (*apenas quando reclamação do serviço de campo - placa do veículo): {{equipe}}\nNº da Nota de Serviço que foi Executada (*apenas quando reclamação do serviço de campo): {{nota_exec}}\n{{/se}}Data: {{data}}\nHorário: {{hora}}\nNome do Funcionário Reclamado: {{func}}\nTelefone: {{tel}}\nE-mail: {{email}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=atraso}}Nome e sobrenome do cliente (titular ou terceiros): {{nome}}\nMotivo da Reclamação: {{motivo}}\nNúmero da nota de serviço em atraso: {{num_nota}}\nPontos de referência: {{ref}}\nTelefone: {{tel}}\nE-mail: {{email}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=cadastro}}Solicitante (informar caso seja procurador): {{nome}}\nMotivo da Reclamação: {{motivo}}\nTelefone: {{tel}}\nE-mail: {{email}}\nCliente informa que hoje reside no endereço: {{end_atual}}\nConta contrato atual do solicitante: {{cc_atual}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=arrecadacao}}Nome e sobrenome do cliente (titular ou terceiros): {{nome}}\nMotivo da Reclamação: {{motivo}}\nFatura(s): (vencimento e valor): {{fatura_simples}}\nPonto de Referência: {{ref}}\nE-mail: {{email}}\nTelefone: {{tel}}\nOutras informações: {{outras}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=toi}}Solicitante (informar caso seja procurador): {{nome}}\nTelefones: {{tel}} | E-mail para contato: {{email}}\nMotivo da reclamação: {{motivo}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nPrazo para análise até 15 (quinze) dias corridos, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=negativa}}Nome e sobrenome do cliente (titular ou terceiros): {{nome}}\nMotivo da Reclamação: {{motivo}}\nFatura: (vencimento e valor): {{fatura_simples}}\nTelefone: {{tel}}\nE-mail: {{email}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=cobranca}}Solicitante (informar caso seja procurador): {{nome}}\nTelefones e e-mail para contato: {{tel}} - {{email}}\nMotivo da reclamação: {{motivo}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=obra}}Nome e sobrenome do cliente (titular ou terceiros): {{nome}}\nMotivo da Reclamação: {{motivo_obra}}\nNúmero da nota de serviço: {{num_nota}}\nPontos de referência: {{ref}}\nTelefone: {{tel}}\nE-mail: {{email}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=entrega}}Nome e sobrenome do cliente (titular ou terceiros): {{nome}}\nMotivo da Reclamação: {{motivo}}\nFatura: (vencimento e valor): {{fatura_simples}}\nTelefone: {{tel}}\nE-mail: {{email}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}{{#se tipo=outros}}Nome e sobrenome do cliente (titular ou terceiros): {{nome}}\nMotivo da Reclamação: {{motivo}}\nTelefone: {{tel}}\nE-mail: {{email}}\nModalidade de comunicação (e-mail, SMS ou carta): {{modalidade}}\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nPrazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.{{/se}}"
+}

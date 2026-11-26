@@ -144,302 +144,10 @@
   }
 
   // DINÂMICA DE FATURAS DE RECLAMAÇÃO (SUPORTA MAIS DE 10)
-  function adicionarFaturaRow() {
-    var container = document.getElementById('container_faturas_rec');
-    var div = document.createElement('div');
-    div.className = 'fatura-row';
-    div.innerHTML = '<input type="text" class="rec_fat_venc" placeholder="Vencimento: dd/mm/aaaa" data-input="mascararData(this)" required>' +
-                    '<input type="text" class="rec_fat_valor" placeholder="Valor R$: 0,00" required>' +
-                    '<button type="button" class="btn-del" data-click="removerFaturaRow(this)">✕</button>';
-    container.appendChild(div);
-  }
 
-  function removerFaturaRow(btn) {
-    var rows = document.querySelectorAll('#container_faturas_rec .fatura-row');
-    if (rows.length > 1) {
-      btn.parentElement.remove();
-    } else {
-      btn.parentElement.querySelectorAll('input').forEach(function(i) { i.value = ''; });
-    }
-  }
 
-  function toggleReclamacoes() {
-    var tipo = document.getElementById('rec_tipo').value;
-    var alerta = document.getElementById('rec_alerta_box');
 
-    var lblNome = document.getElementById('lbl_rec_nome');
-    if (tipo === 'cadastro' || tipo === 'toi' || tipo === 'cobranca') {
-      lblNome.innerText = 'Solicitante (informar caso seja procurador): *';
-    } else if (tipo === 'leitura_fat') {
-      lblNome.innerText = 'Solicitante - Nome e sobrenome do cliente (Titular ou terceiros): *';
-    } else {
-      lblNome.innerText = 'Nome e sobrenome do cliente (titular ou terceiros): *';
-    }
 
-    if (tipo === 'arrecadacao' || tipo === 'negativa') {
-      alerta.innerHTML = '⚠️ Atenção: Ao realizar a abertura da reclamação, é muito importante que seja inserido bloqueio de 15 dias nas faturas reclamadas. Incluir o texto da nota na agenda da conta contrato.';
-    } else {
-      alerta.innerHTML = '⚠️ Atenção: Incluir o texto da nota na agenda da conta contrato. Sempre informar "Realizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.". Sempre ofertar parcelamento caso tenha fatura em aberto. ';
-    }
-
-    var isLeitura = (tipo === 'leitura_fat');
-    var isAtendimento = (tipo === 'atendimento');
-    var isAtraso = (tipo === 'atraso');
-    var isCadastro = (tipo === 'cadastro');
-    var isArrecadacao = (tipo === 'arrecadacao');
-    var isToi = (tipo === 'toi');
-    var isNegativa = (tipo === 'negativa');
-    var isCobranca = (tipo === 'cobranca');
-    var isObra = (tipo === 'obra');
-    var isEntrega = (tipo === 'entrega');
-
-    document.getElementById('grp_rec_subcanal').style.display = isAtendimento ? 'flex' : 'none';
-    if (isAtendimento) {
-      toggleCanalAtendimento();
-    } else {
-      ['grp_rec_proto', 'grp_rec_loja', 'grp_rec_equipe', 'grp_rec_nota_exec', 'grp_rec_data', 'grp_rec_hora', 'grp_rec_func'].forEach(function(id) {
-        document.getElementById(id).style.display = 'none';
-      });
-      ['rec_proto', 'rec_loja', 'rec_equipe', 'rec_nota_exec', 'rec_data', 'rec_hora', 'rec_func'].forEach(function(id) {
-        document.getElementById(id).required = false;
-      });
-    }
-
-    document.getElementById('grp_rec_parte_interna').style.display = isLeitura ? 'flex' : 'none';
-    document.getElementById('grp_rec_prob_medidor').style.display = isLeitura ? 'flex' : 'none';
-    document.getElementById('grp_rec_analises').style.display = isLeitura ? 'flex' : 'none';
-    document.getElementById('grp_rec_faturas_dinamicas').style.display = isLeitura ? 'flex' : 'none';
-    document.getElementById('grp_rec_leit_cliente').style.display = isLeitura ? 'flex' : 'none';
-    document.getElementById('grp_rec_dt_leit').style.display = isLeitura ? 'flex' : 'none';
-
-    document.getElementById('rec_prob_medidor').required = isLeitura;
-    document.getElementById('rec_analises').required = isLeitura;
-    document.getElementById('rec_leit_cliente').required = isLeitura;
-    document.getElementById('rec_dt_leit').required = isLeitura;
-    document.querySelectorAll('#container_faturas_rec input').forEach(function(inp) {
-      inp.required = isLeitura;
-    });
-
-    document.getElementById('grp_rec_motivo_obra').style.display = isObra ? 'flex' : 'none';
-    document.getElementById('grp_rec_motivo_txt').style.display = isObra ? 'none' : 'flex';
-    document.getElementById('rec_motivo').required = !isObra;
-
-    var txtMotivo = document.getElementById('rec_motivo');
-    var lblMotivo = document.getElementById('lbl_rec_motivo');
-    if (isLeitura) {
-      lblMotivo.innerText = 'Descrição da Reclamação: *';
-      txtMotivo.placeholder = 'Descreva a reclamação com bastantes detalhes...';
-    } else if (isToi) {
-      lblMotivo.innerText = 'Motivo da reclamação: *';
-      txtMotivo.placeholder = 'Evidencie o pedido do cliente (Ex: responsabilidade sobre a irregularidade, discordância do período cobrado e/ou recálculo baseado na carga informada)...';
-    } else if (isCobranca) {
-      lblMotivo.innerText = 'Motivo da reclamação: *';
-      txtMotivo.placeholder = 'Evidencie qual a cobrança que foi indevida e em qual fatura esta ocorreu...';
-    } else {
-      lblMotivo.innerText = 'Motivo da Reclamação: *';
-      txtMotivo.placeholder = 'Descreva o motivo da reclamação...';
-    }
-
-    var exibeNota = (isAtraso || isObra);
-    document.getElementById('grp_rec_num_nota').style.display = exibeNota ? 'flex' : 'none';
-    document.getElementById('rec_num_nota').required = exibeNota;
-    document.getElementById('lbl_rec_num_nota').innerText = isAtraso ? 'Número da nota de serviço em atraso: *' : 'Número da nota de serviço: *';
-
-    var exibeFaturaSimples = (isArrecadacao || isNegativa || isEntrega);
-    document.getElementById('grp_rec_fatura_simples').style.display = exibeFaturaSimples ? 'flex' : 'none';
-    document.getElementById('rec_fatura_simples').required = exibeFaturaSimples;
-    document.getElementById('lbl_rec_fatura_simples').innerText = isArrecadacao ? 'Fatura(s): (vencimento e valor): *' : 'Fatura: (vencimento e valor) *';
-
-    document.getElementById('grp_rec_end_atual').style.display = isCadastro ? 'flex' : 'none';
-    document.getElementById('grp_rec_cc_atual').style.display = isCadastro ? 'flex' : 'none';
-    document.getElementById('rec_end_atual').required = isCadastro;
-    document.getElementById('rec_cc_atual').required = isCadastro;
-
-    var exibeRef = (isLeitura || isAtraso || isArrecadacao || isObra);
-    document.getElementById('grp_rec_ref').style.display = exibeRef ? 'flex' : 'none';
-    document.getElementById('rec_ref').required = exibeRef;
-
-    document.getElementById('grp_rec_outras').style.display = isArrecadacao ? 'flex' : 'none';
-    document.getElementById('rec_outras').required = isArrecadacao;
-
-    document.getElementById('grp_rec_ant').style.display = isObra ? 'none' : 'flex';
-  }
-
-  function toggleCanalAtendimento() {
-    var sub = document.getElementById('rec_subcanal').value;
-    var isPres = (sub === 'presencial');
-    var isTele = (sub === 'teleatendimento');
-    var isCampo = (sub === 'campo');
-
-    document.getElementById('grp_rec_proto').style.display = (isPres || isTele) ? 'flex' : 'none';
-    document.getElementById('grp_rec_loja').style.display = isPres ? 'flex' : 'none';
-    document.getElementById('grp_rec_equipe').style.display = isCampo ? 'flex' : 'none';
-    document.getElementById('grp_rec_nota_exec').style.display = isCampo ? 'flex' : 'none';
-    document.getElementById('grp_rec_data').style.display = 'flex';
-    document.getElementById('grp_rec_hora').style.display = 'flex';
-    document.getElementById('grp_rec_func').style.display = 'flex';
-
-    document.getElementById('rec_proto').required = (isPres || isTele);
-    document.getElementById('rec_loja').required = isPres;
-    document.getElementById('rec_equipe').required = isCampo;
-    document.getElementById('rec_nota_exec').required = isCampo;
-    document.getElementById('rec_data').required = true;
-    document.getElementById('rec_hora').required = true;
-    document.getElementById('rec_func').required = true;
-  }
-
-  function gerarReclamacaoUnificada() {
-    if (!validarCampos('sf-reclamacoes')) return;
-
-    var tipo = getVal('rec_tipo');
-    var nome = getVal('rec_nome');
-    var tel = getVal('rec_tel');
-    var email = getVal('rec_email');
-    var mod = getVal('rec_modalidade');
-    var ant = getVal('rec_ant') || 'N/A';
-    var txt = '';
-
-    var prazo5a10 = 'Prazo para análise 5 (cinco) dias úteis ou caso seja necessária a realização de visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.';
-    var prazoTOI = 'Prazo para análise até 15 (quinze) dias corridos, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.';
-
-    if (tipo === 'leitura_fat') {
-      var faturasList = [];
-      var rows = document.querySelectorAll('#container_faturas_rec .fatura-row');
-      rows.forEach(function(row) {
-        var v = row.querySelector('.rec_fat_venc').value.trim();
-        var val = row.querySelector('.rec_fat_valor').value.trim();
-        if (v || val) {
-          faturasList.push('vencimento ' + (v || 'N/A') + ' R$ ' + (val || '0,00'));
-        }
-      });
-      var faturasStr = faturasList.length ? faturasList.join('; ') : 'Não informado';
-
-      txt = 'Solicitante - Nome e sobrenome do cliente (Titular ou terceiros): ' + nome +
-        '\nDescrição da Reclamação: ' + getVal('rec_motivo') +
-        '\nInforme se a parte interna já foi verificada: ' + getVal('rec_parte_interna') +
-        '\nApontamento de problema no medidor: ' + getVal('rec_prob_medidor') +
-        '\nInforme as análises realizadas: ' + getVal('rec_analises') +
-        '\nValor e vencimento da Fatura: ' + faturasStr +
-        '\nLeitura apresentada pelo cliente: ' + getVal('rec_leit_cliente') + ' | Data da coleta da Leitura: ' + getVal('rec_dt_leit') +
-        '\nPonto de Referência: ' + getVal('rec_ref') +
-        '\nE-mail: ' + email +
-        '\nTel. Celular: ' + tel +
-        '\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: ' + ant +
-        '\nModalidade de comunicação (e-mail, SMS ou carta): ' + mod +
-        '\n' + prazo5a10;
-
-    } else if (tipo === 'atendimento') {
-      var sub = getVal('rec_subcanal');
-      var linhaProto = (sub !== 'campo') ? '\nProtocolo do Atendimento (*apenas reclamação de teleatendimento/presencial): ' + getVal('rec_proto') : '';
-      var linhaLoja = (sub === 'presencial') ? '\nLoja de Atendimento Reclamada (*apenas quando reclamação de atendimento presencial): ' + getVal('rec_loja') : '';
-      var linhaEquipe = (sub === 'campo') ? '\nEquipe Reclamada (*apenas quando reclamação do serviço de campo - placa do veículo): ' + getVal('rec_equipe') : '';
-      var linhaNotaExec = (sub === 'campo') ? '\nNº da Nota de Serviço que foi Executada (*apenas quando reclamação do serviço de campo): ' + getVal('rec_nota_exec') : '';
-
-      txt = 'Nome e sobrenome do cliente (titular ou terceiros): ' + nome +
-        '\nCanal do Atendimento Reclamado: ' + sub +
-        '\nMotivo da Reclamação: ' + getVal('rec_motivo') +
-        linhaProto + linhaLoja + linhaEquipe + linhaNotaExec +
-        '\nData: ' + getVal('rec_data') +
-        '\nHorário: ' + getVal('rec_hora') +
-        '\nNome do Funcionário Reclamado: ' + getVal('rec_func') +
-        '\nTelefone: ' + tel +
-        '\nE-mail: ' + email +
-        '\nModalidade de comunicação (e-mail, SMS ou carta): ' + mod +
-        '\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: ' + ant +
-        '\n' + prazo5a10;
-
-    } else if (tipo === 'atraso') {
-      txt = 'Nome e sobrenome do cliente (titular ou terceiros): ' + nome +
-        '\nMotivo da Reclamação: ' + getVal('rec_motivo') +
-        '\nNúmero da nota de serviço em atraso: ' + getVal('rec_num_nota') +
-        '\nPontos de referência: ' + getVal('rec_ref') +
-        '\nTelefone: ' + tel +
-        '\nE-mail: ' + email +
-        '\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: ' + ant +
-        '\nModalidade de comunicação (e-mail, SMS ou carta): ' + mod +
-        '\n' + prazo5a10;
-
-    } else if (tipo === 'cadastro') {
-      txt = 'Solicitante (informar caso seja procurador): ' + nome +
-        '\nMotivo da Reclamação: ' + getVal('rec_motivo') +
-        '\nTelefone: ' + tel +
-        '\nE-mail: ' + email +
-        '\nCliente informa que hoje reside no endereço: ' + getVal('rec_end_atual') +
-        '\nConta contrato atual do solicitante: ' + getVal('rec_cc_atual') +
-        '\nModalidade de comunicação (e-mail, SMS ou carta): ' + mod +
-        '\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: ' + ant +
-        '\n' + prazo5a10;
-
-    } else if (tipo === 'arrecadacao') {
-      txt = 'Nome e sobrenome do cliente (titular ou terceiros): ' + nome +
-        '\nMotivo da Reclamação: ' + getVal('rec_motivo') +
-        '\nFatura(s): (vencimento e valor): ' + getVal('rec_fatura_simples') +
-        '\nPonto de Referência: ' + getVal('rec_ref') +
-        '\nE-mail: ' + email +
-        '\nTelefone: ' + tel +
-        '\nOutras informações: ' + getVal('rec_outras') +
-        '\nModalidade de comunicação (e-mail, SMS ou carta): ' + mod +
-        '\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: ' + ant +
-        '\n' + prazo5a10;
-
-    } else if (tipo === 'toi') {
-      txt = 'Solicitante (informar caso seja procurador): ' + nome +
-        '\nTelefones: ' + tel + ' | E-mail para contato: ' + email +
-        '\nMotivo da reclamação: ' + getVal('rec_motivo') +
-        '\nModalidade de comunicação (e-mail, SMS ou carta): ' + mod +
-        '\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: ' + ant +
-        '\n' + prazoTOI;
-
-    } else if (tipo === 'negativa') {
-      txt = 'Nome e sobrenome do cliente (titular ou terceiros): ' + nome +
-        '\nMotivo da Reclamação: ' + getVal('rec_motivo') +
-        '\nFatura: (vencimento e valor): ' + getVal('rec_fatura_simples') +
-        '\nTelefone: ' + tel +
-        '\nE-mail: ' + email +
-        '\nModalidade de comunicação (e-mail, SMS ou carta): ' + mod +
-        '\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: ' + ant +
-        '\n' + prazo5a10;
-
-    } else if (tipo === 'cobranca') {
-      txt = 'Solicitante (informar caso seja procurador): ' + nome +
-        '\nTelefones e e-mail para contato: ' + tel + ' - ' + email +
-        '\nMotivo da reclamação: ' + getVal('rec_motivo') +
-        '\nModalidade de comunicação (e-mail, SMS ou carta): ' + mod +
-        '\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: ' + ant +
-        '\n' + prazo5a10;
-
-    } else if (tipo === 'obra') {
-      txt = 'Nome e sobrenome do cliente (titular ou terceiros): ' + nome +
-        '\nMotivo da Reclamação: ' + getVal('rec_motivo_obra') +
-        '\nNúmero da nota de serviço: ' + getVal('rec_num_nota') +
-        '\nPontos de referência: ' + getVal('rec_ref') +
-        '\nTelefone: ' + tel +
-        '\nE-mail: ' + email +
-        '\nModalidade de comunicação (e-mail, SMS ou carta): ' + mod +
-        '\n' + prazo5a10;
-
-    } else if (tipo === 'entrega') {
-      txt = 'Nome e sobrenome do cliente (titular ou terceiros): ' + nome +
-        '\nMotivo da Reclamação: ' + getVal('rec_motivo') +
-        '\nFatura: (vencimento e valor): ' + getVal('rec_fatura_simples') +
-        '\nTelefone: ' + tel +
-        '\nE-mail: ' + email +
-        '\nModalidade de comunicação (e-mail, SMS ou carta): ' + mod +
-        '\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: ' + ant +
-        '\n' + prazo5a10;
-
-    } else {
-      txt = 'Nome e sobrenome do cliente (titular ou terceiros): ' + nome +
-        '\nMotivo da Reclamação: ' + getVal('rec_motivo') +
-        '\nTelefone: ' + tel +
-        '\nE-mail: ' + email +
-        '\nModalidade de comunicação (e-mail, SMS ou carta): ' + mod +
-        '\nCaso a reclamação seja reincidente, informe o número da reclamação anterior: ' + ant +
-        '\n' + prazo5a10;
-    }
-
-    finalizarGeracao('sf-reclamacoes', txt, txt, 'nota');
-  }
 
 
   /* ===== PADRONIZAÇÃO: DATA, CPF/CNPJ E TELEFONE =====
@@ -449,7 +157,7 @@
      nenhum texto padrão — só o formato/validação desses valores. */
 
   // Datas dd/mm/aaaa de fatos já ocorridos: data real e NÃO futura
-  var DATAS_PASSADAS = { rec_data: 1, rec_dt_leit: 1, def_dt_ent: 1, def_dt_env: 1, tg_data: 1 };
+  var DATAS_PASSADAS = { def_dt_ent: 1, def_dt_env: 1, tg_data: 1 };
   // Datas dd/mm/aaaa que podem ser futuras (agendamento, vencimento, período): só data real
   var DATAS_LIVRES = { lp_dt_lig: 1, lp_dt_deslig: 1, refp_dt_deslig: 1, refp_dt_relig: 1, def_fat_venc: 1, bloq_dt_ini: 1, bloq_dt_fim: 1 };
 
@@ -512,17 +220,8 @@
         continue;
       }
 
-      // Vencimento das faturas da reclamação (linhas dinâmicas)
-      if (inp.classList.contains('rec_fat_venc')) {
-        var cf = conferirData(valor, false);
-        if (cf.erro) return barrarCampo(inp, 'ATENÇÃO: O vencimento da fatura deve ser uma data real, no formato dd/mm/aaaa.');
-        inp.value = cf.texto;
-        continue;
-      }
-
       // Datas dd/mm/aaaa
       if (DATAS_PASSADAS[id] || DATAS_LIVRES[id]) {
-        if (id === 'rec_dt_leit' && valor.toUpperCase() === 'N/A') continue;
         var c = conferirData(valor, !!DATAS_PASSADAS[id]);
         if (c.erro === 'formato') return barrarCampo(inp, 'ATENÇÃO: A data do campo "' + lbl + '" deve estar no formato dd/mm/aaaa.');
         if (c.erro === 'invalida') return barrarCampo(inp, 'ATENÇÃO: A data do campo "' + lbl + '" não é uma data real. Verifique o dia e o mês.');
@@ -697,22 +396,10 @@
   // GERADORES DOS DEMAIS SERVIÇOS
 
 
-  function rodapComumCorrigido(ant, mod) {
-    return 'Verifique se há nota de reclamação em aberto, caso a reclamação seja reincidente, informe o número da reclamação anterior: ' + ant + '\n' +
-      'Modalidade de comunicação: ' + mod + '\n' +
-      'Cliente solicita comunicação por ' + mod + '. Foi devidamente orientado sobre o prazo de até 5 (cinco) dias úteis ou, caso seja necessária visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\n' +
-      'Realizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.';
-  }
 
   function limparForm(containerId) {
     desbloquearFormulario(containerId);
     document.querySelectorAll('#' + containerId + ' input[type="text"], #' + containerId + ' textarea').forEach(function(i) { i.value = ''; });
-    if (containerId === 'sf-reclamacoes') {
-      document.getElementById('rec_tipo').value = 'leitura_fat';
-      var c = document.getElementById('container_faturas_rec');
-      c.innerHTML = '<div class="fatura-row"><input type="text" class="rec_fat_venc" placeholder="Vencimento: dd/mm/aaaa" data-input="mascararData(this)" required><input type="text" class="rec_fat_valor" placeholder="Valor R$: 0,00" required><button type="button" class="btn-del" data-click="removerFaturaRow(this)">✕</button></div>';
-      toggleReclamacoes();
-    }
     if (containerId === 'sf-resposta-isencao') setTimeout(function() { montarRespostaIsencao(); }, 0);
     
     var subA = subtipoAtivo[containerId];
@@ -725,7 +412,6 @@
   }
 
   // Inicializa os módulos na abertura
-  toggleReclamacoes();
 
   function normalizarTxt(t){ return (t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
   // Busca por sugestoes: digitar NAO filtra os botoes da lista. Os servicos

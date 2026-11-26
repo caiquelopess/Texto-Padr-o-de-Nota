@@ -465,3 +465,51 @@ test('filtros em sequência, valor em reais, "maior que" e períodos', async () 
   assert.deepEqual(mdValidarModelo({ ...m, periodos: [{ de: 'de', ate: 'zz' }] }), ['Período: os campos "de" e "até" precisam existir.']);
   assert.deepEqual(mdValidarModelo({ ...m, nota: '{{docs|maiusculas|inventado}}' }), ['Texto da NOTA: filtro "inventado" desconhecido.']);
 });
+
+test('condições combinadas, listas de rótulos e data que aceita N/A', async () => {
+  const { mdCondicao, mdRotulo, mdNormalizarValores } = await import('../../src/nucleo/modelos.mjs');
+  const m = {
+    id: 'reclamacao-teste',
+    nome: 'R',
+    categoria: 'X',
+    campos: [
+      { id: 'tipo', rotulo: 'Tipo', tipo: 'opcao', opcoes: ['a', 'b', 'c'] },
+      { id: 'canal', rotulo: 'Canal', tipo: 'opcao', opcoes: ['x', 'y'], mostrarSe: { campo: 'tipo', igual: 'a' } },
+      {
+        id: 'proto',
+        rotulo: 'Protocolo',
+        tipo: 'texto',
+        obrigatorio: true,
+        mostrarSe: [
+          { campo: 'tipo', igual: 'a' },
+          { campo: 'canal', igual: 'x' },
+        ],
+      },
+      {
+        id: 'nome',
+        rotulo: 'Nome',
+        tipo: 'texto',
+        rotuloSe: [
+          { campo: 'tipo', igual: 'b', rotulo: 'Solicitante' },
+          { campo: 'tipo', igual: ['b', 'c'], rotulo: 'Cliente' },
+        ],
+      },
+      { id: 'leit', rotulo: 'Data', tipo: 'data', dataRegra: 'passada', aceita: ['N/A'] },
+    ],
+    nota: '{{nome}} {{proto}} {{leit}}',
+  };
+  assert.deepEqual(mdValidarModelo(m), []);
+  assert.equal(mdTestarModelo(m).ok, true);
+  assert.equal(mdCondicao(undefined, {}), true);
+  assert.deepEqual(mdValidarValores(m, { tipo: 'a', canal: 'x' }), ['Preencha o campo: Protocolo']);
+  assert.deepEqual(mdValidarValores(m, { tipo: 'a', canal: 'y' }), []);
+  assert.deepEqual(mdValidarValores(m, { tipo: 'b', canal: 'x' }), []);
+  assert.equal(mdRotulo(m.campos[3], { tipo: 'b' }), 'Solicitante');
+  assert.equal(mdRotulo(m.campos[3], { tipo: 'c' }), 'Cliente');
+  assert.equal(mdRotulo(m.campos[3], { tipo: 'a' }), 'Nome');
+  assert.deepEqual(mdNormalizarValores(m, { leit: 'n/a' }), { valores: { leit: 'n/a' }, erros: [] });
+  assert.deepEqual(mdValidarValores(m, { leit: 'N/A' }), []);
+  assert.equal(mdNormalizarValores(m, { leit: '1/2/2025' }).valores.leit, '01/02/2025');
+  const semCampo = { ...m, campos: m.campos.map((c) => (c.id === 'proto' ? { ...c, mostrarSe: [{ campo: 'zz', igual: 'a' }] } : c)) };
+  assert.deepEqual(mdValidarModelo(semCampo), ['Campo "Protocolo": "mostrar se" usa um campo que não existe.']);
+});

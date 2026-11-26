@@ -12,7 +12,7 @@
   }
   var abaAtualId = null;
   // Serviços que só têm texto de AGENDA (sem nota)
-  var SERVICOS_SO_AGENDA = ['sf-verif-equip', 'sf-afericao'];
+  var SERVICOS_SO_AGENDA = ['sf-verif-equip', 'sf-afericao', 'sf-resposta-isencao'];
 
   function mostrarAviso(msg, tipo) {
     var t = document.getElementById('toastAviso');
@@ -1015,6 +1015,7 @@
       c.innerHTML = '<div class="fatura-row"><input type="text" class="rec_fat_venc" placeholder="Vencimento: dd/mm/aaaa" data-input="mascararData(this)" required><input type="text" class="rec_fat_valor" placeholder="Valor R$: 0,00" required><button type="button" class="btn-del" data-click="removerFaturaRow(this)">✕</button></div>';
       toggleReclamacoes();
     }
+    if (containerId === 'sf-resposta-isencao') setTimeout(function() { montarRespostaIsencao(); }, 0);
     if (containerId === 'sf-res') { document.getElementById('res_forma_pag').value = 'conta'; toggleFormaPagRes(); }
     
     var subA = subtipoAtivo[containerId];

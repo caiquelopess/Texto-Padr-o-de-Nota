@@ -19,7 +19,7 @@ test('categorias e ocultos publicados; sem servidor, usa a cópia', async ({ pag
   await expect(grupo(page, 'Cobrança').locator('.sub-btn')).toHaveText(['BPC/LOAS']);
   // oculto: some da lista e da busca, sem apagar o formulário
   await expect(page.locator('#service_nav .sub-btn', { hasText: 'Aferição' })).toHaveCount(0);
-  await expect(page.locator('#svc_count')).toHaveText('45 serviços');
+  await expect(page.locator('#svc_count')).toHaveText('46 serviços');
   await page.fill('#busca_servico', 'aferi');
   await expect(page.locator('#busca_sugestoes')).toContainText('Nenhum serviço encontrado');
   await page.fill('#busca_servico', '');
@@ -41,5 +41,5 @@ test('sem configuração publicada, fica a organização padrão', async ({ page
   await page.route('**/api/atendimento', (r) => r.fulfill({ json: { documento: null } }));
   await page.reload();
   expect((await titulos(page))[0]).toBe('Ligação e Reativação');
-  await expect(page.locator('#svc_count')).toHaveText('46 serviços');
+  await expect(page.locator('#svc_count')).toHaveText('47 serviços');
 });

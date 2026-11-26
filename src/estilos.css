@@ -621,6 +621,11 @@
     .pend-texto { margin: 10px 0 0; white-space: pre-wrap; word-break: break-word; font: 12px/1.55 var(--font-mono); background: var(--input-bg-soft); border-radius: var(--r-control); padding: 8px 10px; color: var(--text); }
     .pend-responder { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--glass-border); display: grid; grid-template-columns: 1fr 2fr; gap: 10px; }
     .pend-responder .full { grid-column: 1 / -1; }
+    .resp-form { grid-template-columns: 1fr 1fr; border-top: 0; margin-top: 0; padding-top: 0; }
+    .resp-motivos { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 6px 14px; }
+    .pend-responder .resp-motivo { display: flex; align-items: flex-start; gap: 8px; margin: 0; font-size: 13px; font-weight: 400; cursor: pointer; }
+    .pend-responder .resp-motivo input[type="checkbox"] { width: 16px; height: 16px; min-height: 0; flex: none; margin: 2px 0 0; padding: 0; appearance: auto; -webkit-appearance: checkbox; box-shadow: none; accent-color: var(--accent, #0f8a5f); }
+    .resp-dica { font-weight: 400; color: var(--muted); }
     .pend-responder label { display: block; font-size: 12px; margin-bottom: 4px; }
     .pend-responder select, .pend-responder input { width: 100%; }
     @media (max-width: 640px) { .pend-responder { grid-template-columns: 1fr; } }

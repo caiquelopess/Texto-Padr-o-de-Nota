@@ -635,6 +635,11 @@
     .pend-texto { margin: 10px 0 0; white-space: pre-wrap; word-break: break-word; font: 12px/1.55 var(--font-mono); background: var(--input-bg-soft); border-radius: var(--r-control); padding: 8px 10px; color: var(--text); }
     .pend-responder { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--glass-border); display: grid; grid-template-columns: 1fr 2fr; gap: 10px; }
     .pend-responder .full { grid-column: 1 / -1; }
+    .resp-form { grid-template-columns: 1fr 1fr; border-top: 0; margin-top: 0; padding-top: 0; }
+    .resp-motivos { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 6px 14px; }
+    .pend-responder .resp-motivo { display: flex; align-items: flex-start; gap: 8px; margin: 0; font-size: 13px; font-weight: 400; cursor: pointer; }
+    .pend-responder .resp-motivo input[type="checkbox"] { width: 16px; height: 16px; min-height: 0; flex: none; margin: 2px 0 0; padding: 0; appearance: auto; -webkit-appearance: checkbox; box-shadow: none; accent-color: var(--accent, #0f8a5f); }
+    .resp-dica { font-weight: 400; color: var(--muted); }
     .pend-responder label { display: block; font-size: 12px; margin-bottom: 4px; }
     .pend-responder select, .pend-responder input { width: 100%; }
     @media (max-width: 640px) { .pend-responder { grid-template-columns: 1fr; } }
@@ -1097,6 +1102,7 @@
     <div id="painel_servicos" style="display: none;">
       <div class="service-nav" id="service_nav">
         <button type="button" class="sub-btn" data-click="trocarAba('sf-analise-isencao', this)">Isenção de Débitos</button>
+        <button type="button" class="sub-btn" data-click="trocarAba('sf-resposta-isencao', this)">Resposta da Análise de Isenção</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-nova', this)">Ligação Nova</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-muc', this)">Ligação MUC</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-deb|reativacao', this)">Reativação com Análise de Isenção de Débitos</button>
@@ -1471,6 +1477,12 @@
 
     <!-- ATUALIZAÇÃO CADASTRAL -->
     <!-- ISENÇÃO DE DÉBITOS (pedido de análise) -->
+    <div class="subform" id="sf-resposta-isencao">
+      <div class="alert-box">Resposta ao cliente da Análise de Isenção de Débitos (Texto Padrão Lojas). No indeferimento, marque todos os motivos: o texto sai combinado numa resposta só.</div>
+      <div class="form-grid pend-responder resp-form" id="rsp_campos"></div>
+      <div class="actions"><button type="button" class="btn" data-click="gerarRespostaIsencao()">Gerar Texto de AGENDA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-resposta-isencao')">Limpar Tudo</button></div>
+    </div>
+
     <div class="subform" id="sf-analise-isencao">
       <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
       <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
@@ -1956,6 +1968,10 @@
     var index_exports = {};
     __export(index_exports, {
       MD_TIPOS: () => MD_TIPOS,
+      RESP_DEFERIMENTOS: () => RESP_DEFERIMENTOS,
+      RESP_DISTRIBUIDORAS: () => RESP_DISTRIBUIDORAS,
+      RESP_INDEFERIMENTOS: () => RESP_INDEFERIMENTOS,
+      RESP_SERVICOS: () => RESP_SERVICOS,
       calcDias: () => calcDias,
       calcLerData: () => calcLerData,
       calcLerNumero: () => calcLerNumero,
@@ -1981,6 +1997,8 @@
       pSomarUteis: () => pSomarUteis,
       pUteisAte: () => pUteisAte,
       pUtil: () => pUtil,
+      respGerar: () => respGerar,
+      respValidar: () => respValidar,
       telefonesPadraoNota: () => telefonesPadraoNota,
       valorReais: () => valorReais
     });
@@ -2312,6 +2330,136 @@
       return Math.round((b.getTime() - a.getTime()) / 864e5);
     }
 
+    // src/nucleo/respostas.mjs
+    var RESP_DISTRIBUIDORAS = ["Coelba", "Pernambuco", "Cosern", "Brasília", "Elektro"];
+    var RESP_SERVICOS = ["Troca de Titularidade", "Reativação"];
+    var PEDIDO_DOCUMENTOS = "Solicitamos que envie a documentação correta e completa em um de nossos Canais de Atendimento para que possamos prosseguir com a sua {servico}.";
+    var RESP_INDEFERIMENTOS = [
+      {
+        id: "debito_outra_uc",
+        nome: "CPF/CNPJ com débito em outra UC",
+        titulo: "CPF/CNPJ COM DÉBITO EM OUTRA UC",
+        texto: "Informamos que após análise, verificamos que o(a) senhor(a) possui débitos de pagamento em outra Unidade Consumidora cadastrada em seu CPF/CNPJ, portanto, o seu pedido de {servico} não pode ser realizado.",
+        item: "o(a) senhor(a) possui débitos de pagamento em outra Unidade Consumidora cadastrada em seu CPF/CNPJ",
+        norma: "REN 1000/2024 (Art. 346. § 2º (...) A distribuidora pode exigir o pagamento de débitos que sejam do novo titular em outra instalação na área de atuação da distribuidora",
+        pedido: null
+      },
+      {
+        id: "documentacao_incompleta",
+        nome: "Documentação do cliente incompleta",
+        titulo: "DOCUMENTAÇÃO DO CLIENTE INCOMPLETA",
+        texto: "Informamos que após análise, não conseguimos identificar a presença do documento {documento} anexado em sua solicitação, portanto, seu pedido não pôde ser realizado.",
+        item: "não conseguimos identificar a presença do documento {documento} anexado em sua solicitação",
+        norma: "REN 1000/2021 (Art. 138. § 1º A distribuidora pode exigir do novo titular os seguintes documentos para alterar a titularidade:\nI - Identificação do consumidor e demais usuários, conforme incisos I e II do art. 67;\nII - Apresentação de documento, com data, que comprove a propriedade ou posse do imóvel em que se localizam as instalações do consumidor e demais usuários, observado o art. 14);",
+        pedido: "Solicitamos que envie a documentação completa em um de nossos Canais de Atendimento para que possamos prosseguir com a sua {servico}.",
+        precisaDocumento: true
+      },
+      {
+        id: "endereco_divergente",
+        nome: "Endereço do documento do imóvel divergente no sistema comercial",
+        titulo: "ENDEREÇO DO DOCUMENTO DO IMÓVEL DIVERGENTE NO SISTEMA COMERCIAL",
+        texto: "Verificamos que os endereços presentes no Documento do Imóvel e no nosso sistema comercial são divergentes, portanto, o seu pedido não pôde ser realizado.",
+        item: "os endereços presentes no Documento do Imóvel e no nosso sistema comercial são divergentes",
+        norma: null,
+        pedido: "Solicitamos que envie a documentação correta e completa para que possamos prosseguir com a sua {servico}.",
+        aviso: "Use somente após validar com o cliente que não se trata de erro no cadastro da Neoenergia."
+      },
+      {
+        id: "data_futura",
+        nome: "Documento do imóvel com data futura",
+        titulo: "DOCUMENTO DO IMÓVEL COM DATA FUTURA",
+        texto: "Informamos que após análise, verificamos que a data presente no documento do imóvel é diferente da data atual, portanto, o seu pedido não pode ser realizado.",
+        item: "a data presente no documento do imóvel é diferente da data atual",
+        norma: "REN 1000/2024 (Art. 138. §1º, II - apresentação de documento, com data, que comprove a propriedade ou posse do imóvel em que se localizam as instalações do consumidor e demais usuários, observado o art. 14.",
+        pedido: "Solicitamos que envie a documentação correta e completa em um de nossos Canais de Atendimento para que possamos seguir com sua {servico}."
+      },
+      {
+        id: "cpf_invalido",
+        nome: "CPF/CNPJ inválido",
+        titulo: "CPF/CNPJ INVÁLIDO",
+        texto: "Informamos que após análise, verificamos que o documento CPF/CNPJ se encontra anulado, cancelado, ausência de RG ou outro documento oficial com foto, portanto, o seu pedido não pôde ser realizado.",
+        item: "o documento CPF/CNPJ se encontra anulado, cancelado, ausência de RG ou outro documento oficial com foto",
+        norma: "REN 1000/2021 (Art. 67 inciso I e II - I - para pessoa jurídica, apresentação dos documentos relativos à sua constituição, ao seu registro e dos seus representantes legais; II - para pessoa física, apresentação de: a) Cadastro de Pessoa Física – CPF, desde que não esteja em situação cadastral cancelada ou anulada de acordo com instrução normativa da Receita Federal; e b) Carteira de Identidade ou outro documento de identificação oficial com foto e, no caso de indígenas, podendo ser apenas o Registro Administrativo de Nascimento Indígena – RANI.)",
+        pedido: "Solicitamos que envie a documentação correta e completa em um de nossos Canais de Atendimento para que possamos prosseguir com a sua {servico}."
+      },
+      {
+        id: "processo_fraude",
+        nome: "Processo de fraude",
+        titulo: "PROCESSO DE FRAUDE",
+        texto: "Informamos que após análise, verificamos que existe um processo de emissão de fatura de cobrança de fraude/irregularidade em andamento, portanto, o seu pedido não pôde ser realizado.",
+        item: "existe um processo de emissão de fatura de cobrança de fraude/irregularidade em andamento",
+        norma: null,
+        pedido: "Solicitamos que a {servicoMinusculo} seja solicitada após a conclusão/emissão da fatura de fraude ou irregularidade para que possamos prosseguir com a sua {servico}.",
+        pedidoProprio: true
+      }
+    ];
+    var RESP_DEFERIMENTOS = [
+      {
+        id: "total",
+        nome: "Deferido — isenção total do débito",
+        titulo: "DEFERIDA",
+        texto: "Informamos que após análise, a sua solicitação de isenção de débitos foi deferida. Os débitos do período analisado não serão cobrados do(a) senhor(a) e o seu pedido de {servico} seguirá normalmente."
+      },
+      {
+        id: "parcial",
+        nome: "Deferido parcialmente — isenção de parte do débito/período",
+        titulo: "DEFERIDA PARCIALMENTE",
+        texto: "Informamos que após análise, a sua solicitação de isenção de débitos foi deferida parcialmente. Período/valor isento: {detalhe}. Os demais débitos permanecem sob responsabilidade do(a) solicitante para que o seu pedido de {servico} possa seguir.",
+        precisaDetalhe: true
+      }
+    ];
+    var minusculaInicial = (s) => s.charAt(0).toLowerCase() + s.slice(1);
+    function preencher2(t, d) {
+      return String(t || "").replace(/\{servico\}/g, d.servico).replace(/\{servicoMinusculo\}/g, d.servico.toLowerCase()).replace(/\{documento\}/g, d.documento || "XXXXX").replace(/\{detalhe\}/g, d.detalhe || "XXXXX");
+    }
+    function cabecalho(d) {
+      return "Caro Cliente, a Neoenergia " + (d.distribuidora || "XXXXX") + " informa:\n\nSeu protocolo de atendimento é: " + (d.protocolo || "XXXXX") + ".";
+    }
+    function respValidar(d = {}) {
+      const erros = [];
+      if (!["Deferido", "Indeferido"].includes(d.resultado)) erros.push("Escolha o resultado (Deferido ou Indeferido).");
+      if (!RESP_SERVICOS.includes(d.servico)) erros.push("Escolha o serviço (Troca de Titularidade ou Reativação).");
+      if (!String(d.protocolo || "").trim()) erros.push("Informe o protocolo de atendimento.");
+      if (!RESP_DISTRIBUIDORAS.includes(d.distribuidora)) erros.push("Escolha a distribuidora.");
+      const ids = [].concat(d.motivos || []);
+      if (d.resultado === "Indeferido") {
+        const motivos = RESP_INDEFERIMENTOS.filter((m) => ids.includes(m.id));
+        if (!motivos.length) erros.push("Marque pelo menos um motivo do indeferimento.");
+        if (motivos.some((m) => m.precisaDocumento) && !String(d.documento || "").trim()) erros.push("Informe qual documento não foi identificado.");
+      }
+      if (d.resultado === "Deferido") {
+        const def = RESP_DEFERIMENTOS.find((m) => m.id === ids[0]);
+        if (!def) erros.push("Escolha o tipo de deferimento.");
+        else if (def.precisaDetalhe && !String(d.detalhe || "").trim()) erros.push("Informe o período/valor isento no deferimento parcial.");
+      }
+      return erros;
+    }
+    function respGerar(d = {}) {
+      const dados = __spreadProps(__spreadValues({}, d), { servico: RESP_SERVICOS.includes(d.servico) ? d.servico : RESP_SERVICOS[0] });
+      const ids = [].concat(d.motivos || []);
+      const servicoTitulo = dados.servico.toUpperCase();
+      if (d.resultado === "Deferido") {
+        const def = RESP_DEFERIMENTOS.find((m) => m.id === ids[0]) || RESP_DEFERIMENTOS[0];
+        return "Título: " + servicoTitulo + " – ISENÇÃO DE DÉBITOS " + def.titulo + "\n\n" + cabecalho(dados) + "\n\n" + preencher2(def.texto, dados);
+      }
+      const motivos = RESP_INDEFERIMENTOS.filter((m) => ids.includes(m.id));
+      if (!motivos.length) return "";
+      const titulo = `Título: ${servicoTitulo} INDEFERIDA – ${motivos.map((m) => m.titulo).join(" / ")}`;
+      const partes = [titulo, cabecalho(dados)];
+      if (motivos.length === 1) {
+        partes.push(preencher2(motivos[0].texto, dados));
+      } else {
+        const lista = motivos.map((m, i) => `${i + 1}. ${minusculaInicial(preencher2(m.item, dados))}${i === motivos.length - 1 ? "." : ";"}`).join("\n");
+        partes.push("Informamos que após análise, verificamos que:\n" + lista + "\n\nPortanto, o seu pedido de " + dados.servico + " não pôde ser realizado.");
+      }
+      for (const n of [...new Set(motivos.map((m) => m.norma).filter(Boolean))]) partes.push(n);
+      const pedidos = motivos.filter((m) => m.pedido && !m.pedidoProprio);
+      if (pedidos.length === 1) partes.push(preencher2(pedidos[0].pedido, dados));
+      else if (pedidos.length > 1) partes.push(preencher2(PEDIDO_DOCUMENTOS, dados));
+      for (const m of motivos.filter((x) => x.pedidoProprio)) partes.push(preencher2(m.pedido, dados));
+      return partes.join("\n\n");
+    }
+
     // src/nucleo/versao.mjs
     function compararVersoes(a, b) {
       const pa = String(a).split(/[^0-9]+/), pb = String(b).split(/[^0-9]+/);
@@ -2342,7 +2490,7 @@
   }
   var abaAtualId = null;
   // Serviços que só têm texto de AGENDA (sem nota)
-  var SERVICOS_SO_AGENDA = ['sf-verif-equip', 'sf-afericao'];
+  var SERVICOS_SO_AGENDA = ['sf-verif-equip', 'sf-afericao', 'sf-resposta-isencao'];
 
   function mostrarAviso(msg, tipo) {
     var t = document.getElementById('toastAviso');
@@ -3345,6 +3493,7 @@
       c.innerHTML = '<div class="fatura-row"><input type="text" class="rec_fat_venc" placeholder="Vencimento: dd/mm/aaaa" data-input="mascararData(this)" required><input type="text" class="rec_fat_valor" placeholder="Valor R$: 0,00" required><button type="button" class="btn-del" data-click="removerFaturaRow(this)">✕</button></div>';
       toggleReclamacoes();
     }
+    if (containerId === 'sf-resposta-isencao') setTimeout(function() { montarRespostaIsencao(); }, 0);
     if (containerId === 'sf-res') { document.getElementById('res_forma_pag').value = 'conta'; toggleFormaPagRes(); }
     
     var subA = subtipoAtivo[containerId];
@@ -3790,7 +3939,7 @@
     pendServicoMudou: pendServicoMudou, adicionarPendenciaRefat: adicionarPendenciaRefat, concluirPendenciaRefat: concluirPendenciaRefat,
     iniciarPendenciaServico: iniciarPendenciaServico, salvarPendenciaServico: salvarPendenciaServico, concluirPendenciaServico: concluirPendenciaServico,
     sairModoPendencia: sairModoPendencia, retomarPendencia: retomarPendencia, editarComentario: editarComentario,
-    abrirResposta: abrirResposta, atualizarMotivosPend: atualizarMotivosPend, concluirPendencia: concluirPendencia, informarNota: informarNota,
+    abrirResposta: abrirResposta, respAtualizar: respAtualizar, gerarRespostaIsencao: gerarRespostaIsencao, copiarRespostaPend: copiarRespostaPend, concluirPendencia: concluirPendencia, informarNota: informarNota,
     excluirPendencia: excluirPendencia, reabrirPendencia: reabrirPendencia, alternarTextoPend: alternarTextoPend, copiarTextoPend: copiarTextoPend,
     fecharLembrete: fecharLembrete, verPendencias: verPendencias, ativarAvisosNavegador: ativarAvisosNavegador,
     gerarDeclaracao: gerarDeclaracao, limparDeclaracao: limparDeclaracao, imprimirDeclaracao: imprimirDeclaracao, toggleDeclEncerramento: toggleDeclEncerramento,
@@ -4426,13 +4575,9 @@
   //    serviço preenchido e gerar o texto (vai para o Histórico).
   //  - 'prazo': Análise de Isenção de Débitos, criada ao gerar o texto, com
   //    prazo de 5 dias úteis e resposta Deferido/Indeferido.
-  // TIPOS DE RESPOSTA da isenção: lista inicial, ajustar conforme o procedimento oficial.
+  // Os textos de resposta (deferido/indeferido) ficam no núcleo: respostas.mjs.
   var TIPOS_PENDENCIA = {
-    isencao: { nome: 'Análise de Isenção de Débitos', prazo: 5,
-      deferido: ['Deferido — isenção total do débito', 'Deferido parcialmente — isenção de parte do débito/período'],
-      indeferido: ['Documentação não comprova a posse no período do débito', 'Solicitante era responsável pelo imóvel no período do débito',
-                   'Documentação ilegível, incompleta ou fora da validade', 'Dados da Receita Federal pendentes ou irregulares',
-                   'Outro motivo (descrever na observação)'] }
+    isencao: { nome: 'Análise de Isenção de Débitos', prazo: 5 }
   };
   var PEND_CHAVE = AMBIENTE_TESTE ? 'tp_teste_pendencias_v1' : 'tp_pendencias_v1';
   var PEND_DIAS_CONCLUIDAS = 90;
@@ -4697,7 +4842,8 @@
     if (aberta && !servico) botoes += '<button type="button" class="pend-resp" data-click="abrirResposta(\'' + pd.id + '\')">Responder</button>' +
       '<button type="button" data-click="informarNota(\'' + pd.id + '\')">' + (pd.nota ? 'Alterar nº da nota' : 'Informar nº da nota') + '</button>' +
       '<button type="button" data-click="editarComentario(\'' + pd.id + '\')">' + (pd.comentario ? 'Alterar comentário' : 'Comentário') + '</button>';
-    if (!aberta && !servico) botoes += '<button type="button" data-click="reabrirPendencia(\'' + pd.id + '\')">Reabrir</button>';
+    if (!aberta && !servico) botoes += '<button type="button" data-click="reabrirPendencia(\'' + pd.id + '\')">Reabrir</button>' +
+      (pd.respostaTexto ? '<button type="button" data-click="copiarRespostaPend(\'' + pd.id + '\')">Copiar resposta</button>' : '');
     if (pd.texto) botoes += '<button type="button" data-click="alternarTextoPend(\'' + pd.id + '\')">Ver texto</button><button type="button" data-click="copiarTextoPend(\'' + pd.id + '\')">Copiar texto</button>';
     botoes += '<button type="button" class="pend-del" data-click="excluirPendencia(\'' + pd.id + '\')">Excluir</button>';
     return '<div class="pend-item ' + sit.classe + '" id="pitem_' + pd.id + '">' +
@@ -4726,41 +4872,94 @@
   }
   function reabrirPendencia(id) {
     var r = pAchar(id); if (!r) return;
-    r.pd.status = 'aberta'; delete r.pd.resultado; delete r.pd.motivo; delete r.pd.respostaObs; delete r.pd.respostaData; delete r.pd.respostaTs;
+    r.pd.status = 'aberta'; delete r.pd.resultado; delete r.pd.motivo; delete r.pd.respostaObs; delete r.pd.respostaTexto; delete r.pd.respostaData; delete r.pd.respostaTs;
     r.pd.ultimoLembrete = 0; pendGravar(r.lista); renderPendencias(); atualizarBadgePendencias();
   }
   // ---- resposta da Análise de Isenção (deferido / indeferido) ----
+  // Formulário compartilhado (pendência e serviço "Resposta da Análise de Isenção"):
+  // os textos vêm do núcleo (respostas.mjs). No indeferimento dá para marcar mais de um
+  // motivo: a resposta sai combinada num texto só.
+  var RESP_DIST_CHAVE = 'tp_resp_distribuidora';
+  function respOpcoes(lista, atual) {
+    return lista.map(function(v) { return '<option value="' + pEsc(v) + '"' + (v === atual ? ' selected' : '') + '>' + pEsc(v) + '</option>'; }).join('');
+  }
+  function respCamposHtml(px, ini) {
+    ini = ini || {};
+    var dist = ini.distribuidora; try { dist = dist || localStorage.getItem(RESP_DIST_CHAVE); } catch (e) {}
+    var motivos = RESP_INDEFERIMENTOS.map(function(m) {
+      return '<label class="resp-motivo"><input type="checkbox" class="' + px + 'mot" value="' + m.id + '" data-change="respAtualizar(\'' + px + '\')"> ' + pEsc(m.nome) + '</label>';
+    }).join('');
+    return '<div><label>Resultado *</label><select id="' + px + 'res" data-change="respAtualizar(\'' + px + '\')"><option value="Deferido">Deferido</option><option value="Indeferido">Indeferido</option></select></div>' +
+      '<div><label>Serviço *</label><select id="' + px + 'serv">' + respOpcoes(RESP_SERVICOS, ini.servico) + '</select></div>' +
+      '<div><label>Distribuidora *</label><select id="' + px + 'dist">' + respOpcoes(RESP_DISTRIBUIDORAS, dist || 'Coelba') + '</select></div>' +
+      '<div><label>Protocolo de atendimento *</label><input type="text" id="' + px + 'prot" value="' + pEsc(ini.protocolo || '') + '" placeholder="Nº do protocolo" required></div>' +
+      '<div class="full" id="' + px + 'def_box"><label>Tipo de deferimento *</label><select id="' + px + 'def" data-change="respAtualizar(\'' + px + '\')">' +
+        RESP_DEFERIMENTOS.map(function(m) { return '<option value="' + m.id + '">' + pEsc(m.nome) + '</option>'; }).join('') + '</select></div>' +
+      '<div class="full" id="' + px + 'det_box"><label>Período/valor isento *</label><input type="text" id="' + px + 'det" placeholder="Ex: faturas de 01/2025 a 03/2025 (R$ 350,00)"></div>' +
+      '<div class="full" id="' + px + 'ind_box"><label>Motivos do indeferimento * <span class="resp-dica">(marque um ou mais: os textos são combinados)</span></label><div class="resp-motivos">' + motivos + '</div></div>' +
+      '<div class="full" id="' + px + 'doc_box"><label>Documento não identificado *</label><input type="text" id="' + px + 'doc" placeholder="Ex: RG, contrato de locação"></div>' +
+      '<div class="full alert-box" id="' + px + 'aviso_end">⚠️ Endereço divergente: use somente após validar com o cliente que não se trata de erro no cadastro da Neoenergia.</div>';
+  }
+  function respLer(px) {
+    var g = function(s) { var e = document.getElementById(px + s); return e ? e.value : ''; };
+    var res = g('res');
+    var motivos = res === 'Deferido' ? [g('def')] : [].slice.call(document.querySelectorAll('.' + px + 'mot:checked')).map(function(c) { return c.value; });
+    return { resultado: res, servico: g('serv'), distribuidora: g('dist'), protocolo: g('prot').trim(), motivos: motivos, documento: g('doc').trim(), detalhe: g('det').trim() };
+  }
+  function respAtualizar(px) {
+    var d = respLer(px), def = d.resultado === 'Deferido';
+    var mostra = function(s, v) { var e = document.getElementById(px + s); if (e) e.style.display = v ? '' : 'none'; };
+    mostra('def_box', def); mostra('det_box', def && d.motivos[0] === 'parcial');
+    mostra('ind_box', !def); mostra('doc_box', !def && d.motivos.indexOf('documentacao_incompleta') >= 0);
+    mostra('aviso_end', !def && d.motivos.indexOf('endereco_divergente') >= 0);
+  }
+  function respNomes(d) {
+    if (d.resultado === 'Deferido') return RESP_DEFERIMENTOS.filter(function(m) { return m.id === d.motivos[0]; }).map(function(m) { return m.nome; }).join('');
+    return RESP_INDEFERIMENTOS.filter(function(m) { return d.motivos.indexOf(m.id) >= 0; }).map(function(m) { return m.nome; }).join(' + ');
+  }
+  function respGuardarDistribuidora(d) { try { localStorage.setItem(RESP_DIST_CHAVE, d.distribuidora); } catch (e) {} }
+
   function abrirResposta(id) {
     var r = pAchar(id); if (!r) return;
     var box = document.getElementById('presp_' + id);
     if (box.innerHTML) { box.innerHTML = ''; return; }
+    var px = 'pres_' + id + '_';
     box.innerHTML = '<div class="pend-responder">' +
-      '<div><label>Resultado *</label><select id="pres_res_' + id + '" data-change="atualizarMotivosPend(\'' + id + '\')"><option value="Deferido">Deferido</option><option value="Indeferido">Indeferido</option></select></div>' +
-      '<div><label>Tipo *</label><select id="pres_mot_' + id + '"></select></div>' +
+      respCamposHtml(px, { servico: /^Reativa/.test(r.pd.origem || '') ? 'Reativação' : 'Troca de Titularidade', protocolo: r.pd.nota }) +
       '<div><label>Data da resposta *</label><input type="text" id="pres_data_' + id + '" inputmode="numeric" value="' + pBR(pHoje()) + '" data-input="mascararData(this)"></div>' +
-      '<div><label>Observação</label><input type="text" id="pres_obs_' + id + '" placeholder="Opcional (obrigatória em Outro motivo)"></div>' +
-      '<div class="full pend-botoes"><button type="button" class="pend-resp" data-click="concluirPendencia(\'' + id + '\')">Confirmar resposta</button><button type="button" data-click="abrirResposta(\'' + id + '\')">Cancelar</button></div></div>';
-    atualizarMotivosPend(id);
-  }
-  function atualizarMotivosPend(id) {
-    var r = pAchar(id); if (!r) return;
-    var t = TIPOS_PENDENCIA[r.pd.tipo] || TIPOS_PENDENCIA.isencao;
-    var res = document.getElementById('pres_res_' + id).value, sel = document.getElementById('pres_mot_' + id);
-    sel.innerHTML = '';
-    (res === 'Deferido' ? t.deferido : t.indeferido).forEach(function(m) { var o = document.createElement('option'); o.value = m; o.textContent = m; sel.appendChild(o); });
+      '<div><label>Observação</label><input type="text" id="pres_obs_' + id + '" placeholder="Opcional"></div>' +
+      '<div class="full pend-botoes"><button type="button" class="pend-resp" data-click="concluirPendencia(\'' + id + '\')">Confirmar e copiar resposta</button><button type="button" data-click="abrirResposta(\'' + id + '\')">Cancelar</button></div></div>';
+    respAtualizar(px);
   }
   function concluirPendencia(id) {
     var r = pAchar(id); if (!r) return;
     var data = pDeBR(document.getElementById('pres_data_' + id).value);
     if (!data) { mostrarAviso('ATENÇÃO: a data da resposta deve ser uma data real (dd/mm/aaaa).'); return; }
     if (data < r.pd.abertura) { mostrarAviso('ATENÇÃO: a resposta não pode ser anterior à abertura (' + pBR(r.pd.abertura) + ').'); return; }
-    var motivo = document.getElementById('pres_mot_' + id).value, obs = document.getElementById('pres_obs_' + id).value.trim();
-    if (/^Outro motivo|descrever/i.test(motivo) && !obs) { mostrarAviso('ATENÇÃO: descreva o motivo na observação.'); document.getElementById('pres_obs_' + id).focus(); return; }
-    r.pd.status = 'concluida'; r.pd.resultado = document.getElementById('pres_res_' + id).value; r.pd.motivo = motivo; r.pd.respostaObs = obs;
-    r.pd.respostaData = data; r.pd.respostaTs = Date.now();
+    var d = respLer('pres_' + id + '_'), erros = respValidar(d);
+    if (erros.length) { mostrarAviso('ATENÇÃO: ' + erros[0]); return; }
+    var texto = respGerar(d);
+    r.pd.status = 'concluida'; r.pd.resultado = d.resultado; r.pd.motivo = respNomes(d); r.pd.respostaObs = document.getElementById('pres_obs_' + id).value.trim();
+    r.pd.respostaTexto = texto; r.pd.respostaData = data; r.pd.respostaTs = Date.now();
+    respGuardarDistribuidora(d);
     pendGravar(r.lista); renderPendencias(); atualizarBadgePendencias();
-    mostrarAviso('Pendência respondida: ' + r.pd.resultado + (data <= r.pd.prazo ? ' (no prazo).' : ' (fora do prazo).'), 'ok');
+    histCopiarTexto(texto);
+    setTimeout(function() { mostrarAviso('Pendência respondida: ' + r.pd.resultado + (data <= r.pd.prazo ? ' (no prazo)' : ' (fora do prazo)') + '. Resposta copiada para colar na Agenda.', 'ok'); }, 50);
   }
+  // Serviço "Resposta da Análise de Isenção" (aba Agenda e Nota)
+  function montarRespostaIsencao() {
+    var box = document.getElementById('rsp_campos'); if (!box) return;
+    box.innerHTML = respCamposHtml('rsp_');
+    respAtualizar('rsp_');
+  }
+  function gerarRespostaIsencao() {
+    var d = respLer('rsp_'), erros = respValidar(d);
+    if (erros.length) { mostrarAviso('ATENÇÃO: ' + erros[0]); return; }
+    respGuardarDistribuidora(d);
+    var texto = respGerar(d);
+    finalizarGeracao('sf-resposta-isencao', '', texto, 'agenda');
+  }
+  function copiarRespostaPend(id) { var r = pAchar(id); if (r && r.pd.respostaTexto) histCopiarTexto(r.pd.respostaTexto); }
 
   // ---- contador e lembretes ----
   function atualizarBadgePendencias() {
@@ -4831,6 +5030,7 @@
     var limite = Date.now() - PEND_DIAS_CONCLUIDAS * 86400000, l = pendLer();
     var l2 = l.filter(function(pd) { return pd.status === 'aberta' || (pd.respostaTs || 0) >= limite; });
     if (l2.length !== l.length) pendGravar(l2);
+    montarRespostaIsencao();
     montarListaServicosPend();
     pendServicoMudou();
     atualizarBadgePendencias();
@@ -5055,7 +5255,7 @@
   // ?v=2.6.1) levam direto para a produção.
   // PUBLICAR: troque o código abaixo e o campo "versao" do versao.json pelo mesmo
   // valor (ex.: a data e hora da publicação). Ele é interno e não aparece na tela.
-  var VERSAO_ATUAL = '2.19.5';
+  var VERSAO_ATUAL = '2.20.0';
   var SITE_PRODUCAO = 'https://textos-padroes.pages.dev/';   // endereço oficial (Cloudflare, com login)
   var NA_WEB = /^https?:$/.test(location.protocol);
 
@@ -5539,7 +5739,7 @@
   var CATEGORIAS = [
     ['Ligação e Reativação', /^(Liga[çc][aã]o|Reativa|Religa|Inspe[çc][aã]o e liga|Desligamento)/i],
     ['Titularidade e Cadastro', /^(Troca de Titularidade|Atualiza[çc][aã]o Cadastral|Modifica[çc][aã]o Contratual|Cadastro de Parceiro|BPC)/i],
-    ['Faturamento e Débitos', /^(Conta Paga|DATA BOA|D[ée]bito autom|Isen[çc][aã]o de D[ée]bitos|Restitui|Estorno|TR DE PARTIDAS|Tarefa NEO|Bloqueio de Cobran|Defesa Adm)/i],
+    ['Faturamento e Débitos', /^(Conta Paga|DATA BOA|D[ée]bito autom|Isen[çc][aã]o de D[ée]bitos|Resposta da An[aá]lise de Isen|Restitui|Estorno|TR DE PARTIDAS|Tarefa NEO|Bloqueio de Cobran|Defesa Adm)/i],
     ['Parcelamento', /Parcelamento/i],
     ['Ressarcimento', /^Ressarcimento/i],
     ['Medição e Rede', /^(Aferi|Medidor|Selagem|Verifica[çc][aã]o de Equip|Reforma Padr|Reloca|Servi[çc]o no Ramal|Tele grava)/i],

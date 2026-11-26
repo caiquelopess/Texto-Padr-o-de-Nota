@@ -1,7 +1,8 @@
 {
-  "versao": "2.19.5",
+  "versao": "2.20.0",
   "data": "25/11/2026",
   "novidades": [
+    "Resposta da Análise de Isenção (Texto Padrão Lojas): novo serviço e resposta das pendências, com vários motivos de indeferimento combinados num texto só",
     "Reativação, Reativação Virtual e Desligamento Definitivo migrados para modelos (sem mudança nos textos)",
     "Troca de Titularidade e Reativação com débitos migradas para modelos (sem mudança nos textos)",
     "TR de Partidas migrado para modelo (sem mudança no texto); modelos aceitam CPF/CNPJ e vencimento em mês/ano",

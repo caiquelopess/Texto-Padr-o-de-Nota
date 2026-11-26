@@ -5,7 +5,7 @@
   var CATEGORIAS = [
     ['Ligação e Reativação', /^(Liga[çc][aã]o|Reativa|Religa|Inspe[çc][aã]o e liga|Desligamento)/i],
     ['Titularidade e Cadastro', /^(Troca de Titularidade|Atualiza[çc][aã]o Cadastral|Modifica[çc][aã]o Contratual|Cadastro de Parceiro|BPC)/i],
-    ['Faturamento e Débitos', /^(Conta Paga|DATA BOA|D[ée]bito autom|Isen[çc][aã]o de D[ée]bitos|Restitui|Estorno|TR DE PARTIDAS|Tarefa NEO|Bloqueio de Cobran|Defesa Adm)/i],
+    ['Faturamento e Débitos', /^(Conta Paga|DATA BOA|D[ée]bito autom|Isen[çc][aã]o de D[ée]bitos|Resposta da An[aá]lise de Isen|Restitui|Estorno|TR DE PARTIDAS|Tarefa NEO|Bloqueio de Cobran|Defesa Adm)/i],
     ['Parcelamento', /Parcelamento/i],
     ['Ressarcimento', /^Ressarcimento/i],
     ['Medição e Rede', /^(Aferi|Medidor|Selagem|Verifica[çc][aã]o de Equip|Reforma Padr|Reloca|Servi[çc]o no Ramal|Tele grava)/i],

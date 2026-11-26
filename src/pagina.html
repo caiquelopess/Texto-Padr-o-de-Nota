@@ -76,9 +76,7 @@
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-nova', this)">Ligação Nova</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-ligacao-muc', this)">Ligação MUC</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-deb|reativacao', this)">Reativação com Análise de Isenção de Débitos</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-reclamacao-gd', this)">Reclamação GD</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reclamacoes', this)">Reclamações</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-res', this)">Restituição de valores</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-deb|troca', this)">Troca de Titularidade com Análise de Isenção de Débitos</button>
       </div>
     </div>
@@ -294,120 +292,6 @@
     </div>
 
     <!-- RECLAMAÇÃO GD (4 TIPOS) -->
-    <div class="subform" id="sf-reclamacao-gd">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box" id="gd_alerta_box">
-        ⚠️ Orientação: Analise o histórico de consumo e leitura; confira através da transação FPL9 se existe parcelamento considerando o artigo 323.
-      </div>
-
-      <div class="form-grid">
-        <div class="field-group full-width">
-          <label>Selecione o Tipo de Reclamação GD: *</label>
-          <select id="gd_tipo" data-change="toggleReclamacaoGD()">
-            <option value="ausencia_fat">1. Ausência de Faturamento</option>
-            <option value="credito_gmm">2. Crédito não migrado do GMM para o SAP</option>
-            <option value="geradora_benef">3. Geradora e Beneficiária sem compensar</option>
-            <option value="art_323">4. Faturamento acumulado sem aplicação do Art 323</option>
-          </select>
-        </div>
-
-        <div class="field-group full-width">
-          <label>Solicitante – Nome e sobrenome do cliente (Titular ou terceiro): *</label>
-          <input type="text" id="gd_nome" placeholder="Nome completo" required>
-        </div>
-
-        <div class="field-group full-width">
-          <label>Descrição da reclamação: *</label>
-          <textarea id="gd_motivo" rows="3" placeholder="Descreva a reclamação com detalhes..." required></textarea>
-        </div>
-
-        <!-- Campos específicos -->
-        <div class="field-group" id="grp_gd_dt_ultima_fat">
-          <label>Data da última fatura: *</label>
-          <input type="text" id="gd_dt_ultima_fat" placeholder="dd/mm/aaaa" data-input="mascararData(this)">
-        </div>
-
-        <div class="field-group" id="grp_gd_periodo_sem_fat">
-          <label>Período sem receber a fatura: *</label>
-          <input type="text" id="gd_periodo_sem_fat" placeholder="Ex: Últimos 2 meses">
-        </div>
-
-        <div class="field-group" id="grp_gd_dt_ult_sem_cred" style="display: none;">
-          <label>Data da última fatura sem informação do crédito: *</label>
-          <input type="text" id="gd_dt_ult_sem_cred" placeholder="dd/mm/aaaa" data-input="mascararData(this)">
-        </div>
-
-        <div class="field-group" id="grp_gd_dt_gmm" style="display: none;">
-          <label>Data do último registro do demonstrativo no GMM: *</label>
-          <input type="text" id="gd_dt_gmm" placeholder="dd/mm/aaaa" data-input="mascararData(this)">
-        </div>
-
-        <div class="field-group" id="grp_gd_ger_benef" style="display: none;">
-          <label>Geradora ou beneficiária: *</label>
-          <select id="gd_ger_benef">
-            <option value="Geradora">Geradora</option>
-            <option value="Beneficiária">Beneficiária</option>
-          </select>
-        </div>
-
-        <div class="field-group" id="grp_gd_periodo_sem_comp" style="display: none;">
-          <label>Período sem compensar: *</label>
-          <input type="text" id="gd_periodo_sem_comp" placeholder="Ex: Ciclo atual / Mês X">
-        </div>
-
-        <div class="field-group" id="grp_gd_art323_simnao" style="display: none;">
-          <label>As faturas deveriam ter a aplicação do Artigo 323? *</label>
-          <select id="gd_art323_simnao">
-            <option value="Sim">Sim</option>
-            <option value="Não">Não</option>
-          </select>
-        </div>
-
-        <div class="field-group" id="grp_gd_periodo_fat" style="display: none;">
-          <label>Período do faturamento: *</label>
-          <input type="text" id="gd_periodo_fat" placeholder="Ex: 01/2026 a 03/2026">
-        </div>
-
-        <div class="field-group full-width">
-          <label>Ponto de Referência: *</label>
-          <input type="text" id="gd_ref" placeholder="Ponto de referência detalhado" required>
-        </div>
-
-        <div class="field-group">
-          <label>E-mail: *</label>
-          <input type="text" id="gd_email" placeholder="cliente@email.com" required>
-        </div>
-
-        <div class="field-group">
-          <label>Tel. Celular: *</label>
-          <input type="text" id="gd_tel" placeholder="Ex: 84988887777" required>
-        </div>
-
-        <div class="field-group full-width">
-          <label>Outras Informações:</label>
-          <input type="text" id="gd_outras" placeholder="Outras informações relevantes ou N/A">
-        </div>
-
-        <div class="field-group full-width">
-          <label>Nº da reclamação anterior (se reincidente):</label>
-          <input type="text" id="gd_ant" placeholder="Ex: 9200xxxx ou N/A">
-        </div>
-
-        <div class="field-group full-width">
-          <label>Modalidade de comunicação: *</label>
-          <select id="gd_modalidade">
-            <option value="e-mail">e-mail</option>
-            <option value="SMS">SMS</option>
-            <option value="carta">carta</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button type="button" class="btn" data-click="gerarReclamacaoGD()">Gerar Texto de Reclamação GD e Copiar</button>
-        <button type="button" class="btn btn-clear" data-click="limparForm('sf-reclamacao-gd')">Limpar Tudo</button>
-      </div>
-    </div>
 
     <!-- ANÁLISE DE ISENÇÃO DE DÉBITOS (Troca de titularidade ou Reativação) -->
     <div class="subform" id="sf-isencao-deb">
@@ -519,23 +403,6 @@
 
 
     <!-- 7. RESTITUIÇÃO DE VALORES -->
-    <div class="subform" id="sf-res">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box">Atenção: O mesmo texto da nota é igual para a agenda<br>É obrigatório que o formulário seja preenchido corretamente e anexado no SAP KM juntamente com documento de identificação do solicitação. Em caso de procurador, não esquecer de anexar procuração e documento do procurador e um único arquivo.</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Solicitante: *</label><input type="text" id="res_solic" placeholder="Nome completo do solicitante" required></div>
-        <div class="field-group"><label>Telefone: *</label><input type="text" id="res_tel" placeholder="Ex: 84988887777" required></div>
-        <div class="field-group"><label>E mail: *</label><input type="text" id="res_email1" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>Forma de pagamento: *</label><select id="res_forma_pag" data-change="toggleFormaPagRes()"><option value="conta">Conta Bancária</option><option value="ordem">Ordem de pagamento</option></select></div>
-        <div class="field-group"><label>E-mail: *</label><input type="text" id="res_email2" placeholder="Confirme o e-mail ou Não informado" required></div>
-        <div class="field-group"><label>Dados Bancários: *</label><input type="text" id="res_dados_banc" placeholder="Resumo dos dados bancários" required></div>
-        <div class="field-group"><label>Banco: *</label><input type="text" id="res_banco" placeholder="Ex: Banco do Brasil" required></div>
-        <div class="field-group"><label>Agência: *</label><input type="text" id="res_ag" placeholder="Ex: 0035" required></div>
-        <div class="field-group" id="grp_res_conta"><label>Conta: *</label><input type="text" id="res_conta" placeholder="Ex: 12345-6" required></div>
-        <div class="field-group" id="grp_res_tipo_conta"><label>Tipo da Conta: *</label><select id="res_tipo_conta"><option value="Corrente">Corrente</option><option value="Poupança">Poupança</option></select></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarRES()">Gerar Texto e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-res')">Limpar Tudo</button></div>
-    </div>
 
 
 

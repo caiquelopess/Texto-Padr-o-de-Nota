@@ -441,12 +441,6 @@
     finalizarGeracao('sf-reclamacoes', txt, txt, 'nota');
   }
 
-  function toggleFormaPagRes() {
-    var isConta = (document.getElementById('res_forma_pag').value === 'conta');
-    document.getElementById('grp_res_conta').style.display = isConta ? 'flex' : 'none';
-    document.getElementById('grp_res_tipo_conta').style.display = isConta ? 'flex' : 'none';
-    document.getElementById('res_conta').required = isConta;
-  }
 
 
 
@@ -458,7 +452,7 @@
      nenhum texto padrão — só o formato/validação desses valores. */
 
   // Datas dd/mm/aaaa de fatos já ocorridos: data real e NÃO futura
-  var DATAS_PASSADAS = { rec_data: 1, rec_dt_leit: 1, gd_dt_ultima_fat: 1, gd_dt_ult_sem_cred: 1, gd_dt_gmm: 1, def_dt_ent: 1, def_dt_env: 1, tg_data: 1 };
+  var DATAS_PASSADAS = { rec_data: 1, rec_dt_leit: 1, def_dt_ent: 1, def_dt_env: 1, tg_data: 1 };
   // Datas dd/mm/aaaa que podem ser futuras (agendamento, vencimento, período): só data real
   var DATAS_LIVRES = { lp_dt_lig: 1, lp_dt_deslig: 1, refp_dt_deslig: 1, refp_dt_relig: 1, def_fat_venc: 1, bloq_dt_ini: 1, bloq_dt_fim: 1 };
 
@@ -782,23 +776,6 @@
 
 
 
-  function gerarRES() {
-    if (!validarCampos('sf-res')) return;
-    var forma = (getVal('res_forma_pag') === 'conta') ? '(X) Conta Bancária ( ) Ordem de pagamento' : '( ) Conta Bancária (X) Ordem de pagamento';
-    var conta = (getVal('res_forma_pag') === 'conta') ? getVal('res_conta') : 'Não se aplica';
-    var tipoConta = (getVal('res_forma_pag') === 'conta') ? getVal('res_tipo_conta') : 'Não se aplica';
-    var txt = 'Solicitante: ' + getVal('res_solic') +
-      '\nTelefone: ' + getVal('res_tel') +
-      '\nE mail: ' + getVal('res_email1') +
-      '\nForma de pagamento: ' + forma +
-      '\nE-mail: ' + getVal('res_email2') +
-      '\nDados Bancários: ' + getVal('res_dados_banc') +
-      '\nBanco: ' + getVal('res_banco') +
-      '\nAgência: ' + getVal('res_ag') +
-      '\nConta: ' + conta +
-      '\nTipo da Conta: ' + tipoConta;
-    finalizarGeracao('sf-res', txt, txt, 'nota');
-  }
 
 
 
@@ -830,106 +807,7 @@
 
 
 
-  function toggleReclamacaoGD() {
-    var tipo = document.getElementById('gd_tipo').value;
-    var alerta = document.getElementById('gd_alerta_box');
 
-    var isAusencia = (tipo === 'ausencia_fat');
-    var isCredito = (tipo === 'credito_gmm');
-    var isGerBenef = (tipo === 'geradora_benef');
-    var isArt323 = (tipo === 'art_323');
-
-    if (isAusencia) {
-      alerta.innerHTML = '⚠️ Orientação: Analise o histórico de consumo e leitura; confira através da transação FPL9 se existe parcelamento considerando o artigo 323.';
-    } else if (isCredito) {
-      alerta.innerHTML = '⚠️ Orientação: Analise o último demonstrativo no GMM; verifique na fatura se não consta, ao final, o crédito alocado no ciclo; confirme se nas faturas posteriores as informações do crédito deixaram de aparecer.';
-    } else if (isGerBenef) {
-      alerta.innerHTML = '⚠️ Orientação: Analise a existência da nota 48; confira se há ciclo descasado (quando a beneficiária foi lida antes ou no mesmo dia da geradora); verifique a fatura do período relatado pelo cliente e o histórico de consumo e leitura para confirmar se não houve a compensação.';
-    } else if (isArt323) {
-      alerta.innerHTML = '⚠️ Orientação: Analise em 2ª via a data do último faturamento; se houve ausência do faturamento anterior; se deveria ser parcelado considerando o artigo 323.';
-    }
-
-    document.getElementById('grp_gd_dt_ultima_fat').style.display = isAusencia ? 'flex' : 'none';
-    document.getElementById('grp_gd_periodo_sem_fat').style.display = isAusencia ? 'flex' : 'none';
-    document.getElementById('gd_dt_ultima_fat').required = isAusencia;
-    document.getElementById('gd_periodo_sem_fat').required = isAusencia;
-
-    document.getElementById('grp_gd_dt_ult_sem_cred').style.display = isCredito ? 'flex' : 'none';
-    document.getElementById('grp_gd_dt_gmm').style.display = isCredito ? 'flex' : 'none';
-    document.getElementById('gd_dt_ult_sem_cred').required = isCredito;
-    document.getElementById('gd_dt_gmm').required = isCredito;
-
-    document.getElementById('grp_gd_ger_benef').style.display = isGerBenef ? 'flex' : 'none';
-    document.getElementById('grp_gd_periodo_sem_comp').style.display = isGerBenef ? 'flex' : 'none';
-    document.getElementById('gd_periodo_sem_comp').required = isGerBenef;
-
-    document.getElementById('grp_gd_art323_simnao').style.display = isArt323 ? 'flex' : 'none';
-    document.getElementById('grp_gd_periodo_fat').style.display = isArt323 ? 'flex' : 'none';
-    document.getElementById('gd_periodo_fat').required = isArt323;
-  }
-
-  function gerarReclamacaoGD() {
-    if (!validarCampos('sf-reclamacao-gd')) return;
-    var tipo = getVal('gd_tipo');
-    var nome = getVal('gd_nome');
-    var motivo = getVal('gd_motivo');
-    var ref = getVal('gd_ref');
-    var email = getVal('gd_email');
-    var tel = getVal('gd_tel');
-    var outras = getVal('gd_outras') || 'Não informado';
-    var ant = getVal('gd_ant') || 'N/A';
-    var mod = getVal('gd_modalidade');
-    var txt = '';
-
-    if (tipo === 'ausencia_fat') {
-      txt = 'Ausência de Faturamento\n' +
-        'Solicitante – ' + nome + '\n' +
-        'Descrição da reclamação: ' + motivo + '\n' +
-        'Data da última fatura: ' + getVal('gd_dt_ultima_fat') + '\n' +
-        'Período sem receber a fatura: ' + getVal('gd_periodo_sem_fat') + '\n' +
-        'Ponto de Referência: ' + ref + '\n' +
-        'E-mail: ' + email + '\n' +
-        'Tel. Celular: ' + tel + '\n' +
-        'Outras Informações: ' + outras + '\n' +
-        rodapComumCorrigido(ant, mod);
-    } else if (tipo === 'credito_gmm') {
-      txt = 'Crédito não migrado do GMM para o SAP\n' +
-        'Solicitante – ' + nome + '\n' +
-        'Descrição da reclamação: ' + motivo + '\n' +
-        'Data da última fatura sem informação do crédito: ' + getVal('gd_dt_ult_sem_cred') + '\n' +
-        'Data do último registro do demonstrativo no GMM: ' + getVal('gd_dt_gmm') + '\n' +
-        'Ponto de Referência: ' + ref + '\n' +
-        'E-mail: ' + email + '\n' +
-        'Tel. Celular: ' + tel + '\n' +
-        'Outras Informações: ' + outras + '\n' +
-        rodapComumCorrigido(ant, mod);
-    } else if (tipo === 'geradora_benef') {
-      txt = 'Geradora e Beneficiária sem compensar\n' +
-        'Solicitante – ' + nome + '\n' +
-        'Descrição da reclamação: ' + motivo + '\n' +
-        'Geradora ou beneficiária: ' + getVal('gd_ger_benef') + '\n' +
-        'Período sem compensar: ' + getVal('gd_periodo_sem_comp') + '\n' +
-        'Ponto de Referência: ' + ref + '\n' +
-        'E-mail: ' + email + '\n' +
-        'Tel. Celular: ' + tel + '\n' +
-        'Outras Informações: ' + outras + '\n' +
-        rodapComumCorrigido(ant, mod);
-    } else if (tipo === 'art_323') {
-      var artSimNao = (getVal('gd_art323_simnao') === 'Sim') ? 'Sim (X) Não ( )' : 'Sim ( ) Não (X)';
-      txt = 'Faturamento acumulado sem aplicação do Art 323\n' +
-        'Solicitante – ' + nome + '\n' +
-        'Descrição da reclamação: ' + motivo + '\n' +
-        'As faturas deveriam ter a aplicação do Artigo 323? ' + artSimNao + '\n' +
-        'Período do faturamento: ' + getVal('gd_periodo_fat') + '\n' +
-        'Ponto de Referência: ' + ref + '\n' +
-        'E-mail: ' + email + '\n' +
-        'Tel. Celular: ' + tel + '\n' +
-        'Outras Informações: ' + outras + '\n' +
-        rodapComumCorrigido(ant, mod);
-    }
-
-    finalizarGeracao('sf-reclamacao-gd', txt, txt, 'nota');
-  }
 
   function rodapComumCorrigido(ant, mod) {
     return 'Verifique se há nota de reclamação em aberto, caso a reclamação seja reincidente, informe o número da reclamação anterior: ' + ant + '\n' +
@@ -946,7 +824,6 @@
     }
     if (containerId === 'sf-ligacao-nova') { document.getElementById('ln_modo').value = 'normal'; setTimeout(toggleLigacaoNova, 0); }
     document.querySelectorAll('#' + containerId + ' input[type="text"], #' + containerId + ' textarea').forEach(function(i) { i.value = ''; });
-    if (containerId === 'sf-reclamacao-gd') { document.getElementById('gd_tipo').value = 'ausencia_fat'; toggleReclamacaoGD(); }
     if (containerId === 'sf-reclamacoes') {
       document.getElementById('rec_tipo').value = 'leitura_fat';
       var c = document.getElementById('container_faturas_rec');
@@ -954,7 +831,6 @@
       toggleReclamacoes();
     }
     if (containerId === 'sf-resposta-isencao') setTimeout(function() { montarRespostaIsencao(); }, 0);
-    if (containerId === 'sf-res') { document.getElementById('res_forma_pag').value = 'conta'; toggleFormaPagRes(); }
     
     var subA = subtipoAtivo[containerId];
     if (subA) setTimeout(function() { aplicarSubtipo(containerId, subA); }, 0);
@@ -967,7 +843,6 @@
 
   // Inicializa os módulos na abertura
   toggleReclamacoes();
-  toggleReclamacaoGD();
 
   function normalizarTxt(t){ return (t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
   // Busca por sugestoes: digitar NAO filtra os botoes da lista. Os servicos

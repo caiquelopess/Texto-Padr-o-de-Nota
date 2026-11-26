@@ -1,0 +1,114 @@
+{
+  "id": "restituicao",
+  "sf": "sf-res",
+  "nome": "Restituição de valores",
+  "categoria": "Faturamento e Débitos",
+  "descricao": "Migrado do código (lote 8 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "botao": "Gerar Texto e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "Atenção: O mesmo texto da nota é igual para a agenda<br>É obrigatório que o formulário seja preenchido corretamente e anexado no SAP KM juntamente com documento de identificação do solicitação. Em caso de procurador, não esquecer de anexar procuração e documento do procurador e um único arquivo.",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "elementoId": "res_solic",
+      "rotulo": "Solicitante:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Nome completo do solicitante"
+    },
+    {
+      "id": "tel",
+      "elementoId": "res_tel",
+      "rotulo": "Telefone:",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84988887777"
+    },
+    {
+      "id": "email1",
+      "elementoId": "res_email1",
+      "rotulo": "E mail:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com ou Não informado"
+    },
+    {
+      "id": "forma_pag",
+      "elementoId": "res_forma_pag",
+      "rotulo": "Forma de pagamento:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["conta", "ordem"],
+      "rotulosOpcoes": ["Conta Bancária", "Ordem de pagamento"]
+    },
+    {
+      "id": "email2",
+      "elementoId": "res_email2",
+      "rotulo": "E-mail:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Confirme o e-mail ou Não informado"
+    },
+    {
+      "id": "dados_banc",
+      "elementoId": "res_dados_banc",
+      "rotulo": "Dados Bancários:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Resumo dos dados bancários"
+    },
+    {
+      "id": "banco",
+      "elementoId": "res_banco",
+      "rotulo": "Banco:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: Banco do Brasil"
+    },
+    {
+      "id": "ag",
+      "elementoId": "res_ag",
+      "rotulo": "Agência:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 0035"
+    },
+    {
+      "id": "conta",
+      "elementoId": "res_conta",
+      "rotulo": "Conta:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 12345-6",
+      "mostrarSe": {
+        "campo": "forma_pag",
+        "igual": "conta"
+      }
+    },
+    {
+      "id": "tipo_conta",
+      "elementoId": "res_tipo_conta",
+      "rotulo": "Tipo da Conta:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["Corrente", "Poupança"],
+      "mostrarSe": {
+        "campo": "forma_pag",
+        "igual": "conta"
+      }
+    }
+  ],
+  "nota": "Solicitante: {{solic}}\nTelefone: {{tel}}\nE mail: {{email1}}\nForma de pagamento: {{#se forma_pag=conta}}(X) Conta Bancária ( ) Ordem de pagamento\n{{/se}}{{#se forma_pag=ordem}}( ) Conta Bancária (X) Ordem de pagamento\n{{/se}}E-mail: {{email2}}\nDados Bancários: {{dados_banc}}\nBanco: {{banco}}\nAgência: {{ag}}\nConta: {{conta|ou:Não se aplica}}\nTipo da Conta: {{tipo_conta|ou:Não se aplica}}",
+  "agenda": "Solicitante: {{solic}}\nTelefone: {{tel}}\nE mail: {{email1}}\nForma de pagamento: {{#se forma_pag=conta}}(X) Conta Bancária ( ) Ordem de pagamento\n{{/se}}{{#se forma_pag=ordem}}( ) Conta Bancária (X) Ordem de pagamento\n{{/se}}E-mail: {{email2}}\nDados Bancários: {{dados_banc}}\nBanco: {{banco}}\nAgência: {{ag}}\nConta: {{conta|ou:Não se aplica}}\nTipo da Conta: {{tipo_conta|ou:Não se aplica}}"
+}

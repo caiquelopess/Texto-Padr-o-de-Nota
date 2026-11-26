@@ -391,11 +391,11 @@ test('modelos: rascunho, teste, publicação, versões, conflito, restauração 
   const URL_BASE = 'http://localhost:8788';
   await entrar(page, 'admin.teste', 'senha-admin-teste');
   await page.goto('/admin/modelos');
-  await page.fill('#mi', 'cadastro-irrigante');
-  await page.fill('#mn', 'Cadastro de Irrigante');
+  await page.fill('#mi', 'modelo-teste-painel');
+  await page.fill('#mn', 'Modelo de Teste do Painel');
   await page.selectOption('#mc', 'Titularidade e Cadastro');
   await page.click('form[data-carrega] button[type=submit]');
-  await expect(page).toHaveURL(/\/admin\/modelos\/cadastro-irrigante$/);
+  await expect(page).toHaveURL(/\/admin\/modelos\/modelo-teste-painel$/);
 
   const campo = async (i, id, rotulo, tipo, obrig = 'nao', opcoes = '', mostrar = '') => {
     const l = page.locator('#campos tr').nth(i);
@@ -432,20 +432,20 @@ test('modelos: rascunho, teste, publicação, versões, conflito, restauração 
   const at = await ctx.newPage();
   await entrar(at, 'chefe.equipe', 'chefe-nova');
   await at.click('#btn_alternar_servicos');
-  const btn = at.locator('#service_nav .sub-btn[data-modelo="cadastro-irrigante"]');
-  await expect(btn).toHaveText('Cadastro de Irrigante');
+  const btn = at.locator('#service_nav .sub-btn[data-modelo="modelo-teste-painel"]');
+  await expect(btn).toHaveText('Modelo de Teste do Painel');
   await expect(btn.locator('xpath=..').locator('.svc-grupo-titulo')).toHaveText('Titularidade e Cadastro');
   await btn.click();
   const pedidos = [];
   at.on('request', (r) => {
     if (r.method() !== 'GET') pedidos.push(r.url());
   });
-  await at.click('#sf-md-cadastro-irrigante .actions .btn:not(.btn-clear)');
+  await at.click('#sf-md-modelo-teste-painel .actions .btn:not(.btn-clear)');
   await expect(at.locator('#toastAviso')).toContainText('Preencha o campo: Nome');
-  await at.fill('#md_cadastro_irrigante__nome', 'Maria Teste');
-  await at.fill('#md_cadastro_irrigante__tel', '71993501519');
-  await at.selectOption('#md_cadastro_irrigante__tipo', 'Renovação');
-  await at.click('#sf-md-cadastro-irrigante .actions .btn:not(.btn-clear)');
+  await at.fill('#md_modelo_teste_painel__nome', 'Maria Teste');
+  await at.fill('#md_modelo_teste_painel__tel', '71993501519');
+  await at.selectOption('#md_modelo_teste_painel__tipo', 'Renovação');
+  await at.click('#sf-md-modelo-teste-painel .actions .btn:not(.btn-clear)');
   await expect(at.locator('#out-nota')).toHaveValue('Gentileza cadastrar irrigante\nTipo: Renovação\nNome: Maria Teste\nTelefone: (71) 99350-1519');
   expect(pedidos).toEqual([]);
 
@@ -458,7 +458,7 @@ test('modelos: rascunho, teste, publicação, versões, conflito, restauração 
   const outro = await browser.newContext({ baseURL: URL_BASE });
   const adm2 = await outro.newPage();
   await entrar(adm2, 'admin.teste', 'senha-admin-teste');
-  await adm2.goto('/admin/modelos/cadastro-irrigante');
+  await adm2.goto('/admin/modelos/modelo-teste-painel');
   await page.fill('#ed', 'alterado pelo primeiro');
   await page.click('button[value=salvar]');
   await adm2.fill('#ed', 'alterado pelo segundo');
@@ -467,14 +467,14 @@ test('modelos: rascunho, teste, publicação, versões, conflito, restauração 
   await outro.close();
 
   // publica v2, compara e restaura a v1 para os atendentes
-  await page.goto('/admin/modelos/cadastro-irrigante');
+  await page.goto('/admin/modelos/modelo-teste-painel');
   page.once('dialog', (d) => d.accept());
   await page.click('button[value=publicar]');
   await expect(page.locator('.okmsg')).toContainText('versão 2');
-  await page.goto('/admin/modelos/cadastro-irrigante/comparar?a=1&b=2');
+  await page.goto('/admin/modelos/modelo-teste-painel/comparar?a=1&b=2');
   await expect(page.locator('.diff .removida')).toContainText('Gentileza cadastrar irrigante');
   await expect(page.locator('.diff .incluida').first()).toContainText('(v2)');
-  await page.goto('/admin/modelos/cadastro-irrigante');
+  await page.goto('/admin/modelos/modelo-teste-painel');
   page.once('dialog', (d) => d.accept());
   await page.locator('tr', { hasText: 'v1' }).getByRole('button', { name: 'Restaurar para os atendentes' }).click();
   await expect(page.locator('.okmsg')).toContainText('Versão 1 restaurada');
@@ -488,7 +488,7 @@ test('modelos: rascunho, teste, publicação, versões, conflito, restauração 
   await expect(page.locator('.okmsg')).toContainText('Modelo arquivado');
   expect((await (await page.request.get('/api/modelos')).json()).modelos).toEqual([]);
   await at.reload();
-  await expect(at.locator('#service_nav .sub-btn[data-modelo="cadastro-irrigante"]')).toHaveCount(0);
+  await expect(at.locator('#service_nav .sub-btn[data-modelo="modelo-teste-painel"]')).toHaveCount(0);
   page.once('dialog', (d) => d.accept());
   await page.click('button:has-text("Desarquivar")');
   expect((await (await page.request.get('/api/modelos')).json()).modelos).toHaveLength(1);
@@ -498,16 +498,16 @@ test('modelos: rascunho, teste, publicação, versões, conflito, restauração 
   const sup = await browser.newContext({ baseURL: URL_BASE });
   const s = await sup.newPage();
   await entrar(s, 'sara.supervisora', 'sara-nova');
-  await s.goto('/admin/modelos/cadastro-irrigante');
+  await s.goto('/admin/modelos/modelo-teste-painel');
   await expect(s.locator('button[value=publicar]')).toHaveCount(0);
   await s.fill('#ed', 'sugestão do supervisor');
   await s.click('button[value=enviar]');
   await expect(s.locator('.okmsg')).toContainText('enviado para um administrador publicar');
-  const forcado = await s.request.post('/admin/modelos/cadastro-irrigante', { form: { acao: 'publicar', revisao: '1' }, headers: { origin: URL_BASE } });
+  const forcado = await s.request.post('/admin/modelos/modelo-teste-painel', { form: { acao: 'publicar', revisao: '1' }, headers: { origin: URL_BASE } });
   expect(forcado.status()).toBe(403);
   await sup.close();
   await page.goto('/admin/modelos');
-  await expect(page.locator('tr', { hasText: 'Cadastro de Irrigante' })).toContainText('Aguardando publicação');
+  await expect(page.locator('tr', { hasText: 'Modelo de Teste do Painel' })).toContainText('Aguardando publicação');
 
   // auditoria
   await page.goto('/admin/auditoria');
@@ -629,7 +629,7 @@ test('backups: automático, manual, validação, download, restauração e permi
   // muda o estado: arquiva o modelo
   const antes = (await (await page.request.get('/api/modelos')).json()).modelos.length;
   expect(antes).toBe(1);
-  await page.goto('/admin/modelos/cadastro-irrigante');
+  await page.goto('/admin/modelos/modelo-teste-painel');
   await page.click('button:has-text("Arquivar")');
   expect((await (await page.request.get('/api/modelos')).json()).modelos).toHaveLength(0);
 
@@ -653,7 +653,7 @@ test('backups: automático, manual, validação, download, restauração e permi
   await expect(page.locator('.okmsg')).not.toContainText('Perfis ajustados');
   await expect(page.locator('tbody')).toContainText('Antes de restaurar');
   expect((await (await page.request.get('/api/modelos')).json()).modelos).toHaveLength(1);
-  await page.goto('/admin/modelos/cadastro-irrigante');
+  await page.goto('/admin/modelos/modelo-teste-painel');
   await expect(page.locator('.sub')).toContainText('Publicado');
 
   // supervisor nem vê a área de backups
@@ -794,4 +794,29 @@ test('modelos do sistema: personalizar, publicar com as configurações avançad
   await at.click('#sf-tt .actions .btn:not(.btn-clear)');
   await expect(at.locator('#out-nota')).toHaveValue(/^Solicitante \(titular\)\.: Maria Teste\n/);
   await ctx.close();
+});
+
+test('modelo pronto (Cadastro de Irrigante): vira rascunho no painel e não aparece para os atendentes', async ({ page }) => {
+  await entrar(page, 'admin.teste', 'senha-admin-teste');
+  await page.goto('/admin/modelos');
+  const linha = page.locator('tr').filter({ has: page.locator('small', { hasText: /^cadastro-irrigante$/ }) });
+  await expect(linha).toContainText('Aguardando revisão');
+  await linha.locator('button', { hasText: 'Criar rascunho' }).click();
+  await expect(page).toHaveURL(/\/admin\/modelos\/cadastro-irrigante$/);
+  await expect(page.locator('h1')).toHaveText('Cadastro de Irrigante');
+  await expect(page.locator('.sub')).toContainText('Rascunho');
+  await expect(page.locator('#ea')).toContainText('Documentos necessários (anexar no SAP KM):');
+  // rascunho: os atendentes não recebem
+  const api = await (await page.request.get('/api/modelos')).json();
+  expect(api.modelos.some((m) => m.id === 'cadastro-irrigante')).toBe(false);
+  await page.goto('/admin/modelos');
+  await expect(
+    page
+      .locator('tr')
+      .filter({ has: page.locator('small', { hasText: /^cadastro-irrigante$/ }) })
+      .first(),
+  ).toContainText('Rascunho');
+  // criar de novo é recusado (o rascunho já existe)
+  const r = await page.request.post('/admin/modelos', { form: { acao: 'rascunho_pronto', id: 'cadastro-irrigante' } });
+  expect(await r.text()).toContain('já existe');
 });

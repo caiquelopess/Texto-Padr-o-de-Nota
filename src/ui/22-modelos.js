@@ -204,7 +204,14 @@
   function mdMontar(m) {
     var sf = mdSf(m);
     var antigo = document.getElementById(sf);
-    if (antigo) antigo.remove();
+    // se o atendente já está neste serviço quando chega uma versão nova do modelo,
+    // o formulário continua aberto e o que foi digitado é mantido
+    var estavaAberto = !!(antigo && antigo.classList.contains('active'));
+    var digitado = {};
+    if (antigo) {
+      antigo.querySelectorAll('input[id], textarea[id], select[id]').forEach(function(e) { digitado[e.id] = e.value; });
+      antigo.remove();
+    }
     document.querySelectorAll('#service_nav .sub-btn[data-modelo="' + m.id + '"]').forEach(function(b) { b.remove(); });
 
     var form = document.createElement('div');
@@ -252,6 +259,11 @@
     var ultimo = document.querySelectorAll('#painel_agenda .subform');
     var ref = ultimo[ultimo.length - 1];
     ref.parentNode.insertBefore(form, ref.nextSibling);
+    Object.keys(digitado).forEach(function(k) {
+      var e = document.getElementById(k);
+      if (e && form.contains(e) && (e.tagName !== 'SELECT' || [].some.call(e.options, function(o) { return o.value === digitado[k]; }))) e.value = digitado[k];
+    });
+    if (estavaAberto) form.classList.add('active');
     mdAtualizarVisiveis(m);
 
     // botão na lista de serviços, na categoria do modelo (um por subtipo, quando houver)
@@ -288,6 +300,12 @@
       btn.textContent = b.nome;
       grupo.appendChild(btn);
     });
+    if (estavaAberto) {
+      // o botão do serviço aberto continua marcado (com o subtipo escolhido, se houver)
+      var sub = typeof subtipoAtivo !== 'undefined' && subtipoAtivo[sf] ? sf + '|' + subtipoAtivo[sf] : sf;
+      var ativo = document.querySelector('#service_nav .sub-btn[data-click="trocarAba(\'' + sub + '\', this)"]');
+      if (ativo) ativo.classList.add('active');
+    }
     modelosMontados[m.id] = m;
   }
 

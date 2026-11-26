@@ -45,7 +45,7 @@ import { avisoVigente, configuracoesDoFormulario, lerConfiguracoes, salvarConfig
 import { idValido, listarFormularios, nomeDoArquivo, nomeValido, TAMANHO_MAXIMO, tipoDoArquivo } from './_lib/formularios.js';
 import { modeloDoFormulario } from './_lib/modelos-form.js';
 import { PERFIS, perfilDe, perfisQuePodeCriar, pode, podeGerenciar } from './_lib/permissoes.js';
-import { MODELOS_SISTEMA, SERVICOS_EMBUTIDOS } from './_lib/servicos-embutidos.js';
+import { MODELOS_SISTEMA, RASCUNHOS_PRONTOS, SERVICOS_EMBUTIDOS } from './_lib/servicos-embutidos.js';
 import { listarSugestoes, validarSugestao } from './_lib/sugestoes.js';
 import { telaAdmin, telaAuditoria, telaFormularios, telaLogin, telaPainel, telaSugestoes, telaTrocarSenha } from './_lib/telas.js';
 import {
@@ -444,6 +444,14 @@ async function adminModelos(request, env, reg, url) {
   if (!pode(meu, 'modelos.editar')) return proibido('Seu perfil só pode consultar os modelos.');
   const form = await request.formData();
   const id = String(form.get('id') || '').trim();
+  if (form.get('acao') === 'rascunho_pronto') {
+    // modelo novo preparado no repositório: vira rascunho no painel (não é publicado)
+    const pronto = RASCUNHOS_PRONTOS.find((m) => m.id === id);
+    if (!pronto) return lista({ erro: 'Modelo pronto não encontrado.' });
+    if (!(await criarModelo(db, structuredClone(pronto), reg.usuario))) return lista({ erro: `O rascunho de ${pronto.nome} já existe: abra na lista acima.` });
+    await registrar(env.USUARIOS, reg.usuario, 'Criou o rascunho a partir de um modelo pronto', id);
+    return redirecionar(`/admin/modelos/${id}`);
+  }
   if (form.get('acao') === 'personalizar') {
     // cópia em rascunho do modelo do sistema, com todas as configurações; os atendentes
     // continuam no original até a cópia ser publicada (arquivar a cópia volta ao original)

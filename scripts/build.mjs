@@ -29,6 +29,16 @@ for (const f of (await readdir(join(raiz, 'src/modelos'))).filter((f) => f.endsW
   if (!teste.ok) throw new Error(`Modelo embutido ${f} reprovado: ${teste.erros.join('; ')}`);
   embutidos.push(m);
 }
+// Rascunhos prontos (src/rascunhos/*.json): NÃO entram no atendimento. O painel oferece "Criar rascunho"
+// para o administrador revisar e publicar quando quiser. Também passam pelo teste automático.
+const rascunhos = [];
+for (const f of (await readdir(join(raiz, 'src/rascunhos'))).filter((f) => f.endsWith('.json')).sort()) {
+  const m = JSON.parse(await ler(`src/rascunhos/${f}`));
+  const teste = mdTestarModelo(m);
+  if (!teste.ok) throw new Error(`Rascunho pronto ${f} reprovado: ${teste.erros.join('; ')}`);
+  if (embutidos.some((e) => e.id === m.id)) throw new Error(`Rascunho pronto ${f} usa o id de um modelo do sistema`);
+  rascunhos.push(m);
+}
 const ui = [`  // ---- modelos embutidos (src/modelos) ----\n  var MODELOS_EMBUTIDOS = ${JSON.stringify(embutidos)};\n`];
 for (const f of (await readdir(join(raiz, 'src/ui'))).filter((f) => f.endsWith('.js')).sort()) ui.push(await ler(`src/ui/${f}`));
 
@@ -50,7 +60,8 @@ const servicos = [...servicosHtml, ...embutidos.map((m) => ({ id: m.sf || `sf-md
 );
 const listaServicos =
   `// Gerado por scripts/build.mjs a partir de src/pagina.html e src/modelos — não editar à mão.\nexport const SERVICOS_EMBUTIDOS = ${JSON.stringify(servicos, null, 2)};\n` +
-  `\n// Modelos do sistema (src/modelos/*.json), completos: o painel mostra e permite personalizar.\nexport const MODELOS_SISTEMA = ${JSON.stringify(embutidos)};\n`;
+  `\n// Modelos do sistema (src/modelos/*.json), completos: o painel mostra e permite personalizar.\nexport const MODELOS_SISTEMA = ${JSON.stringify(embutidos)};\n` +
+  `\n// Rascunhos prontos (src/rascunhos/*.json): só aparecem no painel, para criar o rascunho e revisar.\nexport const RASCUNHOS_PRONTOS = ${JSON.stringify(rascunhos)};\n`;
 
 const saidas = { 'index.html': await montar(false), 'teste/index.html': await montar(true), 'functions/_lib/servicos-embutidos.js': listaServicos };
 if (process.argv.includes('--check')) {

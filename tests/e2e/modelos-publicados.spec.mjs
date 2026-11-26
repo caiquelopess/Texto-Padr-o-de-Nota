@@ -48,3 +48,17 @@ test('modelo publicado vira serviço; sem servidor, continua pela cópia guardad
   await expect(page.locator('#service_nav .sub-btn[data-modelo="cadastro-irrigante"]')).toHaveCount(0);
   await expect(page.locator('#sf-md-cadastro-irrigante')).toHaveCount(0);
 });
+
+test('versão nova do modelo chega com o serviço aberto: o formulário continua aberto e o que foi digitado fica', async ({ page }) => {
+  await page.evaluate(() => {
+    window.trocarAba('sf-tt|com_assuncao', document.querySelector(`#service_nav .sub-btn[data-click*="'sf-tt|com_assuncao'"]`));
+    document.getElementById('tt_solic').value = 'Maria Teste';
+    // chega uma versão publicada do mesmo modelo (ex.: personalização feita no painel)
+    const m = window.MODELOS_EMBUTIDOS.find((x) => x.id === 'troca-titularidade');
+    window.mdAplicar([{ ...JSON.parse(JSON.stringify(m)), nota: m.nota.replace('Solicitante: {{solic}}', 'Titular: {{solic}}') }]);
+  });
+  await expect(page.locator('#sf-tt')).toBeVisible();
+  await expect(page.locator('#tt_solic')).toHaveValue('Maria Teste');
+  await expect(page.locator('#tt_tipo')).toHaveValue('com_assuncao');
+  await expect(page.locator('#service_nav .sub-btn.active')).toHaveText('Troca de Titularidade com Assunção de Débitos');
+});

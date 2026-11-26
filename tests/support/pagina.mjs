@@ -31,6 +31,14 @@ export async function preencherObrigatorios(page, sf) {
       else if (/valor|deb_total|carga|leitura|medidor|numero|qtd|_cc|contrato|nota/.test(id)) v = '123';
       el.value = v;
     }
+    // listas de "marque pelo menos um" (ex.: motivos do indeferimento): marca o primeiro
+    for (const g of document.querySelectorAll(`#${sf} [data-um-obrigatorio]`)) {
+      const c = g.querySelector('input[type="checkbox"]');
+      if (g.offsetParent !== null && c && !g.querySelector('input:checked')) {
+        c.checked = true;
+        c.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }
   }, sf);
 }
 

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { RESP_DEFERIMENTOS, RESP_INDEFERIMENTOS, respGerar, respValidar } from '../../src/nucleo/respostas.mjs';
+import { RESP_INDEFERIMENTOS, respGerar, respValidar } from '../../src/nucleo/respostas.mjs';
 
 const BASE = { resultado: 'Indeferido', servico: 'Troca de Titularidade', distribuidora: 'Coelba', protocolo: '123' };
 const CAB = 'Caro Cliente, a Neoenergia Coelba informa:\n\nSeu protocolo de atendimento é: 123.';
@@ -55,20 +55,36 @@ test('vários motivos: título, lista, normas sem repetir e um só pedido de doc
   assert.equal(respGerar({ ...BASE, motivos: [] }), '');
 });
 
-test('deferimento total e parcial; dados ausentes viram XXXXX; serviço inválido usa Troca', () => {
-  assert.equal(
-    respGerar({ ...BASE, resultado: 'Deferido', motivos: ['total'] }),
-    `Título: TROCA DE TITULARIDADE – ISENÇÃO DE DÉBITOS DEFERIDA\n\n${CAB}\n\n` +
-      'Informamos que após análise, a sua solicitação de isenção de débitos foi deferida. Os débitos do período analisado não serão cobrados do(a) senhor(a) e o seu pedido de Troca de Titularidade seguirá normalmente.',
-  );
-  assert.ok(respGerar({ ...BASE, resultado: 'Deferido', motivos: ['parcial'], detalhe: '01/2025' }).includes('Período/valor isento: 01/2025.'));
+test('deferido não tem texto de resposta; dados ausentes viram XXXXX; serviço inválido usa Troca', () => {
+  assert.equal(respGerar({ ...BASE, resultado: 'Deferido' }), '');
+  assert.equal(respGerar({}), '');
+  const t = respGerar({ resultado: 'Indeferido', servico: 'x', motivos: ['processo_fraude'] });
+  assert.ok(t.startsWith('Título: TROCA DE TITULARIDADE INDEFERIDA – PROCESSO DE FRAUDE'));
+  assert.ok(t.includes('Caro Cliente, a Neoenergia XXXXX informa:\n\nSeu protocolo de atendimento é: XXXXX.'));
+});
+
+test('motivos novos: ilegível, sem data, pendência na Receita e débito de responsabilidade', () => {
+  const il = respGerar({ ...BASE, motivos: ['documento_ilegivel'], documento: 'contrato de locação' });
+  assert.ok(il.includes('o documento contrato de locação anexado em sua solicitação está ilegível'));
   assert.ok(
-    respGerar({ resultado: 'Deferido', servico: 'x', motivos: ['?'] }).includes(
-      'Caro Cliente, a Neoenergia XXXXX informa:\n\nSeu protocolo de atendimento é: XXXXX.',
+    il.endsWith(
+      'Solicitamos que envie a documentação correta e completa em um de nossos Canais de Atendimento para que possamos prosseguir com a sua Troca de Titularidade.',
     ),
   );
-  assert.ok(respGerar({ resultado: 'Deferido' }).startsWith('Título: TROCA DE TITULARIDADE – ISENÇÃO DE DÉBITOS DEFERIDA\n'));
-  assert.ok(respGerar({ resultado: 'Deferido', motivos: ['parcial'] }).includes('Período/valor isento: XXXXX.'));
+  // só pendência do cliente: "NÃO CONCLUÍDA"; junto com indeferimento: "INDEFERIDA"
+  assert.ok(respGerar({ ...BASE, motivos: ['nome_divergente_receita'] }).startsWith('Título: TROCA DE TITULARIDADE NÃO CONCLUÍDA – PENDÊNCIA CADASTRAL'));
+  const misto = respGerar({ ...BASE, motivos: ['imovel_sem_data', 'nome_divergente_receita', 'documento_ilegivel'], documento: 'RG' });
+  assert.ok(misto.startsWith('Título: TROCA DE TITULARIDADE INDEFERIDA – DOCUMENTO ILEGÍVEL / DOCUMENTO DO IMÓVEL SEM DATA'));
+  assert.equal((misto.match(/envie a documentação/g) || []).length, 1);
+  assert.ok(misto.endsWith('retorne a um de nossos Canais de Atendimento para que possamos prosseguir com a sua Troca de Titularidade.'));
+  // normas iguais citadas uma vez (ilegível + documentação incompleta usam o mesmo Art. 138 de 2021)
+  const dois = respGerar({ ...BASE, motivos: ['documentacao_incompleta', 'documento_ilegivel'], documento: 'RG' });
+  assert.equal((dois.match(/REN 1000\/2021 \(Art\. 138/g) || []).length, 1);
+  const deb = respGerar({ ...BASE, motivos: ['debito_responsabilidade'] });
+  assert.ok(deb.includes('a isenção de débitos não pôde ser concedida'));
+  assert.ok(deb.endsWith('os débitos deverão ser quitados ou negociados em um de nossos Canais de Atendimento.'));
+  const comAviso = RESP_INDEFERIMENTOS.filter((m) => m.aviso).map((m) => m.id);
+  assert.deepEqual(comAviso, ['endereco_divergente', 'nome_divergente_receita', 'debito_responsabilidade']);
 });
 
 test('validação', () => {
@@ -79,11 +95,14 @@ test('validação', () => {
     'Escolha a distribuidora.',
   ]);
   assert.deepEqual(respValidar({ ...BASE, motivos: [] }), ['Marque pelo menos um motivo do indeferimento.']);
-  assert.deepEqual(respValidar({ ...BASE, motivos: ['documentacao_incompleta'], documento: ' ' }), ['Informe qual documento não foi identificado.']);
+  assert.deepEqual(respValidar({ ...BASE, motivos: ['documentacao_incompleta'], documento: ' ' }), [
+    'Informe qual documento não foi identificado ou está ilegível.',
+  ]);
   assert.deepEqual(respValidar({ ...BASE, motivos: ['documentacao_incompleta'], documento: 'RG' }), []);
-  assert.deepEqual(respValidar({ ...BASE, resultado: 'Deferido', motivos: ['?'] }), ['Escolha o tipo de deferimento.']);
-  assert.deepEqual(respValidar({ ...BASE, resultado: 'Deferido', motivos: ['parcial'] }), ['Informe o período/valor isento no deferimento parcial.']);
-  assert.deepEqual(respValidar({ ...BASE, resultado: 'Deferido', motivos: ['total'] }), []);
-  assert.equal(RESP_INDEFERIMENTOS.length, 6);
-  assert.equal(RESP_DEFERIMENTOS.length, 2);
+  assert.deepEqual(respValidar({ resultado: 'Deferido' }), []);
+  assert.deepEqual(respValidar({ ...BASE, motivos: ['debito_responsabilidade'] }), [
+    'Confirme que há comprovação do débito de responsabilidade do solicitante (leia as orientações).',
+  ]);
+  assert.deepEqual(respValidar({ ...BASE, motivos: ['debito_responsabilidade'], confirmado: true }), []);
+  assert.equal(RESP_INDEFERIMENTOS.length, 10);
 });

@@ -1,6 +1,7 @@
 // Respostas da Análise de Isenção de Débitos (Troca de Titularidade ou Reativação).
 // Os textos de INDEFERIMENTO são os do "Texto Padrão Lojas" (Conexão Logos), com a mesma redação.
-// Os textos de DEFERIMENTO seguem o mesmo formato (cabeçalho, protocolo e parágrafo da decisão).
+// Motivos com validar: true não estão no PDF (redação proposta, a validar pela área).
+// DEFERIMENTO não tem resposta própria: a solicitação é atendida e o serviço segue com o seu texto padrão.
 // Com mais de um motivo de indeferimento, os textos são combinados em uma única resposta:
 // título com todos os motivos, um só cabeçalho, a lista dos motivos, as normas citadas
 // (sem repetir) e um só pedido de documentação no final.
@@ -8,6 +9,11 @@
 
 export const RESP_DISTRIBUIDORAS = ['Coelba', 'Pernambuco', 'Cosern', 'Brasília', 'Elektro'];
 export const RESP_SERVICOS = ['Troca de Titularidade', 'Reativação'];
+
+const REN_138_2021 =
+  'REN 1000/2021 (Art. 138. § 1º A distribuidora pode exigir do novo titular os seguintes documentos para alterar a titularidade:\nI - Identificação do consumidor e demais usuários, conforme incisos I e II do art. 67;\nII - Apresentação de documento, com data, que comprove a propriedade ou posse do imóvel em que se localizam as instalações do consumidor e demais usuários, observado o art. 14);';
+const REN_138_2024 =
+  'REN 1000/2024 (Art. 138. §1º, II - apresentação de documento, com data, que comprove a propriedade ou posse do imóvel em que se localizam as instalações do consumidor e demais usuários, observado o art. 14.';
 
 const PEDIDO_DOCUMENTOS =
   'Solicitamos que envie a documentação correta e completa em um de nossos Canais de Atendimento para que possamos prosseguir com a sua {servico}.';
@@ -33,8 +39,7 @@ export const RESP_INDEFERIMENTOS = [
     texto:
       'Informamos que após análise, não conseguimos identificar a presença do documento {documento} anexado em sua solicitação, portanto, seu pedido não pôde ser realizado.',
     item: 'não conseguimos identificar a presença do documento {documento} anexado em sua solicitação',
-    norma:
-      'REN 1000/2021 (Art. 138. § 1º A distribuidora pode exigir do novo titular os seguintes documentos para alterar a titularidade:\nI - Identificação do consumidor e demais usuários, conforme incisos I e II do art. 67;\nII - Apresentação de documento, com data, que comprove a propriedade ou posse do imóvel em que se localizam as instalações do consumidor e demais usuários, observado o art. 14);',
+    norma: REN_138_2021,
     pedido: 'Solicitamos que envie a documentação completa em um de nossos Canais de Atendimento para que possamos prosseguir com a sua {servico}.',
     precisaDocumento: true,
   },
@@ -56,8 +61,7 @@ export const RESP_INDEFERIMENTOS = [
     texto:
       'Informamos que após análise, verificamos que a data presente no documento do imóvel é diferente da data atual, portanto, o seu pedido não pode ser realizado.',
     item: 'a data presente no documento do imóvel é diferente da data atual',
-    norma:
-      'REN 1000/2024 (Art. 138. §1º, II - apresentação de documento, com data, que comprove a propriedade ou posse do imóvel em que se localizam as instalações do consumidor e demais usuários, observado o art. 14.',
+    norma: REN_138_2024,
     pedido: 'Solicitamos que envie a documentação correta e completa em um de nossos Canais de Atendimento para que possamos seguir com sua {servico}.',
   },
   {
@@ -83,23 +87,59 @@ export const RESP_INDEFERIMENTOS = [
       'Solicitamos que a {servicoMinusculo} seja solicitada após a conclusão/emissão da fatura de fraude ou irregularidade para que possamos prosseguir com a sua {servico}.',
     pedidoProprio: true,
   },
-];
-
-export const RESP_DEFERIMENTOS = [
   {
-    id: 'total',
-    nome: 'Deferido — isenção total do débito',
-    titulo: 'DEFERIDA',
+    id: 'documento_ilegivel',
+    nome: 'Documento ilegível, rasurado ou cortado',
+    titulo: 'DOCUMENTO ILEGÍVEL',
     texto:
-      'Informamos que após análise, a sua solicitação de isenção de débitos foi deferida. Os débitos do período analisado não serão cobrados do(a) senhor(a) e o seu pedido de {servico} seguirá normalmente.',
+      'Informamos que após análise, verificamos que o documento {documento} anexado em sua solicitação está ilegível, rasurado ou incompleto, não sendo possível validar as suas informações, portanto, o seu pedido não pôde ser realizado.',
+    item: 'o documento {documento} anexado em sua solicitação está ilegível, rasurado ou incompleto, não sendo possível validar as suas informações',
+    norma: REN_138_2021,
+    pedido: PEDIDO_DOCUMENTOS,
+    precisaDocumento: true,
+    validar: true,
   },
   {
-    id: 'parcial',
-    nome: 'Deferido parcialmente — isenção de parte do débito/período',
-    titulo: 'DEFERIDA PARCIALMENTE',
+    id: 'imovel_sem_data',
+    nome: 'Documento do imóvel sem data ou sem os dados do solicitante',
+    titulo: 'DOCUMENTO DO IMÓVEL SEM DATA OU SEM OS DADOS DO SOLICITANTE',
     texto:
-      'Informamos que após análise, a sua solicitação de isenção de débitos foi deferida parcialmente. Período/valor isento: {detalhe}. Os demais débitos permanecem sob responsabilidade do(a) solicitante para que o seu pedido de {servico} possa seguir.',
-    precisaDetalhe: true,
+      'Informamos que após análise, verificamos que o documento do imóvel apresentado não possui data ou não identifica o(a) solicitante como proprietário(a) ou possuidor(a) do imóvel, portanto, o seu pedido não pôde ser realizado.',
+    item: 'o documento do imóvel apresentado não possui data ou não identifica o(a) solicitante como proprietário(a) ou possuidor(a) do imóvel',
+    norma: REN_138_2024,
+    pedido: PEDIDO_DOCUMENTOS,
+    validar: true,
+  },
+  {
+    id: 'nome_divergente_receita',
+    nome: 'Nome divergente na Receita Federal (pendência do cliente)',
+    titulo: 'PENDÊNCIA CADASTRAL – NOME DIVERGENTE NA RECEITA FEDERAL',
+    texto:
+      'Informamos que após análise, verificamos que o nome informado no documento de identificação está divergente do cadastro do CPF/CNPJ na Receita Federal. Trata-se de uma pendência cadastral do(a) solicitante, que impede a conclusão do seu pedido neste momento.',
+    item: 'o nome informado no documento de identificação está divergente do cadastro do CPF/CNPJ na Receita Federal (pendência cadastral do(a) solicitante)',
+    norma: null,
+    pedido:
+      'Solicitamos que regularize os seus dados junto à Receita Federal e, após a regularização, retorne a um de nossos Canais de Atendimento para que possamos prosseguir com a sua {servico}.',
+    pedidoProprio: true,
+    pendencia: true,
+    aviso:
+      'Não é um indeferimento de fato: é uma pendência do cliente na Receita Federal que impede concluir o pedido. Oriente o cliente a regularizar e retornar.',
+    validar: true,
+  },
+  {
+    id: 'debito_responsabilidade',
+    nome: 'Débito de responsabilidade do solicitante',
+    titulo: 'DÉBITO DE RESPONSABILIDADE DO SOLICITANTE',
+    texto:
+      'Informamos que após análise, verificamos que os débitos existentes na unidade consumidora são de responsabilidade do(a) solicitante, pois foi constatado que o(a) senhor(a) era o(a) usuário(a) ou responsável pelo imóvel no período em que os débitos foram gerados, portanto, a isenção de débitos não pôde ser concedida.',
+    item: 'os débitos existentes na unidade consumidora são de responsabilidade do(a) solicitante, que era o(a) usuário(a) ou responsável pelo imóvel no período em que foram gerados',
+    norma: null,
+    pedido: 'Para prosseguir com a sua {servico}, os débitos deverão ser quitados ou negociados em um de nossos Canais de Atendimento.',
+    pedidoProprio: true,
+    aviso:
+      'Use somente com comprovação de que, no período do débito, o solicitante era o usuário/responsável pelo imóvel: por exemplo, cadastro, contrato de locação ou compra e venda em nome dele com data dentro do período, atendimentos/protocolos anteriores feitos por ele para este imóvel, ou sucessão do mesmo negócio no local. NÃO use só porque o solicitante é parente do titular anterior, mora no imóvel hoje, ou porque a documentação de posse está faltando (nesses casos, use os motivos de documentação). Registre a comprovação na observação.',
+    confirmacao: 'Confirmo que há comprovação de que o solicitante era o responsável pelo imóvel no período do débito e que ela está registrada.',
+    validar: true,
   },
 ];
 
@@ -109,8 +149,7 @@ function preencher(t, d) {
   return String(t || '')
     .replace(/\{servico\}/g, d.servico)
     .replace(/\{servicoMinusculo\}/g, d.servico.toLowerCase())
-    .replace(/\{documento\}/g, d.documento || 'XXXXX')
-    .replace(/\{detalhe\}/g, d.detalhe || 'XXXXX');
+    .replace(/\{documento\}/g, d.documento || 'XXXXX');
 }
 
 function cabecalho(d) {
@@ -122,6 +161,7 @@ function cabecalho(d) {
 export function respValidar(d = {}) {
   const erros = [];
   if (!['Deferido', 'Indeferido'].includes(d.resultado)) erros.push('Escolha o resultado (Deferido ou Indeferido).');
+  if (d.resultado === 'Deferido') return erros; // deferido: sem texto de resposta (o serviço segue com o texto padrão)
   if (!RESP_SERVICOS.includes(d.servico)) erros.push('Escolha o serviço (Troca de Titularidade ou Reativação).');
   if (!String(d.protocolo || '').trim()) erros.push('Informe o protocolo de atendimento.');
   if (!RESP_DISTRIBUIDORAS.includes(d.distribuidora)) erros.push('Escolha a distribuidora.');
@@ -129,29 +169,26 @@ export function respValidar(d = {}) {
   if (d.resultado === 'Indeferido') {
     const motivos = RESP_INDEFERIMENTOS.filter((m) => ids.includes(m.id));
     if (!motivos.length) erros.push('Marque pelo menos um motivo do indeferimento.');
-    if (motivos.some((m) => m.precisaDocumento) && !String(d.documento || '').trim()) erros.push('Informe qual documento não foi identificado.');
-  }
-  if (d.resultado === 'Deferido') {
-    const def = RESP_DEFERIMENTOS.find((m) => m.id === ids[0]);
-    if (!def) erros.push('Escolha o tipo de deferimento.');
-    else if (def.precisaDetalhe && !String(d.detalhe || '').trim()) erros.push('Informe o período/valor isento no deferimento parcial.');
+    if (motivos.some((m) => m.precisaDocumento) && !String(d.documento || '').trim())
+      erros.push('Informe qual documento não foi identificado ou está ilegível.');
+    if (motivos.some((m) => m.confirmacao) && !d.confirmado)
+      erros.push('Confirme que há comprovação do débito de responsabilidade do solicitante (leia as orientações).');
   }
   return erros;
 }
 
 // Monta o texto da resposta (Agenda do Contrato).
-// d = { resultado, servico, distribuidora, protocolo, motivos: [ids], documento, detalhe }
+// d = { resultado, servico, distribuidora, protocolo, motivos: [ids], documento, confirmado }
 export function respGerar(d = {}) {
   const dados = { ...d, servico: RESP_SERVICOS.includes(d.servico) ? d.servico : RESP_SERVICOS[0] };
   const ids = [].concat(d.motivos || []);
   const servicoTitulo = dados.servico.toUpperCase();
-  if (d.resultado === 'Deferido') {
-    const def = RESP_DEFERIMENTOS.find((m) => m.id === ids[0]) || RESP_DEFERIMENTOS[0];
-    return 'Título: ' + servicoTitulo + ' – ISENÇÃO DE DÉBITOS ' + def.titulo + '\n\n' + cabecalho(dados) + '\n\n' + preencher(def.texto, dados);
-  }
+  if (d.resultado !== 'Indeferido') return ''; // deferido: o serviço segue com o texto padrão
   const motivos = RESP_INDEFERIMENTOS.filter((m) => ids.includes(m.id));
   if (!motivos.length) return '';
-  const titulo = `Título: ${servicoTitulo} INDEFERIDA – ${motivos.map((m) => m.titulo).join(' / ')}`;
+  // só pendência do cliente (não é indeferimento de fato): o título diz "NÃO CONCLUÍDA"
+  const situacao = motivos.every((m) => m.pendencia) ? 'NÃO CONCLUÍDA' : 'INDEFERIDA';
+  const titulo = `Título: ${servicoTitulo} ${situacao} – ${motivos.map((m) => m.titulo).join(' / ')}`;
   const partes = [titulo, cabecalho(dados)];
   if (motivos.length === 1) {
     // um motivo: exatamente o texto padrão

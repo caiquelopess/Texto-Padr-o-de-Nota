@@ -19,11 +19,5 @@ test('temas corporativos: 5 opções e tema retirado vira o mais parecido', asyn
   expect(await page.evaluate(() => localStorage.getItem('tp_tema'))).toBe('ardosia');
   await expect(page.locator('html')).toHaveAttribute('data-paleta', 'ardosia');
   await page.evaluate(() => window.abrirTemas());
-  await expect(page.locator('#tema_menu .tema-opcao')).toHaveText([
-    'Claro Corporativo',
-    'Escuro Corporativo',
-    'Logos Executive',
-    'Conforto Visual',
-    'Alto Contraste',
-  ]);
+  await expect(page.locator('#tema_menu .tema-opcao')).toHaveText(['Claro', 'Escuro', 'Sépia', 'Ardósia', 'Alto contraste']);
 });

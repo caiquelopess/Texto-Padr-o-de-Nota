@@ -313,38 +313,49 @@
   function respOpcoes(lista, atual) {
     return lista.map(function(v) { return '<option value="' + pEsc(v) + '"' + (v === atual ? ' selected' : '') + '>' + pEsc(v) + '</option>'; }).join('');
   }
-  function respCamposHtml(px, ini) {
+  // soIndeferido: no serviço avulso só existe o indeferimento (deferido = serviço executado com o texto padrão)
+  function respCamposHtml(px, ini, soIndeferido) {
     ini = ini || {};
     var dist = ini.distribuidora; try { dist = dist || localStorage.getItem(RESP_DIST_CHAVE); } catch (e) {}
+    var ind = ' ' + px + 'ind';
     var motivos = RESP_INDEFERIMENTOS.map(function(m) {
       return '<label class="resp-motivo"><input type="checkbox" class="' + px + 'mot" value="' + m.id + '" data-change="respAtualizar(\'' + px + '\')"> ' + pEsc(m.nome) + '</label>';
     }).join('');
-    return '<div><label>Resultado *</label><select id="' + px + 'res" data-change="respAtualizar(\'' + px + '\')"><option value="Deferido">Deferido</option><option value="Indeferido">Indeferido</option></select></div>' +
-      '<div><label>Serviço *</label><select id="' + px + 'serv">' + respOpcoes(RESP_SERVICOS, ini.servico) + '</select></div>' +
-      '<div><label>Distribuidora *</label><select id="' + px + 'dist">' + respOpcoes(RESP_DISTRIBUIDORAS, dist || 'Coelba') + '</select></div>' +
-      '<div><label>Protocolo de atendimento *</label><input type="text" id="' + px + 'prot" value="' + pEsc(ini.protocolo || '') + '" placeholder="Nº do protocolo" required></div>' +
-      '<div class="full" id="' + px + 'def_box"><label>Tipo de deferimento *</label><select id="' + px + 'def" data-change="respAtualizar(\'' + px + '\')">' +
-        RESP_DEFERIMENTOS.map(function(m) { return '<option value="' + m.id + '">' + pEsc(m.nome) + '</option>'; }).join('') + '</select></div>' +
-      '<div class="full" id="' + px + 'det_box"><label>Período/valor isento *</label><input type="text" id="' + px + 'det" placeholder="Ex: faturas de 01/2025 a 03/2025 (R$ 350,00)"></div>' +
-      '<div class="full" id="' + px + 'ind_box"><label>Motivos do indeferimento * <span class="resp-dica">(marque um ou mais: os textos são combinados)</span></label><div class="resp-motivos">' + motivos + '</div></div>' +
-      '<div class="full" id="' + px + 'doc_box"><label>Documento não identificado *</label><input type="text" id="' + px + 'doc" placeholder="Ex: RG, contrato de locação"></div>' +
-      '<div class="full alert-box" id="' + px + 'aviso_end">⚠️ Endereço divergente: use somente após validar com o cliente que não se trata de erro no cadastro da Neoenergia.</div>';
+    return (soIndeferido
+        ? '<input type="hidden" id="' + px + 'res" value="Indeferido">'
+        : '<div class="full"><label>Resultado *</label><select id="' + px + 'res" data-change="respAtualizar(\'' + px + '\')"><option value="Deferido">Deferido</option><option value="Indeferido">Indeferido</option></select></div>' +
+          '<div class="full alert-box resp-aviso" id="' + px + 'def_info">✅ <b>Deferido:</b> a solicitação é atendida, sem texto de resposta. Execute o serviço (' +
+          'Troca de Titularidade ou Reativação) com o texto padrão dele e registre aqui a data da resposta.</div>') +
+      '<div class="' + ind + '"><label>Serviço *</label><select id="' + px + 'serv">' + respOpcoes(RESP_SERVICOS, ini.servico) + '</select></div>' +
+      '<div class="' + ind + '"><label>Distribuidora *</label><select id="' + px + 'dist">' + respOpcoes(RESP_DISTRIBUIDORAS, dist || 'Coelba') + '</select></div>' +
+      '<div class="full' + ind + '"><label>Protocolo de atendimento *</label><input type="text" id="' + px + 'prot" value="' + pEsc(ini.protocolo || '') + '" placeholder="Nº do protocolo" required></div>' +
+      '<div class="full' + ind + '"><label>Motivos do indeferimento * <span class="resp-dica">(marque um ou mais: os textos são combinados)</span></label><div class="resp-motivos" data-um-obrigatorio>' + motivos + '</div></div>' +
+      '<div class="full" id="' + px + 'doc_box"><label>Documento não identificado ou ilegível *</label><input type="text" id="' + px + 'doc" placeholder="Ex: RG, contrato de locação"></div>' +
+      // orientações de cada motivo: aparecem quando ele é marcado
+      RESP_INDEFERIMENTOS.filter(function(m) { return m.aviso; }).map(function(m) {
+        return '<div class="full alert-box resp-aviso" id="' + px + 'aviso_' + m.id + '"><b>⚠️ ' + pEsc(m.nome) + ':</b> ' + pEsc(m.aviso) + '</div>';
+      }).join('') +
+      '<div class="full" id="' + px + 'conf_box"><label class="resp-motivo resp-confirma"><input type="checkbox" id="' + px + 'conf"> ' +
+        pEsc((RESP_INDEFERIMENTOS.filter(function(m) { return m.confirmacao; })[0] || {}).confirmacao || '') + '</label></div>';
   }
   function respLer(px) {
     var g = function(s) { var e = document.getElementById(px + s); return e ? e.value : ''; };
-    var res = g('res');
-    var motivos = res === 'Deferido' ? [g('def')] : [].slice.call(document.querySelectorAll('.' + px + 'mot:checked')).map(function(c) { return c.value; });
-    return { resultado: res, servico: g('serv'), distribuidora: g('dist'), protocolo: g('prot').trim(), motivos: motivos, documento: g('doc').trim(), detalhe: g('det').trim() };
+    var motivos = [].slice.call(document.querySelectorAll('.' + px + 'mot:checked')).map(function(c) { return c.value; });
+    var conf = document.getElementById(px + 'conf');
+    return { resultado: g('res'), servico: g('serv'), distribuidora: g('dist'), protocolo: g('prot').trim(), motivos: motivos, documento: g('doc').trim(), confirmado: !!(conf && conf.checked) };
   }
   function respAtualizar(px) {
     var d = respLer(px), def = d.resultado === 'Deferido';
     var mostra = function(s, v) { var e = document.getElementById(px + s); if (e) e.style.display = v ? '' : 'none'; };
-    mostra('def_box', def); mostra('det_box', def && d.motivos[0] === 'parcial');
-    mostra('ind_box', !def); mostra('doc_box', !def && d.motivos.indexOf('documentacao_incompleta') >= 0);
-    mostra('aviso_end', !def && d.motivos.indexOf('endereco_divergente') >= 0);
+    mostra('def_info', def);
+    document.querySelectorAll('.' + px + 'ind').forEach(function(e) { e.style.display = def ? 'none' : ''; });
+    var marcados = def ? [] : RESP_INDEFERIMENTOS.filter(function(m) { return d.motivos.indexOf(m.id) >= 0; });
+    var tem = function(campo) { return marcados.some(function(m) { return m[campo]; }); };
+    mostra('doc_box', tem('precisaDocumento')); mostra('conf_box', tem('confirmacao'));
+    RESP_INDEFERIMENTOS.forEach(function(m) { if (m.aviso) mostra('aviso_' + m.id, marcados.indexOf(m) >= 0); });
   }
   function respNomes(d) {
-    if (d.resultado === 'Deferido') return RESP_DEFERIMENTOS.filter(function(m) { return m.id === d.motivos[0]; }).map(function(m) { return m.nome; }).join('');
+    if (d.resultado === 'Deferido') return 'Solicitação atendida (serviço executado com o texto padrão)';
     return RESP_INDEFERIMENTOS.filter(function(m) { return d.motivos.indexOf(m.id) >= 0; }).map(function(m) { return m.nome; }).join(' + ');
   }
   function respGuardarDistribuidora(d) { try { localStorage.setItem(RESP_DIST_CHAVE, d.distribuidora); } catch (e) {} }
@@ -358,7 +369,7 @@
       respCamposHtml(px, { servico: /^Reativa/.test(r.pd.origem || '') ? 'Reativação' : 'Troca de Titularidade', protocolo: r.pd.nota }) +
       '<div><label>Data da resposta *</label><input type="text" id="pres_data_' + id + '" inputmode="numeric" value="' + pBR(pHoje()) + '" data-input="mascararData(this)"></div>' +
       '<div><label>Observação</label><input type="text" id="pres_obs_' + id + '" placeholder="Opcional"></div>' +
-      '<div class="full pend-botoes"><button type="button" class="pend-resp" data-click="concluirPendencia(\'' + id + '\')">Confirmar e copiar resposta</button><button type="button" data-click="abrirResposta(\'' + id + '\')">Cancelar</button></div></div>';
+      '<div class="full pend-botoes"><button type="button" class="pend-resp" data-click="concluirPendencia(\'' + id + '\')">Confirmar resposta</button><button type="button" data-click="abrirResposta(\'' + id + '\')">Cancelar</button></div></div>';
     respAtualizar(px);
   }
   function concluirPendencia(id) {
@@ -368,18 +379,20 @@
     if (data < r.pd.abertura) { mostrarAviso('ATENÇÃO: a resposta não pode ser anterior à abertura (' + pBR(r.pd.abertura) + ').'); return; }
     var d = respLer('pres_' + id + '_'), erros = respValidar(d);
     if (erros.length) { mostrarAviso('ATENÇÃO: ' + erros[0]); return; }
-    var texto = respGerar(d);
+    var texto = respGerar(d); // deferido: '' (o serviço segue com o texto padrão)
     r.pd.status = 'concluida'; r.pd.resultado = d.resultado; r.pd.motivo = respNomes(d); r.pd.respostaObs = document.getElementById('pres_obs_' + id).value.trim();
     r.pd.respostaTexto = texto; r.pd.respostaData = data; r.pd.respostaTs = Date.now();
-    respGuardarDistribuidora(d);
+    var prazo = data <= r.pd.prazo ? ' (no prazo)' : ' (fora do prazo)';
     pendGravar(r.lista); renderPendencias(); atualizarBadgePendencias();
+    if (!texto) { mostrarAviso('Pendência respondida: Deferido' + prazo + '. Execute o serviço com o texto padrão.', 'ok'); return; }
+    respGuardarDistribuidora(d);
     histCopiarTexto(texto);
-    setTimeout(function() { mostrarAviso('Pendência respondida: ' + r.pd.resultado + (data <= r.pd.prazo ? ' (no prazo)' : ' (fora do prazo)') + '. Resposta copiada para colar na Agenda.', 'ok'); }, 50);
+    setTimeout(function() { mostrarAviso('Pendência respondida: Indeferido' + prazo + '. Resposta copiada para colar na Agenda.', 'ok'); }, 50);
   }
   // Serviço "Resposta da Análise de Isenção" (aba Agenda e Nota)
   function montarRespostaIsencao() {
     var box = document.getElementById('rsp_campos'); if (!box) return;
-    box.innerHTML = respCamposHtml('rsp_');
+    box.innerHTML = respCamposHtml('rsp_', null, true);
     respAtualizar('rsp_');
   }
   function gerarRespostaIsencao() {

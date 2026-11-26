@@ -1,0 +1,116 @@
+{
+  "id": "alteracao-horario-irrigante",
+  "nome": "Alteração de Horário — Benefício Irrigante",
+  "categoria": "Titularidade e Cadastro",
+  "descricao": "Alteração do horário do Benefício Irrigante (cliente que já possui o benefício). Abre Nota 48 (Verificação de Equipamento). O sistema confere que os períodos somam 8h30, em blocos de 30 min, fora de 17h–21h30. Rascunho para revisão.",
+  "copiar": "nota",
+  "horarioBeneficio": {
+    "totalMin": 510,
+    "vedado": [[1020, 1290]],
+    "periodos": [
+      {
+        "de": "p1_de",
+        "ate": "p1_ate"
+      },
+      {
+        "de": "p2_de",
+        "ate": "p2_ate",
+        "opcional": true
+      },
+      {
+        "de": "p3_de",
+        "ate": "p3_ate",
+        "opcional": true
+      }
+    ]
+  },
+  "avisos": [
+    {
+      "html": "⚠️ Abra a <b>Nota 48 (Verificação de Equipamento)</b> no sistema comercial (SAP) e registre o(s) horário(s) na nota⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "<b>Horário do benefício (Portaria MME nº 137/2026):</b> 8h30 por dia, contínuo (período único) ou fracionado em até 3 períodos, sempre em blocos de 30 minutos. <b>Vedado das 17h às 21h30.</b> A distribuidora não pode restringir o horário escolhido. O sistema confere a soma de 8h30 e o bloqueio antes de gerar a nota.",
+      "classeOriginal": "alert-box"
+    },
+    {
+      "html": "<b>Observação:</b> serviço para quem <b>já possui</b> o Benefício Irrigante. Preencha o Período 1 e, se o cliente fracionar, os Períodos 2 e 3. Exemplos: 07h às 15h30 (um período) ou 22h–00h30, 05h–07h30 e 11h–14h30 (três períodos).",
+      "classeOriginal": "alert-box"
+    }
+  ],
+  "campos": [
+    {
+      "id": "solic",
+      "rotulo": "Solicitante (titular, cônjuge ou terceiro cadastrado)",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Nome completo"
+    },
+    {
+      "id": "p1_de",
+      "rotulo": "Período 1 — início",
+      "tipo": "hora",
+      "obrigatorio": true,
+      "largo": false,
+      "dica": "Ex: 07h ou 07h30"
+    },
+    {
+      "id": "p1_ate",
+      "rotulo": "Período 1 — fim",
+      "tipo": "hora",
+      "obrigatorio": true,
+      "largo": false,
+      "dica": "Ex: 07h ou 07h30"
+    },
+    {
+      "id": "p2_de",
+      "rotulo": "Período 2 — início (opcional)",
+      "tipo": "hora",
+      "obrigatorio": false,
+      "largo": false,
+      "dica": "Ex: 07h ou 07h30"
+    },
+    {
+      "id": "p2_ate",
+      "rotulo": "Período 2 — fim (opcional)",
+      "tipo": "hora",
+      "obrigatorio": false,
+      "largo": false,
+      "dica": "Ex: 07h ou 07h30"
+    },
+    {
+      "id": "p3_de",
+      "rotulo": "Período 3 — início (opcional)",
+      "tipo": "hora",
+      "obrigatorio": false,
+      "largo": false,
+      "dica": "Ex: 07h ou 07h30"
+    },
+    {
+      "id": "p3_ate",
+      "rotulo": "Período 3 — fim (opcional)",
+      "tipo": "hora",
+      "obrigatorio": false,
+      "largo": false,
+      "dica": "Ex: 07h ou 07h30"
+    },
+    {
+      "id": "tel",
+      "rotulo": "Telefone",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 71993501519"
+    },
+    {
+      "id": "ref",
+      "rotulo": "Ponto de referência",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ponto de referência detalhado"
+    }
+  ],
+  "nota": "IRRI\n{{#se p1_de}}{{p1_de}} até {{p1_ate}}\n{{/se}}{{#se p2_de}}{{p2_de}} até {{p2_ate}}\n{{/se}}{{#se p3_de}}{{p3_de}} até {{p3_ate}}\n{{/se}}Telefone: {{tel|telefoneNota}}\nRef: {{ref}}",
+  "agenda": "IRRI\n{{#se p1_de}}{{p1_de}} até {{p1_ate}}\n{{/se}}{{#se p2_de}}{{p2_de}} até {{p2_ate}}\n{{/se}}{{#se p3_de}}{{p3_de}} até {{p3_ate}}\n{{/se}}Telefone: {{tel|telefoneNota}}\nRef: {{ref}}"
+}

@@ -122,7 +122,7 @@ test('validação do modelo aponta cada problema', () => {
   ])
     assert.ok(erros.includes(esperado), esperado);
   assert.ok(mdValidarModelo({ id: 'abc', nome: 'N', categoria: 'C', campos: [] }).includes('Escreva o texto da NOTA ou da AGENDA.'));
-  assert.deepEqual(MD_TIPOS.length, 12);
+  assert.deepEqual(MD_TIPOS.length, 13);
 });
 
 test('teste automático antes de publicar', () => {
@@ -151,7 +151,7 @@ test('teste automático antes de publicar', () => {
   assert.equal(todos.ok, true, todos.erros.join('; '));
   assert.equal(
     todos.exemplos[0].agenda,
-    'Teste texto Teste textoLongo (71) 99350-1519 teste@email.com 10/11/2026 123456 Um 12345678901 10/2026 10/11/2025 às 14:00 vencimento 10/11/2026 R$ 150,00 1.500,00',
+    'Teste texto Teste textoLongo (71) 99350-1519 teste@email.com 10/11/2026 123456 Um 12345678901 10/2026 10/11/2025 às 14:00 vencimento 10/11/2026 R$ 150,00 1.500,00 07h30',
   );
 });
 
@@ -512,4 +512,69 @@ test('condições combinadas, listas de rótulos e data que aceita N/A', async (
   assert.equal(mdNormalizarValores(m, { leit: '1/2/2025' }).valores.leit, '01/02/2025');
   const semCampo = { ...m, campos: m.campos.map((c) => (c.id === 'proto' ? { ...c, mostrarSe: [{ campo: 'zz', igual: 'a' }] } : c)) };
   assert.deepEqual(mdValidarModelo(semCampo), ['Campo "Protocolo": "mostrar se" usa um campo que não existe.']);
+});
+
+test('tipo hora e horário do benefício: soma 8h30, blocos de 30 min, fora da ponta', async () => {
+  const { minutosHora, horaDisplay, mdNormalizarValores } = await import('../../src/nucleo/modelos.mjs');
+  assert.equal(minutosHora('7'), 420);
+  assert.equal(minutosHora('07h'), 420);
+  assert.equal(minutosHora('7h30'), 450);
+  assert.equal(minutosHora('07:30'), 450);
+  assert.equal(minutosHora('0730'), 450);
+  assert.equal(minutosHora('00h30'), 30);
+  assert.equal(minutosHora('23h30'), 1410);
+  assert.equal(minutosHora('7h15'), null);
+  assert.equal(minutosHora('24h'), null);
+  assert.equal(minutosHora('abc'), null);
+  assert.equal(horaDisplay(420), '07h');
+  assert.equal(horaDisplay(450), '07h30');
+  assert.equal(horaDisplay(30), '00h30');
+
+  const m = {
+    id: 'horario-teste',
+    nome: 'H',
+    categoria: 'X',
+    horarioBeneficio: {
+      totalMin: 510,
+      vedado: [[1020, 1290]],
+      periodos: [
+        { de: 'p1_de', ate: 'p1_ate' },
+        { de: 'p2_de', ate: 'p2_ate', opcional: true },
+        { de: 'p3_de', ate: 'p3_ate', opcional: true },
+      ],
+    },
+    campos: [
+      { id: 'p1_de', rotulo: 'P1 início', tipo: 'hora', obrigatorio: true },
+      { id: 'p1_ate', rotulo: 'P1 fim', tipo: 'hora', obrigatorio: true },
+      { id: 'p2_de', rotulo: 'P2 início', tipo: 'hora' },
+      { id: 'p2_ate', rotulo: 'P2 fim', tipo: 'hora' },
+      { id: 'p3_de', rotulo: 'P3 início', tipo: 'hora' },
+      { id: 'p3_ate', rotulo: 'P3 fim', tipo: 'hora' },
+    ],
+    nota: '{{p1_de}}',
+  };
+  assert.deepEqual(mdValidarModelo(m), []);
+  assert.equal(mdTestarModelo(m).ok, true);
+  const n = (v) => mdNormalizarValores(m, v).erros;
+  // um período de 8h30: ok, e as horas são normalizadas
+  const p = mdNormalizarValores(m, { p1_de: '7h', p1_ate: '15h30' });
+  assert.deepEqual(p.erros, []);
+  assert.deepEqual([p.valores.p1_de, p.valores.p1_ate], ['07h', '15h30']);
+  // três períodos somando 8h30 (um atravessa a meia-noite)
+  assert.deepEqual(n({ p1_de: '22h', p1_ate: '00h30', p2_de: '05h', p2_ate: '07h30', p3_de: '11h', p3_ate: '14h30' }), []);
+  // soma errada
+  assert.deepEqual(n({ p1_de: '07h', p1_ate: '10h' }), ['Os períodos devem somar 8h30 por dia (agora somam 3h).']);
+  // cai na ponta
+  assert.deepEqual(n({ p1_de: '16h', p1_ate: '01h30' }), ['Os horários não podem cair no horário de ponta (17h às 21h30).']);
+  // período só com início
+  assert.deepEqual(n({ p1_de: '07h', p1_ate: '15h30', p2_de: '05h' }), ['Preencha o início e o fim do período (ou deixe os dois em branco).']);
+  // início igual ao fim
+  assert.deepEqual(n({ p1_de: '07h', p1_ate: '07h' }), ['O fim do período deve ser diferente do início.']);
+  // hora inválida barra antes da soma
+  assert.deepEqual(n({ p1_de: '07h15', p1_ate: '15h30' }), ['O campo "P1 início" deve ter um horário de 30 em 30 minutos (ex.: 07h ou 07h30).']);
+  assert.deepEqual(mdValidarValores(m, { p1_de: '07h', p1_ate: '09h' }), []);
+  assert.deepEqual(mdValidarValores(m, { p1_de: '07h61' }), ['P1 início: use um horário de 30 em 30 minutos (ex.: 07h ou 07h30).', 'Preencha o campo: P1 fim']);
+  assert.deepEqual(mdValidarModelo({ ...m, horarioBeneficio: { ...m.horarioBeneficio, periodos: [{ de: 'zz', ate: 'p1_ate' }] } }), [
+    'Horário do benefício: os campos "de" e "até" de cada período precisam existir.',
+  ]);
 });

@@ -23,6 +23,12 @@ test('matriz de permissões por perfil', () => {
   assert.ok(pode('administrador', 'modelos.publicar'));
   assert.ok(pode('supervisor', 'modelos.editar'));
   assert.ok(!pode('supervisor', 'modelos.publicar'));
+  // administrador arquiva e solicita a exclusão; só o gestor geral exclui de fato
+  assert.ok(pode('administrador', 'modelos.solicitar_exclusao'));
+  assert.ok(!pode('administrador', 'modelos.excluir'));
+  assert.ok(!pode('supervisor', 'modelos.solicitar_exclusao'));
+  assert.ok(pode('gestor', 'modelos.excluir'));
+  assert.ok(pode('gestor', 'modelos.solicitar_exclusao'));
   assert.ok(!pode('supervisor', 'formularios.gerenciar'));
   assert.ok(pode('consulta', 'atendimento.usar'));
   assert.ok(pode('consulta', 'painel.ver'));

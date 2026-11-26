@@ -24,10 +24,21 @@ const ESQUEMA = [
     versao INTEGER PRIMARY KEY, conteudo TEXT NOT NULL, checksum TEXT NOT NULL, publicado_em INTEGER, publicado_por TEXT)`,
 ];
 
+// Colunas adicionadas depois da criação inicial: aplicadas uma a uma, ignorando
+// "coluna já existe", para não quebrar bancos que já têm a coluna.
+const MIGRACOES = ['ALTER TABLE modelos ADD COLUMN exclusao_solicitada INTEGER NOT NULL DEFAULT 0'];
+
 const prontos = new WeakSet();
 export async function garantirEsquema(db) {
   if (prontos.has(db)) return;
   await db.batch(ESQUEMA.map((sql) => db.prepare(sql)));
+  for (const sql of MIGRACOES) {
+    try {
+      await db.prepare(sql).run();
+    } catch (e) {
+      if (!/duplicate column name/i.test(String(e))) throw e;
+    }
+  }
   prontos.add(db);
 }
 
@@ -101,17 +112,47 @@ export async function publicar(db, id, revisao, conteudo, por) {
 }
 
 // Arquivar tira o modelo do atendimento (sem apagar nada); desarquivar devolve.
+// Desarquivar também cancela um pedido de exclusão que estivesse em aberto.
 export async function mudarArquivamento(db, id, revisao, arquivar, por) {
   const atual = await lerModelo(db, id);
   if (!atual || atual.revisao !== revisao) return false;
   const status = arquivar ? 'arquivado' : atual.versao_publicada > 0 ? 'publicado' : 'rascunho';
   const [r] = await db.batch([
     db
-      .prepare('UPDATE modelos SET status = ?, revisao = revisao + 1, alterado_em = ?, alterado_por = ? WHERE id = ? AND revisao = ?')
-      .bind(status, Date.now(), por, id, revisao),
+      .prepare('UPDATE modelos SET status = ?, exclusao_solicitada = ?, revisao = revisao + 1, alterado_em = ?, alterado_por = ? WHERE id = ? AND revisao = ?')
+      .bind(status, arquivar ? atual.exclusao_solicitada || 0 : 0, Date.now(), por, id, revisao),
     db.prepare('UPDATE publicacao SET geral = geral + 1, alterado_em = ? WHERE id = 1').bind(Date.now()),
   ]);
   return r.meta.changes === 1;
+}
+
+// Administrador pede a exclusão de um modelo já arquivado; quem exclui de fato é o gestor geral.
+export async function solicitarExclusao(db, id, revisao, por) {
+  const atual = await lerModelo(db, id);
+  if (!atual || atual.revisao !== revisao) return { ok: false, conflito: true };
+  if (atual.status !== 'arquivado') return { ok: false, naoArquivado: true };
+  const r = await db
+    .prepare(
+      "UPDATE modelos SET exclusao_solicitada = 1, revisao = revisao + 1, alterado_em = ?, alterado_por = ? WHERE id = ? AND revisao = ? AND status = 'arquivado'",
+    )
+    .bind(Date.now(), por, id, revisao)
+    .run();
+  return { ok: r.meta.changes === 1, conflito: r.meta.changes !== 1 };
+}
+
+// Exclui de vez um modelo arquivado (modelo + todas as versões), numa transação.
+// Só o gestor geral chama isto. Retorna { ok, conflito, naoArquivado }.
+export async function excluirModelo(db, id, revisao) {
+  const atual = await lerModelo(db, id);
+  if (!atual) return { ok: false, conflito: true };
+  if (atual.revisao !== revisao) return { ok: false, conflito: true };
+  if (atual.status !== 'arquivado') return { ok: false, naoArquivado: true };
+  const [del] = await db.batch([
+    db.prepare("DELETE FROM modelos WHERE id = ? AND revisao = ? AND status = 'arquivado'").bind(id, revisao),
+    db.prepare('DELETE FROM modelo_versoes WHERE modelo_id = ?').bind(id),
+    db.prepare('UPDATE publicacao SET geral = geral + 1, alterado_em = ? WHERE id = 1').bind(Date.now()),
+  ]);
+  return { ok: del.meta.changes === 1, conflito: del.meta.changes !== 1 };
 }
 
 export async function listarVersoes(db, id) {

@@ -1,7 +1,8 @@
 {
-  "versao": "2.21.2",
+  "versao": "2.21.3",
   "data": "25/11/2026",
   "novidades": [
+    "Benefício Irrigante atualizado (Portaria MME nº 137/2026): Cadastro e novo serviço de Alteração de Horário (8h30/dia em até 3 períodos, fora de 17h–21h30), como rascunhos para revisar no painel",
     "Painel: excluir modelo só depois de arquivado — o administrador arquiva e solicita a exclusão, e só o gestor geral exclui de vez",
     "Painel: Cadastro de Irrigante disponível em \"Modelos prontos para revisar\" (vira rascunho; só entra no atendimento depois de publicado)",
     "Painel: os modelos do sistema aparecem em Modelos de texto e podem ser personalizados com segurança (volta ao original arquivando a personalização)",

@@ -2,7 +2,7 @@
   "id": "cadastro-irrigante",
   "nome": "Cadastro de Irrigante",
   "categoria": "Titularidade e Cadastro",
-  "descricao": "Cadastro de Produtor Rural, Irrigante e Aquicultor (benefício tarifário). Rascunho para revisão: conferir documentos necessários e texto antes de publicar.",
+  "descricao": "Cadastro de Produtor Rural, Irrigante e Aquicultor (benefício tarifário). Rascunho para revisão: orientações atualizadas pela Portaria MME nº 137/2026 (horário 8h30/dia). Conferir antes de publicar.",
   "copiar": "nota",
   "avisos": [
     {
@@ -10,15 +10,23 @@
       "classeOriginal": "alert-box alert-box-blink"
     },
     {
-      "html": "<b>Documentos necessários (anexar no SAP KM):</b><ul><li>Autodeclaração de Irrigação e Aquicultura (Anexo I), assinada pelo titular</li><li>Formulário de Solicitação de Benefício Tarifário e Declaração de Carga Instalada</li><li>Inscrição Estadual que comprove a natureza de produtor rural</li><li>CCIR (Certificado de Cadastro de Imóvel Rural, emitido pelo INCRA)</li><li>Requerimento de Reconhecimento de Isenção do ICMS para Produtor Rural, assinado</li><li>Licenciamento ambiental e outorga de uso de recursos hídricos, ou o Termo de Compromisso (Anexo I da Portaria 30.926/2024) quando dispensada</li><li>Pessoa jurídica: CNPJ com a atividade adequada, Contrato/Estatuto Social ou Registro de Empresário Individual atualizado e Ata de eleição da diretoria (quando houver)</li><li>RG e CPF (ou CNH) do titular ou dos representantes legais; procuração quando for o caso</li></ul>",
+      "html": "<b>Horário do benefício (Portaria MME nº 137/2026):</b> 8 horas e 30 minutos de desconto por dia, de forma contínua (período único) ou fracionada em até 3 períodos, sempre em blocos de 30 minutos. <b>Vedado no horário de ponta, das 17h às 21h30.</b> A distribuidora não pode restringir o horário escolhido pelo cliente (ajuste só com restrição técnica aprovada pela ANEEL). Exemplos: 07h às 15h30; ou 22h–00h30, 05h–07h30 e 11h–14h30.",
       "classeOriginal": "alert-box"
     },
     {
-      "html": "<b>Cadastro no SAP-CRM:</b> no Parceiro (PN), em <b>Outros campos → Documentos Não Fiscais</b>, inserir o Tipo ID do documento: Z_IRR (Benefício de Irrigante), Z_IE (Inscrição Estadual), Z_RURL (Carteira de Associado – Trabalhador Rural), Z_CTRU (Carteira de Trabalho – Trabalhador Rural) ou Z_ATIV (Atividade de pessoa jurídica). Atualize também documentos, datas, telefones, endereço e e-mail do PN.",
+      "html": "<b>Documentos necessários (anexar no SAP KM):</b><ul><li>Inscrição Estadual que comprove a natureza de produtor rural (início entre 01.11 e 03.32 da Portaria 264/1999)</li><li>CCIR (Certificado de Cadastro de Imóvel Rural), emitido pelo INCRA</li><li>Requerimento de Reconhecimento de Isenção do ICMS para Produtor Rural, assinado</li><li>Licenciamento ambiental e outorga de uso de recursos hídricos (quando exigidos) ou a respectiva dispensa — não precisam estar em nome do titular</li><li>Pessoa jurídica: CNPJ com a atividade adequada, Contrato/Estatuto Social ou Registro de Empresário Individual atualizado e Ata de eleição da diretoria (quando houver)</li><li>RG e CPF (ou CNH) do titular ou dos representantes legais; procuração pública ou particular vigente quando for o caso</li><li>Documentos complementares</li></ul>",
       "classeOriginal": "alert-box"
     },
     {
-      "html": "<b>Observação:</b> o desconto vale no horário reservado (Neoenergia Coelba: 21h30 às 6h). O consumo deve ser exclusivo da irrigação/aquicultura, e só uma unidade consumidora por titular recebe o benefício. Prazo de análise: 30 dias.",
+      "html": "<b>Documentos no SAP KM</b> (upload com a sigla): Termo de Compromisso (TC) → <b>OUTA</b> · Licença Ambiental ou Dispensa → <b>LIAM</b> · Outorga d’Água ou Dispensa → <b>OUTA</b>. No Parceiro (PN), em Outros campos → Documentos Não Fiscais, inserir o Tipo ID: Z_IRR (Benefício de Irrigante), Z_IE (Inscrição Estadual), Z_RURL, Z_CTRU ou Z_ATIV. Atualize também documentos, datas, telefones, endereço e e-mail do PN.",
+      "classeOriginal": "alert-box"
+    },
+    {
+      "html": "<b>Observação:</b> consumo exclusivo de irrigação/aquicultura. O serviço é condicionado à quitação de débitos e <b>exige a troca do medidor</b> — mantenha o padrão de energia dedicado à atividade rural acessível à equipe. O Benefício Irrigante é <b>incompatível com MMGD/SCEE</b> (geração de créditos): para entrar num, cancele o outro. Isenção de ICMS para quem tem Inscrição Estadual. Recadastramento a cada 3 anos. Prazo de análise: até 30 dias. Serviço gratuito.",
+      "classeOriginal": "alert-box"
+    },
+    {
+      "html": "<b>Neoenergia Coelba — Platô de Irecê:</b> na falta de outorga, o Grupo B pode usar o Termo de Compromisso do INEMA (Portaria 30.926/2024), apenas para novas concessões; o TC não dispensa a licença ambiental. O CAR e o CEFIR substituem a licença ambiental. Municípios: América Dourada, Barro Alto, Cafarnaum, Canarana, Central, Ibipeba, Ibititá, Irecê, João Dourado, Jussara, Lapão, Presidente Dutra, São Gabriel e Uibaí.",
       "classeOriginal": "alert-box"
     }
   ],
@@ -53,6 +61,14 @@
       "dica": "Ex: Sítio do Pica Pau"
     },
     {
+      "id": "horario",
+      "rotulo": "Horário(s) do benefício escolhido(s)",
+      "tipo": "texto",
+      "obrigatorio": false,
+      "largo": true,
+      "dica": "Ex: 07h às 15h30 OU 22h–00h30, 05h–07h30, 11h–14h30 (fora de 17h–21h30)"
+    },
+    {
       "id": "proc",
       "rotulo": "Quem procurar",
       "tipo": "texto",
@@ -60,6 +76,6 @@
       "dica": "Nome de quem receberá a equipe"
     }
   ],
-  "nota": "Cadastro de Irrigante\n\nSolicitante: {{solic}}\nTelefone: {{tel|telefoneNota}}\nE-mail: {{email}}\nRef: {{ref}}\nQuem procurar: {{proc}}",
-  "agenda": "Cadastro de Irrigante\n\nSolicitante: {{solic}}\nTelefone: {{tel|telefoneNota}}\nE-mail: {{email}}\nRef: {{ref}}\nQuem procurar: {{proc}}"
+  "nota": "Cadastro de Irrigante\n\nSolicitante: {{solic}}\nTelefone: {{tel|telefoneNota}}\nE-mail: {{email}}\nRef: {{ref}}\nHorário(s) do benefício (8h30/dia, fora de 17h–21h30): {{horario|ou:A definir com o cliente}}\nQuem procurar: {{proc}}",
+  "agenda": "Cadastro de Irrigante\n\nSolicitante: {{solic}}\nTelefone: {{tel|telefoneNota}}\nE-mail: {{email}}\nRef: {{ref}}\nHorário(s) do benefício (8h30/dia, fora de 17h–21h30): {{horario|ou:A definir com o cliente}}\nQuem procurar: {{proc}}"
 }

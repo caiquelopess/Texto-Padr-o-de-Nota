@@ -461,8 +461,6 @@
   var DATAS_PASSADAS = { rec_data: 1, rec_dt_leit: 1, gd_dt_ultima_fat: 1, gd_dt_ult_sem_cred: 1, gd_dt_gmm: 1, def_dt_ent: 1, def_dt_env: 1, tg_data: 1 };
   // Datas dd/mm/aaaa que podem ser futuras (agendamento, vencimento, período): só data real
   var DATAS_LIVRES = { lp_dt_lig: 1, lp_dt_deslig: 1, refp_dt_deslig: 1, refp_dt_relig: 1, def_fat_venc: 1, bloq_dt_ini: 1, bloq_dt_fim: 1 };
-  // Campos "data e horário" (dd/mm/aaaa + hora no mesmo campo): fato já ocorrido
-  var DATAS_HORA_PASSADAS = { rde_dt_ini: 1, rde_dt_fim: 1, rod_dt_ini: 1, rod_dt_fim: 1 };
 
   function rotuloDoCampo(inp) {
     var labelEl = inp.previousElementSibling;
@@ -529,16 +527,6 @@
         var cf = conferirData(valor, false);
         if (cf.erro) return barrarCampo(inp, 'ATENÇÃO: O vencimento da fatura deve ser uma data real, no formato dd/mm/aaaa.');
         inp.value = cf.texto;
-        continue;
-      }
-
-      // Data e horário do ocorrido (dd/mm/aaaa dentro do campo)
-      if (DATAS_HORA_PASSADAS[id]) {
-        var mdh = /(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{4})/.exec(valor);
-        if (!mdh) return barrarCampo(inp, 'ATENÇÃO: O campo "' + lbl + '" deve começar com uma data no formato dd/mm/aaaa.');
-        var dth = dataRealBR(parseInt(mdh[1], 10), parseInt(mdh[2], 10), parseInt(mdh[3], 10));
-        if (!dth) return barrarCampo(inp, 'ATENÇÃO: A data do campo "' + lbl + '" não é uma data real. Verifique o dia e o mês.');
-        if (ehFutura(dth)) return barrarCampo(inp, 'ATENÇÃO: A data do campo "' + lbl + '" não pode ser uma data futura.');
         continue;
       }
 
@@ -830,63 +818,13 @@
 
 
 
-  function gerarDanosEletricos() {
-    if (!validarCampos('sf-danos-eletricos')) return;
-    var cons = (getVal('rde_conserto') === 'sim') ? 'Sim (X) Não ( )' : 'Sim ( ) Não (X)';
-    var txt = 'Título: RESSARCIMENTO DE DANOS ELÉTRICOS - ABERTURA DE NOTA' +
-      '\nSolicitante: ' + getVal('rde_solic') +
-      '\nRelato da ocorrência: ' + getVal('rde_relato') +
-      '\nData e horário do início do ocorrido: ' + getVal('rde_dt_ini') +
-      '\nData e horário do fim do ocorrido: ' + getVal('rde_dt_fim') +
-      '\nReferência: ' + getVal('rde_ref') +
-      '\nTelefone para contato: ' + getVal('rde_tel') +
-      '\nE-mail para contato: ' + getVal('rde_email') +
-      '\nMeio de comunicação escolhido: ' + getVal('rde_meio') +
-      '\nLista de equipamentos danificados: ' + getVal('rde_lista') +
-      '\nOcorreu o conserto: ' + cons;
-    finalizarGeracao('sf-danos-eletricos', txt, txt, 'agenda');
-  }
-
-  function gerarOutrosDanos() {
-    if (!validarCampos('sf-outros-danos')) return;
-    var txt = 'Título: RESSARCIMENTO DE DANOS NÃO ELÉTRICOS' +
-      '\nNome e sobrenome do cliente: ' + getVal('rod_solic') +
-      '\nRelatos da ocorrência: ' + getVal('rod_relato') +
-      '\nData e horário do início do ocorrido: ' + getVal('rod_dt_ini') +
-      '\nData e horário do fim do ocorrido: ' + getVal('rod_dt_fim') +
-      '\nReferência: ' + getVal('rod_ref') +
-      '\nTelefone: ' + getVal('rod_tel') +
-      '\nE-mail para contato: ' + getVal('rod_email') +
-      '\nMeio de comunicação escolhido (carta ou e-mail): ' + getVal('rod_meio') +
-      '\nDescrição do Dano Não elétrico: ' + getVal('rod_desc') +
-      '\nPrazo para análise 30 (trinta) dias corridos.';
-    finalizarGeracao('sf-outros-danos', txt, txt, 'nota');
-  }
 
 
 
 
 
 
-  function gerarRDEDocumentacao() {
-    if (!validarCampos('sf-rde-doc')) return;
-    var cred = (getVal('rdedoc_cred') === 'sim') ? 'S (X) N ( )' : 'S ( ) N (X)';
-    var orc = (getVal('rdedoc_qtd_orc') === '1') ? '1 (X) 2 ( )' : '1 ( ) 2 (X)';
-    var valDesist = getVal('rdedoc_qtd_desist');
-    var desist = 'Nenhum (X) ( ) 1 ( ) 2';
-    if (valDesist === '1') desist = 'Nenhum ( ) (X) 1 ( ) 2';
-    else if (valDesist === '2') desist = 'Nenhum ( ) ( ) 1 (X) 2';
 
-    var txt = 'Título: RESSARCIMENTO DE DANOS ELÉTRICOS - RECEBIMENTO DE DOCUMENTAÇÃO\n' +
-      'Solicitante ' + getVal('rdedoc_solic') + ' compareceu à loja/credenciado para análise a documentação de ressarcimento de danos elétricos.\n' +
-      'Cliente apresentou laudo (s) e orçamento (s) de oficina (s) Credenciada(s)? ' + cred + '\n' +
-      'Quantidade Orçamento (s) ' + orc + '\n' +
-      'Detalhar de quais equipamentos : ' + getVal('rdedoc_equip') + '\n' +
-      'Quantidade Laudo (s) Desistência? ' + desist + '\n' +
-      'Local de entrega : ' + getVal('rdedoc_local');
-
-    finalizarGeracao('sf-rde-doc', txt, txt, 'agenda');
-  }
 
 
 

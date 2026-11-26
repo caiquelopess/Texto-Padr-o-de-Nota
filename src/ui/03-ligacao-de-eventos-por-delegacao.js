@@ -18,7 +18,6 @@
     gerarReclamacaoUnificada: gerarReclamacaoUnificada, gerarReclamacaoGD: gerarReclamacaoGD,
     gerarLigacaoNova: gerarLigacaoNova, gerarLigacaoMUC: gerarLigacaoMUC,
     gerarRES: gerarRES,
-    gerarDanosEletricos: gerarDanosEletricos, gerarOutrosDanos: gerarOutrosDanos, gerarRDEDocumentacao: gerarRDEDocumentacao,
     toggleLigacaoNova: toggleLigacaoNova,
     calcularRefat: calcularRefat, gerarCalcRefat: gerarCalcRefat, limparCalcRefat: limparCalcRefat,
     gerarRefatUrgente: gerarRefatUrgente, limparRefatUrgente: limparRefatUrgente, toggleRefatUrgente: toggleRefatUrgente,

@@ -9,7 +9,7 @@
 // Os dados preenchidos nunca saem do navegador: o motor só monta o texto localmente.
 import { formatarTelefones, notaCaps, telefonesPadraoNota } from './formatos.mjs';
 
-export const MD_TIPOS = ['texto', 'textoLongo', 'telefone', 'email', 'data', 'numero', 'opcao', 'documento', 'dataOuMes'];
+export const MD_TIPOS = ['texto', 'textoLongo', 'telefone', 'email', 'data', 'numero', 'opcao', 'documento', 'dataOuMes', 'dataHora'];
 // Campo "documento": aceita CPF (11 números) e/ou CNPJ (14), conforme c.documento ('doc' = os dois, 'cpf', 'cnpj').
 const DOC_TIPOS = ['doc', 'cpf', 'cnpj'];
 const ID_CAMPO = /^[a-z][a-z0-9_]{0,39}$/;
@@ -110,6 +110,7 @@ export function mdValidarValores(modelo, valores = {}) {
     if (c.tipo === 'opcao' && !c.opcoes.includes(v)) erros.push(`${c.rotulo}: escolha uma das opções.`);
     if (c.tipo === 'documento' && formatarDocumento(v, c.documento) === null) erros.push(`${c.rotulo}: documento inválido.`);
     if (c.tipo === 'dataOuMes' && !/^\d{2}\/(\d{2}\/)?\d{4}$/.test(v)) erros.push(`${c.rotulo}: use dd/mm/aaaa ou mm/aaaa.`);
+    if (c.tipo === 'dataHora' && !/\d{1,2}\s*\/\s*\d{1,2}\s*\/\s*\d{4}/.test(v)) erros.push(`${c.rotulo}: comece com a data (dd/mm/aaaa).`);
   }
   return erros;
 }
@@ -140,6 +141,21 @@ export function mdNormalizarValores(modelo, valores = {}, hoje = new Date()) {
               : 'um CPF com 11 números ou um CNPJ com 14 números';
         erros.push(`O campo "${mdRotulo(c, valores)}" deve conter ${esperado}. Verifique e tente novamente.`);
       } else saida[c.id] = d;
+    }
+    // "data e horário" (ex.: 10/10/2026 às 14:00): o texto fica como foi digitado; só confere a data
+    if (c.tipo === 'dataHora') {
+      const m = /(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{4})/.exec(v);
+      const rot = mdRotulo(c, valores);
+      if (!m) {
+        erros.push(`O campo "${rot}" deve começar com uma data no formato dd/mm/aaaa.`);
+        continue;
+      }
+      const [dia, mes, ano] = [Number(m[1]), Number(m[2]), Number(m[3])];
+      const dt = new Date(ano, mes - 1, dia);
+      if (mes < 1 || mes > 12 || dia < 1 || dt.getFullYear() !== ano || dt.getMonth() !== mes - 1 || dt.getDate() !== dia)
+        erros.push(`A data do campo "${rot}" não é uma data real. Verifique o dia e o mês.`);
+      else if (c.dataRegra === 'passada' && dt.getTime() > new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()).getTime())
+        erros.push(`A data do campo "${rot}" não pode ser uma data futura.`);
     }
     if (c.tipo === 'dataOuMes') {
       const mm = /^(\d{1,2})\s*\/\s*(\d{4})$/.exec(v);
@@ -217,6 +233,7 @@ function exemplo(campo) {
   if (campo.tipo === 'opcao') return campo.opcoes[0];
   if (campo.tipo === 'documento') return campo.documento === 'cnpj' ? '12345678000195' : '12345678901';
   if (campo.tipo === 'dataOuMes') return '10/2026';
+  if (campo.tipo === 'dataHora') return '10/11/2025 às 14:00';
   return `Teste ${campo.rotulo}`;
 }
 

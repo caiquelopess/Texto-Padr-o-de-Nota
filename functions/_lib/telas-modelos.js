@@ -20,6 +20,7 @@ const NOMES_TIPO = {
   opcao: 'Opção (lista)',
   documento: 'CPF/CNPJ',
   dataOuMes: 'Data ou mês/ano',
+  dataHora: 'Data e horário',
 };
 
 const ESTILO_MODELOS = `

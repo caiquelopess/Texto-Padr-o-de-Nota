@@ -14,8 +14,6 @@
     copiarTexto: copiarTexto, limparForm: limparForm, desbloquearFormulario: desbloquearFormulario,
     toggleReclamacoes: toggleReclamacoes, toggleCanalAtendimento: toggleCanalAtendimento,
     gerarReclamacaoUnificada: gerarReclamacaoUnificada,
-    gerarLigacaoNova: gerarLigacaoNova, gerarLigacaoMUC: gerarLigacaoMUC,
-    toggleLigacaoNova: toggleLigacaoNova,
     calcularRefat: calcularRefat, gerarCalcRefat: gerarCalcRefat, limparCalcRefat: limparCalcRefat,
     gerarRefatUrgente: gerarRefatUrgente, limparRefatUrgente: limparRefatUrgente, toggleRefatUrgente: toggleRefatUrgente,
     gerarAnaliseIsencao: gerarAnaliseIsencao, gerarIsencaoDeb: gerarIsencaoDeb, toggleIsencaoDeb: toggleIsencaoDeb,

@@ -1,0 +1,232 @@
+{
+  "id": "reclamacao-gd",
+  "sf": "sf-reclamacao-gd",
+  "nome": "Reclamação GD",
+  "categoria": "Reclamações e Outros",
+  "descricao": "Migrado do código (lote 8 da etapa 6). Texto idêntico ao serviço anterior.",
+  "copiar": "nota",
+  "botao": "Gerar Texto de Reclamação GD e Copiar",
+  "avisos": [
+    {
+      "html": "⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️",
+      "classeOriginal": "alert-box alert-box-blink"
+    },
+    {
+      "html": "⚠️ Orientação: Analise o histórico de consumo e leitura; confira através da transação FPL9 se existe parcelamento considerando o artigo 323.",
+      "classeOriginal": "alert-box",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "ausencia_fat"
+      }
+    },
+    {
+      "html": "⚠️ Orientação: Analise o último demonstrativo no GMM; verifique na fatura se não consta, ao final, o crédito alocado no ciclo; confirme se nas faturas posteriores as informações do crédito deixaram de aparecer.",
+      "classeOriginal": "alert-box",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "credito_gmm"
+      }
+    },
+    {
+      "html": "⚠️ Orientação: Analise a existência da nota 48; confira se há ciclo descasado (quando a beneficiária foi lida antes ou no mesmo dia da geradora); verifique a fatura do período relatado pelo cliente e o histórico de consumo e leitura para confirmar se não houve a compensação.",
+      "classeOriginal": "alert-box",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "geradora_benef"
+      }
+    },
+    {
+      "html": "⚠️ Orientação: Analise em 2ª via a data do último faturamento; se houve ausência do faturamento anterior; se deveria ser parcelado considerando o artigo 323.",
+      "classeOriginal": "alert-box",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "art_323"
+      }
+    }
+  ],
+  "campos": [
+    {
+      "id": "tipo",
+      "elementoId": "gd_tipo",
+      "rotulo": "Selecione o Tipo de Reclamação GD:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": true,
+      "opcoes": ["ausencia_fat", "credito_gmm", "geradora_benef", "art_323"],
+      "rotulosOpcoes": [
+        "1. Ausência de Faturamento",
+        "2. Crédito não migrado do GMM para o SAP",
+        "3. Geradora e Beneficiária sem compensar",
+        "4. Faturamento acumulado sem aplicação do Art 323"
+      ]
+    },
+    {
+      "id": "nome",
+      "elementoId": "gd_nome",
+      "rotulo": "Solicitante – Nome e sobrenome do cliente (Titular ou terceiro):",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Nome completo"
+    },
+    {
+      "id": "motivo",
+      "elementoId": "gd_motivo",
+      "rotulo": "Descrição da reclamação:",
+      "tipo": "textoLongo",
+      "obrigatorio": true,
+      "dica": "Descreva a reclamação com detalhes...",
+      "linhas": 3
+    },
+    {
+      "id": "dt_ultima_fat",
+      "elementoId": "gd_dt_ultima_fat",
+      "rotulo": "Data da última fatura:",
+      "tipo": "data",
+      "obrigatorio": true,
+      "dataRegra": "passada",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "ausencia_fat"
+      }
+    },
+    {
+      "id": "periodo_sem_fat",
+      "elementoId": "gd_periodo_sem_fat",
+      "rotulo": "Período sem receber a fatura:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: Últimos 2 meses",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "ausencia_fat"
+      }
+    },
+    {
+      "id": "dt_ult_sem_cred",
+      "elementoId": "gd_dt_ult_sem_cred",
+      "rotulo": "Data da última fatura sem informação do crédito:",
+      "tipo": "data",
+      "obrigatorio": true,
+      "dataRegra": "passada",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "credito_gmm"
+      }
+    },
+    {
+      "id": "dt_gmm",
+      "elementoId": "gd_dt_gmm",
+      "rotulo": "Data do último registro do demonstrativo no GMM:",
+      "tipo": "data",
+      "obrigatorio": true,
+      "dataRegra": "passada",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "credito_gmm"
+      }
+    },
+    {
+      "id": "ger_benef",
+      "elementoId": "gd_ger_benef",
+      "rotulo": "Geradora ou beneficiária:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["Geradora", "Beneficiária"],
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "geradora_benef"
+      }
+    },
+    {
+      "id": "periodo_sem_comp",
+      "elementoId": "gd_periodo_sem_comp",
+      "rotulo": "Período sem compensar:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: Ciclo atual / Mês X",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "geradora_benef"
+      }
+    },
+    {
+      "id": "art323_simnao",
+      "elementoId": "gd_art323_simnao",
+      "rotulo": "As faturas deveriam ter a aplicação do Artigo 323?",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": false,
+      "opcoes": ["Sim", "Não"],
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "art_323"
+      }
+    },
+    {
+      "id": "periodo_fat",
+      "elementoId": "gd_periodo_fat",
+      "rotulo": "Período do faturamento:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "Ex: 01/2026 a 03/2026",
+      "mostrarSe": {
+        "campo": "tipo",
+        "igual": "art_323"
+      }
+    },
+    {
+      "id": "ref",
+      "elementoId": "gd_ref",
+      "rotulo": "Ponto de Referência:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "largo": true,
+      "dica": "Ponto de referência detalhado"
+    },
+    {
+      "id": "email",
+      "elementoId": "gd_email",
+      "rotulo": "E-mail:",
+      "tipo": "texto",
+      "obrigatorio": true,
+      "dica": "cliente@email.com"
+    },
+    {
+      "id": "tel",
+      "elementoId": "gd_tel",
+      "rotulo": "Tel. Celular:",
+      "tipo": "telefone",
+      "obrigatorio": true,
+      "dica": "Ex: 84988887777"
+    },
+    {
+      "id": "outras",
+      "elementoId": "gd_outras",
+      "rotulo": "Outras Informações:",
+      "tipo": "texto",
+      "largo": true,
+      "dica": "Outras informações relevantes ou N/A"
+    },
+    {
+      "id": "ant",
+      "elementoId": "gd_ant",
+      "rotulo": "Nº da reclamação anterior (se reincidente):",
+      "tipo": "texto",
+      "largo": true,
+      "dica": "Ex: 9200xxxx ou N/A"
+    },
+    {
+      "id": "modalidade",
+      "elementoId": "gd_modalidade",
+      "rotulo": "Modalidade de comunicação:",
+      "tipo": "opcao",
+      "obrigatorio": true,
+      "largo": true,
+      "opcoes": ["e-mail", "SMS", "carta"]
+    }
+  ],
+  "nota": "{{#se tipo=ausencia_fat}}Ausência de Faturamento\n{{/se}}{{#se tipo=credito_gmm}}Crédito não migrado do GMM para o SAP\n{{/se}}{{#se tipo=geradora_benef}}Geradora e Beneficiária sem compensar\n{{/se}}{{#se tipo=art_323}}Faturamento acumulado sem aplicação do Art 323\n{{/se}}Solicitante – {{nome}}\nDescrição da reclamação: {{motivo}}\n{{#se tipo=ausencia_fat}}Data da última fatura: {{dt_ultima_fat}}\nPeríodo sem receber a fatura: {{periodo_sem_fat}}\n{{/se}}{{#se tipo=credito_gmm}}Data da última fatura sem informação do crédito: {{dt_ult_sem_cred}}\nData do último registro do demonstrativo no GMM: {{dt_gmm}}\n{{/se}}{{#se tipo=geradora_benef}}Geradora ou beneficiária: {{ger_benef}}\nPeríodo sem compensar: {{periodo_sem_comp}}\n{{/se}}{{#se tipo=art_323}}As faturas deveriam ter a aplicação do Artigo 323? {{#se art323_simnao=Sim}}Sim (X) Não ( )\n{{/se}}{{#se art323_simnao=Não}}Sim ( ) Não (X)\n{{/se}}Período do faturamento: {{periodo_fat}}\n{{/se}}Ponto de Referência: {{ref}}\nE-mail: {{email}}\nTel. Celular: {{tel}}\nOutras Informações: {{outras|ou:Não informado}}\nVerifique se há nota de reclamação em aberto, caso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nModalidade de comunicação: {{modalidade}}\nCliente solicita comunicação por {{modalidade}}. Foi devidamente orientado sobre o prazo de até 5 (cinco) dias úteis ou, caso seja necessária visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação.",
+  "agenda": "{{#se tipo=ausencia_fat}}Ausência de Faturamento\n{{/se}}{{#se tipo=credito_gmm}}Crédito não migrado do GMM para o SAP\n{{/se}}{{#se tipo=geradora_benef}}Geradora e Beneficiária sem compensar\n{{/se}}{{#se tipo=art_323}}Faturamento acumulado sem aplicação do Art 323\n{{/se}}Solicitante – {{nome}}\nDescrição da reclamação: {{motivo}}\n{{#se tipo=ausencia_fat}}Data da última fatura: {{dt_ultima_fat}}\nPeríodo sem receber a fatura: {{periodo_sem_fat}}\n{{/se}}{{#se tipo=credito_gmm}}Data da última fatura sem informação do crédito: {{dt_ult_sem_cred}}\nData do último registro do demonstrativo no GMM: {{dt_gmm}}\n{{/se}}{{#se tipo=geradora_benef}}Geradora ou beneficiária: {{ger_benef}}\nPeríodo sem compensar: {{periodo_sem_comp}}\n{{/se}}{{#se tipo=art_323}}As faturas deveriam ter a aplicação do Artigo 323? {{#se art323_simnao=Sim}}Sim (X) Não ( )\n{{/se}}{{#se art323_simnao=Não}}Sim ( ) Não (X)\n{{/se}}Período do faturamento: {{periodo_fat}}\n{{/se}}Ponto de Referência: {{ref}}\nE-mail: {{email}}\nTel. Celular: {{tel}}\nOutras Informações: {{outras|ou:Não informado}}\nVerifique se há nota de reclamação em aberto, caso a reclamação seja reincidente, informe o número da reclamação anterior: {{ant|ou:N/A}}\nModalidade de comunicação: {{modalidade}}\nCliente solicita comunicação por {{modalidade}}. Foi devidamente orientado sobre o prazo de até 5 (cinco) dias úteis ou, caso seja necessária visita técnica à unidade consumidora, até 10 (dez) dias úteis, contados a partir da data do protocolo.\nRealizados todos os esclarecimentos ao cliente, porém o mesmo deseja o registro da reclamação."
+}

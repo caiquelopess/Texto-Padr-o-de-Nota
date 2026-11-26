@@ -184,6 +184,7 @@
       if (c.tipo === 'numero') el.setAttribute('inputmode', 'numeric');
       if (c.teclado === 'numerico') el.setAttribute('inputmode', 'numeric');
       if (c.tipo === 'valor' || c.teclado === 'decimal') el.setAttribute('inputmode', 'decimal');
+      if (c.tipo === 'hora') { el.setAttribute('inputmode', 'numeric'); el.placeholder = c.dica || 'Ex: 07h30'; }
       if (Array.isArray(c.sugestoes) && c.sugestoes.length) {
         // sugestões (o atendente ainda pode digitar outra coisa)
         var dl = document.createElement('datalist');

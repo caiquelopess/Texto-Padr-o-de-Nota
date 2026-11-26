@@ -9,7 +9,21 @@
 // Os dados preenchidos nunca saem do navegador: o motor só monta o texto localmente.
 import { formatarTelefones, telefonesPadraoNota, valorReais } from './formatos.mjs';
 
-export const MD_TIPOS = ['texto', 'textoLongo', 'telefone', 'email', 'data', 'numero', 'opcao', 'documento', 'dataOuMes', 'dataHora', 'faturas', 'valor'];
+export const MD_TIPOS = [
+  'texto',
+  'textoLongo',
+  'telefone',
+  'email',
+  'data',
+  'numero',
+  'opcao',
+  'documento',
+  'dataOuMes',
+  'dataHora',
+  'faturas',
+  'valor',
+  'hora',
+];
 // Campo "valor": valor em reais (ex.: 3.250,80 ou R$ 3.250,80).
 // Campo "faturas": lista de { vencimento, valor } (linhas que o atendente adiciona).
 // No texto sai como na Reclamação: "vencimento 10/10/2026 R$ 150,00; vencimento ...".
@@ -33,6 +47,29 @@ const vazio = (v) => (Array.isArray(v) ? !faturasPreenchidas(v).length : String(
 
 // campo de data que também aceita um texto fixo (ex.: aceita: ["N/A"]), sem diferenciar maiúsculas
 const aceitaTexto = (c, v) => [].concat(c.aceita || []).some((a) => String(a).toUpperCase() === String(v).trim().toUpperCase());
+
+// Horário do dia (campo "hora"): aceita 7, 07h, 7:30, 15h30, 0730... e só minutos 00 ou 30.
+// Retorna os minutos desde a meia-noite, ou null se inválido.
+export function minutosHora(v) {
+  const s = String(v ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s/g, '');
+  const m = /^(\d{1,2})(?:[h:.](\d{2}))?h?$/.exec(s) || /^(\d{2})(\d{2})$/.exec(s);
+  if (!m) return null;
+  const hh = Number(m[1]);
+  const mm = Number(m[2] || 0);
+  if (hh > 23 || (mm !== 0 && mm !== 30)) return null;
+  return hh * 60 + mm;
+}
+// Minutos → "07h" (cheia) ou "07h30" (meia).
+export function horaDisplay(min) {
+  const hh = Math.floor(min / 60);
+  const mm = min % 60;
+  return `${String(hh).padStart(2, '0')}h${mm ? '30' : ''}`;
+}
+// Duração em minutos de HHhMM: "8h30" → 510, "0h30" → 30.
+const fmtDuracao = (min) => `${Math.floor(min / 60)}h${min % 60 ? String(min % 60).padStart(2, '0') : ''}`;
 
 // linhas de fatura com algum dado
 function faturasPreenchidas(lista) {
@@ -105,6 +142,9 @@ export function mdValidarModelo(modelo) {
   }
   for (const per of Array.isArray(modelo.periodos) ? modelo.periodos : [])
     if (!ids.has(per.de) || !ids.has(per.ate)) erros.push('Período: os campos "de" e "até" precisam existir.');
+  if (modelo.horarioBeneficio)
+    for (const per of modelo.horarioBeneficio.periodos || [])
+      if (!ids.has(per.de) || !ids.has(per.ate)) erros.push('Horário do benefício: os campos "de" e "até" de cada período precisam existir.');
   // Subtipos: um modelo atende vários botões; cada botão escolhe um valor de um campo de opção.
   if (modelo.subtipos) {
     const alvo = campos.find((c) => c.id === modelo.subtipos.campo);
@@ -152,6 +192,7 @@ export function mdValidarValores(modelo, valores = {}) {
     if (c.tipo === 'documento' && formatarDocumento(v, c.documento) === null) erros.push(`${c.rotulo}: documento inválido.`);
     if (c.tipo === 'dataOuMes' && !/^\d{2}\/(\d{2}\/)?\d{4}$/.test(v)) erros.push(`${c.rotulo}: use dd/mm/aaaa ou mm/aaaa.`);
     if (c.tipo === 'valor' && valorReais(v) === null) erros.push(c.mensagem || `${c.rotulo}: informe um valor em reais.`);
+    if (c.tipo === 'hora' && minutosHora(v) === null) erros.push(`${c.rotulo}: use um horário de 30 em 30 minutos (ex.: 07h ou 07h30).`);
     if (c.tipo === 'dataHora' && !/\d{1,2}\s*\/\s*\d{1,2}\s*\/\s*\d{4}/.test(v)) erros.push(`${c.rotulo}: comece com a data (dd/mm/aaaa).`);
   }
   return erros;
@@ -231,6 +272,11 @@ export function mdNormalizarValores(modelo, valores = {}, hoje = new Date()) {
         erros.push(`O campo "${mdRotulo(c, valores)}" deve ter uma data real (dd/mm/aaaa) ou um mês/ano (mm/aaaa) válido.`);
       else saida[c.id] = `${dois(dia)}/${dois(mes)}/${ano}`;
     }
+    if (c.tipo === 'hora') {
+      const min = minutosHora(v);
+      if (min === null) erros.push(`O campo "${mdRotulo(c, valores)}" deve ter um horário de 30 em 30 minutos (ex.: 07h ou 07h30).`);
+      else saida[c.id] = horaDisplay(min);
+    }
     if (c.tipo === 'data' && aceitaTexto(c, v)) continue; // ex.: "N/A" na data da leitura
     if (c.tipo === 'data') {
       const m = /^(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{4})$/.exec(v);
@@ -265,7 +311,52 @@ export function mdNormalizarValores(modelo, valores = {}, hoje = new Date()) {
     if (/^\d{2}\/\d{2}\/\d{4}$/.test(de) && /^\d{2}\/\d{2}\/\d{4}$/.test(ate) && n(ate) < n(de))
       erros.push('a data final do período não pode ser anterior à inicial.');
   }
-  return { valores: saida, erros };
+  // horário do benefício (ex.: Irrigante): os períodos devem somar o total, em blocos de 30 min,
+  // fora da(s) janela(s) vedada(s) (ponta). Um período pode atravessar a meia-noite (22h → 00h30).
+  if (modelo.horarioBeneficio) {
+    const cfg = modelo.horarioBeneficio;
+    let soma = 0;
+    let temErro = false;
+    for (const per of cfg.periodos || []) {
+      const de = String(saida[per.de] ?? '').trim();
+      const ate = String(saida[per.ate] ?? '').trim();
+      if (!de && !ate) {
+        if (!per.opcional) {
+          erros.push('Informe o início e o fim de cada período do benefício.');
+          temErro = true;
+        }
+        continue;
+      }
+      if (!de || !ate) {
+        erros.push('Preencha o início e o fim do período (ou deixe os dois em branco).');
+        temErro = true;
+        continue;
+      }
+      const mde = minutosHora(de);
+      const mate = minutosHora(ate);
+      if (mde === null || mate === null) {
+        temErro = true;
+        continue;
+      }
+      const dur = (mate - mde + 1440) % 1440;
+      if (dur === 0) {
+        erros.push('O fim do período deve ser diferente do início.');
+        temErro = true;
+        continue;
+      }
+      soma += dur;
+      for (const [ini, fim] of cfg.vedado || []) {
+        let caiNaPonta = false;
+        for (let off = 0; off < dur; off += 30) if ((mde + off) % 1440 >= ini && (mde + off) % 1440 < fim) caiNaPonta = true;
+        if (caiNaPonta) {
+          erros.push(`Os horários não podem cair no horário de ponta (${horaDisplay(ini)} às ${horaDisplay(fim)}).`);
+          temErro = true;
+        }
+      }
+    }
+    if (!temErro && soma !== cfg.totalMin) erros.push(`Os períodos devem somar ${fmtDuracao(cfg.totalMin)} por dia (agora somam ${fmtDuracao(soma)}).`);
+  }
+  return { valores: saida, erros: [...new Set(erros)] };
 }
 
 function valorFormatado(campo, bruto, filtros) {
@@ -338,6 +429,7 @@ function exemplo(campo) {
   if (campo.tipo === 'dataHora') return '10/11/2025 às 14:00';
   if (campo.tipo === 'faturas') return [{ vencimento: '10/11/2026', valor: '150,00' }];
   if (campo.tipo === 'valor') return '1.500,00';
+  if (campo.tipo === 'hora') return '07h30';
   return `Teste ${campo.rotulo}`;
 }
 

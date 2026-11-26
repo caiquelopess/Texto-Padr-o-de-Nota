@@ -71,11 +71,8 @@
     </div>
     <div id="painel_servicos" style="display: none;">
       <div class="service-nav" id="service_nav">
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-analise-isencao', this)">Isenção de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-resposta-isencao', this)">Resposta da Análise de Isenção</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-deb|reativacao', this)">Reativação com Análise de Isenção de Débitos</button>
         <button type="button" class="sub-btn" data-click="trocarAba('sf-reclamacoes', this)">Reclamações</button>
-        <button type="button" class="sub-btn" data-click="trocarAba('sf-isencao-deb|troca', this)">Troca de Titularidade com Análise de Isenção de Débitos</button>
       </div>
     </div>
 
@@ -292,37 +289,6 @@
     <!-- RECLAMAÇÃO GD (4 TIPOS) -->
 
     <!-- ANÁLISE DE ISENÇÃO DE DÉBITOS (Troca de titularidade ou Reativação) -->
-    <div class="subform" id="sf-isencao-deb">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
-      <div class="alert-box">OBS.: Nos casos de representante legal ou solicitante, deverá criar relações no PN em Outros Campos.</div>
-      <div class="form-grid">
-        <div class="field-group full-width" style="display: none;"><label>Serviço *</label><select id="ise_servico"><option value="troca">Troca de titularidade</option><option value="reativacao">Reativação</option></select></div>
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="ise_solic" placeholder="Nome completo" required></div>
-        <div class="field-group"><label>CPF/CNPJ *</label><input type="text" id="ise_doc" inputmode="numeric" placeholder="Somente números" required></div>
-        <div class="field-group"><label>Telefone com DDD *</label><input type="text" id="ise_tel" placeholder="Ex: 71993501519" required></div>
-        <div class="field-group"><label>E-mail *</label><input type="text" id="ise_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group"><label>CC Antiga *</label><input type="text" id="ise_cca" placeholder="Conta contrato antiga" required></div>
-        <div class="field-group"><label>CC Nova *</label><input type="text" id="ise_ccn" placeholder="Conta contrato nova" required></div>
-        <div class="field-group"><label>Leitura *</label><input type="text" id="ise_leitura" inputmode="numeric" placeholder="Ex: 15420" required></div>
-        <div class="field-group"><label>Valor do débito total (R$) *</label><input type="text" id="ise_deb_total" inputmode="decimal" placeholder="Ex: 3.250,80" data-input="toggleIsencaoDeb()" required></div>
-        <div class="field-group full-width" id="grp_ise_ni" style="display: none;"><label>Débito acima de R$ 12.000 — número da nota interna *</label><input type="text" id="ise_ni" placeholder="Nº da nota interna" required></div>
-        <div class="field-group full-width"><label>Valor do débito de responsabilidade do Solicitante (quando houver faturas a vencer em outra unidade)</label><input type="text" id="ise_deb_solic" inputmode="decimal" placeholder="Em branco = Não se aplica"></div>
-        <div class="field-group"><label>Fatura de responsabilidade do Solicitante foi entregue? *</label><select id="ise_fat_solic"><option value="Não se aplica">Não se aplica</option><option value="Sim">Sim</option><option value="Não">Não</option></select></div>
-        <div class="field-group"><label>Período (de)</label><input type="text" id="ise_de" inputmode="numeric" placeholder="dd/mm/aaaa — em branco = Não se aplica" data-input="mascararData(this)"></div>
-        <div class="field-group"><label>Período (até)</label><input type="text" id="ise_ate" inputmode="numeric" placeholder="dd/mm/aaaa — em branco = Não se aplica" data-input="mascararData(this)"></div>
-        <div class="field-group full-width"><label>Documentação apresentada com comprovação de posse (inserir cópia no SAP KM) *</label><input type="text" id="ise_doc_posse" list="ise_docs_lista" placeholder="Ex: Contrato de locação, Contrato de Compra e Venda, Matrícula do imóvel" required>
-          <datalist id="ise_docs_lista"><option value="Contrato de locação"></option><option value="Contrato de Compra e Venda"></option><option value="Matrícula do imóvel"></option></datalist></div>
-        <div class="field-group"><label>Dados da Receita Federal (inserir cópia no SAP KM) *</label><select id="ise_rec"><option value="regular">regular</option><option value="pendente de regularização">pendente de regularização</option><option value="indisponível">indisponível</option></select></div>
-        <div class="field-group"><label>Cliente ciente do faturamento da fatura de período final de *</label><input type="text" id="ise_periodo_final" placeholder="Ex: 10/10/2026 a 14/11/2026 ou Não se aplica" required></div>
-        <div class="field-group"><label>Critério de fatura final *</label><select id="ise_crit"><option value="Faturado por média">Faturado por média</option><option value="Leitura fornecida pelo cliente">Leitura fornecida pelo cliente</option><option value="Não se aplica">Não se aplica</option></select></div>
-        <div class="field-group"><label>Fatura final entregue de que forma *</label><input type="text" id="ise_forma" list="ise_forma_lista" placeholder="Ex: Impressa na loja, E-mail ou Não se aplica" required>
-          <datalist id="ise_forma_lista"><option value="Impressa na loja"></option><option value="Por e-mail"></option><option value="Não se aplica"></option></datalist></div>
-        <div class="field-group"><label>Unidade consumidora MMGD Geradora? *</label><select id="ise_mmgd"><option value="Não">Não</option><option value="Sim">Sim</option></select></div>
-        <div class="field-group"><label>Número da Tarefa Neo aberta</label><input type="text" id="ise_neo" placeholder="Em branco = Não se aplica"></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarIsencaoDeb()">Gerar Texto e Copiar NOTA</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-isencao-deb')">Limpar Tudo</button></div>
-    </div>
 
     <!-- ATUALIZAÇÃO CADASTRAL -->
     <!-- ISENÇÃO DE DÉBITOS (pedido de análise) -->
@@ -332,20 +298,6 @@
       <div class="actions"><button type="button" class="btn" data-click="gerarRespostaIsencao()">Gerar Texto de AGENDA e Copiar</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-resposta-isencao')">Limpar Tudo</button></div>
     </div>
 
-    <div class="subform" id="sf-analise-isencao">
-      <div class="alert-box alert-box-blink">⚠️ Atualize o cadastro do cliente e anexe os documentos no SAP KM⚠️</div>
-      <div class="alert-box alerta-cnpj"><b>Atenção:</b> Em caso de CNPJ, deverá criar relações no PN em Outros Campos.</div>
-      <div class="form-grid">
-        <div class="field-group"><label>Conta contrato *</label><input type="text" id="aid_cc" inputmode="numeric" placeholder="Ex: 7001234567" required></div>
-        <div class="field-group"><label>PN *</label><input type="text" id="aid_pn" inputmode="numeric" placeholder="Parceiro de negócio — ex: 1010000000" required></div>
-        <div class="field-group"><label>Solicitante *</label><input type="text" id="aid_solic" placeholder="Nome completo" required></div>
-        <div class="field-group"><label>CPF/CNPJ *</label><input type="text" id="aid_doc" inputmode="numeric" placeholder="Somente números" required></div>
-        <div class="field-group"><label>Telefone (DDD + telefone) *</label><input type="text" id="aid_tel" placeholder="Ex: 71993501519" required></div>
-        <div class="field-group full-width"><label>E-mail *</label><input type="text" id="aid_email" placeholder="cliente@email.com ou Não informado" required></div>
-        <div class="field-group full-width"><label>Documentação apresentada *</label><input type="text" id="aid_docs" placeholder="Ex: Escritura e CNH" required></div>
-      </div>
-      <div class="actions"><button type="button" class="btn" data-click="gerarAnaliseIsencao()">Gerar Texto e Copiar NOTA</button><button type="button" class="btn btn-clear" data-click="limparForm('sf-analise-isencao')">Limpar Tudo</button></div>
-    </div>
 
     <!-- 1. LIGAÇÃO NOVA (Normal / Por expediente) -->
 

@@ -103,6 +103,12 @@
     if (erros.length) { mostrarAviso('ATENÇÃO: ' + erros[0]); return; }
     var t = mdGerar(m, p.valores);
     finalizarGeracao(sf, t.nota, t.agenda, m.copiar === 'agenda' ? 'agenda' : 'nota');
+    // pendência criada ao gerar (ex.: Análise de Isenção, prazo de 5 dias úteis)
+    var pd = m.pendencia;
+    if (pd && pd.tipo && typeof criarPendenciaAuto === 'function' && typeof TIPOS_PENDENCIA !== 'undefined' && TIPOS_PENDENCIA[pd.tipo]) {
+      var campo = function(k) { return pd[k] ? mdPreencher(m, p.valores, pd[k]) : ''; };
+      criarPendenciaAuto(pd.tipo, { origem: campo('origem'), solicitante: campo('solicitante'), cc: campo('cc'), doc: campo('doc'), texto: t.nota });
+    }
     // lembrete na hora de criar a nota (depois do "Copiado!")
     if (m.lembrete) setTimeout(function() { mostrarAviso(String(m.lembrete), 'longo'); }, 300);
   }
@@ -153,6 +159,15 @@
       if (c.tipo === 'documento') el.placeholder = c.documento === 'cnpj' ? '00.000.000/0000-00' : 'CPF ou CNPJ — somente números';
       if (c.tipo === 'numero') el.setAttribute('inputmode', 'numeric');
       if (c.teclado === 'numerico') el.setAttribute('inputmode', 'numeric');
+      if (c.tipo === 'valor' || c.teclado === 'decimal') el.setAttribute('inputmode', 'decimal');
+      if (Array.isArray(c.sugestoes) && c.sugestoes.length) {
+        // sugestões (o atendente ainda pode digitar outra coisa)
+        var dl = document.createElement('datalist');
+        dl.id = id + '_lista';
+        c.sugestoes.forEach(function(o) { var op = document.createElement('option'); op.value = o; dl.appendChild(op); });
+        grupo.appendChild(dl);
+        el.setAttribute('list', dl.id);
+      }
       if (c.dica) el.placeholder = c.dica;
     }
     el.id = id;
@@ -215,22 +230,30 @@
 
     // botão na lista de serviços, na categoria do modelo (um por subtipo, quando houver)
     var botoes = m.subtipos
-      ? m.subtipos.botoes.map(function(b) { return { alvo: sf + '|' + b.valor, nome: b.nome }; })
-      : [{ alvo: sf, nome: m.nome }];
-    var grupo = null;
-    document.querySelectorAll('#service_nav .svc-grupo').forEach(function(g) {
-      if (g.querySelector('.svc-grupo-titulo').textContent === m.categoria) grupo = g;
-    });
-    if (!grupo) {
-      grupo = document.createElement('div');
-      grupo.className = 'svc-grupo';
-      var tit = document.createElement('div');
-      tit.className = 'svc-grupo-titulo';
-      tit.textContent = m.categoria;
-      grupo.appendChild(tit);
-      document.getElementById('service_nav').appendChild(grupo);
-    }
+      ? m.subtipos.botoes.map(function(b) { return { alvo: sf + '|' + b.valor, nome: b.nome, categoria: b.categoria || m.categoria }; })
+      : [{ alvo: sf, nome: m.nome, categoria: m.categoria }];
     botoes.forEach(function(b) {
+      var grupo = null;
+      document.querySelectorAll('#service_nav .svc-grupo').forEach(function(g) {
+        if (g.querySelector('.svc-grupo-titulo').textContent === b.categoria) grupo = g;
+      });
+      if (!grupo) {
+        grupo = document.createElement('div');
+        grupo.className = 'svc-grupo';
+        var tit = document.createElement('div');
+        tit.className = 'svc-grupo-titulo';
+        tit.textContent = b.categoria;
+        grupo.appendChild(tit);
+        // grupo novo entra na posição da ordem padrão das categorias (as que não estão nela vão para o fim)
+        var nav = document.getElementById('service_nav');
+        var ordem = typeof CATEGORIAS !== 'undefined' ? CATEGORIAS.map(function(c) { return c[0]; }) : [];
+        var pos = function(nome) { var i = ordem.indexOf(nome); return i < 0 ? ordem.length : i; };
+        var depois = null;
+        nav.querySelectorAll('.svc-grupo').forEach(function(g) {
+          if (!depois && pos(g.querySelector('.svc-grupo-titulo').textContent) > pos(b.categoria)) depois = g;
+        });
+        nav.insertBefore(grupo, depois);
+      }
       var btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'sub-btn';

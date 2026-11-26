@@ -1,7 +1,8 @@
 {
-  "versao": "2.20.2",
+  "versao": "2.20.3",
   "data": "25/11/2026",
   "novidades": [
+    "Conta Paga e Não Baixada: faturas em linhas (vencimento e valor), como na Reclamação; modelos ganham o campo Faturas",
     "Reclamação GD e Restituição de valores migradas para modelos, sem mudança nos textos",
     "Ressarcimento de Danos (Elétricos — Abertura e Documentação; Não Elétricos) migrados para modelos, sem mudança nos textos",
     "Resposta de indeferimento da Análise de Isenção (Texto Padrão Lojas), com vários motivos combinados num texto só; pendência deferida só registra (serviço segue com o texto padrão)",

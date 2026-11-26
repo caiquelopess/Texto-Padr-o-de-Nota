@@ -9,7 +9,9 @@
 // Os dados preenchidos nunca saem do navegador: o motor só monta o texto localmente.
 import { formatarTelefones, notaCaps, telefonesPadraoNota } from './formatos.mjs';
 
-export const MD_TIPOS = ['texto', 'textoLongo', 'telefone', 'email', 'data', 'numero', 'opcao', 'documento', 'dataOuMes', 'dataHora'];
+export const MD_TIPOS = ['texto', 'textoLongo', 'telefone', 'email', 'data', 'numero', 'opcao', 'documento', 'dataOuMes', 'dataHora', 'faturas'];
+// Campo "faturas": lista de { vencimento, valor } (linhas que o atendente adiciona).
+// No texto sai como na Reclamação: "vencimento 10/10/2026 R$ 150,00; vencimento ...".
 // Campo "documento": aceita CPF (11 números) e/ou CNPJ (14), conforme c.documento ('doc' = os dois, 'cpf', 'cnpj').
 const DOC_TIPOS = ['doc', 'cpf', 'cnpj'];
 const ID_CAMPO = /^[a-z][a-z0-9_]{0,39}$/;
@@ -18,7 +20,17 @@ const MARCADOR = /\{\{\s*([a-z][a-z0-9_]*)\s*(?:\|\s*([a-zA-Z]+)(?::([^}]*))?)?\
 const BLOCO = /\{\{#se\s+([a-z][a-z0-9_]*)\s*(?:=\s*([^}]*?))?\s*\}\}\n?((?:(?!\{\{#se\s)[\s\S])*?)\{\{\/se\}\}\n?/;
 const FILTROS = ['maiusculas', 'telefoneNota', 'ou'];
 
-const vazio = (v) => String(v ?? '').trim() === '';
+const vazio = (v) => (Array.isArray(v) ? !faturasPreenchidas(v).length : String(v ?? '').trim() === '');
+
+// linhas de fatura com algum dado
+function faturasPreenchidas(lista) {
+  return (Array.isArray(lista) ? lista : []).filter((f) => f && (String(f.vencimento ?? '').trim() || String(f.valor ?? '').trim()));
+}
+function textoFaturas(lista) {
+  return faturasPreenchidas(lista)
+    .map((f) => `vencimento ${String(f.vencimento ?? '').trim() || 'N/A'} R$ ${String(f.valor ?? '').trim() || '0,00'}`)
+    .join('; ');
+}
 
 // CPF/CNPJ formatado, ou null se a quantidade de números não serve para o tipo.
 function formatarDocumento(valor, tipo = 'doc') {
@@ -98,6 +110,12 @@ export function mdValidarModelo(modelo) {
 export function mdValidarValores(modelo, valores = {}) {
   const erros = [];
   for (const c of mdCamposVisiveis(modelo, valores)) {
+    if (c.tipo === 'faturas') {
+      const fs = faturasPreenchidas(valores[c.id]);
+      if (!fs.length && c.obrigatorio) erros.push(`Preencha o campo: ${mdRotulo(c, valores)}`);
+      for (const f of fs) if (!/^\d{2}\/\d{2}\/\d{4}$/.test(String(f.vencimento ?? '').trim())) erros.push(`${c.rotulo}: vencimento em dd/mm/aaaa.`);
+      continue;
+    }
     const v = String(valores[c.id] ?? '').trim();
     if (!v) {
       if (c.obrigatorio) erros.push(`Preencha o campo: ${mdRotulo(c, valores)}`);
@@ -123,6 +141,22 @@ export function mdNormalizarValores(modelo, valores = {}, hoje = new Date()) {
   const erros = [];
   const dois = (n) => String(n).padStart(2, '0');
   for (const c of mdCamposVisiveis(modelo, valores)) {
+    if (c.tipo === 'faturas') {
+      // cada vencimento: data real (dd/mm/aaaa), corrigida como antes; valor fica como digitado
+      const linhas = [];
+      for (const f of faturasPreenchidas(valores[c.id])) {
+        const venc = String(f.vencimento ?? '').trim();
+        const m = /^(\d{1,2})\s*\/\s*(\d{1,2})\s*\/\s*(\d{4})$/.exec(venc);
+        const [dia, mes, ano] = m ? [Number(m[1]), Number(m[2]), Number(m[3])] : [0, 0, 0];
+        const dt = new Date(ano, mes - 1, dia);
+        if (!m || mes < 1 || mes > 12 || dia < 1 || dt.getFullYear() !== ano || dt.getMonth() !== mes - 1 || dt.getDate() !== dia) {
+          erros.push('O vencimento da fatura deve ser uma data real, no formato dd/mm/aaaa.');
+          linhas.push(f);
+        } else linhas.push({ vencimento: `${dois(dia)}/${dois(mes)}/${ano}`, valor: String(f.valor ?? '').trim() });
+      }
+      saida[c.id] = linhas;
+      continue;
+    }
     const v = String(valores[c.id] ?? '').trim();
     if (!v) continue;
     if (c.tipo === 'telefone') {
@@ -196,7 +230,7 @@ export function mdNormalizarValores(modelo, valores = {}, hoje = new Date()) {
 }
 
 function valorFormatado(campo, bruto, filtro, argumento) {
-  let v = String(bruto ?? '').trim();
+  let v = Array.isArray(bruto) ? textoFaturas(bruto) : String(bruto ?? '').trim();
   if (!v) return filtro === 'ou' ? argumento : '';
   if (campo && campo.tipo === 'telefone') v = filtro === 'telefoneNota' ? telefonesPadraoNota(v) : formatarTelefones(v) || v;
   if (filtro === 'maiusculas') v = v.toUpperCase();
@@ -211,7 +245,8 @@ function preencher(texto, modelo, valores) {
   // blocos condicionais, do mais interno para fora
   for (let m = BLOCO.exec(t); m; m = BLOCO.exec(t)) {
     const [inteiro, campo, igual, corpo] = m;
-    const atual = String(val(campo) ?? '').trim();
+    const bruto = val(campo);
+    const atual = Array.isArray(bruto) ? textoFaturas(bruto) : String(bruto ?? '').trim();
     const entra = igual === undefined ? atual !== '' : atual === igual.trim();
     t = t.slice(0, m.index) + (entra ? corpo : '') + t.slice(m.index + inteiro.length);
   }
@@ -234,6 +269,7 @@ function exemplo(campo) {
   if (campo.tipo === 'documento') return campo.documento === 'cnpj' ? '12345678000195' : '12345678901';
   if (campo.tipo === 'dataOuMes') return '10/2026';
   if (campo.tipo === 'dataHora') return '10/11/2025 às 14:00';
+  if (campo.tipo === 'faturas') return [{ vencimento: '10/11/2026', valor: '150,00' }];
   return `Teste ${campo.rotulo}`;
 }
 

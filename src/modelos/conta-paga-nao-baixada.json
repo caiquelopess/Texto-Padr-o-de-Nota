@@ -3,7 +3,7 @@
   "sf": "sf-cpnb",
   "nome": "Conta Paga e Não Baixada",
   "categoria": "Faturamento e Débitos",
-  "descricao": "Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior.",
+  "descricao": "Migrado do código (lote 2 da etapa 6). Texto idêntico ao serviço anterior. Faturas em linhas (vencimento e valor), como na Reclamação.",
   "copiar": "nota",
   "botao": "Gerar Texto e Copiar",
   "avisos": [
@@ -37,9 +37,8 @@
       "id": "fatura",
       "elementoId": "cpnb_fatura",
       "rotulo": "Fatura (vencimento e valor) :",
-      "tipo": "texto",
+      "tipo": "faturas",
       "obrigatorio": true,
-      "dica": "Ex: Venc 10/10/2026 valor R$ 150,00",
       "largo": true
     },
     {

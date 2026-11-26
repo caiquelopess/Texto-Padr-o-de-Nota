@@ -122,7 +122,7 @@ test('validação do modelo aponta cada problema', () => {
   ])
     assert.ok(erros.includes(esperado), esperado);
   assert.ok(mdValidarModelo({ id: 'abc', nome: 'N', categoria: 'C', campos: [] }).includes('Escreva o texto da NOTA ou da AGENDA.'));
-  assert.deepEqual(MD_TIPOS.length, 10);
+  assert.deepEqual(MD_TIPOS.length, 11);
 });
 
 test('teste automático antes de publicar', () => {
@@ -151,7 +151,7 @@ test('teste automático antes de publicar', () => {
   assert.equal(todos.ok, true, todos.erros.join('; '));
   assert.equal(
     todos.exemplos[0].agenda,
-    'Teste texto Teste textoLongo (71) 99350-1519 teste@email.com 10/11/2026 123456 Um 12345678901 10/2026 10/11/2025 às 14:00',
+    'Teste texto Teste textoLongo (71) 99350-1519 teste@email.com 10/11/2026 123456 Um 12345678901 10/2026 10/11/2025 às 14:00 vencimento 10/11/2026 R$ 150,00',
   );
 });
 
@@ -373,4 +373,43 @@ test('dataHora: confere a data do início do texto, sem reescrever', async () =>
   assert.deepEqual(n({ ini: '27/11/2026 10h' }).erros, ['A data do campo "Início:" não pode ser uma data futura.']);
   assert.deepEqual(n({ ini: '26/11/2026 10h' }).erros, []);
   assert.deepEqual(mdValidarValores(m, { ini: 'sem data' }), ['Início:: comece com a data (dd/mm/aaaa).']);
+});
+
+test('faturas: linhas de vencimento e valor', async () => {
+  const { mdNormalizarValores } = await import('../../src/nucleo/modelos.mjs');
+  const m = {
+    id: 'faturas-teste',
+    nome: 'F',
+    categoria: 'X',
+    campos: [{ id: 'fat', rotulo: 'Faturas:', tipo: 'faturas', obrigatorio: true }],
+    nota: 'F: {{fat|ou:Não informado}}{{#se fat}} (com faturas){{/se}}',
+  };
+  assert.deepEqual(mdValidarModelo(m), []);
+  assert.equal(mdTestarModelo(m).ok, true);
+  const p = mdNormalizarValores(m, {
+    fat: [
+      { vencimento: '1/2/2026', valor: ' 10,00 ' },
+      { vencimento: '', valor: '' },
+      { vencimento: '05/03/2026', valor: '' },
+    ],
+  });
+  assert.deepEqual(p, {
+    valores: {
+      fat: [
+        { vencimento: '01/02/2026', valor: '10,00' },
+        { vencimento: '05/03/2026', valor: '' },
+      ],
+    },
+    erros: [],
+  });
+  assert.equal(mdGerar(m, p.valores).nota, 'F: vencimento 01/02/2026 R$ 10,00; vencimento 05/03/2026 R$ 0,00 (com faturas)');
+  assert.equal(mdGerar(m, { fat: [{ vencimento: '', valor: '5' }] }).nota, 'F: vencimento N/A R$ 5 (com faturas)');
+  assert.equal(mdGerar(m, { fat: [] }).nota, 'F: Não informado');
+  assert.deepEqual(mdNormalizarValores(m, { fat: [{ vencimento: '31/02/2026', valor: '1' }] }).erros, [
+    'O vencimento da fatura deve ser uma data real, no formato dd/mm/aaaa.',
+  ]);
+  assert.deepEqual(mdNormalizarValores(m, { fat: 'texto' }).valores.fat, []);
+  assert.deepEqual(mdValidarValores(m, { fat: [] }), ['Preencha o campo: Faturas:']);
+  assert.deepEqual(mdValidarValores(m, { fat: [{ vencimento: '1/2/26', valor: '1' }] }), ['Faturas:: vencimento em dd/mm/aaaa.']);
+  assert.deepEqual(mdValidarValores(m, { fat: [{ vencimento: '01/02/2026', valor: '1' }] }), []);
 });

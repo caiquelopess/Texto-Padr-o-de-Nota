@@ -1,7 +1,8 @@
 {
-  "versao": "2.21.1",
+  "versao": "2.21.2",
   "data": "25/11/2026",
   "novidades": [
+    "Painel: excluir modelo só depois de arquivado — o administrador arquiva e solicita a exclusão, e só o gestor geral exclui de vez",
     "Painel: Cadastro de Irrigante disponível em \"Modelos prontos para revisar\" (vira rascunho; só entra no atendimento depois de publicado)",
     "Painel: os modelos do sistema aparecem em Modelos de texto e podem ser personalizados com segurança (volta ao original arquivando a personalização)",
     "Reclamações (11 tipos) migradas para modelos, sem mudança nos textos: todos os serviços agora são modelos",

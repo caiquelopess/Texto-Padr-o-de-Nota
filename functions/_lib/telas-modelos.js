@@ -30,7 +30,7 @@ const ESTILO_MODELOS = `
 .filtros{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}.filtros a{padding:6px 12px;border:1px solid var(--borda);border-radius:999px;color:var(--muted);text-decoration:none;font-size:13px}
 .filtros a.ativo{color:var(--txt);border-color:var(--neon);background:var(--realce)}
 .selo-publicado{color:var(--ok)}.selo-sistema{color:var(--neon)}.selo-arquivado{color:var(--muted)}.selo-rascunho{color:var(--aviso)}
-.selo-alerta{color:var(--aviso);border-color:var(--aviso)}
+.selo-alerta{color:var(--aviso);border-color:var(--aviso)}.selo-perigo{color:var(--perigo);border-color:var(--perigo)}
 .editor fieldset{border:1px solid var(--borda);border-radius:14px;padding:14px 16px;margin:0 0 16px}
 .editor legend{padding:0 6px;font-weight:700;font-size:14px}
 .editor textarea{width:100%;min-height:150px;padding:11px 12px;border-radius:10px;border:1px solid var(--borda);background:rgba(127,127,127,.06);color:var(--txt);font:13.5px/1.5 ui-monospace,Menlo,Consolas,monospace}
@@ -68,7 +68,7 @@ export function telaModelos({ usuario, perfil, modelos = [], filtro = 'todos', c
       (
         m,
       ) => `<tr><td><a href="/admin/modelos/${esc(m.id)}" style="color:var(--neon);font-weight:600">${esc(m.nome)}</a><br><small style="color:var(--muted)">${esc(m.id)}</small></td><td>${esc(m.categoria)}</td>
-<td><span class="selo selo-${m.status}">${STATUS[m.status]}</span>${m.aguardando ? ' <span class="selo selo-alerta">Aguardando publicação</span>' : ''}</td><td>${m.versao_publicada ? `v${m.versao_publicada}` : '—'}</td><td>${data(m.alterado_em)}<br><small style="color:var(--muted)">${esc(m.alterado_por || '')}</small></td></tr>`,
+<td><span class="selo selo-${m.status}">${STATUS[m.status]}</span>${m.aguardando ? ' <span class="selo selo-alerta">Aguardando publicação</span>' : ''}${m.exclusao_solicitada ? ' <span class="selo selo-perigo">Exclusão solicitada</span>' : ''}</td><td>${m.versao_publicada ? `v${m.versao_publicada}` : '—'}</td><td>${data(m.alterado_em)}<br><small style="color:var(--muted)">${esc(m.alterado_por || '')}</small></td></tr>`,
     )
     .join('');
   const criar = pode(perfil, 'modelos.editar')
@@ -180,7 +180,7 @@ ${publica && v.versao !== registro.versao_publicada ? `<form method="post" style
     'modelos',
     { usuario, perfil },
     `<p style="margin:0 0 6px"><a href="/admin/modelos" style="color:var(--neon);font-size:13px">← Modelos</a></p>
-<h1>${esc(m.nome)}</h1><p class="sub">${sistema ? '<span class="selo selo-sistema">Modelo do sistema personalizado</span> · ' : ''}<code>${esc(registro.id)}</code> · <span class="selo selo-${registro.status}">${STATUS[registro.status]}</span> ${registro.versao_publicada ? `· em uso pelos atendentes: <b>v${registro.versao_publicada}</b>` : '· ainda não publicado'}${registro.aguardando ? ' · <span class="selo selo-alerta">Aguardando publicação</span>' : ''}</p><div class="linha-neon"></div>
+<h1>${esc(m.nome)}</h1><p class="sub">${sistema ? '<span class="selo selo-sistema">Modelo do sistema personalizado</span> · ' : ''}<code>${esc(registro.id)}</code> · <span class="selo selo-${registro.status}">${STATUS[registro.status]}</span> ${registro.versao_publicada ? `· em uso pelos atendentes: <b>v${registro.versao_publicada}</b>` : '· ainda não publicado'}${registro.aguardando ? ' · <span class="selo selo-alerta">Aguardando publicação</span>' : ''}${registro.exclusao_solicitada ? ' · <span class="selo selo-perigo">Exclusão solicitada (só o gestor geral exclui)</span>' : ''}</p><div class="linha-neon"></div>
 ${msgs(erro, ok, problemas)}${resultado}
 <form method="post" class="editor" data-carrega><input type="hidden" name="revisao" value="${registro.revisao}">
 <fieldset${ro}><legend>Identificação</legend><div class="grade grade-usuario">
@@ -206,7 +206,14 @@ ${publica ? '<button type="submit" name="acao" value="publicar" onclick="return 
 ${
   pode(perfil, 'modelos.editar')
     ? `<div class="botoes" style="margin-top:12px"><form method="post" onsubmit="var n=prompt('Identificador da cópia (letras minúsculas, números e hífen):','${esc(registro.id)}-copia');if(!n)return false;this.novo_id.value=n;"><input type="hidden" name="acao" value="duplicar"><input type="hidden" name="novo_id"><button type="submit" class="secundario">Duplicar</button></form>
-${publica ? `<form method="post" onsubmit="return confirm('${registro.status === 'arquivado' ? 'Desarquivar este modelo?' : sistema ? 'Arquivar a personalização? Os atendentes voltam a usar o modelo original do sistema. Nada é apagado e dá para desarquivar.' : 'Arquivar? O modelo sai do atendimento, mas nada é apagado e dá para desarquivar.'}')"><input type="hidden" name="acao" value="${registro.status === 'arquivado' ? 'desarquivar' : 'arquivar'}"><input type="hidden" name="revisao" value="${registro.revisao}"><button type="submit" class="${registro.status === 'arquivado' ? 'secundario' : 'perigo'}">${registro.status === 'arquivado' ? 'Desarquivar' : 'Arquivar'}</button></form>` : ''}</div>`
+${publica ? `<form method="post" onsubmit="return confirm('${registro.status === 'arquivado' ? 'Desarquivar este modelo?' : sistema ? 'Arquivar a personalização? Os atendentes voltam a usar o modelo original do sistema. Nada é apagado e dá para desarquivar.' : 'Arquivar? O modelo sai do atendimento, mas nada é apagado e dá para desarquivar.'}')"><input type="hidden" name="acao" value="${registro.status === 'arquivado' ? 'desarquivar' : 'arquivar'}"><input type="hidden" name="revisao" value="${registro.revisao}"><button type="submit" class="${registro.status === 'arquivado' ? 'secundario' : 'perigo'}">${registro.status === 'arquivado' ? 'Desarquivar' : 'Arquivar'}</button></form>` : ''}
+${
+  registro.status === 'arquivado' && pode(perfil, 'modelos.excluir')
+    ? `<form method="post" onsubmit="return confirm('Excluir definitivamente este modelo e todas as suas versões? Esta ação NÃO pode ser desfeita.')"><input type="hidden" name="acao" value="excluir"><input type="hidden" name="revisao" value="${registro.revisao}"><button type="submit" class="perigo">Excluir definitivamente</button></form>`
+    : registro.status === 'arquivado' && !registro.exclusao_solicitada && pode(perfil, 'modelos.solicitar_exclusao')
+      ? `<form method="post" onsubmit="return confirm('Solicitar ao gestor geral a exclusão definitiva deste modelo arquivado?')"><input type="hidden" name="acao" value="solicitar_exclusao"><input type="hidden" name="revisao" value="${registro.revisao}"><button type="submit" class="perigo">Solicitar exclusão</button></form>`
+      : ''
+}</div>`
     : ''
 }
 <h2 style="margin-top:26px;font-size:17px">Versões publicadas</h2>

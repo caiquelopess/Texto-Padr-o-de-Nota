@@ -26,6 +26,7 @@ import { backupDiarioSeNecessario, criarBackup, lerBackup, listarBackups, restau
 import {
   atendimentoPublicado,
   criarModelo,
+  excluirModelo,
   garantirEsquema,
   lerAtendimento,
   lerModelo,
@@ -40,6 +41,7 @@ import {
   publicarAtendimento,
   salvarAtendimento,
   salvarRascunho,
+  solicitarExclusao,
 } from './_lib/banco.js';
 import { avisoVigente, configuracoesDoFormulario, lerConfiguracoes, salvarConfiguracoes, validarConfiguracoes } from './_lib/configuracoes.js';
 import { idValido, listarFormularios, nomeDoArquivo, nomeValido, TAMANHO_MAXIMO, tipoDoArquivo } from './_lib/formularios.js';
@@ -512,6 +514,8 @@ async function adminModelo(request, env, reg, id, url) {
   const conflito = 'Outro administrador alterou este modelo enquanto você editava. Suas mudanças não foram salvas: recarregue a página e confira.';
   const exigePublicar = ['publicar', 'republicar', 'arquivar', 'desarquivar'].includes(acao);
   if (exigePublicar && !pode(meu, 'modelos.publicar')) return proibido('Seu perfil pode editar rascunhos, mas a publicação é feita por um administrador.');
+  if (acao === 'solicitar_exclusao' && !pode(meu, 'modelos.solicitar_exclusao')) return proibido('Seu perfil não pode solicitar a exclusão de modelos.');
+  if (acao === 'excluir' && !pode(meu, 'modelos.excluir')) return proibido('Só o gestor geral pode excluir modelos.');
 
   if (acao === 'salvar' || acao === 'testar' || acao === 'enviar' || acao === 'publicar') {
     if (registro.status === 'arquivado') return tela({ erro: 'Desarquive o modelo para editar.' });
@@ -540,6 +544,21 @@ async function adminModelo(request, env, reg, id, url) {
     await registrar(env.USUARIOS, reg.usuario, acao === 'arquivar' ? 'Arquivou o modelo' : 'Desarquivou o modelo', id);
     registro = await lerModelo(db, id);
     return tela({ ok: acao === 'arquivar' ? 'Modelo arquivado: saiu do atendimento (nada foi apagado).' : 'Modelo desarquivado.' });
+  }
+  if (acao === 'solicitar_exclusao') {
+    const r = await solicitarExclusao(db, id, revisao, reg.usuario);
+    if (r.naoArquivado) return tela({ erro: 'Arquive o modelo antes de solicitar a exclusão.' });
+    if (!r.ok) return tela({ erro: conflito });
+    await registrar(env.USUARIOS, reg.usuario, 'Solicitou a exclusão do modelo', id);
+    registro = await lerModelo(db, id);
+    return tela({ ok: 'Exclusão solicitada. O gestor geral vai decidir sobre a exclusão definitiva.' });
+  }
+  if (acao === 'excluir') {
+    const r = await excluirModelo(db, id, revisao);
+    if (r.naoArquivado) return tela({ erro: 'Só é possível excluir um modelo que esteja arquivado.' });
+    if (!r.ok) return tela({ erro: conflito });
+    await registrar(env.USUARIOS, reg.usuario, 'Excluiu o modelo definitivamente', id);
+    return redirecionar('/admin/modelos');
   }
   if (acao === 'duplicar') {
     const novoId = String(form.get('novo_id') || '').trim();

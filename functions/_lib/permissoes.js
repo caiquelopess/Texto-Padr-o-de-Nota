@@ -20,6 +20,8 @@ const MATRIZ = {
   'modelos.ver': ['administrador', 'supervisor', 'consulta'],
   'modelos.editar': ['administrador', 'supervisor'],
   'modelos.publicar': ['administrador'],
+  'modelos.solicitar_exclusao': ['administrador'],
+  'modelos.excluir': [],
   'backups.gerenciar': ['administrador'],
   'backups.restaurar': [],
   'auditoria.ver': [],

@@ -820,3 +820,61 @@ test('modelo pronto (Cadastro de Irrigante): vira rascunho no painel e não apar
   const r = await page.request.post('/admin/modelos', { form: { acao: 'rascunho_pronto', id: 'cadastro-irrigante' } });
   expect(await r.text()).toContain('já existe');
 });
+
+test('excluir modelo: só após arquivar, administrador solicita e só o gestor geral exclui', async ({ page, browser }) => {
+  const URL_BASE = 'http://localhost:8788';
+  // gestor cria um rascunho e um administrador
+  await entrar(page, 'admin.teste', 'senha-admin-teste');
+  await page.goto('/admin/modelos');
+  await page.fill('#mi', 'rascunho-para-excluir');
+  await page.fill('#mn', 'Rascunho para excluir');
+  await page.selectOption('#mc', 'Reclamações e Outros');
+  await page.click('form[data-carrega] button[type=submit]');
+  await expect(page).toHaveURL(/\/admin\/modelos\/rascunho-para-excluir$/);
+  await page.goto('/admin');
+  await page.fill('#nu', 'davi.admin');
+  await page.fill('#ns', 'prov-adm');
+  await page.selectOption('#np', 'administrador');
+  await page.click('form[data-carrega] button[type=submit]');
+
+  // antes de arquivar: ninguém consegue excluir (nem o gestor pelo POST direto)
+  const cedo = await page.request.post('/admin/modelos/rascunho-para-excluir', {
+    form: { acao: 'excluir', revisao: '1' },
+    headers: { origin: URL_BASE },
+  });
+  expect(await cedo.text()).toContain('arquivado');
+
+  // administrador arquiva e solicita a exclusão
+  const ctx = await browser.newContext({ baseURL: URL_BASE });
+  const adm = await ctx.newPage();
+  await primeiroAcesso(adm, 'davi.admin', 'prov-adm', 'davi-nova');
+  await adm.goto('/admin/modelos/rascunho-para-excluir');
+  adm.once('dialog', (d) => d.accept());
+  await adm.click('button:has-text("Arquivar")');
+  await expect(adm.locator('.okmsg')).toContainText('Modelo arquivado');
+  // o administrador vê "Solicitar exclusão", não "Excluir definitivamente"
+  await expect(adm.locator('button:has-text("Solicitar exclusão")')).toBeVisible();
+  await expect(adm.locator('button:has-text("Excluir definitivamente")')).toHaveCount(0);
+  // e o POST direto de exclusão é barrado
+  const tentativa = await adm.request.post('/admin/modelos/rascunho-para-excluir', {
+    form: { acao: 'excluir', revisao: '2' },
+    headers: { origin: URL_BASE },
+  });
+  expect(tentativa.status()).toBe(403);
+  expect(await tentativa.text()).toContain('Só o gestor geral pode excluir');
+  adm.once('dialog', (d) => d.accept());
+  await adm.click('button:has-text("Solicitar exclusão")');
+  await expect(adm.locator('.okmsg')).toContainText('Exclusão solicitada');
+  await expect(adm.locator('.sub')).toContainText('Exclusão solicitada');
+
+  // o gestor vê o pedido e exclui de vez
+  await page.goto('/admin/modelos/rascunho-para-excluir');
+  await expect(page.locator('.sub')).toContainText('Exclusão solicitada');
+  page.once('dialog', (d) => d.accept());
+  await page.click('button:has-text("Excluir definitivamente")');
+  await expect(page).toHaveURL(/\/admin\/modelos$/);
+  await expect(page.locator('tr').filter({ has: page.locator('small', { hasText: /^rascunho-para-excluir$/ }) })).toHaveCount(0);
+  // some de vez: abrir de novo dá "não encontrado"
+  expect((await page.request.get('/admin/modelos/rascunho-para-excluir')).status()).toBe(404);
+  await ctx.close();
+});

@@ -11,15 +11,46 @@ export const CATEGORIAS_PADRAO = [
 
 const texto = (v) => String(v ?? '').trim();
 
-// Texto de um aviso como aparece no editor (avisos formatados viram texto sem marcação).
+const escapar = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const desescapar = (t) => String(t).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+
+// Texto de um aviso como aparece no editor: cada item de lista numa linha "• ...".
 export function textoDoAviso(a) {
   if (a && typeof a === 'object')
-    return String(a.texto ?? a.html ?? '')
-      .replace(/<br\s*\/?>/gi, ' ')
+    return desescapar(String(a.texto ?? a.html ?? ''))
+      .replace(/<li[^>]*>/gi, '\n• ')
+      .replace(/<\/li>/gi, '')
+      .replace(/<\/?(ul|ol)[^>]*>/gi, '\n')
+      .replace(/<br\s*\/?>/gi, '\n')
       .replace(/<[^>]*>/g, '')
-      .replace(/\s+/g, ' ')
-      .trim();
+      .replace(/[ \t]+/g, ' ')
+      .split('\n')
+      .map((l) => l.trim())
+      .filter(Boolean)
+      .join('\n');
   return texto(a);
+}
+
+// Um bloco de texto do editor (linhas) vira um aviso. Linhas "• " ou "- " viram itens de lista.
+// Se o bloco for igual a um aviso que já existe, mantém o original (negrito, cor, "mostrar se", id).
+function avisoDoBloco(bloco, avisosBase) {
+  const linhas = bloco
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean);
+  if (!linhas.length) return null;
+  const canon = linhas.join('\n');
+  const existente = avisosBase.find((a) => textoDoAviso(a) === canon);
+  if (existente) return existente;
+  const itens = [];
+  const cabecalho = [];
+  for (const l of linhas) {
+    const m = /^[•-]\s+(.*)$/.exec(l);
+    if (m) itens.push(m[1]);
+    else cabecalho.push(l);
+  }
+  if (itens.length) return { html: `${escapar(cabecalho.join(' '))}<ul>${itens.map((it) => `<li>${escapar(it)}</li>`).join('')}</ul>` };
+  return cabecalho.join(' ');
 }
 
 // "Mostrar se" simples (campo=A|B) cabe no formulário; regras combinadas ou "maior que" são avançadas.
@@ -62,13 +93,13 @@ export function modeloDoFormulario(form, id, base = null) {
     }
     campos.push(c);
   });
-  // avisos: linha igual a um aviso existente mantém a formatação dele; linha nova é texto puro
+  // avisos: um por bloco (separados por linha em branco). Dentro do bloco, linhas "• " viram lista.
   const avisosBase = base?.avisos || [];
-  const avisos = texto(form.get('avisos'))
-    .split('\n')
-    .map(texto)
-    .filter(Boolean)
-    .map((linha) => avisosBase.find((a) => textoDoAviso(a) === linha) ?? linha);
+  const avisos = String(form.get('avisos') ?? '')
+    .replace(/\r\n/g, '\n')
+    .split(/\n\s*\n/)
+    .map((bloco) => avisoDoBloco(bloco, avisosBase))
+    .filter(Boolean);
   const extras = base ? Object.fromEntries(Object.entries(base).filter(([k]) => !CHAVES_FORM.includes(k))) : {};
   return {
     ...extras,

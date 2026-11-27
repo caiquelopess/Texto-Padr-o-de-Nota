@@ -107,7 +107,7 @@ test('modelo do sistema personalizado: o que o formulário não mostra é mantid
     ['nome', 'Troca de Titularidade'],
     ['categoria', 'Titularidade e Cadastro'],
     ['descricao', ''],
-    ['avisos', 'Atenção: CNPJ\nAviso novo'],
+    ['avisos', 'Atenção: CNPJ\n\nAviso novo'],
     ['copiar', 'nota'],
     ...linha('tipo', 'Tipo', 'opcao', 'sim', 'a | b', ''),
     ...linha('solic', 'Solicitante (titular)', 'texto', 'sim', '', MOSTRAR_AVANCADO),
@@ -133,8 +133,55 @@ test('modelo do sistema personalizado: o que o formulário não mostra é mantid
   assert.equal(modeloDoFormulario(f2, 'troca-titularidade', base).campos[0].rotulosOpcoes, undefined);
   // sem base, nada de extra
   assert.equal(modeloDoFormulario(f, 'x').sf, undefined);
-  assert.equal(textoDoAviso({ html: 'A<br>B <b>C</b>' }), 'A B C');
+  assert.equal(textoDoAviso({ html: 'A<br>B <b>C</b>' }), 'A\nB C');
   assert.equal(textoDoAviso({ texto: ' T ' }), 'T');
   assert.equal(mostrarSeSimples({ campo: 'a', igual: 'b' }), true);
   assert.equal(mostrarSeSimples({ campo: 'a', maiorQue: 1 }), false);
+});
+
+test('avisos com lista: editar item a item mantém a lista; linha em branco separa os avisos', () => {
+  const base = {
+    id: 'docs',
+    nome: 'D',
+    categoria: 'X',
+    avisos: [
+      { html: '⚠️ Topo', classeOriginal: 'alert-box alert-box-blink' },
+      { html: '<b>Documentos:</b><ul><li>A</li><li>B</li><li>C</li></ul>', classeOriginal: 'alert-box' },
+    ],
+    campos: [{ id: 'x', rotulo: 'X', tipo: 'texto' }],
+    nota: '{{x}}',
+  };
+  // como aparece no editor
+  assert.equal(textoDoAviso(base.avisos[1]), 'Documentos:\n• A\n• B\n• C');
+  const editor = base.avisos.map(textoDoAviso).join('\n\n');
+  const montar = (avisosTexto) => {
+    const f = new FormData();
+    f.append('nome', base.nome);
+    f.append('categoria', base.categoria);
+    f.append('descricao', '');
+    f.append('copiar', 'nota');
+    f.append('avisos', avisosTexto);
+    f.append('nota', base.nota);
+    f.append('agenda', '');
+    f.append('campo_id', 'x');
+    f.append('campo_rotulo', 'X');
+    f.append('campo_tipo', 'texto');
+    f.append('campo_obrigatorio', 'nao');
+    f.append('campo_opcoes', '');
+    f.append('campo_mostrar', '');
+    return modeloDoFormulario(f, base.id, base);
+  };
+  // sem mexer: os dois avisos originais são preservados (negrito, classe, etc.)
+  const igual = montar(editor);
+  assert.deepEqual(igual.avisos, base.avisos);
+  // editar a lista: tira B, acrescenta D — continua lista <ul><li>
+  const editado = montar(editor.replace('• B\n', '').replace('• C', '• C\n• D'));
+  assert.equal(igual.avisos.length, 2);
+  assert.equal(editado.avisos[0].html, '⚠️ Topo'); // bloco igual = preservado
+  assert.equal(editado.avisos[1].html, 'Documentos:<ul><li>A</li><li>C</li><li>D</li></ul>');
+  // lista escrita com "- " também vira itens; HTML digitado é escapado
+  const novo = montar('Materiais\n- Caneta <azul>\n- Papel');
+  assert.equal(novo.avisos[0].html, 'Materiais<ul><li>Caneta &lt;azul&gt;</li><li>Papel</li></ul>');
+  // sem itens: aviso de texto puro
+  assert.equal(montar('So um texto').avisos[0], 'So um texto');
 });

@@ -1,7 +1,8 @@
 {
-  "versao": "2.21.4",
+  "versao": "2.21.5",
   "data": "25/11/2026",
   "novidades": [
+    "Correções: modal do Histórico aparece por cima de tudo (computador e celular); no painel, listas dos avisos podem ser editadas item a item sem perder a formatação",
     "Novo serviço (rascunho para revisar): Alteração de Horário do Benefício Irrigante — períodos com conferência automática de 8h30/dia em blocos de 30 min, fora de 17h–21h30",
     "Cadastro de Irrigante (rascunho para revisar) atualizado pela Portaria MME nº 137/2026: horário de 8h30/dia em até 3 períodos (fora de 17h–21h30), siglas do SAP KM e regras de MMGD, ICMS e recadastramento",
     "Painel: excluir modelo só depois de arquivado — o administrador arquiva e solicita a exclusão, e só o gestor geral exclui de vez",
